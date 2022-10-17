@@ -1,0 +1,167 @@
+image: python:3.8-slim
+
+stages:
+  - lint
+  - build
+  - test
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+cache:
+  paths:
+    - .cache/pip
+    - venv/
+
+workflow:
+  rules:
+    # Run pipeline MR
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    # Remove pipeline branch if MR open
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    # Run pipeline branch
+    - if: $CI_COMMIT_BRANCH
+    # Run pipeline for tags
+    - if: $CI_COMMIT_TAG
+
+code_format:
+  stage: lint
+  before_script:
+    - python --version
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
+    - pip install -r requirements-dev.txt
+  script:
+    - yapf -d -r mse_ctl/ mse_ctl.py
+
+code_style:
+  stage: lint
+  before_script:
+    - python --version
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt
+    - pip install -r requirements-dev.txt
+    - pip install .
+  script:
+    - pycodestyle mse_ctl/ mse_ctl.py
+
+doc_style:
+  stage: lint
+  before_script:
+    - python --version
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt
+    - pip install -r requirements-dev.txt
+    - pip install .
+  script:
+    - pydocstyle mse_ctl/ mse_ctl.py
+
+static_analysis:
+  stage: lint
+  before_script:
+    - python --version
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt
+    - pip install -r requirements-dev.txt
+    - pip install .
+  script:
+    - pylint --rcfile=setup.cfg mse_ctl/ mse_ctl.py
+
+type_check:
+  stage: lint
+  before_script:
+    - python --version
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt
+    - pip install -r requirements-dev.txt
+    - pip install .
+  script:
+    - mypy mse_ctl/
+
+doc:
+  stage: build
+  rules:
+    # Deploy on prod on tag
+    - if: '$CI_COMMIT_TAG =~ /^\d+.\d+.\d+$/'
+      variables:
+        REMOTE_HOST: "ui.sc.prod.cosmian.com"
+    # Deploy on test on develop
+    - if: $CI_COMMIT_BRANCH == 'develop'
+      variables:
+        REMOTE_HOST: "ui.sc.test.cosmian.com"
+        CI_COMMIT_TAG: "dev"
+    - when: on_success
+  allow_failure: false
+  before_script:
+    - apt update -y
+    - apt install -y ssh
+    - python --version
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
+    - pip install -r requirements-dev.txt
+  script:
+    - sphinx-build docs docs/_build -E -a -W
+    - mkdir html/ && mv docs/_build/* html/
+    - echo $CI_COMMIT_TAG
+    - echo $REMOTE_HOST
+    - >
+      if ! [ -z "$REMOTE_HOST" ]; then
+        ssh cosmian@$REMOTE_HOST "mkdir -p /var/www/documentation_root/microservice_encryption/python-versions"
+        ssh cosmian@$REMOTE_HOST "rm -fr /var/www/documentation_root/microservice_encryption/python-versions/${CI_COMMIT_TAG}"
+        scp -r html cosmian@$REMOTE_HOST:/var/www/documentation_root/microservice_encryption/python-versions/${CI_COMMIT_TAG}
+        ssh cosmian@$REMOTE_HOST "unlink /var/www/documentation_root/microservice_encryption/python || true"
+        ssh cosmian@$REMOTE_HOST "ln -s /var/www/documentation_root/microservice_encryption/python-versions/${CI_COMMIT_TAG} /var/www/documentation_root/microservice_encryption/python"
+      fi
+  artifacts:
+    name: "documentation"
+    paths:
+      - html/
+    expire_in: 1 mos
+
+release_wheel:
+  stage: build
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^\d+\.\d+(\.\d+)?([\.\-\_])?((a(lpha)?|b(eta)?|c|r(c|ev)?|pre(view)?)\d*)?(\.?(post|dev)\d*)?$/
+  before_script:
+    - python --version
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt
+    - pip install build twine
+  script:
+    - |
+      if [ "$(python setup.py --version)" == "$CI_COMMIT_TAG" ]
+      then
+          python -m build --wheel && twine upload -u "${PYPI_USERNAME}" -p "${PYPI_PASSWORD}" dist/*
+      else
+          echo "Git tag version should be the same as in setup.py!"
+          exit 1
+      fi
+  artifacts:
+    paths:
+      - dist/*.whl
+
+test_unit:
+  stage: test
+  before_script:
+    - python --version
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt
+    - pip install -r requirements-dev.txt
+    - pip install .
+  script:
+    - pytest -m "not slow"

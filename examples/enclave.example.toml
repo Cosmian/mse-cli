@@ -1,0 +1,9 @@
+service_name="test"
+service_version="1.0.1"
+enclave_size="4G"
+enclave_lifetime=10
+code_location="/path/to/the/code"
+code_mode="encrypted"
+python_flask_module="app"
+python_flask_variable_name="app"
+health_check_endpoint="/"
