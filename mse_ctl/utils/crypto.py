@@ -1,4 +1,4 @@
-"""mse_ctl.crypto.helper module."""
+"""mse_ctl.utils.crypto module."""
 
 import hashlib
 from pathlib import Path

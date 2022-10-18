@@ -1,4 +1,4 @@
-"""mse_ctl.util.base64url module."""
+"""mse_ctl.utils.base64url module."""
 
 import base64
 import json

@@ -1,4 +1,4 @@
-"""mse_ctl.util.entrypoint module."""
+"""mse_ctl.utils.entrypoint module."""
 
 import ast
 from pathlib import Path
