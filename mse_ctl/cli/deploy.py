@@ -14,7 +14,7 @@ import time
 from mse_ctl.api.enclave import get, new
 from mse_ctl.api.types import Enclave, EnclaveStatus
 
-from mse_ctl.conf.enclave import CodeMode, EnclaveConf
+from mse_ctl.conf.enclave import CodeProtection, EnclaveConf
 from mse_ctl.conf.user import UserConf
 from mse_ctl.log import LOGGER as log
 from mse_ctl.utils.crypto import encrypt_directory
@@ -74,7 +74,7 @@ def run(args):
 
     # TODO
 
-    log.info("It's now ready to be used on https://e1.machine1.cosmian.com")
+    log.info("It's now ready to be used on https://{enclave.domain_name}")
 
     service_context.id = enclave.uuid
     service_context.domain_name = enclave.domain_name
@@ -91,17 +91,16 @@ def prepare_code(enclave_conf: EnclaveConf,
                  file_exceptions: Optional[List[str]] = None,
                  dir_exceptions: Optional[List[str]] = None) -> Path:
     """Tar and encrypt if required the Service Python code."""
-
     # TODO: check that with much more complicated python_flask_module (with dots)
     if not (Path(enclave_conf.code_location) /
             (enclave_conf.python_flask_module + ".py")).exists():
         raise FileNotFoundError(
-            f"Flask module '{enclave_conf.python_flask_module}' not found in {enclave_conf.code_location}!"
-        )
+            f"Flask module '{enclave_conf.python_flask_module}' "
+            f"not found in {enclave_conf.code_location}!")
 
     src_path = Path(enclave_conf.code_location).resolve()
 
-    if enclave_conf.code_mode == CodeMode.Encrypted:
+    if enclave_conf.code_protection == CodeProtection.Encrypted:
 
         log.debug("Encrypt code in %s to %s...", enclave_conf.code_location,
                   service_context.encrypted_code_path)
@@ -130,7 +129,7 @@ def deploy_service(conn: Connection, enclave_conf: EnclaveConf,
                    tar_path: Path) -> Enclave:
     """Deploy the service to an enclave."""
     r: requests.Response = new(conn=conn,
-                               name=enclave_conf.service_name,
+                               conf=enclave_conf,
                                code_tar_path=tar_path)
 
     if not r.ok:
@@ -157,8 +156,7 @@ def wait_enclave_creation(conn: Connection, uuid: UUID) -> Enclave:
             raise Exception(
                 "The enclave creation stopped because an error occured...")
         if enclave.status == EnclaveStatus.Deleted:
-            raise Exception(
-                "The enclave creation stopped because it has been deleted in the meantimes..."
-            )
+            raise Exception("The enclave creation stopped because it "
+                            " has been deleted in the meantimes...")
 
     return enclave

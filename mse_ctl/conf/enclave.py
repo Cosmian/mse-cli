@@ -8,14 +8,14 @@ from pathlib import Path
 from pydantic import BaseModel
 
 
-class CodeMode(Enum):
-    """Code mode."""
+class CodeProtection(str, Enum):
+    """Code protection."""
 
     Encrypted = "encrypted"
     Plaintext = "plaintext"
 
 
-class EnclaveSize(Enum):
+class EnclaveSize(str, Enum):
     """Enclave size."""
 
     G1 = "1G"
@@ -35,7 +35,7 @@ class EnclaveConf(BaseModel):
     # Location of the code (a path or an url)
     code_location: str
     # Wether the code is encrypted or not
-    code_mode: CodeMode
+    code_protection: CodeProtection
 
     # Size of the enclave
     enclave_size: EnclaveSize
@@ -51,6 +51,7 @@ class EnclaveConf(BaseModel):
 
     @property
     def service_identifier(self):
+        """Get the service identifier."""
         return f"{self.service_name}-{self.service_version}"
 
     @staticmethod
@@ -60,3 +61,36 @@ class EnclaveConf(BaseModel):
             dataMap = toml.load(f)
 
             return EnclaveConf(**dataMap)
+
+    def save(self, folder: Path):
+        """Dump the current object to a file."""
+        with open(folder / "mse.toml", "w") as f:
+            dataMap = {
+                "service_name": self.service_name,
+                "service_version": self.service_version,
+                "code_location": self.code_location,
+                "code_protection": self.code_protection.value,
+                "enclave_size": self.enclave_size.value,
+                "enclave_lifetime": self.enclave_lifetime,
+                "python_flask_module": self.python_flask_module,
+                "python_flask_variable_name": self.python_flask_variable_name,
+                "health_check_endpoint": self.health_check_endpoint
+            }
+            toml.dump(dataMap, f)
+
+    @staticmethod
+    def default(name: str, code_path: Path):
+        """Generate a default configuration."""
+        dataMap = {
+            "service_name": name,
+            "service_version": "0.1.0",
+            "code_location": str(code_path),
+            "code_protection": "plaintext",
+            "enclave_size": "1G",
+            "enclave_lifetime": 1,
+            "python_flask_module": "app",
+            "python_flask_variable_name": "app",
+            "health_check_endpoint": "/"
+        }
+
+        return EnclaveConf(**dataMap)

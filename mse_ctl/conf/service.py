@@ -32,14 +32,16 @@ class Service(BaseModel):
 
     @property
     def encrypted_code_path(self):
+        """Get the path to store the encrypted code."""
         return self.workspace / "encrypted_code"
 
     @property
     def tar_code_path(self):
+        """Get the path to store the tar code."""
         return self.workspace / "code.tar"
 
     @property
-    def path(self) -> str:
+    def path(self) -> Path:
         """Get the path of the service context."""
         return MSE_CONF_DIR / "services" / (str(self.id) + ".mse")
 

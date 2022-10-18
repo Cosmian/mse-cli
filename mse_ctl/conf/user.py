@@ -3,6 +3,7 @@
 import toml
 import os
 
+from pathlib import Path
 from pydantic import BaseModel
 from mse_ctl.api.auth import Connection
 from mse_ctl import MSE_CONF_DIR
@@ -17,7 +18,7 @@ class UserConf(BaseModel):
     secret_token: str
 
     @staticmethod
-    def path() -> str:
+    def path() -> Path:
         """Get the path of the user conf."""
         return MSE_CONF_DIR / "login.toml"
 

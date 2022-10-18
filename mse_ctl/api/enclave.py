@@ -4,27 +4,28 @@ from pathlib import Path
 from typing import List, Optional
 from uuid import UUID
 import requests
-
+import json
 from mse_ctl.api.auth import Connection
+from mse_ctl.conf.enclave import EnclaveConf
 
 
-def new(conn: Connection, name: str, code_tar_path: Path) -> requests.Response:
+def new(conn: Connection, conf: EnclaveConf,
+        code_tar_path: Path) -> requests.Response:
     """POST `/enclaves`."""
     if not code_tar_path.exists():
         raise FileNotFoundError("Can't find tar file!")
 
     with code_tar_path.open("rb") as fp:
-        return conn.post(url="/enclaves",
-                         files={
-                             "file":
-                                 (code_tar_path.name, fp, "application/tar", {
-                                     "Expires": "0"
-                                 })
-                         },
-                         timeout=None,
-                         json={
-                             "name": name,
-                         })
+        return conn.post(
+            url="/enclaves",
+            files={
+                "code": (code_tar_path.name, fp, "application/tar", {
+                    "Expires": "0"
+                }),
+                "conf": (None, json.dumps(conf.__dict__), 'application/json')
+            },
+            timeout=None,
+        )
 
 
 def list(conn: Connection) -> requests.Response:

@@ -6,6 +6,8 @@ from pydantic import BaseModel
 from uuid import UUID
 from enum import Enum
 
+from mse_ctl.conf.enclave import CodeProtection, EnclaveSize
+
 
 class EnclaveStatus(Enum):
     """EnclaveStatus enum."""
@@ -20,14 +22,17 @@ class Enclave(BaseModel):
     """Enclave class."""
 
     uuid: UUID
-    name: str
+    service_name: str
+    service_version: str
     owner_uuid: UUID
     domain_name: Optional[str]
-    version: Optional[str]
+    enclave_version: Optional[str]
     created_at: Optional[datetime.datetime]
     ready_at: Optional[datetime.datetime]
     deleted_at: Optional[datetime.datetime]
     status: EnclaveStatus
+    enclave_size: EnclaveSize
+    code_protection: CodeProtection
 
     @staticmethod
     def from_json_dict(json: dict):

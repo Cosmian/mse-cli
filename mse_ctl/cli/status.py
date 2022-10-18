@@ -39,30 +39,33 @@ def run(args):
     enclave = Enclave.from_json_dict(r.json())
 
     log.info("\nMicroservice")
-    log.info(f"\tName        = {enclave.name}")
-    log.info(f"\tVersion     = {enclave.version}")
+    log.info(f"\tName        = {enclave.service_name}")
+    log.info(f"\tVersion     = {enclave.service_version}")
     log.info(f"\tDomain name = {enclave.domain_name}")
 
     log.info("\nDeployement status")
-    log.info(f"\tUUID         = {enclave.uuid}")
+    log.info(f"\tUUID            = {enclave.uuid}")
+    log.info(f"\tSGX MSE lib     = {enclave.enclave_version}")
+    log.info(f"\tEnclave size    = {str(enclave.enclave_size)}")
+    log.info(f"\tCode protection = {str(enclave.code_protection)}")
 
-    log.info(f"\tCreated at   = {enclave.created_at}")
+    log.info(f"\tCreated at      = {enclave.created_at}")
 
     if enclave.status == EnclaveStatus.Running:
         log.info(
-            f"\tStatus       = {bcolors.OKGREEN}{enclave.status.value}{bcolors.ENDC}"
+            f"\tStatus           = {bcolors.OKGREEN}{enclave.status.value}{bcolors.ENDC}"
         )
-        log.info(f"\tOnline since = {enclave.ready_at}")
+        log.info(f"\tOnline since     = {enclave.ready_at}")
     elif enclave.status == EnclaveStatus.Deleted:
         log.info(
-            f"\tStatus       = {bcolors.WARNING}{enclave.status.value}{bcolors.ENDC}"
+            f"\tStatus           = {bcolors.WARNING}{enclave.status.value}{bcolors.ENDC}"
         )
-        log.info(f"\tOnline since = {enclave.deleted_at}")
+        log.info(f"\tOnline since     = {enclave.deleted_at}")
     elif enclave.status == EnclaveStatus.OnError:
         log.info(
-            f"\tStatus       = {bcolors.FAIL}{enclave.status.value}{bcolors.ENDC}"
+            f"\tStatus           = {bcolors.FAIL}{enclave.status.value}{bcolors.ENDC}"
         )
     elif enclave.status == EnclaveStatus.Initializing:
         log.info(
-            f"\tStatus       = {bcolors.OKBLUE}{enclave.status.value}{bcolors.ENDC}"
+            f"\tStatus           = {bcolors.OKBLUE}{enclave.status.value}{bcolors.ENDC}"
         )
