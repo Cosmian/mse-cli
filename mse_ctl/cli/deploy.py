@@ -1,16 +1,27 @@
 """Deploy subparser definition."""
 
 from pathlib import Path
+from typing import List, Optional, Set
+from uuid import UUID
+from cryptography import x509
 
+import ssl
+from mse_ctl.conf.service import Service
+from mse_ctl.utils.fs import tar
 import requests
 import time
 
 from mse_ctl.api.enclave import get, new
 from mse_ctl.api.types import Enclave, EnclaveStatus
 
-from mse_ctl.conf.enclave import EnclaveConf
+from mse_ctl.conf.enclave import CodeMode, EnclaveConf
 from mse_ctl.conf.user import UserConf
 from mse_ctl.log import LOGGER as log
+from mse_ctl.utils.crypto import encrypt_directory
+from mse_ctl.api.auth import Connection
+
+# from mse_lib_sgx.conversion import ed25519_to_x25519_pk
+# from mse_lib_sgx.crypto import seal
 
 
 def add_subparser(subparsers):
@@ -24,38 +35,130 @@ def add_subparser(subparsers):
 
 def run(args):
     """Run the subcommand."""
-    enclave_conf = EnclaveConf.from_toml(
-        Path("examples/enclave.example.toml"))  # TODO: unhardcode that
-
     user_conf = UserConf.from_toml()
+    enclave_conf = EnclaveConf.from_toml()
+    service_context = Service.from_enclave_conf(enclave_conf)
+
+    log.info("Preparing your project...")
+    tar_path = prepare_code(enclave_conf, service_context)
 
     log.info("Deploying your project...")
-
     conn = user_conf.get_connection()
+    enclave = deploy_service(conn, enclave_conf, tar_path)
 
-    r: requests.Response = new(conn=conn, name=enclave_conf.service_name)
+    log.info(f"Enclave creating for {enclave_conf.service_name}...")
+    enclave = wait_enclave_creation(conn, enclave.uuid)
+
+    log.info(f"Enclave created with uuid: {enclave.uuid}")
+
+    # ca_data = ssl.get_server_certificate(
+    #     (enclave.domain_name, 443)).encode("utf-8")
+    # cert_path = Path(
+    #     f"{enclave_conf.service_name}_{enclave_conf.service_version}_cert.pem")
+    # cert_path.write_bytes(ca_data)
+
+    # TODO: RA
+
+    log.info("Enclave thrustworthiness check (RA processing...): Ok.")
+    log.info("Unsealing your code and your private data from the enclave.")
+
+    # cert = x509.load_pem_x509_certificate(ca_data)
+    # x25519_pk: bytes = ed25519_to_x25519_pk(cert.public_key())
+
+    # requests.post(url=enclave.domain_name,
+    #               data=seal(data=b"hello", recipient_public_key=x25519_pk),
+    #               headers={'Content-Type': 'application/octet-stream'},
+    #               verify=str(cert_path.resolve()))
+
+    log.info("Your application is now fully deployed and started.")
+
+    # TODO
+
+    log.info("It's now ready to be used on https://e1.machine1.cosmian.com")
+
+    service_context.id = enclave.uuid
+    service_context.domain_name = enclave.domain_name
+    service_context.save()
+
+    log.info(
+        f"The context of this creation has been saved at: {service_context.path}"
+    )
+
+
+def prepare_code(enclave_conf: EnclaveConf,
+                 service_context: Service,
+                 patterns: Optional[List[str]] = None,
+                 file_exceptions: Optional[List[str]] = None,
+                 dir_exceptions: Optional[List[str]] = None) -> Path:
+    """Tar and encrypt if required the Service Python code."""
+
+    # TODO: check that with much more complicated python_flask_module (with dots)
+    if not (Path(enclave_conf.code_location) /
+            (enclave_conf.python_flask_module + ".py")).exists():
+        raise FileNotFoundError(
+            f"Flask module '{enclave_conf.python_flask_module}' not found in {enclave_conf.code_location}!"
+        )
+
+    src_path = Path(enclave_conf.code_location).resolve()
+
+    if enclave_conf.code_mode == CodeMode.Encrypted:
+
+        log.debug("Encrypt code in %s to %s...", enclave_conf.code_location,
+                  service_context.encrypted_code_path)
+
+        whitelist: Set[str] = {"requirements.txt"}
+
+        encrypt_directory(
+            dir_path=Path(enclave_conf.code_location),
+            patterns=(["*"] if patterns is None else patterns),
+            key=service_context.symkey,
+            exceptions=(list(whitelist) if file_exceptions is None else
+                        list(set(file_exceptions) | whitelist)),
+            dir_exceptions=([] if dir_exceptions is None else dir_exceptions),
+            out_dir_path=service_context.encrypted_code_path)
+
+        src_path = service_context.encrypted_code_path
+
+    tar_path = tar(dir_path=src_path, tar_path=service_context.tar_code_path)
+
+    log.debug("Tar encrypted code in '%s'", tar_path.name)
+
+    return tar_path
+
+
+def deploy_service(conn: Connection, enclave_conf: EnclaveConf,
+                   tar_path: Path) -> Enclave:
+    """Deploy the service to an enclave."""
+    r: requests.Response = new(conn=conn,
+                               name=enclave_conf.service_name,
+                               code_tar_path=tar_path)
 
     if not r.ok:
         raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
 
-    enclave = Enclave.from_json_dict(r.json())
+    return Enclave.from_json_dict(r.json())
 
-    log.info(f"Enclave creating for {enclave_conf.service_name}...")
 
-    while enclave.status == EnclaveStatus.Initializing:
+def wait_enclave_creation(conn: Connection, uuid: UUID) -> Enclave:
+    """Wait for the enclave to be fully deployed."""
+    while True:
         time.sleep(1)
 
-        r: requests.Response = get(conn=conn, uuid=enclave.uuid)
-
+        r: requests.Response = get(conn=conn, uuid=uuid)
         if not r.ok:
             raise Exception(
                 f"Unexpected response ({r.status_code}): {r.content!r}")
 
         enclave = Enclave.from_json_dict(r.json())
 
-    log.info("Enclave created!")
-    log.info(f"Enclave uuid: id {enclave.uuid}")
-    log.info("Enclave thrustworthiness check (RA processing...): Ok.")
-    log.info("Unsealing your code and your private data from the enclave.")
-    log.info("Your application is now fully deployed and started.")
-    log.info("It's now ready to be used on https://e1.machine1.cosmian.com")
+        if enclave.status == EnclaveStatus.Running:
+            break
+        if enclave.status == EnclaveStatus.OnError:
+            raise Exception(
+                "The enclave creation stopped because an error occured...")
+        if enclave.status == EnclaveStatus.Deleted:
+            raise Exception(
+                "The enclave creation stopped because it has been deleted in the meantimes..."
+            )
+
+    return enclave

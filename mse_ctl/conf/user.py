@@ -1,25 +1,25 @@
 """User configuration file module."""
 
-from enum import Enum
 import toml
-from pathlib import Path
 import os
+
 from pydantic import BaseModel
 from mse_ctl.api.auth import Connection
+from mse_ctl import MSE_CONF_DIR
 
 
 class UserConf(BaseModel):
-    """Definition of an enclave by a user."""
+    """Definition of the user param."""
 
     # Email of the user
     email: str
-    # Access token of the user
+    # Secret token of the user
     secret_token: str
 
     @staticmethod
     def path() -> str:
         """Get the path of the user conf."""
-        return os.getenv('MSE_CTL_USER_CONF', "mse.toml")
+        return MSE_CONF_DIR / "login.toml"
 
     @staticmethod
     def from_toml():
@@ -29,7 +29,7 @@ class UserConf(BaseModel):
 
             return UserConf(**dataMap)
 
-    def get_connection(self):
+    def get_connection(self) -> Connection:
         """Get the connection to the backend."""
         return Connection(base_url=os.getenv(
             'MSE_CTL_BASE_URL', default="https://backend.mse.cosmian.com"),

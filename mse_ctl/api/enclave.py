@@ -8,11 +8,23 @@ import requests
 from mse_ctl.api.auth import Connection
 
 
-def new(conn: Connection, name: str) -> requests.Response:
+def new(conn: Connection, name: str, code_tar_path: Path) -> requests.Response:
     """POST `/enclaves`."""
-    return conn.post(url="/enclaves", json={
-        "name": name,
-    })
+    if not code_tar_path.exists():
+        raise FileNotFoundError("Can't find tar file!")
+
+    with code_tar_path.open("rb") as fp:
+        return conn.post(url="/enclaves",
+                         files={
+                             "file":
+                                 (code_tar_path.name, fp, "application/tar", {
+                                     "Expires": "0"
+                                 })
+                         },
+                         timeout=None,
+                         json={
+                             "name": name,
+                         })
 
 
 def list(conn: Connection) -> requests.Response:

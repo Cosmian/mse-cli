@@ -2,6 +2,7 @@
 
 from enum import Enum
 import toml
+import os
 from pathlib import Path
 
 from pydantic import BaseModel
@@ -48,10 +49,14 @@ class EnclaveConf(BaseModel):
     # Endpoint to use to check if the application is up and sane
     health_check_endpoint: str
 
+    @property
+    def service_identifier(self):
+        return f"{self.service_name}-{self.service_version}"
+
     @staticmethod
-    def from_toml(path: Path):
+    def from_toml():
         """Build a EnclaveConf object from a Toml file."""
-        with open(path) as f:
+        with open(Path(os.getcwd()) / "mse.toml") as f:
             dataMap = toml.load(f)
 
             return EnclaveConf(**dataMap)

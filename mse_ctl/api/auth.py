@@ -22,12 +22,12 @@ class AccessTokenAuth(AuthBase):
         self.exp: int = int(
             jwt.decode(self.access_token,
                        options={"verify_signature": False})["exp"])
-        self.version = version("cosmian_secure_computation_client")
+        self.version = version("mse_ctl")
 
     def __call__(self, r):
         """Call used by `Session.request()` method."""
         r.headers["Authorization"] = f"Bearer {self.access_token}"
-        r.headers["User-Agent"] = f"cscc-python/{self.version}"
+        r.headers["User-Agent"] = f"mse-python/{self.version}"
 
         return r
 

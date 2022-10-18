@@ -1,6 +1,7 @@
 .vscode/
 .idea/
 .python-version
+examples/services
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
