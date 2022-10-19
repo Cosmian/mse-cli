@@ -1,12 +1,13 @@
 """User configuration file module."""
 
-import toml
 import os
-
 from pathlib import Path
+
+import toml
 from pydantic import BaseModel
-from mse_ctl.api.auth import Connection
+
 from mse_ctl import MSE_CONF_DIR
+from mse_ctl.api.auth import Connection
 
 
 class UserConf(BaseModel):
@@ -25,7 +26,7 @@ class UserConf(BaseModel):
     @staticmethod
     def from_toml():
         """Build a UserConf object from a Toml file."""
-        with open(UserConf.path()) as f:
+        with open(UserConf.path(), encoding="utf8") as f:
             dataMap = toml.load(f)
 
             return UserConf(**dataMap)

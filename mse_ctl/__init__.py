@@ -1,7 +1,6 @@
 """mse_ctl module."""
 
 import os
-
 from pathlib import Path
 
 # TODO: deal with Windows and so on

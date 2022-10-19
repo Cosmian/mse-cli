@@ -1,8 +1,8 @@
 """Scaffold subparser definition."""
 
 import os
-
 from pathlib import Path
+
 from mse_ctl.conf.enclave import EnclaveConf
 from mse_ctl.log import LOGGER as log
 
@@ -30,9 +30,8 @@ def run(args):
     enclave_conf.save(project_dir)
 
     # Saving the python code
-    with open(project_dir / (enclave_conf.python_flask_module + ".py"),
-              "w") as f:
-        f.write(f"""
+    python_module = project_dir / (enclave_conf.python_flask_module + ".py")
+    python_module.write(f"""
 from flask import Flask
 
 {enclave_conf.python_flask_variable_name} = Flask(__name__)
@@ -45,10 +44,9 @@ def hello():
 """)
 
     # Saving the requirements
-    with open(project_dir / "requirements.txt", "w") as f:
-        f.write("flask")
+    requirements = project_dir / "requirements.txt"
+    requirements.write("flask")
 
     log.info("An empty project has been generated in the current directory.")
-    log.info(
-        f"You can configured your mse application in: {project_dir / 'mse.toml'}"
-    )
+    log.info("You can configured your mse application in: %s",
+             project_dir / 'mse.toml')

@@ -1,26 +1,26 @@
 """Deploy subparser definition."""
 
 import os
+import re
+import ssl
+import time
 from pathlib import Path
 from typing import List, Optional, Set
 from uuid import UUID
+
+import docker
+import requests
 from cryptography import x509
 
-import re
-import ssl
-from mse_ctl.conf.service import Service
-from mse_ctl.utils.fs import tar
-import requests
-import time
-import docker
+from mse_ctl.api.auth import Connection
 from mse_ctl.api.enclave import get, new
 from mse_ctl.api.types import Enclave, EnclaveStatus
-
 from mse_ctl.conf.enclave import CodeProtection, EnclaveConf
+from mse_ctl.conf.service import Service
 from mse_ctl.conf.user import UserConf
 from mse_ctl.log import LOGGER as log
 from mse_ctl.utils.crypto import encrypt_directory
-from mse_ctl.api.auth import Connection
+from mse_ctl.utils.fs import tar
 
 # from mse_lib_sgx.conversion import ed25519_to_x25519_pk
 # from mse_lib_sgx.crypto import seal
@@ -48,18 +48,18 @@ def run(args):
     conn = user_conf.get_connection()
     enclave = deploy_service(conn, enclave_conf, tar_path)
 
-    log.info(f"Enclave creating for {enclave_conf.service_name}...")
+    log.info("Enclave creating for %s...", enclave_conf.service_name)
     enclave = wait_enclave_creation(conn, enclave.uuid)
 
     service_context.id = enclave.uuid
     service_context.domain_name = enclave.domain_name
 
-    log.info(f"Enclave created with uuid: {enclave.uuid}")
+    log.info("Enclave created with uuid: %s", enclave.uuid)
 
     log.info("Checking enclave thrustworthiness...")
     mr_enclave = compute_mr_enclave(enclave, service_context.workspace,
                                     tar_path)
-    log.info(f"MR enclave is {str(mr_enclave)}")
+    log.info("MR enclave is %s", mr_enclave)
 
     # ca_data = ssl.get_server_certificate(
     #     (enclave.domain_name, 443)).encode("utf-8")
@@ -83,13 +83,12 @@ def run(args):
 
     # TODO
 
-    log.info("It's now ready to be used on https://{enclave.domain_name}")
+    log.info("It's now ready to be used on https://%s", enclave.domain_name)
 
     service_context.save()
 
-    log.info(
-        f"The context of this creation has been saved at: {service_context.path}"
-    )
+    log.info("The context of this creation has been saved at: %s",
+             service_context.path)
 
 
 def prepare_code(enclave_conf: EnclaveConf,
@@ -171,7 +170,7 @@ def wait_enclave_creation(conn: Connection, uuid: UUID) -> Enclave:
 
 def compute_mr_enclave(enclave: Enclave, workspace: Path,
                        tar_path: Path) -> str:
-    """Compute the MR enclave of an enclave"""
+    """Compute the MR enclave of an enclave."""
     client = docker.from_env()
     container = client.containers.run(
         os.getenv('MSE_CTL_DOCKER_REMOTE_URL', "mse-enclave:latest"),
@@ -192,7 +191,7 @@ def compute_mr_enclave(enclave: Enclave, workspace: Path,
 
     # Save the docker output
     docker_log_path = workspace / 'docker.log'
-    log.debug(f"Write docker logs in: {docker_log_path}")
+    log.debug("Write docker logs in: %s", docker_log_path)
     docker_log_path.write_bytes(container)
 
     # Get the mr_enclave from the docker output
@@ -204,4 +203,4 @@ def compute_mr_enclave(enclave: Enclave, workspace: Path,
             "Fail to compute mr_enclave!!! See {docker_log_path} for more details."
         )
 
-    return m.group(1)
+    return str(m.group(1))

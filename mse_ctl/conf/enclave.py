@@ -1,10 +1,10 @@
 """Enclave configuration file module."""
 
-from enum import Enum
-import toml
 import os
+from enum import Enum
 from pathlib import Path
 
+import toml
 from pydantic import BaseModel
 
 
@@ -57,14 +57,14 @@ class EnclaveConf(BaseModel):
     @staticmethod
     def from_toml():
         """Build a EnclaveConf object from a Toml file."""
-        with open(Path(os.getcwd()) / "mse.toml") as f:
+        with open(Path(os.getcwd()) / "mse.toml", encoding="utf8") as f:
             dataMap = toml.load(f)
 
             return EnclaveConf(**dataMap)
 
     def save(self, folder: Path):
         """Dump the current object to a file."""
-        with open(folder / "mse.toml", "w") as f:
+        with open(folder / "mse.toml", "w", encoding="utf8") as f:
             dataMap = {
                 "service_name": self.service_name,
                 "service_version": self.service_version,

@@ -1,17 +1,16 @@
 """Enclave configuration file module."""
 
-from enum import Enum
-import tempfile
-from uuid import UUID
-import toml
 import os
+import tempfile
 from pathlib import Path
+from uuid import UUID
 
+import toml
 from pydantic import BaseModel
 
+from mse_ctl import MSE_CONF_DIR
 from mse_ctl.conf.enclave import EnclaveConf
 from mse_ctl.utils.crypto import random_symkey
-from mse_ctl import MSE_CONF_DIR
 
 
 class Service(BaseModel):
@@ -66,7 +65,7 @@ class Service(BaseModel):
     @staticmethod
     def from_toml(path: Path):
         """Build a Service object from a Toml file."""
-        with open(path) as f:
+        with open(path, encoding="utf8") as f:
             dataMap = toml.load(f)
 
             return Service(**dataMap)
@@ -75,7 +74,7 @@ class Service(BaseModel):
         """Dump the current object to a file."""
         os.makedirs(self.path.parent, exist_ok=True)
 
-        with open(self.path, "w") as f:
+        with open(self.path, "w", encoding="utf8") as f:
             dataMap = {
                 "name": self.name,
                 "version": self.version,

@@ -1,10 +1,11 @@
 """mse_ctl.api.enclave module."""
 
-from pathlib import Path
-from typing import List, Optional
-from uuid import UUID
-import requests
 import json
+from pathlib import Path
+from uuid import UUID
+
+import requests
+
 from mse_ctl.api.auth import Connection
 from mse_ctl.conf.enclave import EnclaveConf
 
@@ -28,7 +29,7 @@ def new(conn: Connection, conf: EnclaveConf,
         )
 
 
-def list(conn: Connection) -> requests.Response:
+def get_all(conn: Connection) -> requests.Response:
     """GET `/enclaves`."""
     return conn.get(url="/enclaves")
 

@@ -1,10 +1,11 @@
 """mse_ctl.api.types module."""
 
 import datetime
-from typing import Optional
-from pydantic import BaseModel
-from uuid import UUID
 from enum import Enum
+from typing import Optional
+from uuid import UUID
+
+from pydantic import BaseModel
 
 from mse_ctl.conf.enclave import CodeProtection, EnclaveSize
 

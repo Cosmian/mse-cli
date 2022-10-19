@@ -1,10 +1,9 @@
 """MicroService Encryption Control (CLI)."""
 
-from pathlib import Path
-from mse_ctl.cli import deploy, login, remove, scaffold, signup, status, verify
-
 import argparse
+from pathlib import Path
 
+from mse_ctl.cli import deploy, login, remove, scaffold, signup, status, verify
 from mse_ctl.log import setup_logging
 
 if __name__ == '__main__':
