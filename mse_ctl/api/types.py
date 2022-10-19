@@ -26,6 +26,7 @@ class Enclave(BaseModel):
     service_version: str
     owner_uuid: UUID
     domain_name: Optional[str]
+    port: Optional[int]
     enclave_version: Optional[str]
     created_at: Optional[datetime.datetime]
     ready_at: Optional[datetime.datetime]
@@ -33,6 +34,10 @@ class Enclave(BaseModel):
     status: EnclaveStatus
     enclave_size: EnclaveSize
     code_protection: CodeProtection
+    enclave_lifetime: int
+    python_flask_module: str
+    python_flask_variable_name: str
+    health_check_endpoint: str
 
     @staticmethod
     def from_json_dict(json: dict):

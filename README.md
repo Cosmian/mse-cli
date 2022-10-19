@@ -16,6 +16,7 @@ $ pip install mse-ctl
 $ cd examples
 $ export MSE_CTL_BASE_URL="http://localhost:8080" 
 $ export MSE_CTL_CONF_PATH=.
+$ export MSE_CTL_DOCKER_REMOTE_URL="mse-enclave:latest"
 $ python3 ../mse_ctl.py deploy
 ```
 
