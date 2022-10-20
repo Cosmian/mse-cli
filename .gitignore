@@ -2,6 +2,7 @@
 .idea/
 .python-version
 examples/services
+my_first_app
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

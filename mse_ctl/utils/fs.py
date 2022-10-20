@@ -1,7 +1,7 @@
 """mse_ctl.utils.fs module."""
 
-from pathlib import Path
 import tarfile
+from pathlib import Path
 from typing import Iterator
 
 

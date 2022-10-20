@@ -84,7 +84,7 @@ class EnclaveConf(BaseModel):
         dataMap = {
             "service_name": name,
             "service_version": "0.1.0",
-            "code_location": str(code_path),
+            "code_location": str(code_path) + "/code",
             "code_protection": "plaintext",
             "enclave_size": "1G",
             "enclave_lifetime": 1,

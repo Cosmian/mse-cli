@@ -30,8 +30,11 @@ def run(args):
     enclave_conf.save(project_dir)
 
     # Saving the python code
-    python_module = project_dir / (enclave_conf.python_flask_module + ".py")
-    python_module.write(f"""
+    os.makedirs(enclave_conf.code_location, exist_ok=False)
+
+    python_module = Path(
+        enclave_conf.code_location) / (enclave_conf.python_flask_module + ".py")
+    python_module.write_text(f"""
 from flask import Flask
 
 {enclave_conf.python_flask_variable_name} = Flask(__name__)
@@ -44,8 +47,8 @@ def hello():
 """)
 
     # Saving the requirements
-    requirements = project_dir / "requirements.txt"
-    requirements.write("flask")
+    requirements = Path(enclave_conf.code_location) / "requirements.txt"
+    requirements.write_text("flask=2.2.2")
 
     log.info("An empty project has been generated in the current directory.")
     log.info("You can configured your mse application in: %s",

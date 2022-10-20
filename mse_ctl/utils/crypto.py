@@ -1,27 +1,27 @@
 """mse_ctl.utils.crypto module."""
 
 import hashlib
-from pathlib import Path
 import shutil
-from typing import Tuple, List
+from pathlib import Path
+from typing import List, Tuple
 from unicodedata import normalize
 
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import nacl.public
 import nacl.secret
 import nacl.signing
 import nacl.utils
-from nacl.public import PrivateKey, PublicKey, SealedBox
-from nacl.secret import SecretBox
-from nacl.signing import SigningKey, VerifyKey
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from nacl.bindings import (crypto_sign_ed25519_pk_to_curve25519,
+                           crypto_sign_ed25519_sk_to_curve25519,
+                           crypto_sign_keypair, crypto_sign_seed_keypair,
+                           crypto_sign_SEEDBYTES)
 from nacl.bindings.crypto_scalarmult import (
     crypto_scalarmult, crypto_scalarmult_ed25519_base,
     crypto_scalarmult_ed25519_SCALARBYTES)
-from nacl.bindings import (crypto_sign_keypair, crypto_sign_seed_keypair,
-                           crypto_sign_ed25519_sk_to_curve25519,
-                           crypto_sign_ed25519_pk_to_curve25519,
-                           crypto_sign_SEEDBYTES)
+from nacl.public import PrivateKey, PublicKey, SealedBox
+from nacl.secret import SecretBox
+from nacl.signing import SigningKey, VerifyKey
 
 ENC_EXT: str = ".enc"
 
