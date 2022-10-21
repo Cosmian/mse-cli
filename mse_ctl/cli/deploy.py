@@ -97,11 +97,11 @@ def prepare_code(app_conf: AppConf,
                  dir_exceptions: Optional[List[str]] = None) -> Path:
     """Tar and encrypt (if required) the app python code."""
     # TODO: check that with much more complicated python_flask_module (with dots)
+    # TODO: check python_application format and file location
     if not (Path(app_conf.code_location) /
-            (app_conf.python_flask_module + ".py")).exists():
-        raise FileNotFoundError(
-            f"Flask module '{app_conf.python_flask_module}' "
-            f"not found in {app_conf.code_location}!")
+            (app_conf.python_module + ".py")).exists():
+        raise FileNotFoundError(f"Flask module '{app_conf.python_module}' "
+                                f"not found in {app_conf.code_location}!")
 
     src_path = Path(app_conf.code_location).resolve()
 

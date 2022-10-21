@@ -33,14 +33,14 @@ def run(args):
     os.makedirs(app_conf.code_location, exist_ok=False)
 
     python_module = Path(
-        app_conf.code_location) / (app_conf.python_flask_module + ".py")
+        app_conf.code_location) / (app_conf.python_module + ".py")
     python_module.write_text(f"""
 from flask import Flask
 
-{app_conf.python_flask_variable_name} = Flask(__name__)
+{app_conf.python_variable} = Flask(__name__)
 
 
-@{app_conf.python_flask_variable_name}.route('/')
+@{app_conf.python_variable}.route('/')
 def hello():
     \"\"\"Get a simple example.\"\"\"
     return "Hello world"

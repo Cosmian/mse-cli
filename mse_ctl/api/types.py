@@ -36,13 +36,12 @@ class App(BaseModel):
     ready_at: Optional[datetime.datetime]
     deleted_at: Optional[datetime.datetime]
     stopped_at: Optional[datetime.datetime]
-    # paused_at: Optional[datetime.datetime]
+    onerror_at: Optional[datetime.datetime]
     status: AppStatus
     enclave_size: EnclaveSize
     code_protection: CodeProtection
     enclave_lifetime: int
-    python_flask_module: str
-    python_flask_variable_name: str
+    python_application: str
     health_check_endpoint: str
 
     @staticmethod

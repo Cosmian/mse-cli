@@ -46,11 +46,24 @@ class AppConf(BaseModel):
     enclave_lifetime: int
 
     # from python_flask_module import python_flask_variable_name
-    python_flask_module: str
-    python_flask_variable_name: str
+    python_application: str
 
     # Endpoint to use to check if the application is up and sane
     health_check_endpoint: str
+
+    @property
+    def python_module(self):
+        """Get the python module from python_application."""
+        split_str = self.python_application.split(":")
+        assert len(split_str) == 2
+        return split_str[0]
+
+    @property
+    def python_variable(self):
+        """Get the python variable from python_application."""
+        split_str = self.python_application.split(":")
+        assert len(split_str) == 2
+        return split_str.split(":")[1]
 
     @property
     def service_identifier(self):
@@ -76,8 +89,7 @@ class AppConf(BaseModel):
                 "code_protection": self.code_protection.value,
                 "enclave_size": self.enclave_size.value,
                 "enclave_lifetime": self.enclave_lifetime,
-                "python_flask_module": self.python_flask_module,
-                "python_flask_variable_name": self.python_flask_variable_name,
+                "python_application": self.python_application,
                 "health_check_endpoint": self.health_check_endpoint
             }
             toml.dump(dataMap, f)
@@ -93,8 +105,7 @@ class AppConf(BaseModel):
             "code_protection": "plaintext",
             "enclave_size": "1G",
             "enclave_lifetime": 1,
-            "python_flask_module": "app",
-            "python_flask_variable_name": "app",
+            "python_application": "app:app",
             "health_check_endpoint": "/"
         }
 

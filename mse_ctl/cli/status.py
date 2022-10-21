@@ -41,6 +41,9 @@ def run(args):
     log.info("\tName        = %s", app.name)
     log.info("\tVersion     = %s", app.version)
     log.info("\tDomain name = %s", app.domain_name)
+    log.info("\tLifetime    = %s", app.enclave_lifetime)
+    log.info("\tApplication = %s", app.python_application)
+    log.info("\tHealthcheck = %s", app.health_check_endpoint)
 
     log.info("\nDeployement status")
     log.info("\tUUID            = %s", app.uuid)
@@ -60,6 +63,7 @@ def run(args):
     elif app.status == AppStatus.OnError:
         log.info("\tStatus          = %s%s%s", bcolors.FAIL, app.status.value,
                  bcolors.ENDC)
+        log.info("\tOn error since  = %s", app.onerror_at)
     elif app.status == AppStatus.Initializing:
         log.info("\tStatus          = %s%s%s", bcolors.OKBLUE, app.status.value,
                  bcolors.ENDC)
