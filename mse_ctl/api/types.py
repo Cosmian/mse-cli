@@ -7,24 +7,27 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from mse_ctl.conf.enclave import CodeProtection, EnclaveSize
+from mse_ctl.conf.app import CodeProtection, EnclaveSize
 
 
-class EnclaveStatus(Enum):
+class AppStatus(Enum):
     """EnclaveStatus enum."""
 
     Initializing = "Initializing"
     Running = "Running"
     OnError = "OnError"
     Deleted = "Deleted"
+    Paused = "Paused"
+    Stopped = "Stopped"
 
 
-class Enclave(BaseModel):
-    """Enclave class."""
+class App(BaseModel):
+    """App class."""
 
     uuid: UUID
-    service_name: str
-    service_version: str
+    name: str
+    version: str
+    project_uuid: UUID
     owner_uuid: UUID
     domain_name: Optional[str]
     port: Optional[int]
@@ -32,7 +35,9 @@ class Enclave(BaseModel):
     created_at: Optional[datetime.datetime]
     ready_at: Optional[datetime.datetime]
     deleted_at: Optional[datetime.datetime]
-    status: EnclaveStatus
+    stopped_at: Optional[datetime.datetime]
+    # paused_at: Optional[datetime.datetime]
+    status: AppStatus
     enclave_size: EnclaveSize
     code_protection: CodeProtection
     enclave_lifetime: int
@@ -43,4 +48,4 @@ class Enclave(BaseModel):
     @staticmethod
     def from_json_dict(json: dict):
         """Build a Enclave object from a json dict."""
-        return Enclave(**json)
+        return App(**json)

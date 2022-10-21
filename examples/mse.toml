@@ -1,5 +1,6 @@
-service_name="test"
-service_version="1.0.1"
+name="test"
+version="1.0.1"
+project="default"
 enclave_size="4G"
 enclave_lifetime=10
 code_location="../../mse-app-demo/helloworld/code"

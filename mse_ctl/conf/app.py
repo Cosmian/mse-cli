@@ -1,4 +1,4 @@
-"""Enclave configuration file module."""
+"""App configuration file module."""
 
 import os
 from enum import Enum
@@ -24,13 +24,16 @@ class EnclaveSize(str, Enum):
     G8 = "8G"
 
 
-class EnclaveConf(BaseModel):
-    """Definition of an enclave by a user."""
+class AppConf(BaseModel):
+    """Definition of an app by a user."""
 
     # Name of the mse instance
-    service_name: str
+    name: str
     # Version of the mse instance
-    service_version: str
+    version: str
+
+    # Name of the parent project
+    project: str
 
     # Location of the code (a path or an url)
     code_location: str
@@ -52,22 +55,23 @@ class EnclaveConf(BaseModel):
     @property
     def service_identifier(self):
         """Get the service identifier."""
-        return f"{self.service_name}-{self.service_version}"
+        return f"{self.name}-{self.version}"
 
     @staticmethod
     def from_toml():
-        """Build a EnclaveConf object from a Toml file."""
+        """Build a AppConf object from a Toml file."""
         with open(Path(os.getcwd()) / "mse.toml", encoding="utf8") as f:
             dataMap = toml.load(f)
 
-            return EnclaveConf(**dataMap)
+            return AppConf(**dataMap)
 
     def save(self, folder: Path):
         """Dump the current object to a file."""
         with open(folder / "mse.toml", "w", encoding="utf8") as f:
             dataMap = {
-                "service_name": self.service_name,
-                "service_version": self.service_version,
+                "name": self.name,
+                "version": self.version,
+                "project": self.project,
                 "code_location": self.code_location,
                 "code_protection": self.code_protection.value,
                 "enclave_size": self.enclave_size.value,
@@ -82,8 +86,9 @@ class EnclaveConf(BaseModel):
     def default(name: str, code_path: Path):
         """Generate a default configuration."""
         dataMap = {
-            "service_name": name,
-            "service_version": "0.1.0",
+            "name": name,
+            "version": "0.1.0",
+            "project": "default",
             "code_location": str(code_path) + "/code",
             "code_protection": "plaintext",
             "enclave_size": "1G",
@@ -93,4 +98,4 @@ class EnclaveConf(BaseModel):
             "health_check_endpoint": "/"
         }
 
-        return EnclaveConf(**dataMap)
+        return AppConf(**dataMap)

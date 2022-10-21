@@ -1,6 +1,5 @@
 """Login subparser definition."""
 
-from pathlib import Path
 from mse_ctl.log import LOGGER as log
 
 

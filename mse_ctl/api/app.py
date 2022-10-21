@@ -1,4 +1,4 @@
-"""mse_ctl.api.enclave module."""
+"""mse_ctl.api.app module."""
 
 import json
 from pathlib import Path
@@ -7,18 +7,18 @@ from uuid import UUID
 import requests
 
 from mse_ctl.api.auth import Connection
-from mse_ctl.conf.enclave import EnclaveConf
+from mse_ctl.conf.app import AppConf
 
 
-def new(conn: Connection, conf: EnclaveConf,
+def new(conn: Connection, conf: AppConf,
         code_tar_path: Path) -> requests.Response:
-    """POST `/enclaves`."""
+    """POST `/apps`."""
     if not code_tar_path.exists():
         raise FileNotFoundError("Can't find tar file!")
 
     with code_tar_path.open("rb") as fp:
         return conn.post(
-            url="/enclaves",
+            url="/apps",
             files={
                 "code": (code_tar_path.name, fp, "application/tar", {
                     "Expires": "0"
@@ -30,15 +30,20 @@ def new(conn: Connection, conf: EnclaveConf,
 
 
 def get_all(conn: Connection) -> requests.Response:
-    """GET `/enclaves`."""
-    return conn.get(url="/enclaves")
+    """GET `/apps`."""
+    return conn.get(url="/apps")
 
 
 def get(conn: Connection, uuid: UUID) -> requests.Response:
-    """GET `/enclaves/{uuid}`."""
-    return conn.get(url=f"/enclaves/{uuid}")
+    """GET `/apps/{uuid}`."""
+    return conn.get(url=f"/apps/{uuid}")
 
 
 def remove(conn: Connection, uuid: UUID) -> requests.Response:
-    """DELETE `/enclaves/{uuid}`."""
-    return conn.delete(url=f"/enclaves/{uuid}")
+    """DELETE `/apps/{uuid}`."""
+    return conn.delete(url=f"/apps/{uuid}")
+
+
+def stop(conn: Connection, uuid: UUID) -> requests.Response:
+    """POST `/apps/{uuid}`."""
+    return conn.post(url=f"/apps/{uuid}/stop")

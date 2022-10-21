@@ -1,4 +1,4 @@
-"""Enclave configuration file module."""
+"""Context file."""
 
 import os
 import tempfile
@@ -9,17 +9,19 @@ import toml
 from pydantic import BaseModel
 
 from mse_ctl import MSE_CONF_DIR
-from mse_ctl.conf.enclave import EnclaveConf
+from mse_ctl.conf.app import AppConf
 from mse_ctl.utils.crypto import random_symkey
 
 
-class Service(BaseModel):
+class Context(BaseModel):
     """Definition of a mse context."""
 
     # Name of the mse instance
     name: str
     # Version of the mse instance
     version: str
+    # Project parent of the app
+    project: str
     # Unique id of the service enclave
     id: UUID
     # Domain name of the service
@@ -41,17 +43,18 @@ class Service(BaseModel):
 
     @property
     def path(self) -> Path:
-        """Get the path of the service context."""
-        return MSE_CONF_DIR / "services" / (str(self.id) + ".mse")
+        """Get the path of the node context."""
+        return MSE_CONF_DIR / "contexts" / (str(self.id) + ".mse")
 
     @staticmethod
-    def from_enclave_conf(conf: EnclaveConf):
-        """Build a Service object from an enclave conf."""
+    def from_app_conf(conf: AppConf):
+        """Build a Context object from an app conf."""
         workspace = Path(tempfile.gettempdir()) / conf.service_identifier
 
         dataMap = {
-            "name": conf.service_name,
-            "version": conf.service_version,
+            "name": conf.name,
+            "version": conf.version,
+            "project": conf.project,
             "id": "00000000-0000-0000-0000-000000000000",
             "domain_name": "",
             "workspace": workspace,
@@ -60,15 +63,15 @@ class Service(BaseModel):
 
         os.makedirs(workspace, exist_ok=True)
 
-        return Service(**dataMap)
+        return Context(**dataMap)
 
     @staticmethod
     def from_toml(path: Path):
-        """Build a Service object from a Toml file."""
+        """Build a Context object from a Toml file."""
         with open(path, encoding="utf8") as f:
             dataMap = toml.load(f)
 
-            return Service(**dataMap)
+            return Context(**dataMap)
 
     def save(self):
         """Dump the current object to a file."""
@@ -78,6 +81,7 @@ class Service(BaseModel):
             dataMap = {
                 "name": self.name,
                 "version": self.version,
+                "project": self.project,
                 "id": str(self.id),
                 "domain_name": self.domain_name,
                 "workspace": str(self.workspace),

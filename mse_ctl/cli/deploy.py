@@ -12,11 +12,11 @@ import docker
 import requests
 from cryptography import x509
 
+from mse_ctl.api.app import get, new
 from mse_ctl.api.auth import Connection
-from mse_ctl.api.enclave import get, new
-from mse_ctl.api.types import Enclave, EnclaveStatus
-from mse_ctl.conf.enclave import CodeProtection, EnclaveConf
-from mse_ctl.conf.service import Service
+from mse_ctl.api.types import App, AppStatus
+from mse_ctl.conf.app import AppConf, CodeProtection
+from mse_ctl.conf.context import Context
 from mse_ctl.conf.user import UserConf
 from mse_ctl.log import LOGGER as log
 from mse_ctl.utils.crypto import encrypt_directory
@@ -30,7 +30,7 @@ def add_subparser(subparsers):
     """Define the subcommand."""
     parser = subparsers.add_parser("deploy",
                                    help="Deploy the application from the "
-                                   "current directory into a MSE enclave")
+                                   "current directory into a MSE node")
 
     parser.set_defaults(func=run)
 
@@ -38,33 +38,32 @@ def add_subparser(subparsers):
 def run(args):
     """Run the subcommand."""
     user_conf = UserConf.from_toml()
-    enclave_conf = EnclaveConf.from_toml()
-    service_context = Service.from_enclave_conf(enclave_conf)
+    app_conf = AppConf.from_toml()
+    service_context = Context.from_app_conf(app_conf)
 
-    log.info("Preparing your project...")
-    tar_path = prepare_code(enclave_conf, service_context)
+    log.info("Preparing your app...")
+    tar_path = prepare_code(app_conf, service_context)
 
-    log.info("Deploying your project...")
+    log.info("Deploying your app...")
     conn = user_conf.get_connection()
-    enclave = deploy_service(conn, enclave_conf, tar_path)
+    app = deploy_app(conn, app_conf, tar_path)
 
-    log.info("Enclave creating for %s...", enclave_conf.service_name)
-    enclave = wait_enclave_creation(conn, enclave.uuid)
+    log.info("App creating for %s:%s...", app_conf.name, app_conf.version)
+    app = wait_app_creation(conn, app.uuid)
 
-    service_context.id = enclave.uuid
-    service_context.domain_name = enclave.domain_name
+    service_context.id = app.uuid
+    service_context.domain_name = app.domain_name
 
-    log.info("Enclave created with uuid: %s", enclave.uuid)
+    log.info("App created with uuid: %s", app.uuid)
 
-    log.info("Checking enclave thrustworthiness...")
-    mr_enclave = compute_mr_enclave(enclave, service_context.workspace,
-                                    tar_path)
+    log.info("Checking app thrustworthiness...")
+    mr_enclave = compute_mr_enclave(app, service_context.workspace, tar_path)
     log.info("MR enclave is %s", mr_enclave)
 
     # ca_data = ssl.get_server_certificate(
     #     (enclave.domain_name, 443)).encode("utf-8")
     # cert_path = Path(
-    #     f"{enclave_conf.service_name}_{enclave_conf.service_version}_cert.pem")
+    #     f"{app_conf.service_name}_{app_conf.service_version}_cert.pem")
     # cert_path.write_bytes(ca_data)
 
     # TODO: RA
@@ -83,7 +82,7 @@ def run(args):
 
     # TODO
 
-    log.info("It's now ready to be used on https://%s", enclave.domain_name)
+    log.info("It's now ready to be used on https://%s", app.domain_name)
 
     service_context.save()
 
@@ -91,30 +90,30 @@ def run(args):
              service_context.path)
 
 
-def prepare_code(enclave_conf: EnclaveConf,
-                 service_context: Service,
+def prepare_code(app_conf: AppConf,
+                 service_context: Context,
                  patterns: Optional[List[str]] = None,
                  file_exceptions: Optional[List[str]] = None,
                  dir_exceptions: Optional[List[str]] = None) -> Path:
-    """Tar and encrypt if required the Service Python code."""
+    """Tar and encrypt (if required) the app python code."""
     # TODO: check that with much more complicated python_flask_module (with dots)
-    if not (Path(enclave_conf.code_location) /
-            (enclave_conf.python_flask_module + ".py")).exists():
+    if not (Path(app_conf.code_location) /
+            (app_conf.python_flask_module + ".py")).exists():
         raise FileNotFoundError(
-            f"Flask module '{enclave_conf.python_flask_module}' "
-            f"not found in {enclave_conf.code_location}!")
+            f"Flask module '{app_conf.python_flask_module}' "
+            f"not found in {app_conf.code_location}!")
 
-    src_path = Path(enclave_conf.code_location).resolve()
+    src_path = Path(app_conf.code_location).resolve()
 
-    if enclave_conf.code_protection == CodeProtection.Encrypted:
+    if app_conf.code_protection == CodeProtection.Encrypted:
 
-        log.debug("Encrypt code in %s to %s...", enclave_conf.code_location,
+        log.debug("Encrypt code in %s to %s...", app_conf.code_location,
                   service_context.encrypted_code_path)
 
         whitelist: Set[str] = {"requirements.txt"}
 
         encrypt_directory(
-            dir_path=Path(enclave_conf.code_location),
+            dir_path=Path(app_conf.code_location),
             patterns=(["*"] if patterns is None else patterns),
             key=service_context.symkey,
             exceptions=(list(whitelist) if file_exceptions is None else
@@ -131,21 +130,18 @@ def prepare_code(enclave_conf: EnclaveConf,
     return tar_path
 
 
-def deploy_service(conn: Connection, enclave_conf: EnclaveConf,
-                   tar_path: Path) -> Enclave:
-    """Deploy the service to an enclave."""
-    r: requests.Response = new(conn=conn,
-                               conf=enclave_conf,
-                               code_tar_path=tar_path)
+def deploy_app(conn: Connection, app_conf: AppConf, tar_path: Path) -> App:
+    """Deploy the app to a mse node."""
+    r: requests.Response = new(conn=conn, conf=app_conf, code_tar_path=tar_path)
 
     if not r.ok:
         raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
 
-    return Enclave.from_json_dict(r.json())
+    return App.from_json_dict(r.json())
 
 
-def wait_enclave_creation(conn: Connection, uuid: UUID) -> Enclave:
-    """Wait for the enclave to be fully deployed."""
+def wait_app_creation(conn: Connection, uuid: UUID) -> App:
+    """Wait for the app to be fully deployed."""
     while True:
         time.sleep(1)
 
@@ -154,30 +150,32 @@ def wait_enclave_creation(conn: Connection, uuid: UUID) -> Enclave:
             raise Exception(
                 f"Unexpected response ({r.status_code}): {r.content!r}")
 
-        enclave = Enclave.from_json_dict(r.json())
+        app = App.from_json_dict(r.json())
 
-        if enclave.status == EnclaveStatus.Running:
+        if app.status == AppStatus.Running:
             break
-        if enclave.status == EnclaveStatus.OnError:
+        if app.status == AppStatus.OnError:
             raise Exception(
-                "The enclave creation stopped because an error occured...")
-        if enclave.status == EnclaveStatus.Deleted:
-            raise Exception("The enclave creation stopped because it "
+                "The app creation stopped because an error occured...")
+        if app.status == AppStatus.Deleted:
+            raise Exception("The app creation stopped because it "
                             " has been deleted in the meantimes...")
+        if app.status == AppStatus.Stopped:
+            raise Exception("The app creation stopped because it "
+                            " has been stopped in the meantimes...")
 
-    return enclave
+    return app
 
 
-def compute_mr_enclave(enclave: Enclave, workspace: Path,
-                       tar_path: Path) -> str:
+def compute_mr_enclave(app: App, workspace: Path, tar_path: Path) -> str:
     """Compute the MR enclave of an enclave."""
     client = docker.from_env()
     container = client.containers.run(
         os.getenv('MSE_CTL_DOCKER_REMOTE_URL', "mse-enclave:latest"),
         command=[
-            enclave.enclave_size.value,
-            str(enclave.enclave_lifetime), enclave.domain_name,
-            str(enclave.port), enclave.code_protection.value, "--dry-run"
+            app.enclave_size.value,
+            str(app.enclave_lifetime), app.domain_name,
+            str(app.port), app.code_protection.value, "--dry-run"
         ],
         volumes={f"{tar_path}": {
             'bind': '/tmp/service.tar',

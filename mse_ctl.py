@@ -1,9 +1,9 @@
 """MicroService Encryption Control (CLI)."""
 
 import argparse
-from pathlib import Path
 
-from mse_ctl.cli import deploy, login, remove, scaffold, signup, status, verify
+from mse_ctl.cli import (deploy, login, remove, scaffold, signup, status, stop,
+                         verify)
 from mse_ctl.log import setup_logging
 
 if __name__ == '__main__':
@@ -20,6 +20,7 @@ if __name__ == '__main__':
     scaffold.add_subparser(subparsers)
     signup.add_subparser(subparsers)
     status.add_subparser(subparsers)
+    stop.add_subparser(subparsers)
     verify.add_subparser(subparsers)
 
     args = parser.parse_args()
