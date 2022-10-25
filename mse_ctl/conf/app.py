@@ -63,7 +63,7 @@ class AppConf(BaseModel):
         """Get the python variable from python_application."""
         split_str = self.python_application.split(":")
         assert len(split_str) == 2
-        return split_str.split(":")[1]
+        return split_str[1]
 
     @property
     def service_identifier(self):

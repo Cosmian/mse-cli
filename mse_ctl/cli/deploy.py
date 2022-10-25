@@ -11,6 +11,7 @@ from uuid import UUID
 import docker
 import requests
 from cryptography import x509
+from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 
 from mse_ctl.api.app import get, new
 from mse_ctl.api.auth import Connection
@@ -19,11 +20,9 @@ from mse_ctl.conf.app import AppConf, CodeProtection
 from mse_ctl.conf.context import Context
 from mse_ctl.conf.user import UserConf
 from mse_ctl.log import LOGGER as log
-from mse_ctl.utils.crypto import encrypt_directory
+from mse_ctl.utils.crypto import (ed25519_to_x25519_pubkey, encrypt_directory,
+                                  seal)
 from mse_ctl.utils.fs import tar
-
-# from mse_lib_sgx.conversion import ed25519_to_x25519_pk
-# from mse_lib_sgx.crypto import seal
 
 
 def add_subparser(subparsers):
@@ -59,29 +58,13 @@ def run(args):
     log.info("Checking app thrustworthiness...")
     mr_enclave = compute_mr_enclave(app, service_context.workspace, tar_path)
     log.info("MR enclave is %s", mr_enclave)
-
-    # ca_data = ssl.get_server_certificate(
-    #     (enclave.domain_name, 443)).encode("utf-8")
-    # cert_path = Path(
-    #     f"{app_conf.service_name}_{app_conf.service_version}_cert.pem")
-    # cert_path.write_bytes(ca_data)
-
     # TODO: RA
 
-    log.info("Unsealing your code and your private data from the enclave.")
-
-    # cert = x509.load_pem_x509_certificate(ca_data)
-    # x25519_pk: bytes = ed25519_to_x25519_pk(cert.public_key())
-
-    # requests.post(url=enclave.domain_name,
-    #               data=seal(data=b"hello", recipient_public_key=x25519_pk),
-    #               headers={'Content-Type': 'application/octet-stream'},
-    #               verify=str(cert_path.resolve()))
+    if app.code_protection == CodeProtection.Encrypted:
+        log.info("Unsealing your code and your private data from the enclave.")
+        send_seal_key(service_context)
 
     log.info("Your application is now fully deployed and started.")
-
-    # TODO
-
     log.info("It's now ready to be used on https://%s", app.domain_name)
 
     service_context.save()
@@ -171,11 +154,12 @@ def compute_mr_enclave(app: App, workspace: Path, tar_path: Path) -> str:
     """Compute the MR enclave of an enclave."""
     client = docker.from_env()
     container = client.containers.run(
-        os.getenv('MSE_CTL_DOCKER_REMOTE_URL', "mse-enclave:latest"),
+        os.getenv('MSE_CTL_DOCKER_REMOTE_URL',
+                  'gitlab.cosmian.com:5000/core/mse-docker:develop'),
         command=[
             app.enclave_size.value,
-            str(app.enclave_lifetime), app.domain_name,
-            str(app.port), app.code_protection.value, "--dry-run"
+            str(app.enclave_lifetime), app.domain_name, app.python_application,
+            app.code_protection.value, "--dry-run"
         ],
         volumes={f"{tar_path}": {
             'bind': '/tmp/service.tar',
@@ -201,4 +185,26 @@ def compute_mr_enclave(app: App, workspace: Path, tar_path: Path) -> str:
             "Fail to compute mr_enclave!!! See {docker_log_path} for more details."
         )
 
-    return str(m.group(1))
+    return str(m.group(1).decode("utf-8"))
+
+
+def send_seal_key(service_context: Context):
+    """Send the key which was used to encrypt the code."""
+    ca_data = ssl.get_server_certificate(
+        (service_context.domain_name, 443)).encode("utf-8")
+
+    cert_path = service_context.workspace / "cert.pem"
+    cert_path.write_bytes(ca_data)
+
+    cert = x509.load_pem_x509_certificate(ca_data)
+    x25519_pk: bytes = ed25519_to_x25519_pubkey(cert.public_key().public_bytes(
+        encoding=Encoding.Raw, format=PublicFormat.Raw))
+
+    r = requests.post(url=f"https://{service_context.domain_name}",
+                      data=seal(data=service_context.symkey,
+                                recipient_public_key=x25519_pk),
+                      headers={'Content-Type': 'application/octet-stream'},
+                      verify=str(cert_path.resolve()))
+
+    if not r.ok:
+        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
