@@ -29,11 +29,6 @@ def new(conn: Connection, conf: AppConf,
         )
 
 
-def get_all(conn: Connection, project_uuid: UUID) -> requests.Response:
-    """GET `/apps`."""
-    return conn.get(url=f"/projects/{str(project_uuid)}/apps")
-
-
 def get(conn: Connection, uuid: UUID) -> requests.Response:
     """GET `/apps/{uuid}`."""
     return conn.get(url=f"/apps/{uuid}")

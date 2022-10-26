@@ -2,8 +2,8 @@
 
 import argparse
 
-from mse_ctl.cli import (deploy, login, remove, scaffold, signup, status, stop,
-                         verify)
+from mse_ctl.cli import (deploy, list, login, remove, scaffold, signup, status,
+                         stop, verify)
 from mse_ctl.log import setup_logging
 
 if __name__ == '__main__':
@@ -22,6 +22,7 @@ if __name__ == '__main__':
     status.add_subparser(subparsers)
     stop.add_subparser(subparsers)
     verify.add_subparser(subparsers)
+    list.add_subparser(subparsers)
 
     args = parser.parse_args()
     args.func(args)
