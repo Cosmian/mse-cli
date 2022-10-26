@@ -5,7 +5,7 @@ import uuid
 import requests
 
 from mse_ctl.api.project import list_apps
-from mse_ctl.api.types import App, AppStatus, Project
+from mse_ctl.api.types import App, AppStatus
 from mse_ctl.cli.helpers import get_project_from_name
 from mse_ctl.conf.user import UserConf
 from mse_ctl.log import LOGGER as log
@@ -44,7 +44,7 @@ def run(args):
 
     r: requests.Response = list_apps(conn=conn, project_uuid=project_uuid)
 
-    log.info(f"\n%s | %s | %12s | %s ", "App UUID".center(36),
+    log.info("\n%s | %s | %12s | %s ", "App UUID".center(36),
              "Creation date".center(32), "Status".center(12),
              "App summary".center(36))
     log.info(("-" * 126))
@@ -64,6 +64,6 @@ def run(args):
         elif app.status == AppStatus.Initializing:
             color = bcolors.OKBLUE
 
-        log.info(f"%s | %s |%s %s %s| %s %s %s", app.uuid, app.created_at,
-                 color, app.status.value.center(12), bcolors.ENDC, app.name,
+        log.info("%s | %s |%s %s %s| %s %s %s", app.uuid, app.created_at, color,
+                 app.status.value.center(12), bcolors.ENDC, app.name,
                  app.version, app.domain_name)

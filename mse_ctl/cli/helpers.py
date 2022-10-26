@@ -2,7 +2,6 @@
 
 from typing import List, Optional
 from uuid import UUID
-from xmlrpc.client import Boolean
 
 import requests
 
