@@ -16,6 +16,8 @@ from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 from mse_ctl.api.app import get, new
 from mse_ctl.api.auth import Connection
 from mse_ctl.api.types import App, AppStatus
+from mse_ctl.cli.helpers import (exists_in_project, get_project_from_name,
+                                 stop_app)
 from mse_ctl.conf.app import AppConf, CodeProtection
 from mse_ctl.conf.context import Context
 from mse_ctl.conf.user import UserConf
@@ -39,12 +41,15 @@ def run(args):
     user_conf = UserConf.from_toml()
     app_conf = AppConf.from_toml()
     service_context = Context.from_app_conf(app_conf)
+    conn = user_conf.get_connection()
+
+    if not check_app(conn, app_conf):
+        return
 
     log.info("Preparing your app...")
     tar_path = prepare_code(app_conf, service_context)
 
     log.info("Deploying your app...")
-    conn = user_conf.get_connection()
     app = deploy_app(conn, app_conf, tar_path)
 
     log.info("App creating for %s:%s...", app_conf.name, app_conf.version)
@@ -71,6 +76,35 @@ def run(args):
 
     log.info("The context of this creation has been saved at: %s",
              service_context.path)
+
+
+def check_app(conn: Connection, app_conf: AppConf) -> bool:
+    """Check app conf: project exist, app name exist, etc."""
+    # Check that project exist
+    project = get_project_from_name(conn, app_conf.project)
+    if not project:
+        raise Exception(f"Project {app_conf.project} does not exist")
+
+    # Check that a same name application is not running yet
+    app = exists_in_project(conn, project.uuid, app_conf.name, [
+        AppStatus.Initializing,
+        AppStatus.Running,
+        AppStatus.OnError,
+    ])
+
+    if app:
+        log.info(
+            "An application with the same name in that project is already running..."
+        )
+        answer = input("Would you like to replace it [yes/no]? ")
+        if answer.lower() in ["y", "yes"]:
+            log.info("Stopping the previous app...")
+            stop_app(conn, app.uuid)
+        else:
+            log.info("Your deployment has been stopped!")
+            return False
+
+    return True
 
 
 def prepare_code(app_conf: AppConf,

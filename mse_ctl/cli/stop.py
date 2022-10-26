@@ -4,7 +4,7 @@ import uuid
 
 import requests
 
-from mse_ctl.api.app import stop
+from mse_ctl.cli.helpers import stop_app
 from mse_ctl.conf.user import UserConf
 from mse_ctl.log import LOGGER as log
 
@@ -27,7 +27,4 @@ def run(args):
 
     log.info("Stopping and destroying the app...")
 
-    r: requests.Response = stop(conn=user_conf.get_connection(), uuid=args.id)
-
-    if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+    stop_app(user_conf.get_connection(), args.id)

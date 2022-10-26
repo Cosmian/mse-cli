@@ -46,5 +46,32 @@ class App(BaseModel):
 
     @staticmethod
     def from_json_dict(json: dict):
-        """Build a Enclave object from a json dict."""
+        """Build an App object from a json dict."""
         return App(**json)
+
+
+class BillingPlan(Enum):
+    """BillingPlan enum."""
+
+    Free = "Free"
+    Essential = "Essential"
+    Pro = "Pro"
+
+
+class Project(BaseModel):
+    """App class."""
+
+    uuid: UUID
+    name: str
+    description: str
+    owner_uuid: UUID
+    is_default: bool
+    billing_plan: BillingPlan
+    enclave_version: Optional[str]
+    created_at: Optional[datetime.datetime]
+    deleted_at: Optional[datetime.datetime]
+
+    @staticmethod
+    def from_json_dict(json: dict):
+        """Build a Project object from a json dict."""
+        return Project(**json)
