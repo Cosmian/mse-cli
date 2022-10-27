@@ -43,7 +43,7 @@ def run(args):
     service_context = Context.from_app_conf(app_conf)
     conn = user_conf.get_connection()
 
-    if not check_app(conn, app_conf):
+    if not check_app_conf(conn, app_conf):
         return
 
     log.info("Preparing your app...")
@@ -63,13 +63,17 @@ def run(args):
     log.info("Checking app thrustworthiness...")
     mr_enclave = compute_mr_enclave(app, service_context.workspace, tar_path)
     log.info("MR enclave is %s", mr_enclave)
+
     # TODO: RA
 
     if app.code_protection == CodeProtection.Encrypted:
         log.info("Unsealing your code and your private data from the enclave.")
         send_seal_key(service_context)
 
-    log.info("Your application is now fully deployed and started.")
+    log.info("Waiting for application to be ready...")
+    check_app_health(service_context, app.health_check_endpoint)
+
+    log.info("Your application is now fully deployed and started...")
     log.info("It's now ready to be used on https://%s", app.domain_name)
 
     service_context.save()
@@ -78,7 +82,36 @@ def run(args):
              service_context.path)
 
 
-def check_app(conn: Connection, app_conf: AppConf) -> bool:
+def check_app_health(service_context: Context, health_check_endpoint: str):
+    """Return True when the app is ready and up."""
+    cert_path = service_context.workspace / "cert.pem"
+
+    if not cert_path.exists:
+        ca_data = ssl.get_server_certificate(
+            (service_context.domain_name, 443)).encode("utf-8")
+
+        cert_path.write_bytes(ca_data)
+
+    while True:
+        try:
+            r = requests.get(
+                url=
+                f"https://{service_context.domain_name}{health_check_endpoint}",
+                verify=str(cert_path.resolve()))
+
+            if r.ok and r.status_code == 200 and r.content != b"Waiting for sealed symmetric key...":
+                # TODO: use header banner of the response instead of hardcoding this string
+                break
+        except:
+            # Ignore the error, server is not ready yet
+            pass
+
+        time.sleep(2)
+
+    return True
+
+
+def check_app_conf(conn: Connection, app_conf: AppConf) -> bool:
     """Check app conf: project exist, app name exist, etc."""
     # Check that project exist
     project = get_project_from_name(conn, app_conf.project)
@@ -187,6 +220,8 @@ def wait_app_creation(conn: Connection, uuid: UUID) -> App:
 def compute_mr_enclave(app: App, workspace: Path, tar_path: Path) -> str:
     """Compute the MR enclave of an enclave."""
     client = docker.from_env()
+    # TODO: use version of docker from get app
+    # TODO: use --pull=always
     container = client.containers.run(
         os.getenv('MSE_CTL_DOCKER_REMOTE_URL',
                   'gitlab.cosmian.com:5000/core/mse-docker:develop'),

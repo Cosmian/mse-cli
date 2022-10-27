@@ -8,7 +8,7 @@ from mse_ctl.log import LOGGER as log
 def add_subparser(subparsers):
     """Define the subcommand."""
     parser = subparsers.add_parser(
-        "verify", help="Verify the trustworthiness of a MSE app")
+        "verify", help="Verify the trustworthiness of an MSE app")
 
     parser.set_defaults(func=run)
 
