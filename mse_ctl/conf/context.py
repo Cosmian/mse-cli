@@ -6,7 +6,7 @@ from pathlib import Path
 from uuid import UUID
 
 import toml
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 from mse_ctl import MSE_CONF_DIR
 from mse_ctl.conf.app import AppConf
@@ -30,6 +30,11 @@ class Context(BaseModel):
     workspace: Path
     # Symetric used to encrypt the code
     symkey: bytes
+
+    @validator('symkey', pre=True, always=True)
+    def set_symkey(cls, v, values, **kwargs):
+        """Set symkey from a value for pydantic."""
+        return bytes.fromhex(v) if isinstance(v, str) else v
 
     @property
     def encrypted_code_path(self):
@@ -58,7 +63,7 @@ class Context(BaseModel):
             "id": "00000000-0000-0000-0000-000000000000",
             "domain_name": "",
             "workspace": workspace,
-            "symkey": random_symkey()
+            "symkey": bytes(random_symkey()).hex()
         }
 
         os.makedirs(workspace, exist_ok=True)
@@ -75,6 +80,7 @@ class Context(BaseModel):
 
     def save(self):
         """Dump the current object to a file."""
+        # TODO: put symkey in hex
         os.makedirs(self.path.parent, exist_ok=True)
 
         with open(self.path, "w", encoding="utf8") as f:
@@ -85,6 +91,6 @@ class Context(BaseModel):
                 "id": str(self.id),
                 "domain_name": self.domain_name,
                 "workspace": str(self.workspace),
-                "symkey": self.symkey
+                "symkey": bytes(self.symkey).hex()
             }
             toml.dump(dataMap, f)
