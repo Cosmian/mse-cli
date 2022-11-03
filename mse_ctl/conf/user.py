@@ -6,7 +6,7 @@ from pathlib import Path
 import toml
 from pydantic import BaseModel
 
-from mse_ctl import MSE_CONF_DIR
+from mse_ctl import MSE_BACKEND_URL, MSE_CONF_DIR
 from mse_ctl.api.auth import Connection
 
 
@@ -33,6 +33,5 @@ class UserConf(BaseModel):
 
     def get_connection(self) -> Connection:
         """Get the connection to the backend."""
-        return Connection(base_url=os.getenv(
-            'MSE_CTL_BASE_URL', default="https://backend.mse.cosmian.com"),
+        return Connection(base_url=MSE_BACKEND_URL,
                           refresh_token=self.secret_token)

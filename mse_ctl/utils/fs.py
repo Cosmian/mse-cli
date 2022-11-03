@@ -67,3 +67,18 @@ def tar(dir_path: Path, tar_path: Path, dot_files: bool = False) -> Path:
             tar_file.add(path, rel_path)
 
     return tar_path
+
+
+def untar(dir_path: Path, tar_file: Path):
+    """Untar directory `tar_path` to `dir_path`.
+
+    Parameters
+    ----------
+    dir_path : Path
+        Directory output path.
+    tar_file : Path
+        Path to of the tar file to untar.
+
+    """
+    with tarfile.open(tar_file, "r:") as tar_file:
+        tar_file.extractall(dir_path)

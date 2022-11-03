@@ -6,3 +6,4 @@ urllib3>=1.26.12,<1.27.0
 pydantic
 toml
 docker
+intel-sgx-ra==0.3
