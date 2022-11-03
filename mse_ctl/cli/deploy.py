@@ -1,6 +1,5 @@
 """Deploy subparser definition."""
 
-import ssl
 import time
 from pathlib import Path
 from typing import List, Optional, Set
@@ -9,6 +8,7 @@ from uuid import UUID
 import requests
 from cryptography import x509
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
+from requests import ReadTimeout
 
 from mse_ctl.api.app import get, new
 from mse_ctl.api.auth import Connection
@@ -34,6 +34,7 @@ def add_subparser(subparsers):
     parser.set_defaults(func=run)
 
 
+# pylint: disable=unused-argument
 def run(args):
     """Run the subcommand."""
     user_conf = UserConf.from_toml()
@@ -53,7 +54,8 @@ def run(args):
     log.info("App creating for %s:%s...", app.name, app.version)
     app = wait_app_creation(conn, app.uuid)
 
-    context.run(app.uuid, app.domain_name, "develop")  #TODO: unhardcode develop
+    context.run(app.uuid, app.domain_name,
+                "develop")  # TODO: unhardcode develop
     log.info("App created with uuid: %s", app.uuid)
 
     log.info("Checking app thrustworthiness...")
@@ -88,12 +90,17 @@ def check_app_health(context: Context, health_check_endpoint: str):
         try:
             r = requests.get(
                 url=f"https://{context.domain_name}{health_check_endpoint}",
-                verify=str(context.cert_path.resolve()))
+                verify=str(context.cert_path.resolve()),
+                timeout=2)
 
-            if r.ok and r.status_code == 200 and r.content != b"Waiting for sealed symmetric key...":
-                # TODO: use header banner of the response instead of hardcoding this string
+            if r.ok and r.status_code == 200 \
+               and r.content != b"Waiting for sealed symmetric key...":
+                # TODO: use header banner in the response?
                 break
-        except:
+        except ReadTimeout:
+            # Ignore the error, server is not ready yet
+            pass
+        except requests.exceptions.SSLError:
             # Ignore the error, server is not ready yet
             pass
 
@@ -184,7 +191,8 @@ def send_seal_key(context: Context, ca_data: bytes):
                       data=seal(data=context.symkey,
                                 recipient_public_key=x25519_pk),
                       headers={'Content-Type': 'application/octet-stream'},
-                      verify=str(context.cert_path.resolve()))
+                      verify=str(context.cert_path.resolve()),
+                      timeout=60)
 
     if not r.ok:
         raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")

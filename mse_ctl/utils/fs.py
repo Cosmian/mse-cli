@@ -80,5 +80,5 @@ def untar(dir_path: Path, tar_file: Path):
         Path to of the tar file to untar.
 
     """
-    with tarfile.open(tar_file, "r:") as tar_file:
-        tar_file.extractall(dir_path)
+    with tarfile.open(tar_file, "r:") as f:
+        f.extractall(dir_path)

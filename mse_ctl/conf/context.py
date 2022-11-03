@@ -40,8 +40,10 @@ class Context(BaseModel):
     docker_version: str
 
     @validator('symkey', pre=True, always=True)
+    # pylint: disable=no-self-argument,unused-argument
     def set_symkey(cls, v, values, **kwargs):
         """Set symkey from a value for pydantic."""
+
         return bytes.fromhex(v) if isinstance(v, str) else v
 
     @property
@@ -82,6 +84,7 @@ class Context(BaseModel):
 
     @property
     def workspace(self) -> Path:
+        """Get the workspace path and create it."""
         path = Path(tempfile.gettempdir()) / f"{self.name}-{self.version}"
         os.makedirs(path, exist_ok=True)
         return path

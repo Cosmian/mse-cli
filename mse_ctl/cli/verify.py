@@ -2,18 +2,9 @@
 
 import os
 import ssl
-import sys
-import traceback
 
-import requests
-from intel_sgx_ra.attest import remote_attestation
-from intel_sgx_ra.error import (CertificateRevokedError, RATLSVerificationError,
-                                SGXDebugModeError, SGXQuoteNotFound)
-from intel_sgx_ra.ratls import ratls_verification
-from intel_sgx_ra.signer import mr_signer_from_pk
 from pathlib2 import Path
 
-from mse_ctl import MSE_CERTIFICATES_URL, MSE_PCCS_URL
 from mse_ctl.cli.helpers import compute_mr_enclave, verify_app
 from mse_ctl.conf.app import CodeProtection
 from mse_ctl.conf.context import Context
@@ -45,13 +36,11 @@ def add_subparser(subparsers):
                         type=str,
                         help='Check the mrenclave against that value.')
 
-    parser.add_argument(
-        '--context',
-        type=Path,
-        metavar='path/to/context/uuid.mse',
-        help=
-        'Path to the context file to use to recompute the mrenclave and verify it.'
-    )
+    parser.add_argument('--context',
+                        type=Path,
+                        metavar='path/to/context/uuid.mse',
+                        help='Path to the context file to use '
+                        'to recompute the mrenclave and verify it.')
 
     parser.add_argument('--code',
                         type=Path,
@@ -65,19 +54,17 @@ def run(args):
 
     # Check args
     if args.skip_mrenclave and (args.mrenclave or args.context or args.code):
-        print(
-            "[--skip-mrenclave] and [--mrenclave] and [--context | --code] are mutually exclusive"
-        )
+        print("[--skip-mrenclave] and [--mrenclave] and [--context | --code] "
+              "are mutually exclusive")
         return
 
     if args.mrenclave and (args.context or args.code):
-        print(
-            "[--skip-mrenclave] and [--mrenclave] and [--context | --code] are mutually exclusive"
-        )
+        print("[--skip-mrenclave] and [--mrenclave] and [--context | --code] "
+              "are mutually exclusive")
         return
 
-    if not args.mrenclave and not args.skip_mrenclave and (
-        (args.context and not args.code) or (not args.context and args.code)):
+    if not args.mrenclave and not args.skip_mrenclave\
+       and ((args.context and not args.code) or (not args.context and args.code)):
         print("[--context] and [--code] must be used together")
         return
 

@@ -1,6 +1,5 @@
 """User configuration file module."""
 
-import os
 from pathlib import Path
 
 import toml

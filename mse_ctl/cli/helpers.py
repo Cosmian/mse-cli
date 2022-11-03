@@ -1,33 +1,25 @@
 """Handlers functions."""
 
-import os
 import re
 from pathlib import Path
 import ssl
-import sys
-import traceback
-from typing import List, Optional, Set
+from typing import List, Optional
 from uuid import UUID
 
 import docker
 import requests
-from mse_ctl import MSE_CERTIFICATES_URL, MSE_DOCKER_IMAGE_URL, MSE_PCCS_URL
 from intel_sgx_ra.attest import remote_attestation
-from intel_sgx_ra.error import (CertificateRevokedError, RATLSVerificationError,
-                                SGXDebugModeError, SGXQuoteNotFound)
+from intel_sgx_ra.ratls import ratls_verification
+from intel_sgx_ra.signer import mr_signer_from_pk
+
+from mse_ctl import MSE_CERTIFICATES_URL, MSE_DOCKER_IMAGE_URL, MSE_PCCS_URL
 from mse_ctl.api.app import stop
 from mse_ctl.api.auth import Connection
 from mse_ctl.api.project import get_app_from_name, get_from_name
 from mse_ctl.api.types import App, AppStatus, Project
-from mse_ctl.conf.app import CodeProtection
 from mse_ctl.conf.context import Context
 from mse_ctl.log import LOGGER as log
 from mse_ctl.utils.color import bcolors
-from mse_ctl.utils.crypto import encrypt_directory
-from mse_ctl.utils.fs import tar
-
-from intel_sgx_ra.ratls import ratls_verification
-from intel_sgx_ra.signer import mr_signer_from_pk
 
 
 def get_project_from_name(conn: Connection, name: str) -> Optional[Project]:
@@ -120,7 +112,7 @@ def get_certificate_and_save(domain_name: str, output_path: Path) -> bytes:
 def verify_app(mrenclave: Optional[str], ca_data: bytes):
     """Verify the app by proceeding the remote attestion."""
     # Compute MRSIGNER
-    r = requests.get(url=MSE_CERTIFICATES_URL)
+    r = requests.get(url=MSE_CERTIFICATES_URL, timeout=60)
     if not r.ok:
         raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
     mrsigner = mr_signer_from_pk(r.content)
@@ -139,13 +131,14 @@ def verify_app(mrenclave: Optional[str], ca_data: bytes):
         if quote.report_body.mr_enclave != bytes.fromhex(mrenclave):
             log.info("Verification: %sfailure%s", bcolors.FAIL, bcolors.ENDC)
             raise Exception(
-                f"MRENCLAVE is wrong (read {bytes(quote.report_body.mr_enclave).hex()} but should be {mrenclave})"
-            )
+                "MRENCLAVE is wrong "
+                f"(read {bytes(quote.report_body.mr_enclave).hex()} "
+                f"but should be {mrenclave})")
     else:
         log.info("%sMRENCLAVE check skipped!%s", bcolors.WARNING, bcolors.ENDC)
 
     if quote.report_body.mr_signer != mrsigner:
         log.info("Verification: %sfailure%s", bcolors.FAIL, bcolors.ENDC)
-        raise Exception(
-            f"MRSIGNER is wrong (read {bytes(quote.report_body.mr_signer).hex()} but should be {bytes(mrsigner).hex()})"
-        )
+        raise Exception("MRSIGNER is wrong "
+                        f"(read {bytes(quote.report_body.mr_signer).hex()} "
+                        f"but should be {bytes(mrsigner).hex()})")
