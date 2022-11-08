@@ -23,7 +23,8 @@ def new(conn: Connection, conf: AppConf,
                 "code": (code_tar_path.name, fp, "application/tar", {
                     "Expires": "0"
                 }),
-                "conf": (None, json.dumps(conf.__dict__), 'application/json')
+                "conf":
+                    (None, json.dumps(conf.into_payload()), 'application/json')
             },
             timeout=None,
         )
