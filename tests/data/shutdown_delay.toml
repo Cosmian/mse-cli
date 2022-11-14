@@ -5,7 +5,7 @@ plan = "free"
 shutdown_delay = 10
 
 [code]
-location = "./code"
+location = "/tmp/code"
 encrypted = true
 python_application = "app:app"
 health_check_endpoint = "/"

@@ -2,7 +2,7 @@ name = "helloworld"
 version = "1.0.0"
 project = "default"
 plan = "free"
-shutdown_delay = 1
+shutdown_delay = 100000000
 
 [code]
 location = "/tmp/code"

@@ -1,0 +1,13 @@
+name = "helloworld"
+version = "1.0.0"
+project = "default"
+id = "d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e"
+domain_name = "demo.cosmian.app"
+symkey = "a389f8baf2e03cebd445d99f03600b29ca259faa9a3964e529c03effef206135"
+encrypted_code = true
+enclave_size = "1"
+expires_in = 1
+python_application = "app:app"
+docker_version = "11d789bf"
+app_certificate_origin = "owner"
+ssl_app_certificate = "-----BEGIN CERTIFICATE"
