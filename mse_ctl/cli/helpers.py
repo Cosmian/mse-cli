@@ -16,10 +16,23 @@ from mse_ctl import MSE_CERTIFICATES_URL, MSE_DOCKER_IMAGE_URL, MSE_PCCS_URL
 from mse_ctl.api.app import stop
 from mse_ctl.api.auth import Connection
 from mse_ctl.api.project import get_app_from_name, get_from_name
-from mse_ctl.api.types import App, AppStatus, Project
-from mse_ctl.conf.context import Context
+from mse_ctl.api.plan import get as get_plan
+from mse_ctl.api.types import App, AppStatus, Plan, Project
+from mse_ctl.conf.app import AppConf
+from mse_ctl.conf.context import AppCertificateOrigin, Context
 from mse_ctl.log import LOGGER as log
 from mse_ctl.utils.color import bcolors
+
+
+def get_enclave_size(conn: Connection, app: AppConf) -> int:
+    """Get the enclave size from an app."""
+    r: requests.Response = get_plan(conn=conn, name=app.plan)
+
+    if not r.ok:
+        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+
+    plan = Plan.from_json_dict(r.json())
+    return plan.memory
 
 
 def get_project_from_name(conn: Connection, name: str) -> Optional[Project]:
@@ -66,20 +79,36 @@ def compute_mr_enclave(context: Context, tar_path: Path) -> str:
     """Compute the MR enclave of an enclave."""
     client = docker.from_env()
     image = f"{MSE_DOCKER_IMAGE_URL}:{context.docker_version}"
+
     # Pull always before running
     client.images.pull(image)
+
+    command = [
+        "--size", f"{context.enclave_size}G", "--code", "/tmp/service.tar",
+        "--host", context.domain_name, "--application",
+        context.python_application, "--dry-run"
+    ]
+
+    volumes = {f"{tar_path}": {'bind': '/tmp/service.tar', 'mode': 'rw'}}
+
+    if context.app_certificate_origin == AppCertificateOrigin.Owner:
+        command.append("--certificate")
+        command.append("/tmp/cert.pem")
+        volumes[f"{context.app_cert_path}"] = {
+            'bind': '/tmp/cert.pem',
+            'mode': 'rw'
+        }
+    else:
+        command.append("--self-signed")
+        command.append(str(context.expires_in))
+
+    if context.encrypted_code:
+        command.append("--encrypted")
+
     container = client.containers.run(
         image,
-        command=[
-            context.enclave_size.value,
-            str(context.enclave_lifetime), context.domain_name,
-            context.python_application, context.code_protection.value,
-            "--dry-run"
-        ],
-        volumes={f"{tar_path}": {
-            'bind': '/tmp/service.tar',
-            'mode': 'rw'
-        }},
+        command=command,
+        volumes=volumes,
         remove=True,
         detach=False,
         stdout=True,
@@ -102,14 +131,12 @@ def compute_mr_enclave(context: Context, tar_path: Path) -> str:
     return str(m.group(1).decode("utf-8"))
 
 
-def get_certificate_and_save(domain_name: str, output_path: Path) -> bytes:
-    """Get the certificate from `domain_name` and save it at `output_path`."""
-    ca_data = ssl.get_server_certificate((domain_name, 443)).encode("utf-8")
-    output_path.write_bytes(ca_data)
-    return ca_data
+def get_certificate(domain_name: str) -> str:
+    """Get the certificate from `domain_name`."""
+    return ssl.get_server_certificate((domain_name, 443))
 
 
-def verify_app(mrenclave: Optional[str], ca_data: bytes):
+def verify_app(mrenclave: Optional[str], ca_data: str):
     """Verify the app by proceeding the remote attestion."""
     # Compute MRSIGNER
     r = requests.get(url=MSE_CERTIFICATES_URL, timeout=60)
@@ -118,7 +145,7 @@ def verify_app(mrenclave: Optional[str], ca_data: bytes):
     mrsigner = mr_signer_from_pk(r.content)
 
     # Get the quote
-    quote = ratls_verification(ca_data)
+    quote = ratls_verification(ca_data.encode('utf8'))
 
     # Proceed the RA.
     try:

@@ -3,10 +3,9 @@
 import os
 import ssl
 
-from pathlib2 import Path
+from pathlib import Path
 
 from mse_ctl.cli.helpers import compute_mr_enclave, verify_app
-from mse_ctl.conf.app import CodeProtection
 from mse_ctl.conf.context import Context
 from mse_ctl.log import LOGGER as log
 from mse_ctl.utils.color import bcolors
@@ -63,10 +62,10 @@ def run(args):
               "are mutually exclusive")
         return
 
-    if not args.mrenclave and not args.skip_mrenclave\
-       and ((args.context and not args.code) or (not args.context and args.code)):
-        print("[--context] and [--code] must be used together")
-        return
+    if not args.mrenclave and not args.skip_mrenclave:
+        if (args.context and not args.code) or (not args.context and args.code):
+            print("[--context] and [--code] must be used together")
+            return
 
     # Compute MRENCLAVE and decrypt the code if needed
     mrenclave = None
@@ -74,7 +73,7 @@ def run(args):
         mrenclave = args.mrenclave
     elif args.context:
         context = Context.from_toml(args.context)
-        if context.code_protection == CodeProtection.Encrypted:
+        if context.encrypted:
             untar(context.decrypted_code_path, context.tar_code_path)
             decrypt_directory(context.decrypted_code_path, context.symkey)
             log.info("The code has been decrypted in: %s",

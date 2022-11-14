@@ -1,11 +1,14 @@
 """App configuration file module."""
 
 import os
-from enum import Enum
+from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
 import toml
+from cryptography import x509
+from cryptography.x509.extensions import SubjectAlternativeName
+from cryptography.x509.oid import ExtensionOID
 from pydantic import BaseModel, validator
 
 
@@ -24,13 +27,19 @@ class CodeConf(BaseModel):
     """Definition of the code configuration."""
 
     # Location of the code (a path or an url)
-    location: str
+    location: Path
     # Wether the code is encrypted or not
     encrypted: bool
     # from python_flask_module import python_flask_variable_name
     python_application: str
     # Endpoint to use to check if the application is up and sane
     health_check_endpoint: str
+
+    @validator('location', pre=True, always=True)
+    # pylint: disable=no-self-argument,unused-argument
+    def resolve_location(cls, v, values, **kwargs):
+        """Resolve the code location path."""
+        return Path(v).resolve()
 
 
 class AppConf(BaseModel):
@@ -89,7 +98,32 @@ class AppConf(BaseModel):
         with open(path, encoding="utf8") as f:
             dataMap = toml.load(f)
 
-            return AppConf(**dataMap)
+            app = AppConf(**dataMap)
+
+            if app.ssl:
+                cert = x509.load_pem_x509_certificate(
+                    app.ssl.certificate.encode('utf8'))
+
+                # Set shutdown_delay using cert expiration date
+                delta = cert.not_valid_after - datetime.now()
+                if not app.shutdown_delay:
+                    app.shutdown_delay = delta.days
+                elif app.shutdown_delay > delta.days:
+                    raise Exception(
+                        "`shutdown_delay` ({shutdown_delay}) can't be bigger than the number of days before certificate expiration ({delta})"
+                    )
+
+                # Check domain names from cert
+                ext: SubjectAlternativeName = cert.extensions.get_extension_for_oid(
+                    ExtensionOID.SUBJECT_ALTERNATIVE_NAME)
+                domains = ext.value.get_values_for_type(x509.DNSName)
+
+                if app.ssl.domain_name not in domains:
+                    raise Exception(
+                        "{app.ssl.domain_name} should be present in the SSL certificate as a Subject Alternative Name ({domains})"
+                    )
+
+            return app
 
     def save(self, folder: Path):
         """Dump the current object to a file."""
@@ -100,7 +134,7 @@ class AppConf(BaseModel):
                 "project": self.project,
                 "plan": self.plan,
                 "code": {
-                    "location": self.code.location,
+                    "location": str(self.code.location),
                     "encrypted": self.code.encrypted,
                     "python_application": self.code.python_application,
                     "health_check_endpoint": self.code.health_check_endpoint
@@ -121,7 +155,7 @@ class AppConf(BaseModel):
     @staticmethod
     def default(name: str, code_path: Path):
         """Generate a default configuration."""
-        code = CodeConf(location=str(code_path) + "/code",
+        code = CodeConf(location=code_path / "code",
                         encrypted=True,
                         python_application="app:app",
                         health_check_endpoint="/")
@@ -145,4 +179,4 @@ class AppConf(BaseModel):
             "ssl_certificate": self.ssl.certificate if self.ssl else None,
             "domain_name": self.ssl.domain_name if self.ssl else None,
             "plan": self.plan,
-        }  # Do not send the private_key
+        }  # Do not send the private_key or location code
