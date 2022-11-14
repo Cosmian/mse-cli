@@ -1,0 +1,48 @@
+{
+  "exp": 1651104032,
+  "iat": 1651075232,
+  "is-debuggable": "False,",
+  "iss": "https: //sharedneu.neu.attest.azure.net",
+  "jti": "c0af5cf6f3116e7f6b668f362842268f7fdf925a405d17d48f67a84f891cf3bb",
+  "maa-attestationcollateral": {
+    "qeidcertshash": "a64d649198507d8b57e33f63ab266838f43f327bd4aacc78510b6976ed046e10",
+    "qeidcrlhash": "3dbcd25597ba0548bf32240b3079d4310151756f17e5537d3015b16e399acad5",
+    "qeidhash": "7701f64700b7f505d7b4b7a93e45d5cde8cfc865b60f1dd49ecbee9790c3372e",
+    "quotehash": "0c330dd9b79d10228fa12c35a27062a8c9c5f73bf30f3be0cbd9bd34d2292754",
+    "tcbinfocertshash": "a64d649198507d8b57e33f63ab266838f43f327bd4aacc78510b6976ed046e10",
+    "tcbinfocrlhash": "3dbcd25597ba0548bf32240b3079d4310151756f17e5537d3015b16e399acad5",
+    "tcbinfohash": "88149197195950562cc097ad0267a66de7c08e0189bddeb3977d8e2b6a05fd45"
+  },
+  "nbf": 1651075232,
+  "product-id": 0,
+  "sgx-mrenclave": "929f66c365fce9ebcd2e6a809f938b4305dfc2f9094a6b726e3e2b6abe9413a7",
+  "sgx-mrsigner": "c1c161d0dd996e8a9847de67ea2c00226761f7715a2c422d3012ac10795a1ef5",
+  "svn": 0,
+  "tee": "sgx",
+  "x-ms-attestation-type": "sgx",
+  "x-ms-policy": {
+    "is-debuggable": "False,",
+    "product-id": 0,
+    "sgx-mrenclave": "929f66c365fce9ebcd2e6a809f938b4305dfc2f9094a6b726e3e2b6abe9413a7",
+    "sgx-mrsigner": "c1c161d0dd996e8a9847de67ea2c00226761f7715a2c422d3012ac10795a1ef5",
+    "svn": 0,
+    "tee": "sgx"
+  },
+  "x-ms-policy-hash": "bROrN897ZfWmWY2V0FLUlu3uwk5xatGnKYHn3zBbSlw",
+  "x-ms-sgx-collateral": {
+    "qeidcertshash": "a64d649198507d8b57e33f63ab266838f43f327bd4aacc78510b6976ed046e10",
+    "qeidcrlhash": "3dbcd25597ba0548bf32240b3079d4310151756f17e5537d3015b16e399acad5",
+    "qeidhash": "7701f64700b7f505d7b4b7a93e45d5cde8cfc865b60f1dd49ecbee9790c3372e",
+    "quotehash": "0c330dd9b79d10228fa12c35a27062a8c9c5f73bf30f3be0cbd9bd34d2292754",
+    "tcbinfocertshash": "a64d649198507d8b57e33f63ab266838f43f327bd4aacc78510b6976ed046e10",
+    "tcbinfocrlhash": "3dbcd25597ba0548bf32240b3079d4310151756f17e5537d3015b16e399acad5",
+    "tcbinfohash": "88149197195950562cc097ad0267a66de7c08e0189bddeb3977d8e2b6a05fd45"
+  },
+  "x-ms-sgx-is-debuggable": "False,",
+  "x-ms-sgx-mrenclave": "929f66c365fce9ebcd2e6a809f938b4305dfc2f9094a6b726e3e2b6abe9413a7",
+  "x-ms-sgx-mrsigner": "c1c161d0dd996e8a9847de67ea2c00226761f7715a2c422d3012ac10795a1ef5",
+  "x-ms-sgx-product-id": 0,
+  "x-ms-sgx-report-data": "21be4c8ec9c488fa0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "x-ms-sgx-svn": 0,
+  "x-ms-ver": "1.0"
+}

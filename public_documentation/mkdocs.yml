@@ -1,0 +1,57 @@
+site_name: Cosmian Technical Documentation
+site_url: https://docs.cosmian.com/
+copyright: © Copyright 2018-2023 Cosmian. All rights reserved
+dev_addr: "127.0.0.1:8003"
+theme:
+  name: "material"
+  language: "en"
+  font:
+    text: Open Sans
+  favicon: "favicon.png"
+  logo: "images/docslogo-2x.png"
+  custom_dir: overrides
+  features:
+    - content.tabs.link
+markdown_extensions:
+  - tables
+  - smarty
+  - abbr
+  - admonition
+  - toc:
+      permalink: true
+      baselevel: 1
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji
+  - pymdownx.details
+  - pymdownx.arithmatex
+  - pymdownx.tasklist
+  - pymdownx.snippets
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - attr_list
+  - markdown_katex:
+      no_inline_svg: True
+      insert_fonts_css: True
+      macro-file: docs/src/macros.tex
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+plugins:
+  - search
+  - kroki
+extra_css:
+  - css/extra.css
+extra_javascript:
+  - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+  - https://unpkg.com/mermaid@8.7.0/dist/mermaid.min.js
+  - javascripts/extra.js
+nav:
+  - Microservice Encryption:
+      - Spawn your first service: microservice_encryption/spawn.md
+      - Options of a service: microservice_encryption/options.md
+      - Certificates:  microservice_encryption/certificates.md
+      - Security checks:  microservice_encryption/security.md
+      - Python API: microservice_encryption/python/
