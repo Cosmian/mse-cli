@@ -1,9 +1,0 @@
-name="test2"
-version="1.0.1"
-project="default"
-enclave_size="4G"
-enclave_lifetime=10
-code_location="../../mse-app-demo/helloworld/code"
-code_protection="plaintext"
-python_application="app:app"
-health_check_endpoint="/"
