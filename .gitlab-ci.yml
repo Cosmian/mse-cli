@@ -34,7 +34,7 @@ code_format:
     - source venv/bin/activate
     - pip install -r requirements-dev.txt
   script:
-    - yapf -d -r mse_ctl/ mse_ctl.py
+    - yapf -d -r mse_ctl/
 
 code_style:
   stage: lint
@@ -47,7 +47,7 @@ code_style:
     - pip install -r requirements-dev.txt
     - pip install .
   script:
-    - pycodestyle mse_ctl/ mse_ctl.py
+    - pycodestyle mse_ctl/
 
 doc_style:
   stage: lint
@@ -60,7 +60,7 @@ doc_style:
     - pip install -r requirements-dev.txt
     - pip install .
   script:
-    - pydocstyle mse_ctl/ mse_ctl.py
+    - pydocstyle mse_ctl/
 
 static_analysis:
   stage: lint
@@ -73,7 +73,7 @@ static_analysis:
     - pip install -r requirements-dev.txt
     - pip install .
   script:
-    - pylint --rcfile=setup.cfg mse_ctl/ mse_ctl.py
+    - pylint --rcfile=setup.cfg mse_ctl/
 
 type_check:
   stage: lint

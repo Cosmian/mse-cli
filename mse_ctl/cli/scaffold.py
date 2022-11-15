@@ -30,10 +30,10 @@ def run(args):
     app_conf.save(project_dir)
 
     # Saving the python code
-    os.makedirs(app_conf.code_location, exist_ok=False)
+    os.makedirs(app_conf.code.location, exist_ok=False)
 
     python_module = Path(
-        app_conf.code_location) / (app_conf.python_module + ".py")
+        app_conf.code.location) / (app_conf.python_module + ".py")
     python_module.write_text(f"""
 from flask import Flask
 
@@ -47,7 +47,7 @@ def hello():
 """)
 
     # Saving the requirements
-    requirements = Path(app_conf.code_location) / "requirements.txt"
+    requirements = Path(app_conf.code.location) / "requirements.txt"
     requirements.write_text("flask==2.2.0")
 
     log.info("An empty app has been generated in the current directory.")

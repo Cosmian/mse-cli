@@ -1,4 +1,11 @@
+#!/usr/bin/env python
 """MicroService Encryption Control (CLI)."""
+
+from warnings import filterwarnings  # noqa: E402
+
+filterwarnings("ignore")  # noqa: E402
+
+# pylint: disable=wrong-import-position
 
 import argparse
 
@@ -6,7 +13,9 @@ from mse_ctl.cli import (deploy, list_all, login, remove, scaffold, signup,
                          status, stop, verify)
 from mse_ctl.log import setup_logging
 
-if __name__ == '__main__':
+
+def main():
+    """Entrypoint of the CLI."""
     setup_logging(False)
 
     parser = argparse.ArgumentParser(
@@ -26,3 +35,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     args.func(args)
+
+
+if __name__ == '__main__':
+    main()

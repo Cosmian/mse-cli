@@ -2,6 +2,8 @@
 
 import uuid
 
+from datetime import datetime, timezone
+
 import requests
 
 from mse_ctl.api.app import get
@@ -38,32 +40,38 @@ def run(args):
     app = App.from_json_dict(r.json())
 
     log.info("\nMicroservice")
-    log.info("\tName        = %s", app.name)
-    log.info("\tVersion     = %s", app.version)
-    log.info("\tDomain name = %s", app.domain_name)
-    log.info("\tLifetime    = %s", app.enclave_lifetime)
-    log.info("\tApplication = %s", app.python_application)
-    log.info("\tHealthcheck = %s", app.health_check_endpoint)
+    log.info("\tName         = %s", app.name)
+    log.info("\tVersion      = %s", app.version)
+    log.info("\tDomain name  = %s", app.domain_name)
+    log.info("\tBilling plan = %s", app.plan)
+    log.info("\tApplication  = %s", app.python_application)
+    log.info("\tHealthcheck  = %s", app.health_check_endpoint)
 
     log.info("\nDeployement status")
-    log.info("\tUUID            = %s", app.uuid)
-    log.info("\tSGX MSE lib     = %s", app.enclave_version)
-    log.info("\tEnclave size    = %s", app.enclave_size.value)
-    log.info("\tCode protection = %s", app.code_protection.value)
-    log.info("\tCreated at      = %s", app.created_at)
+    log.info("\tUUID               = %s", app.uuid)
+    log.info("\tMSE docker version = %s", app.docker_version)
+    log.info("\tEncrypted code     = %s", "Yes" if app.encrypted_code else "No")
+    log.info("\tForced SSL cert    = %s", "Yes" if app.delegated_ssl else "No")
+    log.info("\tCreated at         = %s", app.created_at)
+
+    delta = datetime.now(timezone.utc) - app.created_at
+    remaining_days = app.shutdown_delay - delta.days
+
+    log.info("\tLifetime           = %d days (will expire in %d days)",
+             app.shutdown_delay, remaining_days)
 
     if app.status == AppStatus.Running:
-        log.info("\tStatus          = %s%s%s", bcolors.OKGREEN,
+        log.info("\tStatus             = %s%s%s", bcolors.OKGREEN,
                  app.status.value, bcolors.ENDC)
-        log.info("\tOnline since    = %s", app.ready_at)
+        log.info("\tOnline since       = %s", app.ready_at)
     elif app.status == AppStatus.Stopped:
-        log.info("\tStatus          = %s%s%s", bcolors.WARNING,
+        log.info("\tStatus             = %s%s%s", bcolors.WARNING,
                  app.status.value, bcolors.ENDC)
-        log.info("\tStopped since   = %s", app.stopped_at)
+        log.info("\tStopped since      = %s", app.stopped_at)
     elif app.status == AppStatus.OnError:
-        log.info("\tStatus          = %s%s%s", bcolors.FAIL, app.status.value,
-                 bcolors.ENDC)
-        log.info("\tOn error since  = %s", app.onerror_at)
+        log.info("\tStatus             = %s%s%s", bcolors.FAIL,
+                 app.status.value, bcolors.ENDC)
+        log.info("\tOn error since     = %s", app.onerror_at)
     elif app.status == AppStatus.Initializing:
-        log.info("\tStatus          = %s%s%s", bcolors.OKBLUE, app.status.value,
-                 bcolors.ENDC)
+        log.info("\tStatus             = %s%s%s", bcolors.OKBLUE,
+                 app.status.value, bcolors.ENDC)
