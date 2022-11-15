@@ -7,8 +7,7 @@ from typing import Optional
 
 import toml
 from cryptography import x509
-from cryptography.x509.extensions import SubjectAlternativeName, Extension
-from cryptography.x509.oid import ExtensionOID
+from cryptography.x509.extensions import SubjectAlternativeName
 from pydantic import BaseModel, validator
 
 

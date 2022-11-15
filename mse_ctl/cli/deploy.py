@@ -19,7 +19,7 @@ from mse_ctl.conf.context import AppCertificateOrigin, Context
 from mse_ctl.conf.user import UserConf
 from mse_ctl.log import LOGGER as log
 from mse_ctl.utils.color import bcolors
-from mse_ctl.utils.crypto import encrypt_directory
+from mse_lib_crypto.xsalsa20_poly1305 import encrypt_directory
 from mse_ctl.utils.fs import tar
 
 
@@ -33,7 +33,7 @@ def add_subparser(subparsers):
         '--path',
         type=Path,
         required=False,
-        metavar='path/to/mse/app/config.mse',
+        metavar='path/to/mse/app/mse.toml',
         help='Path to the mse app to deploy (current directory if not set)')
 
     parser.set_defaults(func=run)
