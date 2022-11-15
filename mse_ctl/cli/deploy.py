@@ -29,6 +29,13 @@ def add_subparser(subparsers):
                                    help="Deploy the application from the "
                                    "current directory into a MSE node")
 
+    parser.add_argument(
+        '--path',
+        type=Path,
+        required=False,
+        metavar='path/to/mse/app/config.mse',
+        help='Path to the mse app to deploy (current directory if not set)')
+
     parser.set_defaults(func=run)
 
 
@@ -36,7 +43,7 @@ def add_subparser(subparsers):
 def run(args):
     """Run the subcommand."""
     user_conf = UserConf.from_toml()
-    app_conf = AppConf.from_toml()
+    app_conf = AppConf.from_toml(path=args.path)
 
     conn = user_conf.get_connection()
 
@@ -65,7 +72,7 @@ def run(args):
 
     log.info("Checking app thrustworthiness...")
     mr_enclave = compute_mr_enclave(context, tar_path)
-    log.info("MR enclave is %s", mr_enclave)
+    log.info("The code fingerprint is %s", mr_enclave)
     verify_app(mr_enclave, selfsigned_cert)
     log.info("Verification: %ssuccess%s", bcolors.OKGREEN, bcolors.ENDC)
 
@@ -74,7 +81,7 @@ def run(args):
                  context.app_cert_path)
 
     if app.encrypted_code or app.delegated_ssl:
-        log.info("Unsealing your private data from the enclave...")
+        log.info("Unsealing your private data from your mse instance...")
         unseal_private_data(
             context,
             ssl_private_key=app_conf.ssl.private_key if app_conf.ssl else None)
@@ -143,10 +150,11 @@ def check_app_conf(conn: Connection, app_conf: AppConf) -> bool:
             log.info("Your deployment has been stopped!")
             return False
 
-    if not (Path(app_conf.code.location) /
+    if not (app_conf.code.location /
             (app_conf.python_module.replace(".", "/") + ".py")).exists():
-        raise FileNotFoundError(f"Flask module '{app_conf.python_module}' "
-                                f"not found in {app_conf.code.location}!")
+        raise FileNotFoundError(
+            f"Flask module '{app_conf.python_module}' "
+            f"not found in directory: {app_conf.code.location}!")
 
     return True
 
