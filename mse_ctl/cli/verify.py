@@ -21,29 +21,28 @@ def add_subparser(subparsers):
     parser.set_defaults(func=run)
 
     parser.add_argument(
-        '--domain-name',
+        'domain_name',
         type=str,
-        help='The domain name of the MSE app (ex: demo.cosmian.app).',
-        required=True)
+        help='The domain name of the MSE app (ex: demo.cosmian.app).')
 
-    parser.add_argument('--skip-mrenclave',
+    parser.add_argument('--skip-fingerprint',
                         action='store_true',
-                        help='Do not verify mrenclave.')
+                        help='Do not verify the code fingerprint')
 
-    parser.add_argument('--mrenclave',
+    parser.add_argument('--fingerprint',
                         type=str,
-                        help='Check the mrenclave against that value.')
+                        help='Check the code fingerprint against that value')
 
     parser.add_argument('--context',
                         type=Path,
                         metavar='path/to/context/uuid.mse',
                         help='Path to the context file to use '
-                        'to recompute the mrenclave and verify it.')
+                        'to recompute the code fingerprint and verify it')
 
     parser.add_argument('--code',
                         type=Path,
                         metavar='path/to/code.tar',
-                        help='Path to the code tarball.')
+                        help='Path to the code tarball')
 
 
 def run(args):
@@ -51,25 +50,28 @@ def run(args):
     log.info("Checking your app...")
 
     # Check args
-    if args.skip_mrenclave and (args.mrenclave or args.context or args.code):
-        print("[--skip-mrenclave] and [--mrenclave] and [--context | --code] "
-              "are mutually exclusive")
+    if args.skip_fingerprint and (args.fingerprint or args.context
+                                  or args.code):
+        print(
+            "[--skip-fingerprint] and [--fingerprint] and [--context | --code] "
+            "are mutually exclusive")
         return
 
-    if args.mrenclave and (args.context or args.code):
-        print("[--skip-mrenclave] and [--mrenclave] and [--context | --code] "
-              "are mutually exclusive")
+    if args.fingerprint and (args.context or args.code):
+        print(
+            "[--skip-fingerprint] and [--fingerprint] and [--context | --code] "
+            "are mutually exclusive")
         return
 
-    if not args.mrenclave and not args.skip_mrenclave:
+    if not args.fingerprint and not args.skip_fingerprint:
         if (args.context and not args.code) or (not args.context and args.code):
             print("[--context] and [--code] must be used together")
             return
 
     # Compute MRENCLAVE and decrypt the code if needed
     mrenclave = None
-    if args.mrenclave:
-        mrenclave = args.mrenclave
+    if args.fingerprint:
+        mrenclave = args.fingerprint
     elif args.context:
         context = Context.from_toml(args.context)
         if context.encrypted_code:
