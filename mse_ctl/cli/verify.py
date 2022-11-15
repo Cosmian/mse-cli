@@ -1,11 +1,10 @@
 """Verify subparser definition."""
 
 import os
-import ssl
 
 from pathlib import Path
 
-from mse_ctl.cli.helpers import compute_mr_enclave, verify_app
+from mse_ctl.cli.helpers import compute_mr_enclave, get_certificate, verify_app
 from mse_ctl.conf.context import Context
 from mse_ctl.log import LOGGER as log
 from mse_ctl.utils.color import bcolors
@@ -73,7 +72,7 @@ def run(args):
         mrenclave = args.mrenclave
     elif args.context:
         context = Context.from_toml(args.context)
-        if context.encrypted:
+        if context.encrypted_code:
             untar(context.decrypted_code_path, context.tar_code_path)
             decrypt_directory(context.decrypted_code_path, context.symkey)
             log.info("The code has been decrypted in: %s",
@@ -81,10 +80,9 @@ def run(args):
         mrenclave = compute_mr_enclave(context, args.code)
 
     # Get the certificate
-    ca_data = ssl.get_server_certificate(
-        (args.domain_name, 443)).encode("utf-8")
+    ca_data = get_certificate(args.domain_name)
     cert_path = Path(os.getcwd()) / "cert.pem"
-    cert_path.write_bytes(ca_data)
+    cert_path.write_text(ca_data)
 
     verify_app(mrenclave, ca_data)
 

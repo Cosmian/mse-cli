@@ -191,7 +191,7 @@ def wait_app_creation(conn: Connection, uuid: UUID) -> App:
 def unseal_private_data(context: Context,
                         ssl_private_key: Optional[str] = None):
     """Send the ssl private key and the key which was used to encrypt the code."""
-    data = dict()
+    data = {}
 
     if context.encrypted_code:
         data["code_sealed_key"] = context.symkey.hex()

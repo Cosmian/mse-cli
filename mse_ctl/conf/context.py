@@ -16,6 +16,7 @@ from mse_ctl.utils.crypto import random_symkey
 
 class AppCertificateOrigin(str, Enum):
     """AppCertificateOrigin enum."""
+
     Self = "self"
     Owner = "owner"
 

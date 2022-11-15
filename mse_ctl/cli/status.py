@@ -2,9 +2,9 @@
 
 import uuid
 
-import requests
-
 from datetime import datetime, timezone
+
+import requests
 
 from mse_ctl.api.app import get
 from mse_ctl.api.types import App, AppStatus
@@ -49,7 +49,7 @@ def run(args):
 
     log.info("\nDeployement status")
     log.info("\tUUID               = %s", app.uuid)
-    log.info("\tMSE docker version = %s", app.enclave_version)
+    log.info("\tMSE docker version = %s", app.docker_version)
     log.info("\tEncrypted code     = %s", "Yes" if app.encrypted_code else "No")
     log.info("\tForced SSL cert    = %s", "Yes" if app.delegated_ssl else "No")
     log.info("\tCreated at         = %s", app.created_at)

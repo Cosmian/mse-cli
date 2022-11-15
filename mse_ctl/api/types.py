@@ -68,6 +68,7 @@ class Project(BaseModel):
 
 class Plan(BaseModel):
     """Plan class."""
+
     name: str
     memory: int
     cores: int

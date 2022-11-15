@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 """MicroService Encryption Control (CLI)."""
 
-from warnings import filterwarnings
+from warnings import filterwarnings  # noqa: E402
 
-filterwarnings("ignore")
+filterwarnings("ignore")  # noqa: E402
+
+# pylint: disable=wrong-import-position
 
 import argparse
 

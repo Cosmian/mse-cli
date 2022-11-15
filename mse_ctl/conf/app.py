@@ -7,7 +7,7 @@ from typing import Optional
 
 import toml
 from cryptography import x509
-from cryptography.x509.extensions import SubjectAlternativeName
+from cryptography.x509.extensions import SubjectAlternativeName, Extension
 from cryptography.x509.oid import ExtensionOID
 from pydantic import BaseModel, validator
 
@@ -110,17 +110,19 @@ class AppConf(BaseModel):
                     app.shutdown_delay = delta.days
                 elif app.shutdown_delay > delta.days:
                     raise Exception(
-                        "`shutdown_delay` ({shutdown_delay}) can't be bigger than the number of days before certificate expiration ({delta})"
+                        "`shutdown_delay` ({shutdown_delay}) can't be bigger "
+                        "than the number of days before certificate expiration ({delta})"
                     )
 
                 # Check domain names from cert
-                ext: SubjectAlternativeName = cert.extensions.get_extension_for_oid(
-                    ExtensionOID.SUBJECT_ALTERNATIVE_NAME)
+                ext = cert.extensions.get_extension_for_class(
+                    SubjectAlternativeName)
                 domains = ext.value.get_values_for_type(x509.DNSName)
 
                 if app.ssl.domain_name not in domains:
                     raise Exception(
-                        "{app.ssl.domain_name} should be present in the SSL certificate as a Subject Alternative Name ({domains})"
+                        "{app.ssl.domain_name} should be present in the "
+                        "SSL certificate as a Subject Alternative Name ({domains})"
                     )
 
             return app
@@ -142,7 +144,7 @@ class AppConf(BaseModel):
             }
 
             if self.shutdown_delay:
-                dataMap['shutdown_delay'] = self.shutdown_delay
+                dataMap['shutdown_delay'] = str(self.shutdown_delay)
             if self.ssl:
                 dataMap['ssl'] = {
                     "domain_name": self.ssl.domain_name,
