@@ -3,12 +3,12 @@
 import os
 
 from pathlib import Path
+from mse_lib_crypto.xsalsa20_poly1305 import decrypt_directory
 
 from mse_ctl.cli.helpers import compute_mr_enclave, get_certificate, verify_app
 from mse_ctl.conf.context import Context
 from mse_ctl.log import LOGGER as log
 from mse_ctl.utils.color import bcolors
-from mse_lib_crypto.xsalsa20_poly1305 import decrypt_directory
 from mse_ctl.utils.fs import untar
 
 

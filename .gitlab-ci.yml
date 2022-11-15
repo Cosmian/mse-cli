@@ -88,7 +88,7 @@ type_check:
   script:
     - mypy mse_ctl/
 
-doc:
+.doc:
   stage: build
   rules:
     # Deploy on prod on tag

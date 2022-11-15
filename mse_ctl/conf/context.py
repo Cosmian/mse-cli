@@ -8,10 +8,10 @@ from uuid import UUID
 
 import toml
 from pydantic import BaseModel, validator
+from mse_lib_crypto.xsalsa20_poly1305 import random_key
 
 from mse_ctl import MSE_CONF_DIR
 from mse_ctl.conf.app import AppConf
-from mse_lib_crypto.xsalsa20_poly1305 import random_key
 
 
 class AppCertificateOrigin(str, Enum):

@@ -7,6 +7,7 @@ from uuid import UUID
 
 import requests
 from requests import ReadTimeout
+from mse_lib_crypto.xsalsa20_poly1305 import encrypt_directory
 
 from mse_ctl.api.app import get, new
 from mse_ctl.api.auth import Connection
@@ -19,7 +20,6 @@ from mse_ctl.conf.context import AppCertificateOrigin, Context
 from mse_ctl.conf.user import UserConf
 from mse_ctl.log import LOGGER as log
 from mse_ctl.utils.color import bcolors
-from mse_lib_crypto.xsalsa20_poly1305 import encrypt_directory
 from mse_ctl.utils.fs import tar
 
 

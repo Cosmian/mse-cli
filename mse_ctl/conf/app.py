@@ -8,7 +8,7 @@ from typing import Optional
 import toml
 from cryptography import x509
 from cryptography.x509.extensions import SubjectAlternativeName
-from pydantic import BaseModel, validator
+from pydantic import BaseModel
 
 
 class SSLConf(BaseModel):

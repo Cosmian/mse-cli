@@ -4,7 +4,8 @@ import os
 import sys
 from pathlib import Path
 
-# This directory contains the login information of the user and the context of all its deployments.
+# This directory contains the login information of the user
+# and the context of all its deployments
 _DEFAULT_MSE_CONF_DIR = "~/.config"
 if sys.platform == 'win32':
     _DEFAULT_MSE_CONF_DIR = os.getenv("APPDATA")
