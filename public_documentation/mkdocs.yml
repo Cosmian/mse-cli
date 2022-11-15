@@ -51,7 +51,8 @@ extra_javascript:
 nav:
   - Microservice Encryption:
       - Spawn your first service: microservice_encryption/spawn.md
-      - Options of a service: microservice_encryption/options.md
+      - Scaffold a new project: microservice_encryption/scaffold.md
+      - Advanced options: microservice_encryption/advanced.md
       - Certificates:  microservice_encryption/certificates.md
       - Security checks:  microservice_encryption/security.md
       - Python API: microservice_encryption/python/

@@ -1,3 +1,0 @@
-
-## Options of a microservice
-
