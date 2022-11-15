@@ -13,10 +13,7 @@ def add_subparser(subparsers):
 
     parser.set_defaults(func=run)
 
-    parser.add_argument('--id',
-                        required=True,
-                        type=uuid.UUID,
-                        help='The id of the MSE app.')
+    parser.add_argument('id', type=uuid.UUID, help='The id of the MSE app.')
 
 
 def run(args):

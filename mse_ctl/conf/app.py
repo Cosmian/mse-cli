@@ -7,9 +7,8 @@ from typing import Optional
 
 import toml
 from cryptography import x509
-from cryptography.x509.extensions import SubjectAlternativeName, Extension
-from cryptography.x509.oid import ExtensionOID
-from pydantic import BaseModel, validator
+from cryptography.x509.extensions import SubjectAlternativeName
+from pydantic import BaseModel
 
 
 class SSLConf(BaseModel):
@@ -34,12 +33,6 @@ class CodeConf(BaseModel):
     python_application: str
     # Endpoint to use to check if the application is up and sane
     health_check_endpoint: str
-
-    @validator('location', pre=True, always=True)
-    # pylint: disable=no-self-argument,unused-argument
-    def resolve_location(cls, v, values, **kwargs):
-        """Resolve the code location path."""
-        return Path(v).resolve()
 
 
 class AppConf(BaseModel):
@@ -94,11 +87,17 @@ class AppConf(BaseModel):
         """Build a AppConf object from a Toml file."""
         if not path:
             path = Path(os.getcwd()) / "mse.toml"
+        else:
+            path = path.expanduser()
 
         with open(path, encoding="utf8") as f:
             dataMap = toml.load(f)
 
             app = AppConf(**dataMap)
+
+            # Make the app code location path absolute from path.parent and not cwd
+            if not app.code.location.is_absolute():
+                app.code.location = (path.parent / app.code.location).resolve()
 
             if app.ssl:
                 cert = x509.load_pem_x509_certificate(
@@ -157,7 +156,7 @@ class AppConf(BaseModel):
     @staticmethod
     def default(name: str, code_path: Path):
         """Generate a default configuration."""
-        code = CodeConf(location=code_path / "code",
+        code = CodeConf(location=code_path.expanduser().resolve() / "code",
                         encrypted=True,
                         python_application="app:app",
                         health_check_endpoint="/")

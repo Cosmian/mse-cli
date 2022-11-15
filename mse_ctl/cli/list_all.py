@@ -42,7 +42,10 @@ def run(args):
 
     log.info("Fetching the project %s...", project_uuid)
 
-    r: requests.Response = list_apps(conn=conn, project_uuid=project_uuid)
+    r: requests.Response = list_apps(
+        conn=conn,
+        project_uuid=project_uuid,
+        status=[AppStatus.Initializing, AppStatus.Running, AppStatus.OnError])
 
     log.info("\n%s | %s | %12s | %s ", "App UUID".center(36),
              "Creation date".center(32), "Status".center(12),
@@ -64,6 +67,6 @@ def run(args):
         elif app.status == AppStatus.Initializing:
             color = bcolors.OKBLUE
 
-        log.info("%s | %s |%s %s %s| %s %s %s", app.uuid, app.created_at, color,
-                 app.status.value.center(12), bcolors.ENDC, app.name,
-                 app.version, app.domain_name)
+        log.info("%s | %s |%s %s %s| %s-%s on %s%s%s", app.uuid, app.created_at,
+                 color, app.status.value.center(12), bcolors.ENDC, app.name,
+                 app.version, bcolors.OKBLUE, app.domain_name, bcolors.ENDC)

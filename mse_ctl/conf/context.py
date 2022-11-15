@@ -8,10 +8,10 @@ from uuid import UUID
 
 import toml
 from pydantic import BaseModel, validator
+from mse_lib_crypto.xsalsa20_poly1305 import random_key
 
 from mse_ctl import MSE_CONF_DIR
 from mse_ctl.conf.app import AppConf
-from mse_ctl.utils.crypto import random_symkey
 
 
 class AppCertificateOrigin(str, Enum):
@@ -117,7 +117,7 @@ class Context(BaseModel):
                        enclave_size=enclave_size,
                        expires_in=0,
                        python_application=conf.code.python_application,
-                       symkey=bytes(random_symkey()).hex(),
+                       symkey=bytes(random_key()).hex(),
                        ssl_app_certificate="",
                        app_certificate_origin=AppCertificateOrigin.Owner
                        if conf.ssl else AppCertificateOrigin.Self,

@@ -15,7 +15,6 @@ class AppStatus(Enum):
     Running = "Running"
     OnError = "OnError"
     Deleted = "Deleted"
-    Paused = "Paused"
     Stopped = "Stopped"
 
 

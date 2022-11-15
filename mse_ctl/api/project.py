@@ -9,9 +9,15 @@ from mse_ctl.api.auth import Connection
 from mse_ctl.api.types import AppStatus
 
 
-def list_apps(conn: Connection, project_uuid: UUID) -> requests.Response:
+def list_apps(conn: Connection, project_uuid: UUID,
+              status: Optional[List[AppStatus]]) -> requests.Response:
     """GET `/projects/{uuid}/apps`."""
-    return conn.get(url=f"/projects/{str(project_uuid)}/apps")
+    return conn.get(
+        url=f"/projects/{str(project_uuid)}/apps",
+        params={
+            'status':
+                ','.join(map(lambda s: s.value, status)) if status else None
+        })
 
 
 def get_app_from_name(conn: Connection, project_uuid: UUID, app_name: str,

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """MicroService Encryption Control (CLI)."""
 
+import sys
 from warnings import filterwarnings  # noqa: E402
 
 filterwarnings("ignore")  # noqa: E402
@@ -8,6 +9,7 @@ filterwarnings("ignore")  # noqa: E402
 # pylint: disable=wrong-import-position
 
 import argparse
+import pkg_resources
 
 from mse_ctl.cli import (deploy, list_all, login, remove, scaffold, signup,
                          status, stop, verify)
@@ -21,7 +23,12 @@ def main():
     parser = argparse.ArgumentParser(
         description='Microservice Encryption Control.')
 
-    subparsers = parser.add_subparsers(title='subcommands', required=True)
+    parser.add_argument('--version',
+                        action='store_true',
+                        help='The version of the CLI')
+
+    subparsers = parser.add_subparsers(title='subcommands',
+                                       required='--version' not in sys.argv)
 
     deploy.add_subparser(subparsers)
     login.add_subparser(subparsers)
@@ -34,7 +41,11 @@ def main():
     list_all.add_subparser(subparsers)
 
     args = parser.parse_args()
-    args.func(args)
+
+    if args.version:
+        print("Version:", pkg_resources.get_distribution("mse_ctl").version)
+    else:
+        args.func(args)
 
 
 if __name__ == '__main__':

@@ -14,10 +14,7 @@ def add_subparser(subparsers):
 
     parser.set_defaults(func=run)
 
-    parser.add_argument('--name',
-                        required=True,
-                        type=str,
-                        help='The name of the empty app.')
+    parser.add_argument('name', type=str, help='The name of the new app.')
 
 
 def run(args):

@@ -11,3 +11,4 @@ sphinx_mdinclude>=0.5.2,<0.6.0
 numpydoc>=1.4.0,<1.5.0
 yapf>=0.32.0,<0.33.0
 types-toml>=0.10,<0.11.0
+types-setuptools>=65.0,<66.0
