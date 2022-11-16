@@ -1,1 +1,0 @@
-Cosmian generates the enclave's identity asynchronously, you need to wait the end of the generation which takes approximately one minute. This is done after all the participants send their public keys and the code provider sent the Python code.
