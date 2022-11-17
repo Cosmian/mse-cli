@@ -3,7 +3,7 @@
 import os
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
+from typing import Any, Dict, Optional
 
 import toml
 from cryptography import x509
@@ -47,6 +47,9 @@ class AppConf(BaseModel):
 
     # MSE plan (defining the enclave memory, cpu, etc.)
     plan: str
+
+    # Dev mode
+    dev: bool = False
 
     # Delay before stopping the app
     shutdown_delay: Optional[int] = None
@@ -95,6 +98,9 @@ class AppConf(BaseModel):
 
             app = AppConf(**dataMap)
 
+            if app.dev and app.ssl:
+                raise Exception("`ssl` param is not allowed when `dev` is true")
+
             # Make the app code location path absolute from path.parent and not cwd
             if not app.code.location.is_absolute():
                 app.code.location = (path.parent / app.code.location).resolve()
@@ -103,11 +109,9 @@ class AppConf(BaseModel):
                 cert = x509.load_pem_x509_certificate(
                     app.ssl.certificate.encode('utf8'))
 
-                # Set shutdown_delay using cert expiration date
+                # Check `shutdown_delay`` using cert expiration date
                 delta = cert.not_valid_after - datetime.now()
-                if not app.shutdown_delay:
-                    app.shutdown_delay = delta.days
-                elif app.shutdown_delay > delta.days:
+                if app.shutdown_delay and app.shutdown_delay > delta.days:
                     raise Exception(
                         "`shutdown_delay` ({shutdown_delay}) can't be bigger "
                         "than the number of days before certificate expiration ({delta})"
@@ -129,7 +133,7 @@ class AppConf(BaseModel):
     def save(self, folder: Path):
         """Dump the current object to a file."""
         with open(folder / "mse.toml", "w", encoding="utf8") as f:
-            dataMap = {
+            dataMap: Dict[str, Any] = {
                 "name": self.name,
                 "version": self.version,
                 "project": self.project,
@@ -142,8 +146,11 @@ class AppConf(BaseModel):
                 },
             }
 
+            if self.dev:
+                dataMap['dev'] = self.dev
             if self.shutdown_delay:
-                dataMap['shutdown_delay'] = str(self.shutdown_delay)
+                dataMap['shutdown_delay'] = str(
+                    self.shutdown_delay)  # TODO: remove str?
             if self.ssl:
                 dataMap['ssl'] = {
                     "domain_name": self.ssl.domain_name,
@@ -174,9 +181,13 @@ class AppConf(BaseModel):
             "version": self.version,
             "project": self.project,
             "encrypted_code": self.code.encrypted,
+            "dev_mode": self.dev,
             "health_check_endpoint": self.code.health_check_endpoint,
             "python_application": self.code.python_application,
-            "shutdown_delay": self.shutdown_delay,
+            "expires_at": None,
+            # TODO
+            # datetime.now(timezone.utc) + timedelta(days=self.shutdown_delay)
+            # if self.shutdown_delay else None,
             "ssl_certificate": self.ssl.certificate if self.ssl else None,
             "domain_name": self.ssl.domain_name if self.ssl else None,
             "plan": self.plan,

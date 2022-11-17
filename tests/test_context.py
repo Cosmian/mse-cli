@@ -1,9 +1,11 @@
 import filecmp
 from pathlib import Path
 from uuid import UUID
-from mse_ctl.conf.app import AppConf, CodeConf, SSLConf
+from datetime import datetime
 
-from mse_ctl.conf.context import AppCertificateOrigin, Context
+from mse_ctl.api.types import SSLCertificateOrigin
+from mse_ctl.conf.app import AppConf, CodeConf, SSLConf
+from mse_ctl.conf.context import Context
 
 
 def test_from_toml():
@@ -16,15 +18,17 @@ def test_from_toml():
         version="1.0.0",
         project="default",
         id="d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e",
-        domain_name="demo.cosmian.app",
+        config_domain_name="demo.cosmian.app",
+        domain_name="demo.cosmian.dev",
         symkey=
         "a389f8baf2e03cebd445d99f03600b29ca259faa9a3964e529c03effef206135",
         encrypted_code=True,
         enclave_size="1",
-        expires_in=1,
+        expires_at=datetime.strptime("2022-11-18T09:15:46.450477",
+                                     "%Y-%m-%dT%H:%M:%S.%f"),
         python_application="app:app",
         docker_version="11d789bf",
-        app_certificate_origin=AppCertificateOrigin.Owner,
+        ssl_certificate_origin=SSLCertificateOrigin.Owner,
         ssl_app_certificate="-----BEGIN CERTIFICATE")
 
     assert conf == ref_context_conf
@@ -57,14 +61,15 @@ def test_from_app_conf():
         version="1.0.0",
         project="default",
         id="00000000-0000-0000-0000-000000000000",
+        config_domain_name="",
         domain_name="",
         symkey=conf.symkey,
         encrypted_code=True,
         enclave_size="1",
-        expires_in=0,
+        expires_at=0,
         python_application="app:app",
         docker_version="",
-        app_certificate_origin=AppCertificateOrigin.Owner,
+        ssl_certificate_origin=SSLCertificateOrigin.Owner,
         ssl_app_certificate="")
 
     assert conf == ref_context_conf
@@ -94,11 +99,14 @@ def test_run():
     conf = Context.from_app_conf(conf=ref_app_conf, enclave_size=1)
     ref_context_conf.symkey = conf.symkey
     conf.run(uuid=UUID("d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e"),
-             domain_name="demo.cosmian.app",
+             config_domain_name="demo.cosmian.app",
+             domain_name="demo.cosmian.dev",
              docker_version="11d789bf",
-             expires_in=1,
+             expires_at=datetime.strptime("2022-11-18T09:15:46.450477",
+                                          "%Y-%m-%dT%H:%M:%S.%f"),
              config_cert="-----BEGIN CERTIFICATE1",
-             app_cert="-----BEGIN CERTIFICATE")
+             app_cert="-----BEGIN CERTIFICATE",
+             ssl_certificate_origin=SSLCertificateOrigin.Owner)
 
     assert conf == ref_context_conf
     assert conf.config_cert_path.read_text() == "-----BEGIN CERTIFICATE1"
