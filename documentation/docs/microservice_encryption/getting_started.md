@@ -1,6 +1,4 @@
 
-## Getting started
-
 !!! info "Welcome to Microservice Encryption"
 
     To launch your first microservice, follow this tutorial. Start with a shell on your Linux distro.
