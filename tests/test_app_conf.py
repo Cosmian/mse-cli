@@ -164,7 +164,7 @@ def test_shutdown_delay():
 
     toml = Path("tests/data/optional_fields_ssl.toml")
     conf = AppConf.from_toml(path=toml)
-    assert conf.shutdown_delay is not None
+    assert conf.shutdown_delay is None
 
 
 def test_bad_domain_name():
@@ -270,7 +270,8 @@ def test_into_payload():
         "encrypted_code": True,
         "health_check_endpoint": "/",
         "python_application": "app:app",
-        "shutdown_delay": 1,
+        "expires_at": None,
+        "dev_mode": False,
         "ssl_certificate": CERTIFICATE,
         "domain_name": "demo.cosmian.app",
         "plan": "free",

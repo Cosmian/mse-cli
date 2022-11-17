@@ -1,5 +1,6 @@
 """Handlers functions."""
 
+from datetime import datetime
 import re
 from pathlib import Path
 import ssl
@@ -17,9 +18,9 @@ from mse_ctl.api.app import stop
 from mse_ctl.api.auth import Connection
 from mse_ctl.api.project import get_app_from_name, get_from_name
 from mse_ctl.api.plan import get as get_plan
-from mse_ctl.api.types import App, AppStatus, Plan, Project
+from mse_ctl.api.types import App, AppStatus, Plan, Project, SSLCertificateOrigin
 from mse_ctl.conf.app import AppConf
-from mse_ctl.conf.context import AppCertificateOrigin, Context
+from mse_ctl.conf.context import Context
 from mse_ctl.log import LOGGER as log
 from mse_ctl.utils.color import bcolors
 
@@ -85,22 +86,24 @@ def compute_mr_enclave(context: Context, tar_path: Path) -> str:
 
     command = [
         "--size", f"{context.enclave_size}G", "--code", "/tmp/service.tar",
-        "--host", context.domain_name, "--application",
+        "--host", context.config_domain_name, "--application",
         context.python_application, "--dry-run"
     ]
 
     volumes = {f"{tar_path}": {'bind': '/tmp/service.tar', 'mode': 'rw'}}
 
-    if context.app_certificate_origin == AppCertificateOrigin.Owner:
+    if context.ssl_certificate_origin == SSLCertificateOrigin.Owner:
         command.append("--certificate")
         command.append("/tmp/cert.pem")
         volumes[f"{context.app_cert_path}"] = {
             'bind': '/tmp/cert.pem',
             'mode': 'rw'
         }
+    elif context.ssl_certificate_origin == SSLCertificateOrigin.Operator:
+        command.append("--no-ssl")
     else:
         command.append("--self-signed")
-        command.append(str(context.expires_in))
+        command.append(str(int(datetime.timestamp(context.expires_at))))
 
     if context.encrypted_code:
         command.append("--encrypted")

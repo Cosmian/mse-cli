@@ -11,11 +11,19 @@ from pydantic import BaseModel
 class AppStatus(Enum):
     """EnclaveStatus enum."""
 
-    Initializing = "Initializing"
-    Running = "Running"
-    OnError = "OnError"
-    Deleted = "Deleted"
-    Stopped = "Stopped"
+    Initializing = "initializing"
+    Running = "running"
+    OnError = "on_error"
+    Deleted = "deleted"
+    Stopped = "stopped"
+
+
+class SSLCertificateOrigin(str, Enum):
+    """SSLCertificateOrigin enum."""
+
+    Self = "self"
+    Owner = "owner"
+    Operator = "operator"
 
 
 class App(BaseModel):
@@ -27,6 +35,7 @@ class App(BaseModel):
     project_uuid: UUID
     owner_uuid: UUID
     domain_name: str
+    config_domain_name: str
     docker_version: Optional[str]
     created_at: Optional[datetime.datetime]
     ready_at: Optional[datetime.datetime]
@@ -35,9 +44,9 @@ class App(BaseModel):
     onerror_at: Optional[datetime.datetime]
     status: AppStatus
     plan: str
-    encrypted_code: bool
-    delegated_ssl: bool
-    shutdown_delay: int
+    has_encrypted_code: bool
+    ssl_certificate_origin: SSLCertificateOrigin
+    expires_at: datetime.datetime
     python_application: str
     health_check_endpoint: str
 

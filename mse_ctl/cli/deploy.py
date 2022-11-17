@@ -11,12 +11,12 @@ from mse_lib_crypto.xsalsa20_poly1305 import encrypt_directory
 
 from mse_ctl.api.app import get, new
 from mse_ctl.api.auth import Connection
-from mse_ctl.api.types import App, AppStatus
+from mse_ctl.api.types import App, AppStatus, SSLCertificateOrigin
 from mse_ctl.cli.helpers import (compute_mr_enclave, exists_in_project,
                                  get_certificate, get_enclave_size,
                                  get_project_from_name, stop_app, verify_app)
 from mse_ctl.conf.app import AppConf
-from mse_ctl.conf.context import AppCertificateOrigin, Context
+from mse_ctl.conf.context import Context
 from mse_ctl.conf.user import UserConf
 from mse_ctl.log import LOGGER as log
 from mse_ctl.utils.color import bcolors
@@ -39,7 +39,6 @@ def add_subparser(subparsers):
     parser.set_defaults(func=run)
 
 
-# pylint: disable=unused-argument
 def run(args):
     """Run the subcommand."""
     user_conf = UserConf.from_toml()
@@ -62,25 +61,28 @@ def run(args):
     log.info("App creating for %s:%s...", app.name, app.version)
     app = wait_app_creation(conn, app.uuid)
 
-    selfsigned_cert = get_certificate(app.domain_name)
-    app_cert = app_conf.ssl.certificate if app.delegated_ssl else selfsigned_cert
+    selfsigned_cert = get_certificate(app.config_domain_name)
+    app_cert = app_conf.ssl.certificate if app.ssl_certificate_origin == \
+        SSLCertificateOrigin.Owner else selfsigned_cert
 
-    context.run(app.uuid, app.domain_name, app.docker_version,
-                app.shutdown_delay, selfsigned_cert, app_cert)
+    context.run(app.uuid, app.config_domain_name, app.domain_name,
+                app.docker_version, app.expires_at, selfsigned_cert, app_cert,
+                app.ssl_certificate_origin)
 
-    log.info("✅ App created with uuid: %s", app.uuid)
+    log.info("✅%s App created with uuid: %s%s", bcolors.OKGREEN, app.uuid,
+             bcolors.ENDC)
 
-    log.info("Checking app thrustworthiness...")
+    log.info("Checking app trustworthiness...")
     mr_enclave = compute_mr_enclave(context, tar_path)
     log.info("The code fingerprint is %s", mr_enclave)
     verify_app(mr_enclave, selfsigned_cert)
     log.info("Verification: %ssuccess%s", bcolors.OKGREEN, bcolors.ENDC)
 
-    if not app.delegated_ssl:
-        log.info("✅ The verified certificate has been saved at: %s",
-                 context.app_cert_path)
+    if app.ssl_certificate_origin == SSLCertificateOrigin.Self:
+        log.info("✅%s The verified certificate has been saved at: %s%s",
+                 bcolors.OKGREEN, context.config_cert_path, bcolors.ENDC)
 
-    if app.encrypted_code or app.delegated_ssl:
+    if app.has_encrypted_code or app.ssl_certificate_origin == SSLCertificateOrigin.Owner:
         log.info("Unsealing your private data from your mse instance...")
         unseal_private_data(
             context,
@@ -90,7 +92,8 @@ def run(args):
     check_app_health(context, app.health_check_endpoint)
 
     log.info("Your application is now fully deployed and started...")
-    log.info("✅ It's now ready to be used on https://%s", app.domain_name)
+    log.info("✅%s It's now ready to be used on https://%s%s", bcolors.OKGREEN,
+             app.domain_name, bcolors.ENDC)
 
     context.save()
 
@@ -104,8 +107,8 @@ def check_app_health(context: Context, health_check_endpoint: str):
         try:
             r = requests.get(
                 url=f"https://{context.domain_name}{health_check_endpoint}",
-                verify=True if context.app_certificate_origin
-                == AppCertificateOrigin.Owner else str(context.app_cert_path),
+                verify=True if context.ssl_certificate_origin
+                != SSLCertificateOrigin.Self else str(context.app_cert_path),
                 timeout=2)
 
             if r.ok and r.status_code == 200 \
@@ -116,6 +119,9 @@ def check_app_health(context: Context, health_check_endpoint: str):
             # Ignore the error, server is not ready yet
             pass
         except requests.exceptions.SSLError:
+            # Ignore the error, server is not ready yet
+            pass
+        except requests.exceptions.ConnectionError:
             # Ignore the error, server is not ready yet
             pass
 
@@ -206,7 +212,7 @@ def unseal_private_data(context: Context,
     if ssl_private_key:
         data["ssl_private_key"] = ssl_private_key
 
-    r = requests.post(url=f"https://{context.domain_name}",
+    r = requests.post(url=f"https://{context.config_domain_name}",
                       json=data,
                       headers={'Content-Type': 'application/json'},
                       verify=str(context.config_cert_path),
