@@ -44,7 +44,7 @@ Let's use a ready-to-use code provided.
 
 ```{.bash}
 $ git clone http://gitlab.cosmian.com/core/mse-app-demo
-$ mse-ctl deploy --path mse-app-demo/helloworld
+$ mse-ctl deploy --path mse-app-demo/helloworld/mse.toml
 ```
 
 Your service is now up and running !

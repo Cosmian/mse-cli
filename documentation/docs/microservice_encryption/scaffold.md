@@ -1,5 +1,5 @@
 
-Use the subcommand `mse-ctl scaffold` to bootstrap your `Flask` app
+Use the subcommand `scaffold` to bootstrap your `Flask` app
 with all the required configuration to be launched in Microservice Encryption.
 
 This scaffold command prepares a fresh lite Flask app, with one endpoint on `/` answering
