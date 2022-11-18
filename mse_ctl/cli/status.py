@@ -48,13 +48,13 @@ def run(args):
     log.info("\tUUID               = %s", app.uuid)
     log.info("\tMSE docker version = %s", app.docker_version)
     log.info("\tEncrypted code     = %s",
-             "Yes" if app.has_encrypted_code else "No")
+             "yes" if app.has_encrypted_code else "no")
     log.info("\tCertificate origin = %s", app.ssl_certificate_origin.value)
     log.info("\tCreated at         = %s", app.created_at)
 
     remaining_days = app.expires_at - datetime.now(timezone.utc)
-    log.info("\tExpires at         = %s (%d days remaining)", app.expires_at,
-             remaining_days.days)
+    log.info("\tExpires at         = %s (%s%d days remaining%s)",
+             app.expires_at, bcolors.WARNING, remaining_days.days, bcolors.ENDC)
 
     if app.status == AppStatus.Running:
         log.info("\tStatus             = %s%s%s", bcolors.OKGREEN,

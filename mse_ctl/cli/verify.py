@@ -10,6 +10,7 @@ from mse_ctl.conf.context import Context
 from mse_ctl.log import LOGGER as log
 from mse_ctl.utils.color import bcolors
 from mse_ctl.utils.fs import untar
+from intel_sgx_ra.error import SGXQuoteNotFound
 
 
 def add_subparser(subparsers):
@@ -87,7 +88,14 @@ def run(args):
     cert_path = Path(os.getcwd()) / "cert.pem"
     cert_path.write_text(ca_data)
 
-    verify_app(mrenclave, ca_data)
+    try:
+        verify_app(mrenclave, ca_data)
+    except SGXQuoteNotFound:
+        log.info(
+            "%sThe application is not using a certificate generate by mse.%s",
+            bcolors.WARNING, bcolors.ENDC)
+        log.info("Verifying the application is therefore not possible on use.")
+        return
 
     log.info("Verification: %ssuccess%s", bcolors.OKGREEN, bcolors.ENDC)
     log.info("The verified certificate has been saved at: %s", cert_path)
