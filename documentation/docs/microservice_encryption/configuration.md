@@ -18,27 +18,39 @@ $ cat my_new_hello_world/mse.toml
 ───────┴──────────────────────────────
 ```
 
-Find below the description of this configuration file. 
+Find below the description of the configuration file. 
 
 ## The main section
 
-|      Keys       | Mandatory |            Types            |                                              Description                                               |
-| :-------------: | :-------: | :-------------------------: | :----------------------------------------------------------------------------------------------------: |
-|      name       |     ✅     |             str             |                      The name of the app. It should be unique in a given project                       |
-|     version     |     ✅     |             str             |         The version of the app. An app can exist with various version number in a same project         |
-|     project     |     ✅     |             str             |                                     The project the app belongs to                                     |
-|      plan       |     ✅     | `free` or other plans names |                             The name of the plan your project is linked to                             |
-|       dev       |           | `True` / `False` (default)  |       Whether you want to start your app in dev mode. See <TODO> for more details about dev mode       |  |
-| expiration_date |           |      YY-MM-DD HH/mm/ss      | The expiration date of your app once deploy. See <TODO> for more information about the expiration date |
+|      Keys       | Mandatory |            Types            |                                                               Description                                                               |
+| :-------------: | :-------: | :-------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------: |
+|      name       |     ✔️     |             str             |                                       The name of the app. It should be unique in a given project                                       |
+|     version     |     ✔️     |             str             |                         The version of the app. An app can exist with various version number in a same project                          |
+|     project     |     ✔️     |             str             |                                                     The project the app belongs to                                                      |
+|      plan       |     ✔️     | `free` or other plans names |                                             The name of the plan your project is linked to                                              |
+|       dev       |           | `True` / `False` (default)  |                       Whether you want to start your app in dev mode. See <TODO> for more details about dev mode                        |  |
+| expiration_date |           |      YY-MM-DD HH/mm/ss      | The expiration date of your app once deploy. See [next paragraph](configuration.md#expiration-date-of-the-application) for more details |
+
+### Expiration date of the application
+
+When the expiration date is reached, the application will be shutdown. Mainly because the SSL certificate needs to be renewed. It requires a new deployment because of our implement security measures to garantee zero trust environment.
+
+If the plan is `free` then the expiration date will be overwritten to the value inherite from this plan: **1  day**. 
+
+In case of a given app owner SSL certificate, this value should be lower than the expiration date of the certificate. 
+
+If no `expiration_date` is specified in the configuration file, the expiration date of the application is the expiration date of the certificate if some otherwise it takes the value inherited from the chosen plan. 
+
+In dev mode, the expiration date is infinite. 
 
 ## The code section
 
 |         Keys          | Mandatory |      Types       |                                             Description                                              |
 | :-------------------: | :-------: | :--------------: | :--------------------------------------------------------------------------------------------------: |
-|       location        |     ✅     |       str        | The path (absolue or relative from the config file location) where to find the application to deploy |
-|       encrypted       |     ✅     | `True` / `False` |                   Wheter the application should be sent encrypted to the mse node                    |
-|  python_application   |     ✅     |       str        |                                   module_name:flask_variable_name                                    |
-| health_check_endpoint |     ✅     |       str        |          An endpoint `mse-ctl` can request to determine if the application is up and ready           |
+|       location        |     ✔️     |       str        | The path (absolue or relative from the config file location) where to find the application to deploy |
+|       encrypted       |     ✔️     | `True` / `False` |                   Wheter the application should be sent encrypted to the mse node                    |
+|  python_application   |     ✔️     |       str        |                                   module_name:flask_variable_name                                    |
+| health_check_endpoint |     ✔️     |       str        |          An endpoint `mse-ctl` can request to determine if the application is up and ready           |
 
 ## The ssl section
 
@@ -46,6 +58,7 @@ For more information about the ssl information. See <TODO>
 
 |    Keys     | Mandatory | Types |                                        Description                                         |
 | :---------: | :-------: | :---: | :----------------------------------------------------------------------------------------: |
-| domain_name |     ✅     |  str  | The chosen domain name for your application. It should be the same than in the certificate |
-| private_key |     ✅     |  str  |                     The private key (PEM format) of the SSL connection                     |
-| certificate |     ✅     |  str  |                    The full chain certificate  (PEM format) of the SSL                     |
+| domain_name |     ✔️     |  str  | The chosen domain name for your application. It should be the same than in the certificate |
+| private_key |     ✔️     |  str  |                     The private key (PEM format) of the SSL connection                     |
+| certificate |     ✔️     |  str  |                    The full chain certificate  (PEM format) of the SSL                     |
+
