@@ -1,4 +1,4 @@
-The configuration of an MSE app is written in a TOML file. This file is read in the current directory when using `deploy` subcommand if a `mse.toml` exists. Otherwise use `--path` to specify its location.
+The configuration of an MSE app is written in a TOML file. This file is read in the current directory when using `deploy` subcommand if an `mse.toml` exists. Otherwise use `--path` to specify its location.
 
 Let's remind the quick start example app configuration file:
 
