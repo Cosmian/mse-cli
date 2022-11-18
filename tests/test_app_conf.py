@@ -1,4 +1,5 @@
 from pathlib import Path
+from datetime import datetime
 import tempfile
 
 from mse_ctl.conf.app import AppConf, SSLConf, CodeConf
@@ -116,14 +117,14 @@ def test_ssl():
                            version="1.0.0",
                            project="default",
                            plan="free",
-                           shutdown_delay=1,
+                           expiration_date=datetime(2023, 1, 1, 0, 0, 0),
                            code=code,
                            ssl=ssl)
 
     assert conf == ref_app_conf
 
 
-def test_optionals():
+def test_ssl_optionals():
     """Test conf with optionals as None."""
     toml = Path("tests/data/optional_fields.toml")
     conf = AppConf.from_toml(path=toml)
@@ -143,9 +144,9 @@ def test_optionals():
     assert conf == ref_app_conf
 
 
-def test_shutdown_delay():
-    """Test conf with `shutdown_delay` set."""
-    toml = Path("tests/data/shutdown_delay.toml")
+def test_expiration_date():
+    """Test conf with `expiration_date` set."""
+    toml = Path("tests/data/expiration_date.toml")
     conf = AppConf.from_toml(path=toml)
 
     code = CodeConf(location="/tmp/code",
@@ -153,18 +154,20 @@ def test_shutdown_delay():
                     python_application="app:app",
                     health_check_endpoint="/")
 
-    ref_app_conf = AppConf(name="helloworld",
-                           version="1.0.0",
-                           project="default",
-                           plan="free",
-                           code=code,
-                           shutdown_delay=10)
+    ref_app_conf = AppConf(
+        name="helloworld",
+        version="1.0.0",
+        project="default",
+        plan="free",
+        code=code,
+        expiration_date=datetime(2023, 1, 1, 0, 0, 0),
+    )
 
     assert conf == ref_app_conf
 
     toml = Path("tests/data/optional_fields_ssl.toml")
     conf = AppConf.from_toml(path=toml)
-    assert conf.shutdown_delay is None
+    assert conf.expiration_date == datetime(2023, 2, 6, 8, 54, 58)
 
 
 def test_bad_domain_name():
@@ -174,9 +177,9 @@ def test_bad_domain_name():
         conf = AppConf.from_toml(path=toml)
 
 
-def test_bad_shutdown_delay():
+def test_bad_expiration_date():
     """Test error when exp doesn't fit the one in the cert."""
-    toml = Path("tests/data/ssl_bad_shutdown_delay.toml")
+    toml = Path("tests/data/ssl_bad_expiration_date.toml")
     with pytest.raises(Exception) as context:
         conf = AppConf.from_toml(path=toml)
 
@@ -198,8 +201,7 @@ def test_python_variable():
                    version="1.0.0",
                    project="default",
                    plan="free",
-                   code=code,
-                   shutdown_delay=10)
+                   code=code)
 
     with pytest.raises(Exception) as context:
         conf.python_variable
@@ -224,7 +226,7 @@ def test_save():
 
     assert filecmp.cmp(toml, saved_path / "mse.toml")
 
-    toml = Path("tests/data/shutdown_delay.toml")
+    toml = Path("tests/data/expiration_date.toml")
     conf = AppConf.from_toml(path=toml)
 
     saved_path = Path(tempfile.gettempdir())
@@ -270,7 +272,7 @@ def test_into_payload():
         "encrypted_code": True,
         "health_check_endpoint": "/",
         "python_application": "app:app",
-        "expires_at": None,
+        "expires_at": '2023-01-01T00:00:00.000000Z',
         "dev_mode": False,
         "ssl_certificate": CERTIFICATE,
         "domain_name": "demo.cosmian.app",

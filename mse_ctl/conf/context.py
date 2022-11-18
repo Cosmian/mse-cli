@@ -4,6 +4,7 @@ from datetime import datetime
 import os
 import tempfile
 from pathlib import Path
+from typing import Any, Dict, Optional
 from uuid import UUID
 
 import toml
@@ -15,43 +16,55 @@ from mse_ctl.api.types import SSLCertificateOrigin
 from mse_ctl.conf.app import AppConf
 
 
-class Context(BaseModel):
-    """Definition of a mse context."""
+class ContextInstance(BaseModel):
+    """Part of the context coming from the instanciation."""
 
-    # Name of the mse instance
-    name: str
-    # Version of the mse instance
-    version: str
-    # Project parent of the app
-    project: str
     # Unique id of the app
     id: UUID
     # Domain name of the configuration server
     config_domain_name: str
-    # Domain name of the app
-    domain_name: str
-    # Symetric used to encrypt the code
-    symkey: bytes
-    # Whether the code is encrypted or not
-    encrypted_code: bool
-    # Size of the enclave
-    enclave_size: str
+    # Size of the enclave determine from the plan
+    enclave_size: int
     # Shutdown date of the spawned enclave
     expires_at: datetime
-    # from python_flask_module import python_flask_variable_name
-    python_application: str
     # The mse-docker version
     docker_version: str
-    # The certificate of the app (self-signed or signed)
-    ssl_app_certificate: str
-    # Whether the certificate has been provided by the app owner
+    # The origin of the app SSL certificate
     ssl_certificate_origin: SSLCertificateOrigin
 
-    @validator('symkey', pre=True, always=True)
+
+class ContextConf(BaseModel):
+    """Part of the context coming from the app conf."""
+
+    # Name of the mse app
+    name: str
+    # Version of the mse app
+    version: str
+    # Project parent of the app
+    project: str
+    # Symetric key used to encrypt the code if required
+    code_sealed_key: Optional[bytes] = None
+    # from python_flask_module import python_flask_variable_name
+    python_application: str
+    # The certificate of the app if origin = Owner
+    ssl_app_certificate: Optional[str] = None
+
+    @validator('code_sealed_key', pre=True, always=True)
     # pylint: disable=no-self-argument,unused-argument
-    def set_symkey(cls, v, values, **kwargs):
-        """Set symkey from a value for pydantic."""
+    def set_code_sealed_key(cls, v, values, **kwargs):
+        """Set code_sealed_key from a value for pydantic."""
         return bytes.fromhex(v) if isinstance(v, str) else v
+
+
+class Context(BaseModel):
+    """Definition of a mse context."""
+
+    # The version of context file
+    version: str = "1.0"
+    # The config of the app
+    config: ContextConf
+    # The mse app instance parameters
+    instance: Optional[ContextInstance] = None
 
     @property
     def docker_log_path(self):
@@ -92,34 +105,35 @@ class Context(BaseModel):
         """Get the path of the context."""
         path = MSE_CONF_DIR / "context"
         os.makedirs(path, exist_ok=True)
-        return path / (str(self.id) + ".mse")
+        assert self.instance
+        return path / (str(self.instance.id) + ".mse")
 
     @property
     def workspace(self) -> Path:
         """Get the workspace path and create it."""
-        path = Path(tempfile.gettempdir()) / f"{self.name}-{self.version}"
+        path = Path(
+            tempfile.gettempdir()) / f"{self.config.name}-{self.config.version}"
         os.makedirs(path, exist_ok=True)
         return path
 
     @staticmethod
-    def from_app_conf(conf: AppConf, enclave_size: int):
+    def from_app_conf(conf: AppConf):
         """Build a Context object from an app conf."""
-        return Context(  # TODO: could we generate context from app and not appconf?
-            name=conf.name,
-            version=conf.version,
-            project=conf.project,
-            id="00000000-0000-0000-0000-000000000000",
-            config_domain_name="",
-            domain_name="",
-            encrypted_code=conf.code.encrypted,
-            enclave_size=enclave_size,
-            expires_at=0,  # TODO
-            python_application=conf.code.python_application,
-            symkey=bytes(random_key()).hex(),
-            ssl_app_certificate="",
-            ssl_certificate_origin=SSLCertificateOrigin.Owner
-            if conf.ssl else SSLCertificateOrigin.Self,  # TODO
-            docker_version="")
+        symkey = bytes(random_key()).hex() if conf.code.encrypted else None
+        cert = conf.ssl.certificate if conf.ssl else None
+
+        context = Context(
+            config=ContextConf(name=conf.name,
+                               version=conf.version,
+                               project=conf.project,
+                               python_application=conf.code.python_application,
+                               code_sealed_key=symkey,
+                               ssl_app_certificate=cert))
+
+        if cert:
+            context.app_cert_path.write_text(cert)
+
+        return context
 
     @staticmethod
     def from_toml(path: Path):
@@ -129,40 +143,53 @@ class Context(BaseModel):
 
         return Context(**dataMap)
 
-    def run(self, uuid: UUID, config_domain_name: str, domain_name: str,
-            docker_version: str, expires_at: datetime, config_cert: str,
-            app_cert: str, ssl_certificate_origin: SSLCertificateOrigin):
-        """Complete the context since the app is now running."""
-        self.id = uuid
-        self.config_domain_name = config_domain_name
-        self.domain_name = domain_name
-        self.docker_version = docker_version
-        self.expires_at = expires_at
-        self.ssl_app_certificate = app_cert
-        self.ssl_certificate_origin = ssl_certificate_origin
+    @property
+    def has_sealed_private_data(self):
+        """Whether the application require to unseal to work."""
+        return self.config.code_sealed_key or self.config.ssl_app_certificate
 
-        self.config_cert_path.write_text(config_cert)
-        self.app_cert_path.write_text(app_cert)
+    def run(self, uuid: UUID, enclave_size: int, config_domain_name: str,
+            docker_version: str, expires_at: datetime,
+            ssl_certificate_origin: SSLCertificateOrigin):
+        """Complete the context since the app is now running."""
+        self.instance = ContextInstance(
+            id=uuid,
+            config_domain_name=config_domain_name,
+            enclave_size=enclave_size,
+            docker_version=docker_version,
+            expires_at=expires_at,
+            ssl_certificate_origin=ssl_certificate_origin,
+        )
 
     def save(self):
         """Dump the current object to a file."""
         with open(self.exported_path, "w", encoding="utf8") as f:
-            dataMap = {
-                "name": self.name,
+            dataMap: Dict[str, Any] = {
                 "version": self.version,
-                "project": self.project,
-                "id": str(self.id),
-                "config_domain_name": self.config_domain_name,
-                "domain_name": self.domain_name,
-                "symkey": bytes(self.symkey).hex(),
-                "encrypted_code": self.encrypted_code,
-                "enclave_size": self.enclave_size,
-                "expires_at": self.expires_at,
-                "python_application": self.python_application,
-                "docker_version": self.docker_version,
-                "ssl_certificate_origin": self.ssl_certificate_origin.value,
-                "ssl_app_certificate": self.ssl_app_certificate
+                "config": {
+                    "name": self.config.name,
+                    "version": self.config.version,
+                    "project": self.config.project,
+                    "python_application": self.config.python_application,
+                }
             }
-            toml.dump(dataMap, f)
 
-    # TODO: add mse-ctl-version field
+            if self.config.code_sealed_key:
+                dataMap["config"]["code_sealed_key"] = bytes(
+                    self.config.code_sealed_key).hex()
+            if self.config.ssl_app_certificate:
+                dataMap["config"][
+                    "ssl_app_certificate"] = self.config.ssl_app_certificate
+
+            if self.instance:
+                origin = self.instance.ssl_certificate_origin.value
+                dataMap["instance"] = {
+                    "id": str(self.instance.id),
+                    "config_domain_name": self.instance.config_domain_name,
+                    "enclave_size": self.instance.enclave_size,
+                    "expires_at": str(self.instance.expires_at),
+                    "docker_version": self.instance.docker_version,
+                    "ssl_certificate_origin": origin,
+                }
+
+            toml.dump(dataMap, f)

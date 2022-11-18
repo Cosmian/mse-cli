@@ -79,33 +79,37 @@ def stop_app(conn: Connection, app_uuid: UUID):
 def compute_mr_enclave(context: Context, tar_path: Path) -> str:
     """Compute the MR enclave of an enclave."""
     client = docker.from_env()
-    image = f"{MSE_DOCKER_IMAGE_URL}:{context.docker_version}"
+
+    assert context.instance
+
+    image = f"{MSE_DOCKER_IMAGE_URL}:{context.instance.docker_version}"
 
     # Pull always before running
     client.images.pull(image)
 
     command = [
-        "--size", f"{context.enclave_size}G", "--code", "/tmp/service.tar",
-        "--host", context.config_domain_name, "--application",
-        context.python_application, "--dry-run"
+        "--size", f"{context.instance.enclave_size}G", "--code",
+        "/tmp/service.tar", "--host", context.instance.config_domain_name,
+        "--application", context.config.python_application, "--dry-run"
     ]
 
     volumes = {f"{tar_path}": {'bind': '/tmp/service.tar', 'mode': 'rw'}}
 
-    if context.ssl_certificate_origin == SSLCertificateOrigin.Owner:
+    if context.instance.ssl_certificate_origin == SSLCertificateOrigin.Owner:
         command.append("--certificate")
         command.append("/tmp/cert.pem")
         volumes[f"{context.app_cert_path}"] = {
             'bind': '/tmp/cert.pem',
             'mode': 'rw'
         }
-    elif context.ssl_certificate_origin == SSLCertificateOrigin.Operator:
+    elif context.instance.ssl_certificate_origin == SSLCertificateOrigin.Operator:
         command.append("--no-ssl")
     else:
         command.append("--self-signed")
-        command.append(str(int(datetime.timestamp(context.expires_at))))
+        command.append(str(int(datetime.timestamp(
+            context.instance.expires_at))))
 
-    if context.encrypted_code:
+    if context.config.code_sealed_key:
         command.append("--encrypted")
 
     container = client.containers.run(

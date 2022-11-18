@@ -1,14 +1,17 @@
+version = "1.0"
+
+[config]
 name = "helloworld"
 version = "1.0.0"
 project = "default"
+python_application = "app:app"
+code_sealed_key = "a389f8baf2e03cebd445d99f03600b29ca259faa9a3964e529c03effef206135"
+ssl_app_certificate = "-----BEGIN CERTIFICATE"
+
+[instance]
 id = "d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e"
 config_domain_name = "demo.cosmian.app"
-domain_name = "demo.cosmian.dev"
-symkey = "a389f8baf2e03cebd445d99f03600b29ca259faa9a3964e529c03effef206135"
-encrypted_code = true
-enclave_size = "1"
-expires_at = 2022-11-18T09:15:46.450477
-python_application = "app:app"
+enclave_size = 1
+expires_at = "2022-11-18 16:22:11.516125"
 docker_version = "11d789bf"
 ssl_certificate_origin = "owner"
-ssl_app_certificate = "-----BEGIN CERTIFICATE"

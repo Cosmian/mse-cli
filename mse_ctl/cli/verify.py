@@ -74,9 +74,10 @@ def run(args):
         mrenclave = args.fingerprint
     elif args.context:
         context = Context.from_toml(args.context)
-        if context.encrypted_code:
-            untar(context.decrypted_code_path, context.tar_code_path)
-            decrypt_directory(context.decrypted_code_path, context.symkey)
+        if context.config.code_sealed_key:
+            untar(context.decrypted_code_path, args.code)
+            decrypt_directory(context.decrypted_code_path,
+                              context.config.code_sealed_key)
             log.info("The code has been decrypted in: %s",
                      context.decrypted_code_path)
         mrenclave = compute_mr_enclave(context, args.code)

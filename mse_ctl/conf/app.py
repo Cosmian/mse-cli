@@ -51,8 +51,8 @@ class AppConf(BaseModel):
     # Dev mode
     dev: bool = False
 
-    # Delay before stopping the app
-    shutdown_delay: Optional[int] = None
+    # The application will stop at this date
+    expiration_date: Optional[datetime]
 
     # Configuration of the code
     code: CodeConf
@@ -109,13 +109,17 @@ class AppConf(BaseModel):
                 cert = x509.load_pem_x509_certificate(
                     app.ssl.certificate.encode('utf8'))
 
-                # Check `shutdown_delay`` using cert expiration date
-                delta = cert.not_valid_after - datetime.now()
-                if app.shutdown_delay and app.shutdown_delay > delta.days:
+                # Check `expiration_date` using cert expiration date
+                if not app.expiration_date:
+                    app.expiration_date = cert.not_valid_after
+                elif app.expiration_date > cert.not_valid_after:
                     raise Exception(
-                        "`shutdown_delay` ({shutdown_delay}) can't be bigger "
-                        "than the number of days before certificate expiration ({delta})"
+                        "`expiration_date` ({expiration_date}) can't be after "
+                        "the certificate expiration date ({cert.not_valid_after})"
                     )
+                elif app.expiration_date <= datetime.now():
+                    raise Exception(
+                        "`expiration_date` ({expiration_date}) is in the past")
 
                 # Check domain names from cert
                 ext = cert.extensions.get_extension_for_class(
@@ -148,9 +152,8 @@ class AppConf(BaseModel):
 
             if self.dev:
                 dataMap['dev'] = self.dev
-            if self.shutdown_delay:
-                dataMap['shutdown_delay'] = str(
-                    self.shutdown_delay)  # TODO: remove str?
+            if self.expiration_date:
+                dataMap['expiration_date'] = str(self.expiration_date)
             if self.ssl:
                 dataMap['ssl'] = {
                     "domain_name": self.ssl.domain_name,
@@ -176,6 +179,10 @@ class AppConf(BaseModel):
 
     def into_payload(self):
         """Convert it into a mse-backend payload as a dict."""
+        d = None
+        if self.expiration_date:
+            d = self.expiration_date.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+
         return {
             "name": self.name,
             "version": self.version,
@@ -184,10 +191,7 @@ class AppConf(BaseModel):
             "dev_mode": self.dev,
             "health_check_endpoint": self.code.health_check_endpoint,
             "python_application": self.code.python_application,
-            "expires_at": None,
-            # TODO
-            # datetime.now(timezone.utc) + timedelta(days=self.shutdown_delay)
-            # if self.shutdown_delay else None,
+            "expires_at": d,
             "ssl_certificate": self.ssl.certificate if self.ssl else None,
             "domain_name": self.ssl.domain_name if self.ssl else None,
             "plan": self.plan,

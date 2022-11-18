@@ -5,7 +5,7 @@ from datetime import datetime
 
 from mse_ctl.api.types import SSLCertificateOrigin
 from mse_ctl.conf.app import AppConf, CodeConf, SSLConf
-from mse_ctl.conf.context import Context
+from mse_ctl.conf.context import Context, ContextConf, ContextInstance
 
 
 def test_from_toml():
@@ -14,22 +14,24 @@ def test_from_toml():
     conf = Context.from_toml(path=toml)
 
     ref_context_conf = Context(
-        name="helloworld",
-        version="1.0.0",
-        project="default",
-        id="d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e",
-        config_domain_name="demo.cosmian.app",
-        domain_name="demo.cosmian.dev",
-        symkey=
-        "a389f8baf2e03cebd445d99f03600b29ca259faa9a3964e529c03effef206135",
-        encrypted_code=True,
-        enclave_size="1",
-        expires_at=datetime.strptime("2022-11-18T09:15:46.450477",
-                                     "%Y-%m-%dT%H:%M:%S.%f"),
-        python_application="app:app",
-        docker_version="11d789bf",
-        ssl_certificate_origin=SSLCertificateOrigin.Owner,
-        ssl_app_certificate="-----BEGIN CERTIFICATE")
+        version="1.0",
+        config=ContextConf(
+            name="helloworld",
+            version="1.0.0",
+            project="default",
+            code_sealed_key=
+            "a389f8baf2e03cebd445d99f03600b29ca259faa9a3964e529c03effef206135",
+            python_application="app:app",
+            ssl_app_certificate="-----BEGIN CERTIFICATE"),
+        instance=ContextInstance(
+            id="d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e",
+            config_domain_name="demo.cosmian.app",
+            enclave_size=1,
+            expires_at=datetime.strptime("2022-11-18 16:22:11.516125",
+                                         "%Y-%m-%d %H:%M:%S.%f"),
+            docker_version="11d789bf",
+            ssl_certificate_origin=SSLCertificateOrigin.Owner,
+        ))
 
     assert conf == ref_context_conf
 
@@ -54,25 +56,20 @@ def test_from_app_conf():
                            code=code,
                            ssl=ssl)
 
-    conf = Context.from_app_conf(conf=ref_app_conf, enclave_size=1)
+    conf = Context.from_app_conf(conf=ref_app_conf)
 
     ref_context_conf = Context(
-        name="helloworld",
-        version="1.0.0",
-        project="default",
-        id="00000000-0000-0000-0000-000000000000",
-        config_domain_name="",
-        domain_name="",
-        symkey=conf.symkey,
-        encrypted_code=True,
-        enclave_size="1",
-        expires_at=0,
-        python_application="app:app",
-        docker_version="",
-        ssl_certificate_origin=SSLCertificateOrigin.Owner,
-        ssl_app_certificate="")
+        version="1.0",
+        config=ContextConf(name="helloworld",
+                           version="1.0.0",
+                           project="default",
+                           code_sealed_key=conf.config.code_sealed_key,
+                           python_application="app:app",
+                           ssl_app_certificate="-----BEGIN CERTIFICATE"),
+        instance=None)
 
     assert conf == ref_context_conf
+    assert conf.app_cert_path.read_text() == "-----BEGIN CERTIFICATE"
 
 
 def test_run():
@@ -96,21 +93,17 @@ def test_run():
                            code=code,
                            ssl=ssl)
 
-    conf = Context.from_app_conf(conf=ref_app_conf, enclave_size=1)
-    ref_context_conf.symkey = conf.symkey
+    conf = Context.from_app_conf(conf=ref_app_conf)
+    ref_context_conf.config.code_sealed_key = conf.config.code_sealed_key
     conf.run(uuid=UUID("d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e"),
+             enclave_size=1,
              config_domain_name="demo.cosmian.app",
-             domain_name="demo.cosmian.dev",
              docker_version="11d789bf",
-             expires_at=datetime.strptime("2022-11-18T09:15:46.450477",
+             expires_at=datetime.strptime("2022-11-18T16:22:11.516125",
                                           "%Y-%m-%dT%H:%M:%S.%f"),
-             config_cert="-----BEGIN CERTIFICATE1",
-             app_cert="-----BEGIN CERTIFICATE",
              ssl_certificate_origin=SSLCertificateOrigin.Owner)
 
     assert conf == ref_context_conf
-    assert conf.config_cert_path.read_text() == "-----BEGIN CERTIFICATE1"
-    assert conf.app_cert_path.read_text() == "-----BEGIN CERTIFICATE"
 
 
 def test_save():
