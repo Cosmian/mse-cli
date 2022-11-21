@@ -3,7 +3,7 @@
 
 ## Login
 
-The user login information are stored in: `$HOME/.config/mse-ctl/login.toml` on Linux/Darwin and `%APPDATA%\mse-ctl\login.toml` on Windows. 
+The user login information is stored in: `$HOME/.config/mse-ctl/login.toml` on Linux/Darwin and `%APPDATA%\mse-ctl\login.toml` on Windows. 
 
 ## Workspace
 

@@ -35,26 +35,26 @@ Find below the description of the configuration file.
 
 When the expiration date is reached, the application will be shutdown. Mainly because the SSL certificate needs to be renewed. It requires a new deployment because of our implement security measures to garantee zero trust environment.
 
-If the plan is `free` then the expiration date will be overwritten to the value inherite from this plan: **1  day**. 
+If the plan is `free` then the expiration date will be overwritten to the value inherited from this plan: **1  day**. 
 
-In case of a given app owner SSL certificate, this value should be lower than the expiration date of the certificate. 
+In case the SSL certificate is provided by the app owner, this value should be lower than the expiration date of the certificate.
 
 If no `expiration_date` is specified in the configuration file, the expiration date of the application is the expiration date of the certificate if some. Otherwise, it takes the value inherited from the chosen plan. 
 
-In dev mode, the expiration date is infinite. 
+In dev mode, the expiration date is infinite.
 
 ## The code section
 
 |         Keys          | Mandatory |      Types       |                                             Description                                              |
 | :-------------------: | :-------: | :--------------: | :--------------------------------------------------------------------------------------------------: |
 |       location        |     ✔️     |       str        | The path (absolue or relative from the config file location) where to find the application to deploy |
-|       encrypted       |     ✔️     | `True` / `False` |                   Wheter the application should be sent encrypted to the mse node                    |
+|       encrypted       |     ✔️     | `True` / `False` |                   Wheter the application should be sent encrypted to the MSE node                    |
 |  python_application   |     ✔️     |       str        |                                   module_name:flask_variable_name                                    |
 | health_check_endpoint |     ✔️     |       str        |          An endpoint `mse-ctl` can request to determine if the application is up and ready           |
 
-## The ssl section
+## The SSL section
 
-For more information about the ssl information. See [Scenarii](scenarii.md).
+For more information about the SSL information. See [Scenarii](scenarii.md).
 
 |    Keys     | Mandatory | Types |                                        Description                                         |
 | :---------: | :-------: | :---: | :----------------------------------------------------------------------------------------: |

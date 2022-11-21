@@ -8,16 +8,16 @@ The deployment step consists for the app owner in deploying their application in
 
 The deployment is breaking down into two stages: 
 
-- The first one consists in interacting with the cosmian mse backend by sending the code and the configuration
-- The second one consists in interacting right with the spwaned mse node
+- The first one consists in interacting with the Cosmian MSE backend by sending the code and the configuration
+- The second one consists in interacting right with the spwaned MSE node
 
 When you use `mse-ctl deploy` these two stages are merged into this single subcommand.
 
-### Stage 1: spawn the mse node
+### Stage 1: spawn the MSE node
 
 Schéma (TODO show the orgin of this SSL cert)
 
-### Stage 2: configure the mse app
+### Stage 2: configure the MSE app
 
 Schéma
 
@@ -37,11 +37,11 @@ All the [scenarii](./scenarii.md) proceed that way.
 
 ### MSE instance verification
 
-Between stage 1 and stage 2, the app owner should verify the mse app, that is to say:
+Between stage 1 and stage 2, the app owner should verify the MSE app, that is to say:
 
-- Check that the code is running inside an enclave
-- Check that this enclave belongs to Cosmian
-- Check that the code is exactly theirs
+- check that the code is **running inside an enclave**
+- check that this **enclave belongs to Cosmian**
+- check that the **code is exactly theirs**
 
 If not, the app owner shouldn't proceed with stage 2 (`mse-ctl deploy` won't proceed). The stage 2 consists in sending the secret data which can be done only if we are sure the TLS connection is trusted.
 
@@ -49,13 +49,13 @@ For more details about this step, read [security](security.md).
 
 ### Stage 2: secret data configuration
 
-At this point, the app owner has sent their code encrypted inside the mse node and trusts it. 
-Before the application being able to start, the mse node needs several extra secret parameters:
+At this point, the app owner has sent their encrypted code inside the MSE node and trusts it. 
+Before the application being able to start, the MSE node needs several extra secret parameters:
 
 - The key to decrypt the code
 - The private key of the SSL certificate if the TLS connection of the app is managed by the app owner ([scenario #2](./scenarii.md#app-owner-trust-approach-fully-encrypted-saas))
 
-Both these parameters are sent straight to the mse node using the dedicated TLS connection managed by the enclave. Thefore, only the mse app can decrypt the app code previously sent.
+Both these parameters are sent straight to the MSE node using the dedicated TLS connection managed by the enclave. Therefore, only the MSE app can decrypt the app code previously sent.
 
 ## Start the application
 

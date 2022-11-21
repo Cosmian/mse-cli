@@ -58,17 +58,17 @@ This scenario is pretty interesting for developers wishing to test their applica
 
 ## In practice
 
-To cover these scenarii, mse has been implemented with these following features:
+To cover these scenarii, MSE has been implemented with these following features:
 
 |                       Features                       | Zero trust approach | Fully encrypted SaaS | Quick start dev |
 | :--------------------------------------------------: | :-----------------: | :------------------: | :-------------: |
-|   Code encryption when dispatching to the mse node   |          ✅          |          ✅           |        ✅        |
+|   Code encryption when dispatching to the MSE node   |          ✅          |          ✅           |        ✅        |
 | Code & Data encryption when running (on disk/on ram) |          ✅          |          ✅           |        ✅        |
-| App owner can verify the mse instance when deploying |          ✅          |          ✅           |        ✅        |
-|       User can verify the mse instance on use        |          ✅          |          ❌           |        ❌        |
+| App owner can verify the MSE instance when deploying |          ✅          |          ✅           |        ✅        |
+|       User can verify the MSE instance on use        |          ✅          |          ❌           |        ❌        |
 |            User queries & data encryption            |          ✅          |     👁️ App Owner      |    👁️ Cosmian    |
 |           App is working on a web browser            |          ❌          |          ✅           |        ✅        |
 
 ### Code encryption when running
 
-An mse node is an intel sgx enclave which enables Cosmian to run the app in a fully isolated environment in which the filesystem and the memory are completly encrypted from anyone. 
+An MSE node is an intel sgx enclave which enables Cosmian to run the app in a fully isolated environment in which the filesystem and the memory are completely encrypted from anyone.

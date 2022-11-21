@@ -14,7 +14,7 @@ $ pip install mse-ctl
 
 ## Sign up
 
-If it's the first time you are using Microservice Encryption, you need to sign up for an account:
+If it's the first time you are using Microservice Encryption (MSE), you need to sign up for an account:
 
 ```{.bash}
 $ mse-ctl signup
@@ -38,7 +38,7 @@ Credentials are retrieved and stored in your home folder.
 
 ## Deploy your first hello-world
 
-Let's use a ready-to-use code provided.
+Let's start with a ready-to-use code.
 
 === "Linux"
 
