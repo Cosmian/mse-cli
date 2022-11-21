@@ -1,7 +1,7 @@
-You can list all your initializing and running application as follow: 
+You can list all your initializing and running applications as follow: 
 
 ```console
-# List the app from project 'default'
+# List the apps from project 'default'
 $ mse-ctl list ---name default
 
               App UUID               |          Creation date           |    Status    |             App summary              

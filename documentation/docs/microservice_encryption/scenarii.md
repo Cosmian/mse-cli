@@ -17,7 +17,7 @@ The Biotech company (*app owner*) doesn't want to make its code public from anyo
 
 The hospital (*app user*) doesn't want to share its data or any computation results with any one but itself.
 
-It's the **default mode** of the `deploy` subcommand.
+!!! info "It's the **default mode** of the `deploy` subcommand."
 
 ## App owner trust approach: fully encrypted SaaS
 
@@ -40,7 +40,7 @@ The bank (*app owner*) doesn't want to make its code public especially from Cosm
 
 The bank's customer (*app user*) already trusts the bank through the banking application or website. They already shares their data or computation results with no one but the bank.
 
-Therefore, the app owner has to deploy its application by giving a ssl certificate using the `ssl` paragraph in the config file.
+!!! info "The app owner has to deploy its application by giving a ssl certificate using the `ssl` paragraph in the config file."
 
 ## Any trust approach: quick start dev
 
@@ -54,7 +54,7 @@ In that scenario, the app user trusts Cosmian and the app owner.
 
 This scenario is pretty interesting for developers wishing to test their application without being concerned by any SSL generation or DNS configuration.
 
-Therefore, the app owner has to deploy their application by setting `dev=true` in the config file.
+!!! info "The app owner has to deploy their application by setting `dev=true` in the config file."
 
 ## In practice
 

@@ -1,5 +1,5 @@
 
-`mse-ctl` uses various directory to save information about the deployed application. 
+`mse-ctl` uses various directories to save information about the deployed applications. 
 
 ## Login
 
@@ -16,7 +16,7 @@ Any files created during the deployment process are stored in `/tmp/<app_name-ap
 
 ## Context
 
-`mse-ctl` also create a file in `$HOME/.config/mse-ctl/context/<uuid.mse>` when a deployment is sucessfully completed. This file is designed to be shared with any app users wishing to verify the trustworthiness of the app. 
+`mse-ctl` also creates a file in `$HOME/.config/mse-ctl/context/<uuid.mse>` when a deployment is sucessfully completed. This file is designed to be shared with any app users wishing to verify the trustworthiness of the app. 
 
 === "Enclave certificate"
 

@@ -39,7 +39,7 @@ If the plan is `free` then the expiration date will be overwritten to the value 
 
 In case of a given app owner SSL certificate, this value should be lower than the expiration date of the certificate. 
 
-If no `expiration_date` is specified in the configuration file, the expiration date of the application is the expiration date of the certificate if some otherwise it takes the value inherited from the chosen plan. 
+If no `expiration_date` is specified in the configuration file, the expiration date of the application is the expiration date of the certificate if some. Otherwise, it takes the value inherited from the chosen plan. 
 
 In dev mode, the expiration date is infinite. 
 
@@ -54,7 +54,7 @@ In dev mode, the expiration date is infinite.
 
 ## The ssl section
 
-For more information about the ssl information. See <TODO>
+For more information about the ssl information. See [Scenarii](scenarii.md).
 
 |    Keys     | Mandatory | Types |                                        Description                                         |
 | :---------: | :-------: | :---: | :----------------------------------------------------------------------------------------: |
