@@ -71,4 +71,4 @@ To cover these scenarii, mse has been implemented with these following features:
 
 ### Code encryption when running
 
-An mse node is an intel sgx enclave which enables Cosmian to run the app in a complete isolated environment in which the filesystem and the memory are completly encrypted from anyone. 
+An mse node is an intel sgx enclave which enables Cosmian to run the app in a fully isolated environment in which the filesystem and the memory are completly encrypted from anyone. 

@@ -1,4 +1,4 @@
-# Overview
+## Overview
 
 The application has been developped by the app owner. Therefore, how to use it depends on its own API. 
 However, there are some specificity depending on the mse configuration namely the scenarii chosen by the app owner. 
@@ -22,11 +22,11 @@ $ curl https://my_app.cosmian.app/
 
 In *Zero trust approach* the user has to verify the mse app and the SSL certificate before querying the app. The following diagram explains how it works: 
 
-# Use process
+## Use process
 
 Schéma
 
-## MSE instance verification
+### MSE instance verification
 
 The app user should verify the mse app, that is to say:
 
