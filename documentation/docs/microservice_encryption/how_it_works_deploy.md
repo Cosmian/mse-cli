@@ -15,17 +15,19 @@ When you use `mse-ctl deploy` these two stages are merged into this single subco
 
 ### Stage 1: spawn the MSE node
 
-Schéma (TODO show the orgin of this SSL cert)
+![](../images/user_flow_1.png)
+
 
 ### Stage 2: configure the MSE app
 
-Schéma
+![](../images/user_flow_2.png)
+
 
 ## Deployment process
 
 Let's describe in a deeper way what happens when the *app owner* uses: `mse-ctl deploy`.
 
-Schéma
+![](../images/deploy_p1_p2.png)
 
 ### Stage 1: code encryption when dispatching
 

@@ -4,7 +4,7 @@ The application has been developped by the app owner. Therefore, how to use it d
 
 However, there are some specificities about the connection depending on the MSE configuration namely the scenarii chosen by the app owner.
 
-Schema
+![](../images/user_flow_3.png)
 
 The TLS connection is specific to each scenario:
 
@@ -25,7 +25,12 @@ In *Zero trust approach* the user has to verify the MSE app and the SSL certific
 
 ## Use process
 
+<<<<<<< HEAD
 Schema
+=======
+![](../images/self_signed.png)
+
+>>>>>>> 4558a26 (:lipstick: add diagrams)
 
 ### MSE instance verification
 
