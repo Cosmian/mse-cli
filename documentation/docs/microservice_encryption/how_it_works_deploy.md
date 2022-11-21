@@ -9,25 +9,19 @@ The deployment step consists for the app owner in deploying their application in
 The deployment is breaking down into two stages: 
 
 - The first one consists in interacting with the Cosmian MSE backend by sending the code and the configuration
-- The second one consists in interacting right with the spwaned MSE node
-
-When you use `mse-ctl deploy` these two stages are merged into this single subcommand.
-
-### Stage 1: spawn the MSE node
-
 ![](../images/user_flow_1.png)
 
+- The second one consists in interacting right with the spawned MSE node
+  ![](../images/user_flow_2.png)
 
-### Stage 2: configure the MSE app
-
-![](../images/user_flow_2.png)
+When you use `mse-ctl deploy` these two stages are merged into this single subcommand.
 
 
 ## Deployment process
 
 Let's describe in a deeper way what happens when the *app owner* uses: `mse-ctl deploy`.
 
-![](../images/deploy_p1_p2.png)
+![](../images/deploy_p1_p2.png){: .zoom}
 
 ### Stage 1: code encryption when dispatching
 

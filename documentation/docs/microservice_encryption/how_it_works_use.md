@@ -23,14 +23,10 @@ $ curl https://my_app.cosmian.app/
 
 In *Zero trust approach* the user has to verify the MSE app and the SSL certificate before querying the app. The following diagram explains how it works: 
 
-## Use process
+## Usage process
 
-<<<<<<< HEAD
-Schema
-=======
 ![](../images/self_signed.png)
 
->>>>>>> 4558a26 (:lipstick: add diagrams)
 
 ### MSE instance verification
 
