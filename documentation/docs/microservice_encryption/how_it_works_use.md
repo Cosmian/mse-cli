@@ -4,16 +4,17 @@ The application has been developped by the app owner. Therefore, how to use it d
 
 However, there are some specificities about the connection depending on the MSE configuration namely the scenarii chosen by the app owner.
 
-![](../images/user_flow_3.png)
-
 The TLS connection is specific to each scenario:
 
+**Zero trust approach**
+![](../images/use-zero-trust.png)
 
-|                          |                        P1                         |                 P2                  |
-| :----------------------: | :-----------------------------------------------: | :---------------------------------: |
-|   Zero trust approach    |  TLS using enclave SSL certificate (passthrough)  |  TLS using enclave SSL certificate  |
-| App owner trust approach | TLS using app owner SSL certificate (passthrough) | TLS using app owner SSL certificate |
-|    Any trust approach    |         TLS using Cosmian SSL certificate         |                HTTP                 |
+**App owner trust approach**
+![](../images/use-app-owner-trust.png)
+
+**Any trust approach**
+![](../images/use-any-trust.png)
+
 
 In *App owner trust approach* and *Any trust approach* the user trusts the app owner. Therefore, the user does not need to verify the MSE app. So, the user can use the app as if it is running inside a classic cloud. 
 
@@ -25,7 +26,7 @@ In *Zero trust approach* the user has to verify the MSE app and the SSL certific
 
 ## Usage process
 
-![](../images/self_signed.png)
+![](../images/use.png)
 
 
 ### MSE instance verification
