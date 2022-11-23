@@ -50,7 +50,8 @@ nav:
   - Scaffold a new project: subcommand/scaffold.md
   - Configuration: configuration.md
   - Advanced options:
-      - Context: context.md
+      - Context: subcommand/context.md
+      - Init: subcommand/init.md
       - List: subcommand/list.md
       - Remove: subcommand/remove.md
       - Status: subcommand/status.md

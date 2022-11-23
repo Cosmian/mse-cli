@@ -6,3 +6,4 @@ Removing your application from the project...
 ```
 
 It will remove it from your project dashboard.
+It will also remove your context directory from your local host.

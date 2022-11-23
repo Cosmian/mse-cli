@@ -75,4 +75,4 @@ def run(args):
             raise FileNotFoundError(f"Can't find context for app {args.export}")
 
         tar(path, tar_filename)
-        log.info("You can now transfert this file to your app user.")
+        log.info("You can now transfer this file to your app user.")

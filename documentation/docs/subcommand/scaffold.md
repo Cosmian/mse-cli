@@ -31,9 +31,8 @@ $ cat my_new_hello_world/mse.toml
    5   │ 
    6   │ [code]
    7   │ location = "/home/user/some/path/my_new_hello_world/code"
-   8   │ encrypted = true
-   9   │ python_application = "app:app"
-  10   │ health_check_endpoint = "/"
+   8   │ python_application = "app:app"
+   9   │ health_check_endpoint = "/"
 ───────┴──────────────────────────────
 ```
 

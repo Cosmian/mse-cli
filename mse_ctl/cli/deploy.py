@@ -63,7 +63,6 @@ def run(args):
 
     context.run(app.uuid, enclave_size, app.config_domain_name,
                 app.docker_version, app.expires_at, app.ssl_certificate_origin)
-    context.save()
 
     log.info("✅%s App created with uuid: %s%s", bcolors.OKGREEN, app.uuid,
              bcolors.ENDC)
