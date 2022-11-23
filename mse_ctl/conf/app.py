@@ -8,18 +8,18 @@ from typing import Any, Dict, Optional
 import toml
 from cryptography import x509
 from cryptography.x509.extensions import SubjectAlternativeName
-from pydantic import BaseModel
+from pydantic import BaseModel, constr
 
 
 class SSLConf(BaseModel):
     """Definition of the app owner certificate."""
 
     # The domain name of the app
-    domain_name: str
+    domain_name: constr(min_length=1, max_length=255)
     # The ssl private key
-    private_key: str
+    private_key: constr(min_length=1)
     # The ssl certificate chain
-    certificate: str
+    certificate: constr(min_length=1)
 
 
 class CodeConf(BaseModel):
@@ -28,23 +28,23 @@ class CodeConf(BaseModel):
     # Location of the code (a path or an url)
     location: Path
     # from python_flask_module import python_flask_variable_name
-    python_application: str
+    python_application: constr(min_length=1, max_length=255)
     # Endpoint to use to check if the application is up and sane
-    health_check_endpoint: str
+    health_check_endpoint: constr(min_length=1, max_length=255)
 
 
 class AppConf(BaseModel):
     """Definition of an app by a user."""
 
     # Name of the mse instance
-    name: str
+    name: constr(min_length=1, max_length=255)
     # Version of the mse instance
-    version: str
+    version: constr(min_length=1, max_length=16)
     # Name of the parent project
-    project: str
+    project: constr(min_length=1, max_length=255)
 
     # MSE plan (defining the enclave memory, cpu, etc.)
-    plan: str
+    plan: constr(min_length=1, max_length=16)
 
     # Dev mode
     dev: bool = False
