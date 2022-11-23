@@ -47,8 +47,6 @@ def run(args):
     log.info("\nDeployement status")
     log.info("\tUUID               = %s", app.uuid)
     log.info("\tMSE docker version = %s", app.docker_version)
-    log.info("\tEncrypted code     = %s",
-             "yes" if app.has_encrypted_code else "no")
     log.info("\tCertificate origin = %s", app.ssl_certificate_origin.value)
     log.info("\tCreated at         = %s", app.created_at)
 

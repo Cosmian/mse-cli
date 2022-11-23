@@ -5,7 +5,6 @@ plan = "free"
 
 [code]
 location = "/tmp/code"
-encrypted = true
 python_application = "app:ppa"
 health_check_endpoint = "/"
 

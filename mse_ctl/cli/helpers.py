@@ -88,12 +88,13 @@ def compute_mr_enclave(context: Context, tar_path: Path) -> str:
     client.images.pull(image)
 
     command = [
-        "--size", f"{context.instance.enclave_size}G", "--code",
-        "/tmp/service.tar", "--host", context.instance.config_domain_name,
-        "--application", context.config.python_application, "--dry-run"
+        "--size", f"{context.instance.enclave_size}G", "--code", "/tmp/app.tar",
+        "--host", context.instance.config_domain_name, "--uuid",
+        str(context.instance.id), "--application",
+        context.config.python_application, "--dry-run"
     ]
 
-    volumes = {f"{tar_path}": {'bind': '/tmp/service.tar', 'mode': 'rw'}}
+    volumes = {f"{tar_path}": {'bind': '/tmp/app.tar', 'mode': 'rw'}}
 
     if context.instance.ssl_certificate_origin == SSLCertificateOrigin.Owner:
         command.append("--certificate")
@@ -108,9 +109,6 @@ def compute_mr_enclave(context: Context, tar_path: Path) -> str:
         command.append("--self-signed")
         command.append(str(int(datetime.timestamp(
             context.instance.expires_at))))
-
-    if context.config.code_sealed_key:
-        command.append("--encrypted")
 
     container = client.containers.run(
         image,

@@ -105,7 +105,6 @@ def test_ssl():
     conf = AppConf.from_toml(path=toml)
 
     code = CodeConf(location="/tmp/code",
-                    encrypted=True,
                     python_application="app:app",
                     health_check_endpoint="/")
 
@@ -130,7 +129,6 @@ def test_ssl_optionals():
     conf = AppConf.from_toml(path=toml)
 
     code = CodeConf(location="/tmp/code",
-                    encrypted=True,
                     python_application="app:ppa",
                     health_check_endpoint="/")
 
@@ -150,7 +148,6 @@ def test_expiration_date():
     conf = AppConf.from_toml(path=toml)
 
     code = CodeConf(location="/tmp/code",
-                    encrypted=True,
                     python_application="app:app",
                     health_check_endpoint="/")
 
@@ -193,7 +190,6 @@ def test_python_variable():
     assert conf.python_variable == "ppa"
 
     code = CodeConf(location="/tmp/code",
-                    encrypted=True,
                     python_application="bad",
                     health_check_endpoint="/")
 
@@ -248,7 +244,6 @@ def test_default():
     conf = AppConf.default("helloworld", Path("."))
 
     code = CodeConf(location=Path("./code").resolve(),
-                    encrypted=True,
                     python_application="app:app",
                     health_check_endpoint="/")
 
@@ -269,7 +264,6 @@ def test_into_payload():
         "name": "helloworld",
         "version": "1.0.0",
         "project": "default",
-        "encrypted_code": True,
         "health_check_endpoint": "/",
         "python_application": "app:app",
         "expires_at": '2023-01-01T00:00:00.000000Z',

@@ -36,7 +36,7 @@ class App(BaseModel):
     owner_uuid: UUID
     domain_name: str
     config_domain_name: str
-    docker_version: Optional[str]
+    docker_version: Optional[str]  # TODO remove that
     created_at: Optional[datetime.datetime]
     ready_at: Optional[datetime.datetime]
     deleted_at: Optional[datetime.datetime]
@@ -44,7 +44,6 @@ class App(BaseModel):
     onerror_at: Optional[datetime.datetime]
     status: AppStatus
     plan: str
-    has_encrypted_code: bool
     ssl_certificate_origin: SSLCertificateOrigin
     expires_at: datetime.datetime
     python_application: str
