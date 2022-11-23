@@ -51,8 +51,7 @@ def run(args):
     enclave_size = get_enclave_size(conn, app_conf)
     context = Context.from_app_conf(app_conf)
 
-    log.info("%s your source code...",
-             "Encrypting" if app_conf.code.encrypted else "Compressing")
+    log.info("Encrypting your source code...")
     tar_path = prepare_code(app_conf.code.location, context)
 
     log.info("Deploying your app...")
@@ -67,34 +66,23 @@ def run(args):
     log.info("✅%s App created with uuid: %s%s", bcolors.OKGREEN, app.uuid,
              bcolors.ENDC)
 
-    # It's usefull to proceed the RA only if the configuration is up
-    # Which is the case if has_sealed_private_data is true
-    # We can also check it if the configuration is down
-    # but the ssl_certificate_origin is Self
-    # In all the other case, we can't get the quote in the certificate returned.
-    if context.has_sealed_private_data or \
-       app.ssl_certificate_origin == SSLCertificateOrigin.Self:
-        selfsigned_cert = get_certificate(app.config_domain_name)
-        context.config_cert_path.write_text(selfsigned_cert)
+    selfsigned_cert = get_certificate(app.config_domain_name)
+    context.config_cert_path.write_text(selfsigned_cert)
 
-        log.info("Checking app trustworthiness...")
-        mr_enclave = compute_mr_enclave(context, tar_path)
-        log.info("The code fingerprint is %s", mr_enclave)
-        verify_app(mr_enclave, selfsigned_cert)
-        log.info("Verification: %ssuccess%s", bcolors.OKGREEN, bcolors.ENDC)
+    log.info("Checking app trustworthiness...")
+    mr_enclave = compute_mr_enclave(context, tar_path)
+    log.info("The code fingerprint is %s", mr_enclave)
+    verify_app(mr_enclave, selfsigned_cert)
+    log.info("Verification: %ssuccess%s", bcolors.OKGREEN, bcolors.ENDC)
 
-        if app.ssl_certificate_origin == SSLCertificateOrigin.Self:
-            log.info("✅%s The verified certificate has been saved at: %s%s",
-                     bcolors.OKGREEN, context.config_cert_path, bcolors.ENDC)
+    if app.ssl_certificate_origin == SSLCertificateOrigin.Self:
+        log.info("✅%s The verified certificate has been saved at: %s%s",
+                 bcolors.OKGREEN, context.config_cert_path, bcolors.ENDC)
 
-        if context.has_sealed_private_data:
-            log.info("Unsealing your private data from your mse instance...")
-            unseal_private_data(context,
-                                ssl_private_key=app_conf.ssl.private_key
-                                if app_conf.ssl else None)
-    else:
-        log.info(
-            "App trustworthiness skipped because of your app configuration")
+    log.info("Unsealing your private data from your mse instance...")
+    unseal_private_data(
+        context,
+        ssl_private_key=app_conf.ssl.private_key if app_conf.ssl else None)
 
     log.info("Waiting for application to be ready...")
     check_app_health(app.domain_name, context, app.health_check_endpoint)
@@ -217,11 +205,13 @@ def wait_app_creation(conn: Connection, uuid: UUID) -> App:
 def unseal_private_data(context: Context,
                         ssl_private_key: Optional[str] = None):
     """Send the ssl private key and the key which was used to encrypt the code."""
-    data = {}
     assert context.instance
 
-    if context.config.code_sealed_key:
-        data["code_sealed_key"] = context.config.code_sealed_key.hex()
+    data = {
+        "code_sealed_key": context.config.code_sealed_key.hex(),
+        "uuid": str(context.instance.id)
+    }
+
     if ssl_private_key:
         data["ssl_private_key"] = ssl_private_key
 
@@ -241,25 +231,22 @@ def prepare_code(src_path: Path,
                  file_exceptions: Optional[List[str]] = None,
                  dir_exceptions: Optional[List[str]] = None) -> Path:
     """Tar and encrypt (if required) the app python code."""
-    if context.config.code_sealed_key:
+    log.debug("Encrypt code in %s to %s...", src_path,
+              context.encrypted_code_path)
 
-        log.debug("Encrypt code in %s to %s...", src_path,
-                  context.encrypted_code_path)
+    whitelist: Set[str] = {"requirements.txt"}
 
-        whitelist: Set[str] = {"requirements.txt"}
+    encrypt_directory(
+        dir_path=src_path,
+        patterns=(["*"] if patterns is None else patterns),
+        key=context.config.code_sealed_key,
+        exceptions=(list(whitelist) if file_exceptions is None else
+                    list(set(file_exceptions) | whitelist)),
+        dir_exceptions=([] if dir_exceptions is None else dir_exceptions),
+        out_dir_path=context.encrypted_code_path)
 
-        encrypt_directory(
-            dir_path=src_path,
-            patterns=(["*"] if patterns is None else patterns),
-            key=context.config.code_sealed_key,
-            exceptions=(list(whitelist) if file_exceptions is None else
-                        list(set(file_exceptions) | whitelist)),
-            dir_exceptions=([] if dir_exceptions is None else dir_exceptions),
-            out_dir_path=context.encrypted_code_path)
-
-        src_path = context.encrypted_code_path
-
-    tar_path = tar(dir_path=src_path, tar_path=context.tar_code_path)
+    tar_path = tar(dir_path=context.encrypted_code_path,
+                   tar_path=context.tar_code_path)
 
     log.debug("Tar encrypted code in '%s'", tar_path.name)
 

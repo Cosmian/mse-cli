@@ -46,18 +46,18 @@ extra_javascript:
   - https://unpkg.com/mermaid@8.7.0/dist/mermaid.min.js
   - javascripts/extra.js
 nav:
-  - Getting started: microservice_encryption/getting_started.md
-  - Scaffold a new project: microservice_encryption/subcommand/scaffold.md
-  - Configuration: microservice_encryption/configuration.md
+  - Getting started: getting_started.md
+  - Scaffold a new project: subcommand/scaffold.md
+  - Configuration: configuration.md
   - Advanced options:
-      - Context: microservice_encryption/context.md
-      - List: microservice_encryption/subcommand/list.md
-      - Remove: microservice_encryption/subcommand/remove.md
-      - Status: microservice_encryption/subcommand/status.md
-      - Stop: microservice_encryption/subcommand/stop.md
+      - Context: context.md
+      - List: subcommand/list.md
+      - Remove: subcommand/remove.md
+      - Status: subcommand/status.md
+      - Stop: subcommand/stop.md
   - About:
-      - Scenarii: microservice_encryption/scenarii.md
-      - Deployment: microservice_encryption/how_it_works_deploy.md
-      - Usage: microservice_encryption/how_it_works_use.md
-      - Security explain: microservice_encryption/security.md
-  - Python API: microservice_encryption/python/
+      - Scenarii: scenarii.md
+      - Deployment: how_it_works_deploy.md
+      - Usage: how_it_works_use.md
+      - Security explain: security.md
+  - Python API: python/

@@ -27,8 +27,6 @@ class CodeConf(BaseModel):
 
     # Location of the code (a path or an url)
     location: Path
-    # Wether the code is encrypted or not
-    encrypted: bool
     # from python_flask_module import python_flask_variable_name
     python_application: str
     # Endpoint to use to check if the application is up and sane
@@ -144,7 +142,6 @@ class AppConf(BaseModel):
                 "plan": self.plan,
                 "code": {
                     "location": str(self.code.location),
-                    "encrypted": self.code.encrypted,
                     "python_application": self.code.python_application,
                     "health_check_endpoint": self.code.health_check_endpoint
                 },
@@ -167,7 +164,6 @@ class AppConf(BaseModel):
     def default(name: str, code_path: Path):
         """Generate a default configuration."""
         code = CodeConf(location=code_path.expanduser().resolve() / "code",
-                        encrypted=True,
                         python_application="app:app",
                         health_check_endpoint="/")
 
@@ -187,7 +183,6 @@ class AppConf(BaseModel):
             "name": self.name,
             "version": self.version,
             "project": self.project,
-            "encrypted_code": self.code.encrypted,
             "dev_mode": self.dev,
             "health_check_endpoint": self.code.health_check_endpoint,
             "python_application": self.code.python_application,

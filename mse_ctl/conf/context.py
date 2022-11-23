@@ -42,8 +42,8 @@ class ContextConf(BaseModel):
     version: str
     # Project parent of the app
     project: str
-    # Symetric key used to encrypt the code if required
-    code_sealed_key: Optional[bytes] = None
+    # Symetric key used to encrypt the code
+    code_sealed_key: bytes
     # from python_flask_module import python_flask_variable_name
     python_application: str
     # The certificate of the app if origin = Owner
@@ -119,7 +119,6 @@ class Context(BaseModel):
     @staticmethod
     def from_app_conf(conf: AppConf):
         """Build a Context object from an app conf."""
-        symkey = bytes(random_key()).hex() if conf.code.encrypted else None
         cert = conf.ssl.certificate if conf.ssl else None
 
         context = Context(
@@ -127,7 +126,7 @@ class Context(BaseModel):
                                version=conf.version,
                                project=conf.project,
                                python_application=conf.code.python_application,
-                               code_sealed_key=symkey,
+                               code_sealed_key=bytes(random_key()).hex(),
                                ssl_app_certificate=cert))
 
         if cert:
@@ -142,11 +141,6 @@ class Context(BaseModel):
             dataMap = toml.load(f)
 
         return Context(**dataMap)
-
-    @property
-    def has_sealed_private_data(self):
-        """Whether the application require to unseal to work."""
-        return self.config.code_sealed_key or self.config.ssl_app_certificate
 
     def run(self, uuid: UUID, enclave_size: int, config_domain_name: str,
             docker_version: str, expires_at: datetime,
@@ -171,12 +165,10 @@ class Context(BaseModel):
                     "version": self.config.version,
                     "project": self.config.project,
                     "python_application": self.config.python_application,
+                    "code_sealed_key": bytes(self.config.code_sealed_key).hex()
                 }
             }
 
-            if self.config.code_sealed_key:
-                dataMap["config"]["code_sealed_key"] = bytes(
-                    self.config.code_sealed_key).hex()
             if self.config.ssl_app_certificate:
                 dataMap["config"][
                     "ssl_app_certificate"] = self.config.ssl_app_certificate
