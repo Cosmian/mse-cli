@@ -2,6 +2,7 @@
 
 import os
 from pathlib import Path
+import tempfile
 
 from intel_sgx_ra.error import SGXQuoteNotFound
 from mse_lib_crypto.xsalsa20_poly1305 import decrypt_directory
@@ -25,62 +26,49 @@ def add_subparser(subparsers):
         type=str,
         help='The domain name of the MSE app (ex: demo.cosmian.app).')
 
-    parser.add_argument('--skip-fingerprint',
-                        action='store_true',
-                        help='Do not verify the code fingerprint')
+    group = parser.add_mutually_exclusive_group(required=True)
 
-    parser.add_argument('--fingerprint',
-                        type=str,
-                        help='Check the code fingerprint against that value')
+    group.add_argument('--skip-fingerprint',
+                       action='store_true',
+                       help='Do not verify the code fingerprint')
 
-    parser.add_argument('--context',
-                        type=Path,
-                        metavar='path/to/context/uuid.mse',
-                        help='Path to the context file to use '
-                        'to recompute the code fingerprint and verify it')
+    group.add_argument('--fingerprint',
+                       type=str,
+                       help='Check the code fingerprint against that value')
 
-    parser.add_argument('--code',
-                        type=Path,
-                        metavar='path/to/code.tar',
-                        help='Path to the code tarball')
+    group.add_argument('--context',
+                       type=Path,
+                       metavar='path/to/context.tar',
+                       help='Path to the context tarball')
 
 
 def run(args):
     """Run the subcommand."""
     log.info("Checking your app...")
 
-    # Check args
-    if args.skip_fingerprint and (args.fingerprint or args.context
-                                  or args.code):
-        print(
-            "[--skip-fingerprint] and [--fingerprint] and [--context | --code] "
-            "are mutually exclusive")
-        return
-
-    if args.fingerprint and (args.context or args.code):
-        print(
-            "[--skip-fingerprint] and [--fingerprint] and [--context | --code] "
-            "are mutually exclusive")
-        return
-
-    if not args.fingerprint and not args.skip_fingerprint:
-        if (args.context and not args.code) or (not args.context and args.code):
-            print("[--context] and [--code] must be used together")
-            return
-
     # Compute MRENCLAVE and decrypt the code if needed
     mrenclave = None
     if args.fingerprint:
         mrenclave = args.fingerprint
     elif args.context:
-        context = Context.from_toml(args.context)
-        if context.config.code_sealed_key:
-            untar(context.decrypted_code_path, args.code)
-            decrypt_directory(context.decrypted_code_path,
-                              context.config.code_sealed_key)
-            log.info("The code has been decrypted in: %s",
-                     context.decrypted_code_path)
-        mrenclave = compute_mr_enclave(context, args.code)
+        # Untar the context tarball
+        workspace = Path(tempfile.mkdtemp())
+        context_path = workspace / "context"
+        os.makedirs(context_path)
+        decrypted_code_path = workspace / "decrypted_code"
+        untar(context_path, args.context)
+
+        # Read the context file
+        context = Context.from_toml(context_path /
+                                    Context.get_context_filename())
+
+        # Untar and decrypt the code tarball
+        untar(decrypted_code_path,
+              context_path / Context.get_tar_code_filename())
+        decrypt_directory(decrypted_code_path, context.config.code_sealed_key)
+        log.info("The code has been decrypted in: %s", decrypted_code_path)
+        mrenclave = compute_mr_enclave(
+            context, context_path / Context.get_tar_code_filename())
 
     # Get the certificate
     ca_data = get_certificate(args.domain_name)

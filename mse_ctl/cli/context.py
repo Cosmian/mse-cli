@@ -1,6 +1,7 @@
 """Context file manager subparser definition."""
 
 from datetime import datetime
+import shutil
 import uuid
 import tarfile
 
@@ -8,7 +9,7 @@ from mse_ctl.conf.context import Context
 
 from mse_ctl.log import LOGGER as log
 from mse_ctl.utils.color import bcolors
-from mse_ctl.utils.fs import ls
+from mse_ctl.utils.fs import ls, tar
 
 
 def add_subparser(subparsers):
@@ -29,7 +30,7 @@ def add_subparser(subparsers):
                        type=uuid.UUID,
                        help='The id of the MSE context to remove.')
 
-    group.add_argument('--clean-all',
+    group.add_argument('--purge',
                        action='store_true',
                        help='Remove all the MSE context files.')
 
@@ -45,33 +46,31 @@ def run(args):
     """Run the subcommand."""
     if args.clean:
         log.info("Removing context file for %s...", args.clean)
-        Context.get_exported_path(args.clean).unlink(missing_ok=True)
+        Context.clean(args.clean)
 
     if args.list:
-        for path in ls(Context.get_context_path()):
+        for path in ls(Context.get_root_dirpath()):
             if path.is_file() and path.suffix == ".mse":
                 try:
                     context = Context.from_toml(path)
-                    log.info("%s -> %s%s-%s%s (%s)", path.name, bcolors.OKBLUE,
-                             context.config.name, context.config.version,
-                             bcolors.ENDC,
+                    log.info("%s -> %s%s-%s%s (%s)", context.instance.id,
+                             bcolors.OKBLUE, context.config.name,
+                             context.config.version, bcolors.ENDC,
                              datetime.fromtimestamp(path.stat().st_ctime))
                 except Exception:
-                    log.info("%s -> %s[file format not supported]%s", path.name,
-                             bcolors.WARNING, bcolors.ENDC)
+                    log.info("%s -> %s[file format not supported]%s",
+                             path.parent.name, bcolors.WARNING, bcolors.ENDC)
 
-    if args.clean_all:
-        for path in ls(Context.get_context_path()):
-            log.info("Removing context file %s...", path.name)
-            path.unlink(missing_ok=True)
+    if args.purge:
+        log.info("Removing all the context files...")
+        shutil.rmtree(Context.get_root_dirpath())
 
     if args.export:
-        path = Context.get_exported_path(args.export)
+        path = Context.get_dirpath(args.export)
         tar_filename = "context.tar"
-        print(path)
         log.info("Exporting %s context in %s...", args.export, tar_filename)
         if not path.exists():
-            raise FileNotFoundError(
-                f"Can't find context file for app {args.export}")
-        with tarfile.open(tar_filename, "w:") as tar_file:
-            tar_file.add(path, path.name)
+            raise FileNotFoundError(f"Can't find context for app {args.export}")
+
+        tar(path, tar_filename)
+        log.info("You can now transfert this file to your app user.")

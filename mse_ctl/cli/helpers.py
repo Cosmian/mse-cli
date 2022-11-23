@@ -76,7 +76,7 @@ def stop_app(conn: Connection, app_uuid: UUID):
         raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
 
     # Remove context file
-    Context.get_exported_path(app_uuid).unlink(missing_ok=True)
+    Context.clean(app_uuid, ignore_errors=True)
 
 
 def compute_mr_enclave(context: Context, tar_path: Path) -> str:

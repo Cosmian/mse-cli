@@ -50,6 +50,7 @@ def run(args):
 
     enclave_size = get_enclave_size(conn, app_conf)
     context = Context.from_app_conf(app_conf)
+    log.info("Temporary workspace is: %s", context.workspace)
 
     log.info("Encrypting your source code...")
     tar_path = prepare_code(app_conf.code.location, context)
@@ -62,6 +63,7 @@ def run(args):
 
     context.run(app.uuid, enclave_size, app.config_domain_name,
                 app.docker_version, app.expires_at, app.ssl_certificate_origin)
+    context.save()
 
     log.info("✅%s App created with uuid: %s%s", bcolors.OKGREEN, app.uuid,
              bcolors.ENDC)
@@ -93,8 +95,7 @@ def run(args):
 
     context.save()
 
-    log.info("The context of this creation has been saved at: %s",
-             context.exported_path)
+    log.info("The context of this creation has been saved at: %s", context.path)
 
 
 def check_app_health(domain_name: str, context: Context,

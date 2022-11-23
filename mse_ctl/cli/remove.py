@@ -32,4 +32,4 @@ def run(args):
         raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
 
     # Remove the context file
-    Context.get_exported_path(args.id).unlink(missing_ok=True)
+    Context.clean(args.id, ignore_errors=True)
