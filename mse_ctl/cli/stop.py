@@ -3,7 +3,6 @@
 import uuid
 
 from mse_ctl.cli.helpers import stop_app
-from mse_ctl.conf.context import Context
 from mse_ctl.conf.user import UserConf
 from mse_ctl.log import LOGGER as log
 

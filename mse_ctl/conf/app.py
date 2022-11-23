@@ -3,23 +3,32 @@
 import os
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, TYPE_CHECKING
 
 import toml
 from cryptography import x509
 from cryptography.x509.extensions import SubjectAlternativeName
 from pydantic import BaseModel, constr
 
+if TYPE_CHECKING:
+    Str255 = str
+    Str16 = str
+    StrUnlimited = str
+else:
+    Str255 = constr(min_length=1, max_length=255, strip_whitespace=True)
+    Str16 = constr(min_length=1, max_length=16, strip_whitespace=True)
+    StrUnlimited = constr(min_length=1)
+
 
 class SSLConf(BaseModel):
     """Definition of the app owner certificate."""
 
     # The domain name of the app
-    domain_name: constr(min_length=1, max_length=255)
+    domain_name: Str255
     # The ssl private key
-    private_key: constr(min_length=1)
+    private_key: StrUnlimited
     # The ssl certificate chain
-    certificate: constr(min_length=1)
+    certificate: StrUnlimited
 
 
 class CodeConf(BaseModel):
@@ -28,23 +37,23 @@ class CodeConf(BaseModel):
     # Location of the code (a path or an url)
     location: Path
     # from python_flask_module import python_flask_variable_name
-    python_application: constr(min_length=1, max_length=255)
+    python_application: Str255
     # Endpoint to use to check if the application is up and sane
-    health_check_endpoint: constr(min_length=1, max_length=255)
+    health_check_endpoint: Str255
 
 
 class AppConf(BaseModel):
     """Definition of an app by a user."""
 
     # Name of the mse instance
-    name: constr(min_length=1, max_length=255)
+    name: Str255
     # Version of the mse instance
-    version: constr(min_length=1, max_length=16)
+    version: Str16
     # Name of the parent project
-    project: constr(min_length=1, max_length=255)
+    project: Str255
 
     # MSE plan (defining the enclave memory, cpu, etc.)
-    plan: constr(min_length=1, max_length=16)
+    plan: Str16
 
     # Dev mode
     dev: bool = False

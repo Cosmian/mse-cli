@@ -3,7 +3,9 @@
 from datetime import datetime
 import shutil
 import uuid
-import tarfile
+from pydantic import ValidationError
+
+from toml import TomlDecodeError
 
 from mse_ctl.conf.context import Context
 
@@ -57,7 +59,7 @@ def run(args):
                              bcolors.OKBLUE, context.config.name,
                              context.config.version, bcolors.ENDC,
                              datetime.fromtimestamp(path.stat().st_ctime))
-                except Exception:
+                except (TypeError, TomlDecodeError, OSError, ValidationError):
                     log.info("%s -> %s[file format not supported]%s",
                              path.parent.name, bcolors.WARNING, bcolors.ENDC)
 

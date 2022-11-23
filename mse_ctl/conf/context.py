@@ -86,10 +86,12 @@ class Context(BaseModel):
 
     @staticmethod
     def get_context_filename():
+        """Get the filename of the context file."""
         return "context.mse"
 
     @staticmethod
     def get_tar_code_filename():
+        """Get the filename of the code tarball."""
         return "code.tar"
 
     @staticmethod
@@ -148,9 +150,9 @@ class Context(BaseModel):
         shutil.rmtree(Context.get_dirpath(uuid), ignore_errors=ignore_errors)
 
     @staticmethod
-    def from_app_conf(conf: AppConf, purge: bool = False):
+    def from_app_conf(conf: AppConf):
         """Build a Context object from an app conf.
-        
+
         Parameters
         ----------
         purge: bool
