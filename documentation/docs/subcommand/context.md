@@ -89,7 +89,7 @@ This directory is designed to be shared with any app users wishing to verify the
 
 ### List
 
-You can list the context saved on your local host using:
+You can list the contexts saved on your local host using:
 
 ```console
 $ mse-ctl context --list
@@ -111,7 +111,7 @@ $ mse-ctl context --clean 852a4256-fffa-457a-80ed-329166a652af
 
 ### Purge
 
-You can also remove all your context direcotries:
+You can also remove all your context directories:
 
 ```console
 $ mse-ctl context --purge

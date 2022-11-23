@@ -1,4 +1,5 @@
 import filecmp
+import os
 from pathlib import Path
 from uuid import UUID
 from datetime import datetime
@@ -110,29 +111,35 @@ def test_save():
     """Test the `save` method."""
     toml = Path("tests/data/context.toml")
     conf = Context.from_toml(path=toml)
+    workspace = conf.workspace
+    os.makedirs(conf.workspace, exist_ok=True)
+    code = conf.workspace / "code.tar"
+    code.write_text("test")
 
     conf.save()
 
-    assert filecmp.cmp(toml, conf.exported_path)
+    assert filecmp.cmp(toml, conf.path)
+
+    code_new = conf.get_dirpath(
+        "d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e") / conf.get_tar_code_filename()
+    assert filecmp.cmp(code, code_new)
 
 
 def test_path():
     """Test path handling methods."""
     toml = Path("tests/data/context.toml")
     conf = Context.from_toml(path=toml)
+    workspace = conf.workspace
 
-    assert conf.workspace == Path("/tmp/helloworld-1.0.0")
     assert conf.workspace.exists()
-    assert conf.docker_log_path == Path("/tmp/helloworld-1.0.0/docker.log")
-    assert conf.config_cert_path == Path("/tmp/helloworld-1.0.0/cert.conf.pem")
-    assert conf.app_cert_path == Path("/tmp/helloworld-1.0.0/cert.app.pem")
-    assert conf.decrypted_code_path == Path(
-        "/tmp/helloworld-1.0.0/decrypted_code")
+    assert conf.docker_log_path == workspace / "docker.log"
+    assert conf.config_cert_path == workspace / "cert.conf.pem"
+    assert conf.app_cert_path == workspace / "cert.app.pem"
+    assert conf.decrypted_code_path == workspace / "decrypted_code"
     assert conf.decrypted_code_path.exists()
-    assert conf.encrypted_code_path == Path(
-        "/tmp/helloworld-1.0.0/encrypted_code")
+    assert conf.encrypted_code_path == workspace / "encrypted_code"
     assert conf.encrypted_code_path.exists()
-    assert conf.tar_code_path == Path("/tmp/helloworld-1.0.0/code.tar")
-    assert conf.exported_path == Path(
-        "~/.config/mse-ctl/context/d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e.mse"
+    assert conf.tar_code_path == workspace / "code.tar"
+    assert conf.path == Path(
+        "~/.config/mse-ctl/context/d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e/context.mse"
     ).expanduser()
