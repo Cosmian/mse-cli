@@ -103,10 +103,20 @@ class Context(BaseModel):
     @property
     def exported_path(self) -> Path:
         """Get the path of the context."""
-        path = MSE_CONF_DIR / "context"
-        os.makedirs(path, exist_ok=True)
         assert self.instance
-        return path / (str(self.instance.id) + ".mse")
+        return Context.get_exported_path(self.instance.id)
+
+    @staticmethod
+    def get_context_path() -> Path:
+        """Get the path of the context directory."""
+        return MSE_CONF_DIR / "context"
+
+    @staticmethod
+    def get_exported_path(uuid: UUID) -> Path:
+        """Get the path of the context file."""
+        path = Context.get_context_path()
+        os.makedirs(path, exist_ok=True)
+        return path / (str(uuid) + ".mse")
 
     @property
     def workspace(self) -> Path:

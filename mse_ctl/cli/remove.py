@@ -5,6 +5,7 @@ import uuid
 import requests
 
 from mse_ctl.api.app import remove
+from mse_ctl.conf.context import Context
 from mse_ctl.conf.user import UserConf
 from mse_ctl.log import LOGGER as log
 
@@ -29,3 +30,6 @@ def run(args):
 
     if not r.ok:
         raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+
+    # Remove the context file
+    Context.get_exported_path(args.id).unlink(missing_ok=True)
