@@ -165,14 +165,15 @@ def verify_app(mrenclave: Optional[str], ca_data: str):
         if quote.report_body.mr_enclave != bytes.fromhex(mrenclave):
             log.info("Verification: %sfailure%s", bcolors.FAIL, bcolors.ENDC)
             raise Exception(
-                "MRENCLAVE is wrong "
+                "Code fingerprint is wrong "
                 f"(read {bytes(quote.report_body.mr_enclave).hex()} "
                 f"but should be {mrenclave})")
     else:
-        log.info("%sMRENCLAVE check skipped!%s", bcolors.WARNING, bcolors.ENDC)
+        log.info("%sCode fingerprint check skipped!%s", bcolors.WARNING,
+                 bcolors.ENDC)
 
     if quote.report_body.mr_signer != mrsigner:
         log.info("Verification: %sfailure%s", bcolors.FAIL, bcolors.ENDC)
-        raise Exception("MRSIGNER is wrong "
+        raise Exception("Enclave signer is wrong "
                         f"(read {bytes(quote.report_body.mr_signer).hex()} "
                         f"but should be {bytes(mrsigner).hex()})")
