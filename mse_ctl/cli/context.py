@@ -17,7 +17,7 @@ from mse_ctl.utils.fs import ls, tar
 def add_subparser(subparsers):
     """Define the subcommand."""
     parser = subparsers.add_parser("context",
-                                   help="Manage your mse context files")
+                                   help="Manage your MSE context files")
 
     parser.set_defaults(func=run)
 

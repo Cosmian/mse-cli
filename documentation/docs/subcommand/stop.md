@@ -7,4 +7,4 @@ Stopping and destroying the app...
 
 Be aware that stopping an MSE app means that you can't resume it afterwards. All the resources are released and deallocated.
 
-It will remove your context directory from your local host.
+The context directory will be removed locally as well.

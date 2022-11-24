@@ -19,7 +19,7 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
 `mse-ctl` also creates a directory `$HOME/.config/mse-ctl/context/uuid/` when a deployment is sucessfully completed. This directory contains:
 
 - The tarball of the encrypted code
-- A toml file with the details required for a user to verify the trustworthiness of the app
+- A TOML file with contains the details required for a user to verify the trustworthiness of the app
 
 
 === "Enclave certificate"
@@ -106,7 +106,7 @@ $ mse-ctl context --clean 852a4256-fffa-457a-80ed-329166a652af
 [...]
 ```
 
-!!! warning "If you do that, you will lost the configuration and the tar code. Which make you unable to share these information and make your app user unable to verify the trustworthiness of your app"
+!!! warning "If you do that, you will loose the configuration and the tar code. That will make you unable to share these information, thus an app user will be unable to verify the trustworthiness of your app"
 
 
 ### Purge
@@ -118,7 +118,7 @@ $ mse-ctl context --purge
 [...]
 ```
 
-!!! warning "If you do that, you will lost the configuration and the tar code. Which make you unable to share these information and make your app user unable to verify the trustworthiness of your apps"
+!!! warning "If you do that, you will loose the configuration and the tar code for all apps. That will make you unable to share these information, thus an app user will be unable to verify the trustworthiness of all of your apps"
 
 
 ### Export

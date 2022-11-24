@@ -156,7 +156,7 @@ class Context(BaseModel):
         Parameters
         ----------
         purge: bool
-            Whether to remove the content of tmp worlspace if it exists
+            Whether to remove the content of tmp workspace if it exists
         """
         cert = conf.ssl.certificate if conf.ssl else None
 
