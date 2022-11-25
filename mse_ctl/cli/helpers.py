@@ -4,7 +4,7 @@ from datetime import datetime
 import re
 from pathlib import Path
 import ssl
-from typing import List, Optional
+from typing import List, Optional, Tuple
 from uuid import UUID
 
 import docker
@@ -19,21 +19,21 @@ from mse_ctl.api.auth import Connection
 from mse_ctl.api.project import get_app_from_name, get_from_name
 from mse_ctl.api.plan import get as get_plan
 from mse_ctl.api.types import App, AppStatus, Plan, Project, SSLCertificateOrigin
-from mse_ctl.conf.app import AppConf
 from mse_ctl.conf.context import Context
 from mse_ctl.log import LOGGER as log
 from mse_ctl.utils.color import bcolors
 
 
-def get_enclave_size(conn: Connection, app: AppConf) -> int:
-    """Get the enclave size from an app."""
-    r: requests.Response = get_plan(conn=conn, name=app.plan)
+def get_enclave_resources(conn: Connection,
+                          plan_name: str) -> Tuple[int, float]:
+    """Get the enclave size and cores from an app."""
+    r: requests.Response = get_plan(conn=conn, name=plan_name)
 
     if not r.ok:
         raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
 
     plan = Plan.from_json_dict(r.json())
-    return plan.memory
+    return (plan.memory, plan.cores)
 
 
 def get_project_from_name(conn: Connection, name: str) -> Optional[Project]:

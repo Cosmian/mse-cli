@@ -8,6 +8,7 @@ import requests
 
 from mse_ctl.api.app import get
 from mse_ctl.api.types import App, AppStatus
+from mse_ctl.cli.helpers import get_enclave_resources
 from mse_ctl.conf.user import UserConf
 from mse_ctl.log import LOGGER as log
 from mse_ctl.utils.color import bcolors
@@ -29,12 +30,15 @@ def run(args):
 
     log.info("Fetching the app status for %s...", args.id)
 
-    r: requests.Response = get(conn=user_conf.get_connection(), uuid=args.id)
+    conn = user_conf.get_connection()
+    r: requests.Response = get(conn=conn, uuid=args.id)
 
     if not r.ok:
         raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
 
     app = App.from_json_dict(r.json())
+
+    (enclave_size, cores) = get_enclave_resources(conn, app.plan)
 
     log.info("\nMicroservice")
     log.info("\tName         = %s", app.name)
@@ -48,6 +52,9 @@ def run(args):
     log.info("\tUUID               = %s", app.uuid)
     log.info("\tMSE docker version = %s", app.docker_version)
     log.info("\tCertificate origin = %s", app.ssl_certificate_origin.value)
+    log.info("\tEnclave size       = %sM", enclave_size)
+    log.info("\tCores amount       = %s", cores)
+
     log.info("\tCreated at         = %s", app.created_at)
 
     remaining_days = app.expires_at - datetime.now(timezone.utc)

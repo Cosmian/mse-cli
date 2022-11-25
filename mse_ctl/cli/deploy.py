@@ -13,7 +13,7 @@ from mse_ctl.api.app import get, new
 from mse_ctl.api.auth import Connection
 from mse_ctl.api.types import App, AppStatus, SSLCertificateOrigin
 from mse_ctl.cli.helpers import (compute_mr_enclave, exists_in_project,
-                                 get_certificate, get_enclave_size,
+                                 get_certificate, get_enclave_resources,
                                  get_project_from_name, stop_app, verify_app)
 from mse_ctl.conf.app import AppConf
 from mse_ctl.conf.context import Context
@@ -48,7 +48,7 @@ def run(args):
     if not check_app_conf(conn, app_conf):
         return
 
-    enclave_size = get_enclave_size(conn, app_conf)
+    (enclave_size, cores) = get_enclave_resources(conn, app_conf.plan)
     context = Context.from_app_conf(app_conf)
     log.info("Temporary workspace is: %s", context.workspace)
 
@@ -58,7 +58,8 @@ def run(args):
     log.info("Deploying your app...")
     app = deploy_app(conn, app_conf, tar_path)
 
-    log.info("App creating for %s:%s...", app.name, app.version)
+    log.info("App creating for %s:%s with %dM EPC memory and %.2f CPU cores...",
+             app.name, app.version, enclave_size, cores)
     app = wait_app_creation(conn, app.uuid)
 
     context.run(app.uuid, enclave_size, app.config_domain_name,
