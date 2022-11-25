@@ -2,6 +2,7 @@
 
 from datetime import datetime
 import os
+import shutil
 import tempfile
 from pathlib import Path
 from typing import Any, Dict, Optional
@@ -66,6 +67,44 @@ class Context(BaseModel):
     # The mse app instance parameters
     instance: Optional[ContextInstance] = None
 
+    # The workspace (ignore from pydantic)
+    _workspace = Path(tempfile.mkdtemp())
+
+    @staticmethod
+    def get_root_dirpath() -> Path:
+        """Get the root path containing all the contexts."""
+        path = MSE_CONF_DIR / "context"
+        os.makedirs(path, exist_ok=True)
+        return path
+
+    @staticmethod
+    def get_dirpath(uuid: UUID) -> Path:
+        """Get the directory path of that context."""
+        path = Context.get_root_dirpath() / str(uuid)
+        os.makedirs(path, exist_ok=True)
+        return path
+
+    @staticmethod
+    def get_context_filename():
+        """Get the filename of the context file."""
+        return "context.mse"
+
+    @staticmethod
+    def get_tar_code_filename():
+        """Get the filename of the code tarball."""
+        return "code.tar"
+
+    @staticmethod
+    def get_context_filepath(uuid: UUID) -> Path:
+        """Get the path of the context file."""
+        return Context.get_dirpath(uuid) / Context.get_context_filename()
+
+    @property
+    def path(self) -> Path:
+        """Get the path of the context file."""
+        assert self.instance
+        return Context.get_context_filepath(self.instance.id)
+
     @property
     def docker_log_path(self):
         """Get the path to store the docker logs."""
@@ -101,24 +140,24 @@ class Context(BaseModel):
         return self.workspace / "code.tar"
 
     @property
-    def exported_path(self) -> Path:
-        """Get the path of the context."""
-        path = MSE_CONF_DIR / "context"
-        os.makedirs(path, exist_ok=True)
-        assert self.instance
-        return path / (str(self.instance.id) + ".mse")
-
-    @property
     def workspace(self) -> Path:
         """Get the workspace path and create it."""
-        path = Path(
-            tempfile.gettempdir()) / f"{self.config.name}-{self.config.version}"
-        os.makedirs(path, exist_ok=True)
-        return path
+        return self._workspace
+
+    @staticmethod
+    def clean(uuid: UUID, ignore_errors: bool = False):
+        """Remove the context directory."""
+        shutil.rmtree(Context.get_dirpath(uuid), ignore_errors=ignore_errors)
 
     @staticmethod
     def from_app_conf(conf: AppConf):
-        """Build a Context object from an app conf."""
+        """Build a Context object from an app conf.
+
+        Parameters
+        ----------
+        purge: bool
+            Whether to remove the content of tmp workspace if it exists
+        """
         cert = conf.ssl.certificate if conf.ssl else None
 
         context = Context(
@@ -136,7 +175,7 @@ class Context(BaseModel):
 
     @staticmethod
     def from_toml(path: Path):
-        """Build a Context object from a Toml file."""
+        """Build a Context object from a toml file."""
         with open(path, encoding="utf8") as f:
             dataMap = toml.load(f)
 
@@ -157,7 +196,7 @@ class Context(BaseModel):
 
     def save(self):
         """Dump the current object to a file."""
-        with open(self.exported_path, "w", encoding="utf8") as f:
+        with open(self.path, "w", encoding="utf8") as f:
             dataMap: Dict[str, Any] = {
                 "version": self.version,
                 "config": {
@@ -185,3 +224,9 @@ class Context(BaseModel):
                 }
 
             toml.dump(dataMap, f)
+
+        # Also save the tar code in the context folder
+        shutil.copyfile(
+            self.tar_code_path,
+            Context.get_dirpath(self.instance.id) /
+            Context.get_tar_code_filename())

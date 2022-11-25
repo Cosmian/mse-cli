@@ -7,7 +7,7 @@ The user login information is stored in: `$HOME/.config/mse-ctl/login.toml` on L
 
 ## Workspace
 
-Any files created during the deployment process are stored in `/tmp/<app_name-app_version>/` such as:
+Any files created during the deployment process are stored in `/tmp/uniqueName/` such as:
 
 - The encrypted files
 - The code tarball
@@ -16,7 +16,11 @@ Any files created during the deployment process are stored in `/tmp/<app_name-ap
 
 ## Context
 
-`mse-ctl` also creates a file in `$HOME/.config/mse-ctl/context/<uuid.mse>` when a deployment is sucessfully completed. This file is designed to be shared with any app users wishing to verify the trustworthiness of the app. 
+`mse-ctl` also creates a directory `$HOME/.config/mse-ctl/context/uuid/` when a deployment is sucessfully completed. This directory contains:
+
+- The tarball of the encrypted code
+- A TOML file with contains the details required for a user to verify the trustworthiness of the app
+
 
 === "Enclave certificate"
 
@@ -81,3 +85,50 @@ Any files created during the deployment process are stored in `/tmp/<app_name-ap
     ssl_certificate_origin = "operator"
     ```
 
+This directory is designed to be shared with any app users wishing to verify the trustworthiness of the app. 
+
+### List
+
+You can list the contexts saved on your local host using:
+
+```console
+$ mse-ctl context --list
+852a4256-fffa-457a-80ed-329166a652af -> helloworld-1.0.0 (2022-11-23 16:22:34.621387)
+[...]
+```
+
+### Clean
+
+You can remove the context directory of an app using:
+
+```console
+$ mse-ctl context --clean 852a4256-fffa-457a-80ed-329166a652af 
+[...]
+```
+
+!!! warning "If you do that, you will loose the configuration and the tar code. That will make you unable to share these information, thus an app user will be unable to verify the trustworthiness of your app"
+
+
+### Purge
+
+You can also remove all your context directories:
+
+```console
+$ mse-ctl context --purge
+[...]
+```
+
+!!! warning "If you do that, you will loose the configuration and the tar code for all apps. That will make you unable to share these information, thus an app user will be unable to verify the trustworthiness of all of your apps"
+
+
+### Export
+
+If you want an app user to verify the trustworthiness of your apps, they will need this context directory which can be exported as a tarball doing:
+
+```console
+$ mse-ctl context --export 852a4256-fffa-457a-80ed-329166a652af
+Exporting 852a4256-fffa-457a-80ed-329166a652af context in context.tar...
+You can now transfer this file to your app user.
+```
+
+You can now share this tarball with the users.

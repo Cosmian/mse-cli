@@ -75,6 +75,9 @@ def stop_app(conn: Connection, app_uuid: UUID):
     if not r.ok:
         raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
 
+    # Remove context file
+    Context.clean(app_uuid, ignore_errors=True)
+
 
 def compute_mr_enclave(context: Context, tar_path: Path) -> str:
     """Compute the MR enclave of an enclave."""

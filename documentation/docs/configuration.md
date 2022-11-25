@@ -12,9 +12,8 @@ $ cat my_new_hello_world/mse.toml
    5   │ 
    6   │ [code]
    7   │ location = "/home/user/some/path/my_new_hello_world/code"
-   8   │ encrypted = true
-   9   │ python_application = "app:app"
-  10   │ health_check_endpoint = "/"
+   8   │ python_application = "app:app"
+   9   │ health_check_endpoint = "/"
 ───────┴──────────────────────────────
 ```
 
@@ -45,12 +44,11 @@ In dev mode, the expiration date is infinite.
 
 ## The code section
 
-|         Keys          | Mandatory |      Types       |                                             Description                                              |
-| :-------------------: | :-------: | :--------------: | :--------------------------------------------------------------------------------------------------: |
-|       location        |     ✔️     |       str        | The path (absolue or relative from the config file location) where to find the application to deploy |
-|       encrypted       |     ✔️     | `True` / `False` |                   Wheter the application should be sent encrypted to the MSE node                    |
-|  python_application   |     ✔️     |       str        |                                   module_name:flask_variable_name                                    |
-| health_check_endpoint |     ✔️     |       str        |          An endpoint `mse-ctl` can request to determine if the application is up and ready           |
+|         Keys          | Mandatory | Types |                                             Description                                              |
+| :-------------------: | :-------: | :---: | :--------------------------------------------------------------------------------------------------: |
+|       location        |     ✔️     |  str  | The path (absolue or relative from the config file location) where to find the application to deploy |
+|  python_application   |     ✔️     |  str  |                                   module_name:flask_variable_name                                    |
+| health_check_endpoint |     ✔️     |  str  |          An endpoint `mse-ctl` can request to determine if the application is up and ready           |
 
 ## The SSL section
 

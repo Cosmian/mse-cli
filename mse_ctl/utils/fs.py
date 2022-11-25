@@ -70,7 +70,7 @@ def tar(dir_path: Path, tar_path: Path, dot_files: bool = False) -> Path:
 
 
 def untar(dir_path: Path, tar_file: Path):
-    """Untar directory `tar_path` to `dir_path`.
+    """Untar file `tar_file` to `dir_path`.
 
     Parameters
     ----------

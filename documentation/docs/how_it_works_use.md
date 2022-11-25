@@ -50,7 +50,7 @@ For more details about this step, read [security](security.md).
 This verification can be done using: `mse-ctl verify`: 
 
 - code fingerprint can be checked against a fingerprint provided by the app owner, with `--fingerprint FINGERPRINT`
-- code fingerprint can be computed by the user on their own, with options `--context` and `--code`. The context file (`.mse` extension) and the encrypted code (tarball file) must be provided by the app owner to the user by their own means
+- code fingerprint can be computed by the user on their own, with the option `--context`. The context file is the tarball containing the context (TOML file) and the encrypted code (tarball file) which must be provided by the app owner to the user by their own means. See [the context subcommand](subcommand/context.md#export).
 - the verification of the code fingerprint can be omitted with `--skip-fingerprint`
 
 ```console
