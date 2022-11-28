@@ -37,7 +37,7 @@ class App(BaseModel):
     domain_name: str
     config_domain_name: str
     docker_version: str
-    created_at: Optional[datetime.datetime]
+    created_at: datetime.datetime
     ready_at: Optional[datetime.datetime]
     deleted_at: Optional[datetime.datetime]
     stopped_at: Optional[datetime.datetime]
@@ -63,8 +63,10 @@ class Project(BaseModel):
     description: str
     owner_uuid: UUID
     is_default: bool
+    stripe_customer_id: Optional[str]
+    stripe_payment_method_id: Optional[str]
     enclave_version: Optional[str]
-    created_at: Optional[datetime.datetime]
+    created_at: datetime.datetime
     deleted_at: Optional[datetime.datetime]
 
     @staticmethod
@@ -78,10 +80,8 @@ class Plan(BaseModel):
 
     name: str
     memory: int
-    cores: int
+    cores: float
     price: float
-    created_at: Optional[datetime.datetime]
-    deleted_at: Optional[datetime.datetime]
 
     @staticmethod
     def from_json_dict(json: dict):
