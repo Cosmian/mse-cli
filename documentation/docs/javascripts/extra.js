@@ -8,9 +8,9 @@ const app = () => {
     }
     // replace icons with dark/light themes as appropriate
     if (darkModeOn) {
-      favicon.href = "/images/favicon-white.png";
+      favicon.href = "/images/cosmian-favicon-white.png";
     } else {
-      favicon.href = "/images/favicon-black.png";
+      favicon.href = "/images/cosmian-favicon-black.png";
     }
   };
   handleDarkmode(darkModeMediaQuery);
