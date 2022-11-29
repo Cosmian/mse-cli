@@ -14,7 +14,7 @@ from intel_sgx_ra.ratls import ratls_verification
 from intel_sgx_ra.signer import mr_signer_from_pk
 
 from mse_ctl import MSE_CERTIFICATES_URL, MSE_DOCKER_IMAGE_URL, MSE_PCCS_URL
-from mse_ctl.api.app import stop
+from mse_ctl.api.app import get, stop
 from mse_ctl.api.auth import Connection
 from mse_ctl.api.project import get_app_from_name, get_from_name
 from mse_ctl.api.plan import get as get_plan
@@ -22,6 +22,15 @@ from mse_ctl.api.types import App, AppStatus, Plan, Project, SSLCertificateOrigi
 from mse_ctl.conf.context import Context
 from mse_ctl.log import LOGGER as log
 from mse_ctl.utils.color import bcolors
+
+
+def get_app(conn: Connection, uuid: UUID) -> App:
+    """Get an app from the backend."""
+    r: requests.Response = get(conn=conn, uuid=uuid)
+    if not r.ok:
+        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+
+    return App.from_json_dict(r.json())
 
 
 def get_enclave_resources(conn: Connection,
@@ -91,7 +100,7 @@ def compute_mr_enclave(context: Context, tar_path: Path) -> str:
     client.images.pull(image)
 
     command = [
-        "--size", f"{context.instance.enclave_size}G", "--code", "/tmp/app.tar",
+        "--size", f"{context.instance.enclave_size}M", "--code", "/tmp/app.tar",
         "--host", context.instance.config_domain_name, "--uuid",
         str(context.instance.id), "--application",
         context.config.python_application, "--dry-run"

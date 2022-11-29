@@ -11,6 +11,7 @@ from pydantic import BaseModel
 class AppStatus(Enum):
     """EnclaveStatus enum."""
 
+    Spawning = "spawning"
     Initializing = "initializing"
     Running = "running"
     OnError = "on_error"

@@ -6,13 +6,12 @@ from typing import List, Optional, Set
 from uuid import UUID
 
 import requests
-from requests import ReadTimeout
 from mse_lib_crypto.xsalsa20_poly1305 import encrypt_directory
 
-from mse_ctl.api.app import get, new
+from mse_ctl.api.app import new
 from mse_ctl.api.auth import Connection
 from mse_ctl.api.types import App, AppStatus, SSLCertificateOrigin
-from mse_ctl.cli.helpers import (compute_mr_enclave, exists_in_project,
+from mse_ctl.cli.helpers import (compute_mr_enclave, exists_in_project, get_app,
                                  get_certificate, get_enclave_resources,
                                  get_project_from_name, stop_app, verify_app)
 from mse_ctl.conf.app import AppConf
@@ -87,7 +86,7 @@ def run(args):
         ssl_private_key=app_conf.ssl.private_key if app_conf.ssl else None)
 
     log.info("Waiting for application to be ready...")
-    check_app_health(app.domain_name, context, app.health_check_endpoint)
+    app = wait_app_start(conn, app.uuid)
 
     log.info("Your application is now fully deployed and started...")
     log.info("✅%s It's now ready to be used on https://%s until %s%s",
@@ -98,37 +97,28 @@ def run(args):
     log.info("The context of this creation has been saved at: %s", context.path)
 
 
-def check_app_health(domain_name: str, context: Context,
-                     health_check_endpoint: str):
-    """Return True when the app is ready and up."""
-    assert context.instance
-
-    self_signed = context.instance.ssl_certificate_origin == SSLCertificateOrigin.Self
+def wait_app_start(conn: Connection, uuid: UUID) -> App:
+    """Wait for the app to be started."""
     while True:
-        try:
-            r = requests.get(
-                url=f"https://{domain_name}{health_check_endpoint}",
-                verify=True
-                if not self_signed else str(context.config_cert_path),
-                timeout=2)
+        time.sleep(1)
+        app = get_app(conn=conn, uuid=uuid)
 
-            if r.ok and r.status_code == 200 \
-               and 'Mse-Status' not in r.headers:
-                break
+        if app.status == AppStatus.Spawning:
+            raise Exception(
+                "The app shoudn't be in the state spawning at this stage...")
+        if app.status == AppStatus.Running:
+            break
+        if app.status == AppStatus.OnError:
+            raise Exception(
+                "The app creation stopped because an error occured...")
+        if app.status == AppStatus.Deleted:
+            raise Exception("The app creation stopped because it "
+                            "has been deleted in the meantime...")
+        if app.status == AppStatus.Stopped:
+            raise Exception("The app creation stopped because it "
+                            "has been stopped in the meantime...")
 
-        except ReadTimeout:
-            # Ignore the error, server is not ready yet
-            pass
-        except requests.exceptions.SSLError:
-            # Ignore the error, server is not ready yet
-            pass
-        except requests.exceptions.ConnectionError:
-            # Ignore the error, server is not ready yet
-            pass
-
-        time.sleep(2)
-
-    return True
+    return app
 
 
 def check_app_conf(conn: Connection, app_conf: AppConf) -> bool:
@@ -140,6 +130,7 @@ def check_app_conf(conn: Connection, app_conf: AppConf) -> bool:
 
     # Check that a same name application is not running yet
     app = exists_in_project(conn, project.uuid, app_conf.name, [
+        AppStatus.Spawning,
         AppStatus.Initializing,
         AppStatus.Running,
         AppStatus.OnError,
@@ -177,28 +168,25 @@ def deploy_app(conn: Connection, app_conf: AppConf, tar_path: Path) -> App:
 
 
 def wait_app_creation(conn: Connection, uuid: UUID) -> App:
-    """Wait for the app to be fully deployed."""
+    """Wait for the app to be deployed."""
     while True:
         time.sleep(1)
+        app = get_app(conn=conn, uuid=uuid)
 
-        r: requests.Response = get(conn=conn, uuid=uuid)
-        if not r.ok:
-            raise Exception(
-                f"Unexpected response ({r.status_code}): {r.content!r}")
-
-        app = App.from_json_dict(r.json())
-
-        if app.status == AppStatus.Running:
+        if app.status == AppStatus.Initializing:
             break
+        if app.status == AppStatus.Running:
+            raise Exception(
+                "The app shoudn't be in the state running at this stage...")
         if app.status == AppStatus.OnError:
             raise Exception(
                 "The app creation stopped because an error occured...")
         if app.status == AppStatus.Deleted:
             raise Exception("The app creation stopped because it "
-                            "has been deleted in the meantimes...")
+                            "has been deleted in the meantime...")
         if app.status == AppStatus.Stopped:
             raise Exception("The app creation stopped because it "
-                            "has been stopped in the meantimes...")
+                            "has been stopped in the meantime...")
 
     return app
 
