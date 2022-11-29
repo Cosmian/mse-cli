@@ -73,6 +73,6 @@ def run(args):
         log.info("\tStatus             = %s%s%s", bcolors.FAIL,
                  app.status.value, bcolors.ENDC)
         log.info("\tOn error since     = %s", app.onerror_at)
-    elif app.status == AppStatus.Initializing:
+    elif app.status in (AppStatus.Initializing, AppStatus.Spawning):
         log.info("\tStatus             = %s%s%s", bcolors.OKBLUE,
                  app.status.value, bcolors.ENDC)
