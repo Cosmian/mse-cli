@@ -8,7 +8,7 @@ theme:
   font:
     text: Open Sans
   favicon: "favicon.png"
-  logo: "images/docslogo-2x.png"
+  logo: "https://raw.githubusercontent.com/Cosmian/Files/main/products/cosmian-logo-docs.png"
   custom_dir: overrides
   features:
     - content.tabs.link

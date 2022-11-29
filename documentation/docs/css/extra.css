@@ -7,9 +7,9 @@ html {
 :root {
   --md-primary-fg-color: #320099;
   --md-primary-fg-color--light: #ecb7b7;
-  --md-primary-fg-color--dark: #1b0056;
-  --md-accent-fg-color: #1b0056;
-  --dark: #3f3f3f;
+  --md-primary-fg-color--dark: #292f52;
+  --md-accent-fg-color: #292f52;
+  --dark: #3e4e5f;
   --grey-1: #3f3f3f;
   --grey-2: #7c7c7c;
   --grey-3: #bbb;
@@ -17,6 +17,17 @@ html {
   --nav-bg-color: #f8f8fb;
   --warning: #f2994a;
 }
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--dark);
+}
+
 
 body {
   font-size: 16px;
@@ -38,17 +49,26 @@ body {
   color: var(--dark);
 }
 
+.md-header--shadow {
+  box-shadow: none;
+}
+
 .md-header__inner {
   height: 70px;
 }
 
 .md-header__button.md-logo :-webkit-any(img, svg) {
-  height: 28px;
+  height: 40px;
 }
 
 .md-header__button.md-logo img,
 .md-header__button.md-logo svg {
-  height: 28px;
+  height: 40px;
+}
+
+.md-header__button.md-logo {
+  margin: 0;
+  padding: 0;
 }
 
 .md-header__topic:first-child {
@@ -197,12 +217,12 @@ code,
 }
 
 .md-grid {
-  max-width: 1220px;
+  max-width: 1600px;
 }
 
 @media (min-width: 1220px) {
   .md-main {
-    background: var(--nav-bg-color);
+    background-color: #ffffff;
   }
 
   .md-main__inner {
@@ -220,6 +240,12 @@ code,
   .md-sidebar--primary {
     /* width: 250px; */
   }
+}
+
+.md-sidebar__inner {
+  padding: 0;
+  padding-right: 0 !important;
+  padding-left: 0 !important;
 }
 
 @media screen and (min-width: 76.25em) {
@@ -288,6 +314,13 @@ code,
   margin: 1em 0;
 }
 
+@media screen and (max-width: 76.1875em) {
+  .md-nav--primary .md-nav__title[for="__drawer"] {
+    background-color: var(--grey-4);
+    color: var(--dark);
+  }
+}
+
 .md-nav__icon {
   display: none;
 }
@@ -325,10 +358,9 @@ code,
 .admonition {
   padding: 30px !important;
   background: #ffffff;
-  border-left-width: 0px !important;
-  border: 1px solid var(--grey-4);
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
   border-radius: 4px;
+  border: none !important;
 }
 
 .md-typeset :is(.tip, .hint, .important, .warning)> :is(.admonition-title, summary) {
@@ -355,6 +387,10 @@ code,
 
 .md-typeset :is(.tip, .hint, .important, .warning)> :is(.admonition-title, summary):before {
   display: none;
+}
+
+.md-typeset table:not([class]) {
+  font-size: 1rem;
 }
 
 /* Footer */
