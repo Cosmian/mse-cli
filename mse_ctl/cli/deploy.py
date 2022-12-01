@@ -100,7 +100,7 @@ def run(args):
 def wait_app_start(conn: Connection, uuid: UUID) -> App:
     """Wait for the app to be started."""
     while True:
-        time.sleep(1)
+        time.sleep(3)
         app = get_app(conn=conn, uuid=uuid)
 
         if app.status == AppStatus.Spawning:
@@ -170,7 +170,7 @@ def deploy_app(conn: Connection, app_conf: AppConf, tar_path: Path) -> App:
 def wait_app_creation(conn: Connection, uuid: UUID) -> App:
     """Wait for the app to be deployed."""
     while True:
-        time.sleep(1)
+        time.sleep(3)
         app = get_app(conn=conn, uuid=uuid)
 
         if app.status == AppStatus.Initializing:

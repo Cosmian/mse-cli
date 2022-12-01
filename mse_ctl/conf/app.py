@@ -114,19 +114,21 @@ class AppConf(BaseModel):
 
             if app.ssl:
                 cert = x509.load_pem_x509_certificate(
-                    app.ssl.certificate.encode('utf8'))
+                    app.ssl.certificate.encode(
+                        'utf8'))  #TODO: we give the chain here
 
                 # Check `expiration_date` using cert expiration date
                 if not app.expiration_date:
                     app.expiration_date = cert.not_valid_after
                 elif app.expiration_date > cert.not_valid_after:
                     raise Exception(
-                        "`expiration_date` ({expiration_date}) can't be after "
-                        "the certificate expiration date ({cert.not_valid_after})"
+                        f"`expiration_date` ({app.expiration_date}) can't be after "
+                        f"the certificate expiration date ({cert.not_valid_after})"
                     )
-                elif app.expiration_date <= datetime.now():
+                elif app.expiration_date <= datetime.utcnow():
                     raise Exception(
-                        "`expiration_date` ({expiration_date}) is in the past")
+                        f"`expiration_date` ({app.expiration_date}) is in the past"
+                    )
 
                 # Check domain names from cert
                 ext = cert.extensions.get_extension_for_class(
@@ -135,8 +137,8 @@ class AppConf(BaseModel):
 
                 if app.ssl.domain_name not in domains:
                     raise Exception(
-                        "{app.ssl.domain_name} should be present in the "
-                        "SSL certificate as a Subject Alternative Name ({domains})"
+                        f"{app.ssl.domain_name} should be present in the "
+                        f"SSL certificate as a Subject Alternative Name ({domains})"
                     )
 
             return app
