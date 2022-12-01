@@ -6,9 +6,9 @@ from datetime import datetime, timezone
 
 import requests
 
-from mse_ctl.api.app import get
+from mse_ctl.api.app import log as get_app_logs
 from mse_ctl.api.types import App, AppStatus
-from mse_ctl.cli.helpers import get_enclave_resources
+from mse_ctl.cli.helpers import get_app, get_enclave_resources
 from mse_ctl.conf.user import UserConf
 from mse_ctl.log import LOGGER as log
 from mse_ctl.utils.color import bcolors
@@ -22,6 +22,9 @@ def add_subparser(subparsers):
     parser.set_defaults(func=run)
 
     parser.add_argument('id', type=uuid.UUID, help='The id of the MSE app.')
+    parser.add_argument('--log',
+                        action='store_true',
+                        help='Print the log of the app.')
 
 
 def run(args):
@@ -31,16 +34,11 @@ def run(args):
     log.info("Fetching the app status for %s...", args.id)
 
     conn = user_conf.get_connection()
-    r: requests.Response = get(conn=conn, uuid=args.id)
-
-    if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
-
-    app = App.from_json_dict(r.json())
+    app = get_app(conn=conn, uuid=args.id)
 
     (enclave_size, cores) = get_enclave_resources(conn, app.plan)
 
-    log.info("\nMicroservice")
+    log.info("\n> Microservice")
     log.info("\tName         = %s", app.name)
     log.info("\tVersion      = %s", app.version)
     log.info("\tDomain name  = %s", app.domain_name)
@@ -48,7 +46,7 @@ def run(args):
     log.info("\tApplication  = %s", app.python_application)
     log.info("\tHealthcheck  = %s", app.health_check_endpoint)
 
-    log.info("\nDeployement status")
+    log.info("\n> Deployement status")
     log.info("\tUUID               = %s", app.uuid)
     log.info("\tMSE docker version = %s", app.docker_version)
     log.info("\tCertificate origin = %s", app.ssl_certificate_origin.value)
@@ -87,3 +85,13 @@ def run(args):
     elif app.status in (AppStatus.Initializing, AppStatus.Spawning):
         log.info("\tStatus             = %s%s%s", bcolors.OKBLUE,
                  app.status.value, bcolors.ENDC)
+
+    if args.log and app.status != AppStatus.Deleted:
+        r: requests.Response = get_app_logs(conn=conn, uuid=app.uuid)
+        if not r.ok:
+            raise Exception(
+                f"Unexpected response ({r.status_code}): {r.content!r}")
+
+        logs = r.json()
+        log.info("\n> Stdout")
+        log.info(logs["stdout"])
