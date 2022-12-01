@@ -1,7 +1,7 @@
 """App configuration file module."""
 
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Optional, TYPE_CHECKING
 
@@ -119,15 +119,13 @@ class AppConf(BaseModel):
 
                 # Check `expiration_date` using cert expiration date
                 if not app.expiration_date:
-                    app.expiration_date = cert.not_valid_after
-                elif app.expiration_date > cert.not_valid_after:
+                    app.expiration_date = cert.not_valid_after.astimezone(
+                        tz=timezone.utc)
+                elif app.expiration_date > cert.not_valid_after.astimezone(
+                        tz=timezone.utc):
                     raise Exception(
                         f"`expiration_date` ({app.expiration_date}) can't be after "
                         f"the certificate expiration date ({cert.not_valid_after})"
-                    )
-                elif app.expiration_date <= datetime.utcnow():
-                    raise Exception(
-                        f"`expiration_date` ({app.expiration_date}) is in the past"
                     )
 
                 # Check domain names from cert
@@ -140,6 +138,11 @@ class AppConf(BaseModel):
                         f"{app.ssl.domain_name} should be present in the "
                         f"SSL certificate as a Subject Alternative Name ({domains})"
                     )
+
+            if app.expiration_date and app.expiration_date <= datetime.now(
+                    tz=timezone.utc):
+                raise Exception(
+                    f"`expiration_date` ({app.expiration_date}) is in the past")
 
             return app
 
@@ -188,7 +191,8 @@ class AppConf(BaseModel):
         """Convert it into a mse-backend payload as a dict."""
         d = None
         if self.expiration_date:
-            d = self.expiration_date.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+            d = self.expiration_date.astimezone(
+                tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
         return {
             "name": self.name,

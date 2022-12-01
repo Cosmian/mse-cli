@@ -90,7 +90,8 @@ def run(args):
 
     log.info("Your application is now fully deployed and started...")
     log.info("✅%s It's now ready to be used on https://%s until %s%s",
-             bcolors.OKGREEN, app.domain_name, app.expires_at, bcolors.ENDC)
+             bcolors.OKGREEN, app.domain_name, app.expires_at.astimezone(),
+             bcolors.ENDC)
 
     context.save()
 
