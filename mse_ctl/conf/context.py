@@ -32,6 +32,22 @@ class ContextInstance(BaseModel):
     docker_version: str
     # The origin of the app SSL certificate
     ssl_certificate_origin: SSLCertificateOrigin
+    # The nounces of the encrypted files
+    nonces: Dict[str, bytes]
+
+    @validator('nonces', pre=True, always=True)
+    # pylint: disable=no-self-argument,unused-argument
+    def set_nonces(cls, v, values, **kwargs):
+        """Set nonces from a value for pydantic."""
+        if isinstance(v, dict):
+            d = {}
+            for key in v:
+                if isinstance(v[key], str):
+                    d[key] = bytes.fromhex(v[key])
+                else:
+                    d[key] = v[key]
+            return d
+        return v
 
 
 class ContextConf(BaseModel):
@@ -183,7 +199,8 @@ class Context(BaseModel):
 
     def run(self, uuid: UUID, enclave_size: int, config_domain_name: str,
             docker_version: str, expires_at: datetime,
-            ssl_certificate_origin: SSLCertificateOrigin):
+            ssl_certificate_origin: SSLCertificateOrigin, nonces: Dict[str,
+                                                                       bytes]):
         """Complete the context since the app is now running."""
         self.instance = ContextInstance(
             id=uuid,
@@ -192,7 +209,7 @@ class Context(BaseModel):
             docker_version=docker_version,
             expires_at=expires_at,
             ssl_certificate_origin=ssl_certificate_origin,
-        )
+            nonces=nonces)
 
     def save(self):
         """Dump the current object to a file."""
@@ -215,12 +232,22 @@ class Context(BaseModel):
             if self.instance:
                 origin = self.instance.ssl_certificate_origin.value
                 dataMap["instance"] = {
-                    "id": str(self.instance.id),
-                    "config_domain_name": self.instance.config_domain_name,
-                    "enclave_size": self.instance.enclave_size,
-                    "expires_at": str(self.instance.expires_at),
-                    "docker_version": self.instance.docker_version,
-                    "ssl_certificate_origin": origin,
+                    "id":
+                        str(self.instance.id),
+                    "config_domain_name":
+                        self.instance.config_domain_name,
+                    "enclave_size":
+                        self.instance.enclave_size,
+                    "expires_at":
+                        str(self.instance.expires_at),
+                    "docker_version":
+                        self.instance.docker_version,
+                    "ssl_certificate_origin":
+                        origin,
+                    "nonces":
+                        dict(
+                            map(lambda item: (item[0], bytes(item[1]).hex()),
+                                self.instance.nonces.items()))
                 }
 
             toml.dump(dataMap, f)

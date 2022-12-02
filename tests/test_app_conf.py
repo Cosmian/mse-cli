@@ -1,5 +1,5 @@
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 import tempfile
 
 from mse_ctl.conf.app import AppConf, SSLConf, CodeConf
@@ -116,7 +116,13 @@ def test_ssl():
                            version="1.0.0",
                            project="default",
                            plan="free",
-                           expiration_date=datetime(2023, 1, 1, 0, 0, 0),
+                           expiration_date=datetime(2023,
+                                                    1,
+                                                    1,
+                                                    0,
+                                                    0,
+                                                    0,
+                                                    tzinfo=timezone.utc),
                            code=code,
                            ssl=ssl)
 
@@ -157,14 +163,20 @@ def test_expiration_date():
         project="default",
         plan="free",
         code=code,
-        expiration_date=datetime(2023, 1, 1, 0, 0, 0),
+        expiration_date=datetime(2023, 1, 1, 0, 0, 0, tzinfo=timezone.utc),
     )
 
     assert conf == ref_app_conf
 
     toml = Path("tests/data/optional_fields_ssl.toml")
     conf = AppConf.from_toml(path=toml)
-    assert conf.expiration_date == datetime(2023, 2, 6, 8, 54, 58)
+    assert conf.expiration_date == datetime(2023,
+                                            2,
+                                            6,
+                                            8,
+                                            54,
+                                            58,
+                                            tzinfo=timezone.utc)
 
 
 def test_bad_domain_name():

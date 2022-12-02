@@ -32,7 +32,9 @@ def test_from_toml():
                                          "%Y-%m-%d %H:%M:%S.%f"),
             docker_version="11d789bf",
             ssl_certificate_origin=SSLCertificateOrigin.Owner,
-        ))
+            nonces={
+                "app.py": "f33f4a1a1555660f9396aea7811b0ff7b0f19503a7485914"
+            }))
 
     assert conf == ref_context_conf
 
@@ -96,13 +98,15 @@ def test_run():
 
     conf = Context.from_app_conf(conf=ref_app_conf)
     ref_context_conf.config.code_sealed_key = conf.config.code_sealed_key
-    conf.run(uuid=UUID("d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e"),
-             enclave_size=1,
-             config_domain_name="demo.cosmian.app",
-             docker_version="11d789bf",
-             expires_at=datetime.strptime("2022-11-18T16:22:11.516125",
-                                          "%Y-%m-%dT%H:%M:%S.%f"),
-             ssl_certificate_origin=SSLCertificateOrigin.Owner)
+    conf.run(
+        uuid=UUID("d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e"),
+        enclave_size=1,
+        config_domain_name="demo.cosmian.app",
+        docker_version="11d789bf",
+        expires_at=datetime.strptime("2022-11-18T16:22:11.516125",
+                                     "%Y-%m-%dT%H:%M:%S.%f"),
+        ssl_certificate_origin=SSLCertificateOrigin.Owner,
+        nonces={"app.py": "f33f4a1a1555660f9396aea7811b0ff7b0f19503a7485914"})
 
     assert conf == ref_context_conf
 
@@ -111,7 +115,6 @@ def test_save():
     """Test the `save` method."""
     toml = Path("tests/data/context.toml")
     conf = Context.from_toml(path=toml)
-    workspace = conf.workspace
     os.makedirs(conf.workspace, exist_ok=True)
     code = conf.workspace / "code.tar"
     code.write_text("test")

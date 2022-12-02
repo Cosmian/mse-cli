@@ -43,3 +43,8 @@ def remove(conn: Connection, uuid: UUID) -> requests.Response:
 def stop(conn: Connection, uuid: UUID) -> requests.Response:
     """POST `/apps/{uuid}`."""
     return conn.post(url=f"/apps/{uuid}/stop")
+
+
+def log(conn: Connection, uuid: UUID) -> requests.Response:
+    """GET `/apps/{uuid}/logs`."""
+    return conn.get(url=f"/apps/{uuid}/logs")

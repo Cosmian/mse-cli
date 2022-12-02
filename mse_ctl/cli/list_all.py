@@ -72,6 +72,7 @@ def run(args):
         elif app.status == AppStatus.Spawning:
             color = bcolors.OKBLUE
 
-        log.info("%s | %s |%s %s %s| %s-%s on %s%s%s", app.uuid, app.created_at,
-                 color, app.status.value.center(12), bcolors.ENDC, app.name,
+        log.info("%s | %s |%s %s %s| %s-%s on %s%s%s", app.uuid,
+                 app.created_at.astimezone(), color,
+                 app.status.value.center(12), bcolors.ENDC, app.name,
                  app.version, bcolors.OKBLUE, app.domain_name, bcolors.ENDC)

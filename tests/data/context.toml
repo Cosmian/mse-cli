@@ -15,3 +15,6 @@ enclave_size = 1
 expires_at = "2022-11-18 16:22:11.516125"
 docker_version = "11d789bf"
 ssl_certificate_origin = "owner"
+
+[instance.nonces]
+"app.py" = "f33f4a1a1555660f9396aea7811b0ff7b0f19503a7485914"

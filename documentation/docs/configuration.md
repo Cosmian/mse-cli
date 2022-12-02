@@ -21,14 +21,14 @@ Find below the description of the configuration file.
 
 ## The main section
 
-|      Keys       | Mandatory |            Types            |                                                               Description                                                               |
-| :-------------: | :-------: | :-------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------: |
-|      name       |     ✔️     |             str             |                                       The name of the app. It should be unique in a given project                                       |
-|     version     |     ✔️     |             str             |                         The version of the app. An app can exist with various version number in a same project                          |
-|     project     |     ✔️     |             str             |                                                     The project the app belongs to                                                      |
-|      plan       |     ✔️     | `free` or other plans names |                                             The name of the plan your project is linked to                                              |
-|       dev       |           | `True` / `False` (default)  |                       Whether you want to start your app in dev mode. See <TODO> for more details about dev mode                        |  |
-| expiration_date |           |      YY-MM-DD HH/mm/ss      | The expiration date of your app once deploy. See [next paragraph](configuration.md#expiration-date-of-the-application) for more details |
+|      Keys       | Mandatory |            Types            |                                                                  Description                                                                  |
+| :-------------: | :-------: | :-------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------: |
+|      name       |     ✔️     |             str             |                                          The name of the app. It should be unique in a given project                                          |
+|     version     |     ✔️     |             str             |                            The version of the app. An app can exist with various version number in a same project                             |
+|     project     |     ✔️     |             str             |                                                        The project the app belongs to                                                         |
+|      plan       |     ✔️     | `free` or other plans names |                                                The name of the plan your project is linked to                                                 |
+|       dev       |           | `True` / `False` (default)  |                          Whether you want to start your app in dev mode. See <TODO> for more details about dev mode                           |  |
+| expiration_date |           |      YY-MM-DD HH/mm/ss      | The expiration date (UTC) of your app once deploy. See [next paragraph](configuration.md#expiration-date-of-the-application) for more details |
 
 ### Expiration date of the application
 

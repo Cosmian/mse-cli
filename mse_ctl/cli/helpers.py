@@ -4,7 +4,7 @@ from datetime import datetime
 import re
 from pathlib import Path
 import ssl
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 from uuid import UUID
 
 import docker
@@ -12,6 +12,7 @@ import requests
 from intel_sgx_ra.attest import remote_attestation
 from intel_sgx_ra.ratls import ratls_verification
 from intel_sgx_ra.signer import mr_signer_from_pk
+from mse_lib_crypto.xsalsa20_poly1305 import encrypt_directory
 
 from mse_ctl import MSE_CERTIFICATES_URL, MSE_DOCKER_IMAGE_URL, MSE_PCCS_URL
 from mse_ctl.api.app import get, stop
@@ -22,6 +23,7 @@ from mse_ctl.api.types import App, AppStatus, Plan, Project, SSLCertificateOrigi
 from mse_ctl.conf.context import Context
 from mse_ctl.log import LOGGER as log
 from mse_ctl.utils.color import bcolors
+from mse_ctl.utils.fs import tar
 
 
 def get_app(conn: Connection, uuid: UUID) -> App:
@@ -57,6 +59,37 @@ def get_project_from_name(conn: Connection, name: str) -> Optional[Project]:
         return None
 
     return Project.from_json_dict(project[0])
+
+
+def prepare_code(
+    src_path: Path,
+    context: Context,
+    patterns: Optional[List[str]] = None,
+    file_exceptions: Optional[List[str]] = None,
+    dir_exceptions: Optional[List[str]] = None
+) -> Tuple[Path, Dict[str, bytes]]:
+    """Tar and encrypt (if required) the app python code."""
+    log.debug("Encrypt code in %s to %s...", src_path,
+              context.encrypted_code_path)
+
+    whitelist: Set[str] = {"requirements.txt"}
+
+    nonces = encrypt_directory(
+        dir_path=src_path,
+        patterns=(["*"] if patterns is None else patterns),
+        key=context.config.code_sealed_key,
+        nonces=context.instance.nonces if context.instance else None,
+        exceptions=(list(whitelist) if file_exceptions is None else
+                    list(set(file_exceptions) | whitelist)),
+        dir_exceptions=([] if dir_exceptions is None else dir_exceptions),
+        out_dir_path=context.encrypted_code_path)
+
+    tar_path = tar(dir_path=context.encrypted_code_path,
+                   tar_path=context.tar_code_path)
+
+    log.debug("Tar encrypted code in '%s'", tar_path.name)
+
+    return (tar_path, nonces)
 
 
 def exists_in_project(conn: Connection, project_uuid: UUID, name: str,

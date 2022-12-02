@@ -5,7 +5,7 @@ from pathlib import Path
 from setuptools import setup, find_packages
 
 setup(name="mse-ctl",
-      version="0.3.2",
+      version="0.3.3",
       url="https://cosmian.com",
       license="MIT",
       author="Cosmian Tech",
@@ -21,7 +21,7 @@ setup(name="mse-ctl",
           "pyjwt>=2.5.0,<2.6.0", "urllib3>=1.26.12,<1.27.0",
           "pydantic>=1.10.0,<2.0.0", "toml>=0.10.0,<0.11.0",
           "docker>=6.0.0,<7.0.0", "intel-sgx-ra==0.4",
-          "mse-lib-crypto>=0.2,<0.3"
+          "mse-lib-crypto>=0.3,<0.4"
       ],
       entry_points={
           'console_scripts': ['mse-ctl = mse_ctl.run:main',],

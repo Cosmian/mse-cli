@@ -1,14 +1,14 @@
 """App configuration file module."""
 
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Optional, TYPE_CHECKING
 
 import toml
 from cryptography import x509
 from cryptography.x509.extensions import SubjectAlternativeName
-from pydantic import BaseModel, constr
+from pydantic import BaseModel, constr, validator
 
 if TYPE_CHECKING:
     Str255 = str
@@ -67,6 +67,20 @@ class AppConf(BaseModel):
     # Configuration of the ssl
     ssl: Optional[SSLConf] = None
 
+    @validator('expiration_date', pre=False, always=True)
+    # pylint: disable=no-self-argument,unused-argument
+    def set_expiration_date(cls, v, values, **kwargs):
+        """Set timezone for expiration_date from a value for pydantic."""
+        if not v:
+            return None
+
+        d: datetime = v
+        if d.tzinfo is None or d.tzinfo.utcoffset(d) is None:
+            # If no timezone, use the local one
+            return d.astimezone()
+
+        return v
+
     @property
     def python_module(self):
         """Get the python module from python_application."""
@@ -118,15 +132,14 @@ class AppConf(BaseModel):
 
                 # Check `expiration_date` using cert expiration date
                 if not app.expiration_date:
-                    app.expiration_date = cert.not_valid_after
-                elif app.expiration_date > cert.not_valid_after:
+                    app.expiration_date = cert.not_valid_after.replace(
+                        tzinfo=timezone.utc)
+                elif app.expiration_date > cert.not_valid_after.replace(
+                        tzinfo=timezone.utc):
                     raise Exception(
-                        "`expiration_date` ({expiration_date}) can't be after "
-                        "the certificate expiration date ({cert.not_valid_after})"
+                        f"`expiration_date` ({app.expiration_date}) can't be after "
+                        f"the certificate expiration date ({cert.not_valid_after})"
                     )
-                elif app.expiration_date <= datetime.now():
-                    raise Exception(
-                        "`expiration_date` ({expiration_date}) is in the past")
 
                 # Check domain names from cert
                 ext = cert.extensions.get_extension_for_class(
@@ -135,9 +148,14 @@ class AppConf(BaseModel):
 
                 if app.ssl.domain_name not in domains:
                     raise Exception(
-                        "{app.ssl.domain_name} should be present in the "
-                        "SSL certificate as a Subject Alternative Name ({domains})"
+                        f"{app.ssl.domain_name} should be present in the "
+                        f"SSL certificate as a Subject Alternative Name ({domains})"
                     )
+
+            if app.expiration_date and app.expiration_date <= datetime.now(
+                    tz=timezone.utc):
+                raise Exception(
+                    f"`expiration_date` ({app.expiration_date}) is in the past")
 
             return app
 
@@ -186,7 +204,8 @@ class AppConf(BaseModel):
         """Convert it into a mse-backend payload as a dict."""
         d = None
         if self.expiration_date:
-            d = self.expiration_date.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+            d = self.expiration_date.astimezone(
+                tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
         return {
             "name": self.name,
