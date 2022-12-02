@@ -8,7 +8,7 @@ from typing import Any, Dict, Optional, TYPE_CHECKING
 import toml
 from cryptography import x509
 from cryptography.x509.extensions import SubjectAlternativeName
-from pydantic import BaseModel, constr
+from pydantic import BaseModel, constr, validator
 
 if TYPE_CHECKING:
     Str255 = str
@@ -67,6 +67,20 @@ class AppConf(BaseModel):
     # Configuration of the ssl
     ssl: Optional[SSLConf] = None
 
+    @validator('expiration_date', pre=False, always=True)
+    # pylint: disable=no-self-argument,unused-argument
+    def set_expiration_date(cls, v, values, **kwargs):
+        """Set timezone for expiration_date from a value for pydantic."""
+        if not v:
+            return None
+
+        d: datetime = v
+        if d.tzinfo is None or d.tzinfo.utcoffset(d) is None:
+            # If no timezone, use the local one
+            return d.astimezone()
+
+        return v
+
     @property
     def python_module(self):
         """Get the python module from python_application."""
@@ -118,10 +132,10 @@ class AppConf(BaseModel):
 
                 # Check `expiration_date` using cert expiration date
                 if not app.expiration_date:
-                    app.expiration_date = cert.not_valid_after.astimezone(
-                        tz=timezone.utc)
-                elif app.expiration_date > cert.not_valid_after.astimezone(
-                        tz=timezone.utc):
+                    app.expiration_date = cert.not_valid_after.replace(
+                        tzinfo=timezone.utc)
+                elif app.expiration_date > cert.not_valid_after.replace(
+                        tzinfo=timezone.utc):
                     raise Exception(
                         f"`expiration_date` ({app.expiration_date}) can't be after "
                         f"the certificate expiration date ({cert.not_valid_after})"

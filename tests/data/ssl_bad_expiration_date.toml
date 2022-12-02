@@ -2,7 +2,7 @@ name = "helloworld"
 version = "1.0.0"
 project = "default"
 plan = "free"
-expiration_date = "2024-01-01 00:00:00"
+expiration_date = "2024-01-01T00:00:00+00:00"
 
 [code]
 location = "/tmp/code"

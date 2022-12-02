@@ -42,7 +42,7 @@ def add_subparser(subparsers):
         '--export',
         metavar="APP_UUID",
         type=uuid.UUID,
-        help='Extract a context file from your context store with all the data '
+        help='Extract a context file from your store with all the data '
         'to share with an app user wishing to verify '
         'the trustworthiness of the app.')
 
