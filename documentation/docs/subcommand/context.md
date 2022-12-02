@@ -40,6 +40,9 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
     expires_at = "2022-11-19 09:47:26.931077+00:00"
     docker_version = "e1d88756"
     ssl_certificate_origin = "self"
+
+    [instance.nonces]
+    "app.py" = "f33f4a1a1555660f9396aea7811b0ff7b0f19503a7485914"
     ```
 
 === "App owner SSL certificate"
@@ -62,6 +65,9 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
     expires_at = "2022-11-18 16:22:11.516125"
     docker_version = "11d789bf"
     ssl_certificate_origin = "owner"
+
+    [instance.nonces]
+    "app.py" = "f33f4a1a1555660f9396aea7811b0ff7b0f19503a7485914"
     ```
 
 === "Dev mode"
@@ -83,6 +89,9 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
     expires_at = "2022-11-18 16:00:43.352980"
     docker_version = "e1d88756"
     ssl_certificate_origin = "operator"
+
+    [instance.nonces]
+    "app.py" = "f33f4a1a1555660f9396aea7811b0ff7b0f19503a7485914"
     ```
 
 This directory is designed to be shared with any app users wishing to verify the trustworthiness of the app. 
@@ -123,12 +132,12 @@ $ mse-ctl context --purge
 
 ### Export
 
-If you want an app user to verify the trustworthiness of your apps, they will need this context directory which can be exported as a tarball doing:
+If you want an app user to verify the trustworthiness of your apps, they will need this context file from the context directory which can be exported using:
 
 ```console
 $ mse-ctl context --export 852a4256-fffa-457a-80ed-329166a652af
-Exporting 852a4256-fffa-457a-80ed-329166a652af context in context.tar...
+Exporting 852a4256-fffa-457a-80ed-329166a652af context in context.mse...
 You can now transfer this file to your app user.
 ```
 
-You can now share this tarball with the users.
+You can now share this file with the users.
