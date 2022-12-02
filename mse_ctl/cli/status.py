@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 import requests
 
 from mse_ctl.api.app import log as get_app_logs
-from mse_ctl.api.types import App, AppStatus
+from mse_ctl.api.types import AppStatus
 from mse_ctl.cli.helpers import get_app, get_enclave_resources
 from mse_ctl.conf.user import UserConf
 from mse_ctl.log import LOGGER as log

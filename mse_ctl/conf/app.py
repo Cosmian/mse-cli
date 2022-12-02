@@ -114,8 +114,7 @@ class AppConf(BaseModel):
 
             if app.ssl:
                 cert = x509.load_pem_x509_certificate(
-                    app.ssl.certificate.encode(
-                        'utf8'))  #TODO: we give the chain here
+                    app.ssl.certificate.encode('utf8'))
 
                 # Check `expiration_date` using cert expiration date
                 if not app.expiration_date:

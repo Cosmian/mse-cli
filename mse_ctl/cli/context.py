@@ -11,7 +11,7 @@ from mse_ctl.conf.context import Context
 
 from mse_ctl.log import LOGGER as log
 from mse_ctl.utils.color import bcolors
-from mse_ctl.utils.fs import ls, tar
+from mse_ctl.utils.fs import ls
 
 
 def add_subparser(subparsers):
@@ -23,25 +23,28 @@ def add_subparser(subparsers):
 
     group = parser.add_mutually_exclusive_group(required=True)
 
-    group.add_argument('--list',
-                       action='store_true',
-                       help='List the current saved context files.')
+    group.add_argument(
+        '--list',
+        action='store_true',
+        help='List the current saved context files from your store.')
 
-    group.add_argument('--clean',
-                       metavar="APP_UUID",
-                       type=uuid.UUID,
-                       help='The id of the MSE context to remove.')
+    group.add_argument(
+        '--clean',
+        metavar="APP_UUID",
+        type=uuid.UUID,
+        help='The id of the MSE context to remove from your store.')
 
     group.add_argument('--purge',
                        action='store_true',
-                       help='Remove all the MSE context files.')
+                       help='Remove all the MSE context files from your store.')
 
-    group.add_argument('--export',
-                       metavar="APP_UUID",
-                       type=uuid.UUID,
-                       help='Create a tar file with all the context data '
-                       'to share with an app user wishing to verify '
-                       'the trustworthiness of the app.')
+    group.add_argument(
+        '--export',
+        metavar="APP_UUID",
+        type=uuid.UUID,
+        help='Extract a context file from your context store with all the data '
+        'to share with an app user wishing to verify '
+        'the trustworthiness of the app.')
 
 
 def run(args):
@@ -68,11 +71,13 @@ def run(args):
         shutil.rmtree(Context.get_root_dirpath())
 
     if args.export:
-        path = Context.get_dirpath(args.export)
-        tar_filename = "context.tar"
-        log.info("Exporting %s context in %s...", args.export, tar_filename)
+        path = Context.get_context_filepath(args.export)
+        target_filename = "context.mse"
+
+        log.info("Exporting %s context in %s...", args.export, target_filename)
         if not path.exists():
             raise FileNotFoundError(f"Can't find context for app {args.export}")
 
-        tar(path, tar_filename)
+        shutil.copyfile(path, target_filename)
+
         log.info("You can now transfer this file to your app user.")

@@ -2,24 +2,23 @@
 
 import time
 from pathlib import Path
-from typing import List, Optional, Set
+from typing import Optional
 from uuid import UUID
 
 import requests
-from mse_lib_crypto.xsalsa20_poly1305 import encrypt_directory
 
 from mse_ctl.api.app import new
 from mse_ctl.api.auth import Connection
 from mse_ctl.api.types import App, AppStatus, SSLCertificateOrigin
 from mse_ctl.cli.helpers import (compute_mr_enclave, exists_in_project, get_app,
                                  get_certificate, get_enclave_resources,
-                                 get_project_from_name, stop_app, verify_app)
+                                 get_project_from_name, prepare_code, stop_app,
+                                 verify_app)
 from mse_ctl.conf.app import AppConf
 from mse_ctl.conf.context import Context
 from mse_ctl.conf.user import UserConf
 from mse_ctl.log import LOGGER as log
 from mse_ctl.utils.color import bcolors
-from mse_ctl.utils.fs import tar
 
 
 def add_subparser(subparsers):
@@ -52,7 +51,7 @@ def run(args):
     log.info("Temporary workspace is: %s", context.workspace)
 
     log.info("Encrypting your source code...")
-    tar_path = prepare_code(app_conf.code.location, context)
+    (tar_path, nonces) = prepare_code(app_conf.code.location, context)
 
     log.info("Deploying your app...")
     app = deploy_app(conn, app_conf, tar_path)
@@ -62,7 +61,8 @@ def run(args):
     app = wait_app_creation(conn, app.uuid)
 
     context.run(app.uuid, enclave_size, app.config_domain_name,
-                app.docker_version, app.expires_at, app.ssl_certificate_origin)
+                app.docker_version, app.expires_at, app.ssl_certificate_origin,
+                nonces)
 
     log.info("✅%s App created with uuid: %s%s", bcolors.OKGREEN, app.uuid,
              bcolors.ENDC)
@@ -95,7 +95,9 @@ def run(args):
 
     context.save()
 
-    log.info("The context of this creation has been saved at: %s", context.path)
+    log.info(
+        "The context of this creation can be retrieved using "
+        "`mse-ctl context --export %s`", app.uuid)
 
 
 def wait_app_start(conn: Connection, uuid: UUID) -> App:
@@ -213,31 +215,3 @@ def unseal_private_data(context: Context,
 
     if not r.ok:
         raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
-
-
-def prepare_code(src_path: Path,
-                 context: Context,
-                 patterns: Optional[List[str]] = None,
-                 file_exceptions: Optional[List[str]] = None,
-                 dir_exceptions: Optional[List[str]] = None) -> Path:
-    """Tar and encrypt (if required) the app python code."""
-    log.debug("Encrypt code in %s to %s...", src_path,
-              context.encrypted_code_path)
-
-    whitelist: Set[str] = {"requirements.txt"}
-
-    encrypt_directory(
-        dir_path=src_path,
-        patterns=(["*"] if patterns is None else patterns),
-        key=context.config.code_sealed_key,
-        exceptions=(list(whitelist) if file_exceptions is None else
-                    list(set(file_exceptions) | whitelist)),
-        dir_exceptions=([] if dir_exceptions is None else dir_exceptions),
-        out_dir_path=context.encrypted_code_path)
-
-    tar_path = tar(dir_path=context.encrypted_code_path,
-                   tar_path=context.tar_code_path)
-
-    log.debug("Tar encrypted code in '%s'", tar_path.name)
-
-    return tar_path
