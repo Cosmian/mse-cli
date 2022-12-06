@@ -88,3 +88,18 @@ class Plan(BaseModel):
     def from_json_dict(json: dict):
         """Build a Plan object from a json dict."""
         return Plan(**json)
+
+
+class User(BaseModel):
+    """User class."""
+
+    uuid: UUID
+    first_name: str
+    last_name: str
+    email: str
+    created_at: datetime.datetime
+
+    @staticmethod
+    def from_json_dict(json: dict):
+        """Build a User object from a json dict."""
+        return User(**json)

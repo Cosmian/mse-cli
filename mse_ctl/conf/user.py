@@ -1,12 +1,13 @@
 """User configuration file module."""
 
+from ast import Dict
 from pathlib import Path
 from typing import Optional
 
 import toml
 from pydantic import BaseModel
 
-from mse_ctl import MSE_BACKEND_URL, MSE_CONF_DIR
+from mse_ctl import MSE_AUTH0_CLIENT_ID, MSE_AUTH0_DOMAIN_NAME, MSE_BACKEND_URL, MSE_CONF_DIR
 from mse_ctl.api.auth import Connection
 
 
@@ -15,8 +16,8 @@ class UserConf(BaseModel):
 
     # Email of the user
     email: str
-    # Secret token of the user
-    secret_token: str
+    # Refresh token of the user
+    refresh_token: str
 
     @staticmethod
     def path() -> Path:
@@ -34,7 +35,22 @@ class UserConf(BaseModel):
 
             return UserConf(**dataMap)
 
+    def save(self, path: Optional[Path] = None):
+        """Dump the current object to a file."""
+        if not path:
+            path = UserConf.path()
+
+        with open(path, "w", encoding="utf8") as f:
+            dataMap: Dict[str, str] = {
+                "email": self.email,
+                "refresh_token": self.refresh_token,
+            }
+
+            toml.dump(dataMap, f)
+
     def get_connection(self) -> Connection:
         """Get the connection to the backend."""
         return Connection(base_url=MSE_BACKEND_URL,
-                          refresh_token=self.secret_token)
+                          auth0_base_url=MSE_AUTH0_DOMAIN_NAME,
+                          client_id=MSE_AUTH0_CLIENT_ID,
+                          refresh_token=self.refresh_token)
