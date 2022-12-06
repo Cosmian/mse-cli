@@ -27,7 +27,7 @@ def add_subparser(subparsers):
                         help='Print the log of the app.')
 
 
-def run(args):
+def run(args) -> None:
     """Run the subcommand."""
     user_conf = UserConf.from_toml()
 
@@ -73,15 +73,18 @@ def run(args):
     if app.status == AppStatus.Running:
         log.info("\tStatus             = %s%s%s", bcolors.OKGREEN,
                  app.status.value, bcolors.ENDC)
-        log.info("\tOnline since       = %s", app.ready_at.astimezone())
+        if app.ready_at:
+            log.info("\tOnline since       = %s", app.ready_at.astimezone())
     elif app.status == AppStatus.Stopped:
         log.info("\tStatus             = %s%s%s", bcolors.WARNING,
                  app.status.value, bcolors.ENDC)
-        log.info("\tStopped since      = %s", app.stopped_at.astimezone())
+        if app.stopped_at:
+            log.info("\tStopped since      = %s", app.stopped_at.astimezone())
     elif app.status == AppStatus.OnError:
         log.info("\tStatus             = %s%s%s", bcolors.FAIL,
                  app.status.value, bcolors.ENDC)
-        log.info("\tOn error since     = %s", app.onerror_at.astimezone())
+        if app.onerror_at:
+            log.info("\tOn error since     = %s", app.onerror_at.astimezone())
     elif app.status in (AppStatus.Initializing, AppStatus.Spawning):
         log.info("\tStatus             = %s%s%s", bcolors.OKBLUE,
                  app.status.value, bcolors.ENDC)

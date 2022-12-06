@@ -90,7 +90,7 @@ def run_server(port, auth_url, state) -> str:
     return CODE
 
 
-def run(args):
+def run(args) -> None:
     """Run the subcommand."""
     if args.whoami:
         try:

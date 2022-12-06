@@ -22,8 +22,8 @@ def run(_args):
     app_version = input("App version: ")
     project_name = input("Project name [default]: ") or "default"
     plan = input("Plan id [free]: ") or "free"
-    dev = input("Enable dev mode (yes/[no]): ")
-    dev = dev.lower() in ["y", "yes"]
+    dev_input = input("Enable dev mode (yes/[no]): ")
+    dev = dev_input.lower() in ["y", "yes"]
     code_location = input("Code location [.]:") or "."
     python_application = input("Python application [app:app]: ") or "app:app"
     health_check_endpoint = input("Health check endpoint [/]: ") or "/"

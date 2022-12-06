@@ -1,2 +1,2 @@
 email = "john@example.com"
-secret_token = "my_token"
+refresh_token = "my_token"

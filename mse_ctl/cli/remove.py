@@ -20,7 +20,7 @@ def add_subparser(subparsers):
     parser.add_argument('id', type=uuid.UUID, help='The id of the MSE app.')
 
 
-def run(args):
+def run(args) -> None:
     """Run the subcommand."""
     user_conf = UserConf.from_toml()
 

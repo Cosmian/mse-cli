@@ -43,7 +43,7 @@ def add_subparser(subparsers):
                         help='Path to the plaintext code')
 
 
-def run(args):
+def run(args) -> None:
     """Run the subcommand."""
     log.info("Checking your app...")
 
