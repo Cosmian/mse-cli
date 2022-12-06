@@ -1,21 +1,21 @@
-"""Signup/Login subparser definition.
-
-See: https://auth0.com/docs/get-started/authentication-and-authorization-flow/call-your-api-using-the-authorization-code-flow-with-pkce#steps
-
-"""
+"""Signup/Login subparser definition."""
 
 import hashlib
-from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 import secrets
 import base64
 import threading
-from typing import Optional
-from urllib.parse import parse_qs, urlparse, urlencode
 import re
-import requests
 import webbrowser
-from mse_ctl import MSE_AUTH0_AUDIENCE, MSE_AUTH0_CLIENT_ID, MSE_AUTH0_DOMAIN_NAME, MSE_CONSOLE_URL
+
+from typing import Optional
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from urllib.parse import parse_qs, urlparse, urlencode
+
+import requests
+
+from mse_ctl import (MSE_AUTH0_AUDIENCE, MSE_AUTH0_CLIENT_ID,
+                     MSE_AUTH0_DOMAIN_NAME, MSE_CONSOLE_URL)
 from mse_ctl.api.types import User
 from mse_ctl.log import LOGGER as log
 from mse_ctl.conf.user import UserConf
@@ -43,7 +43,7 @@ def run_server(port, auth_url, state) -> str:
     class LocalHTTPRequestHandler(BaseHTTPRequestHandler):
         """Local server designed to receive the access and refresh token."""
 
-        def log_message(self, format, *args):
+        def log_message(self, *args):
             """Remove default logs."""
             return
 
@@ -64,7 +64,7 @@ def run_server(port, auth_url, state) -> str:
                 self.send_response(400)
                 return
 
-            global CODE
+            global CODE  # pylint: disable=global-statement
             CODE = parsed_query['code'][0]
             self.send_response(301)
             self.send_header("location", f"{MSE_CONSOLE_URL}/?origin=mse-ctl")
@@ -72,6 +72,7 @@ def run_server(port, auth_url, state) -> str:
             self.kill_server()
 
         def kill_server(self):
+            """Stop the server."""
             assassin = threading.Thread(target=httpd.shutdown)
             assassin.daemon = True
             assassin.start()
@@ -102,10 +103,11 @@ def run(args):
 
         try:
             me = get_user_info(user_conf)
-        except:
+        except NameError:
             log.info(
-                "%sDon't forget to verify your email and complete your profile before going on%s",
-                bcolors.WARNING, bcolors.ENDC)
+                "%sDon't forget to verify your email and "
+                "complete your profile before going on%s", bcolors.WARNING,
+                bcolors.ENDC)
         return
 
     log.info("You are now redirected to your browser to login...")
@@ -121,18 +123,18 @@ def run(args):
         "response_type": "code",
         "code_challenge_method": "S256",
         "code_challenge": code_challenge,
-        "client_id":  MSE_AUTH0_CLIENT_ID,
+        "client_id": MSE_AUTH0_CLIENT_ID,
         "redirect_uri": redirect_uri,
-        "scope": "openid profile email read:current_user "\
+        "scope": "openid profile email read:current_user "
                  "update:current_user_metadata offline_access",
         "audience": MSE_AUTH0_AUDIENCE,
         "state": state
     }
 
-    url = f"{MSE_AUTH0_DOMAIN_NAME}/authorize?" + urlencode(params)
-
     # Run the server, open the brower and query auth0 "authorized"
-    code = run_server(port, url, state)
+    code = run_server(port,
+                      f"{MSE_AUTH0_DOMAIN_NAME}/authorize?" + urlencode(params),
+                      state)
 
     # Get an access/refresh token
     r = requests.post(
@@ -168,24 +170,26 @@ def run(args):
     try:
         me = get_user_info(user)
         log.info("Welcome back to Microservice Encryption %s", me.first_name)
-    except:
+    except NameError:
         log.info("\nWelcome to Microservice Encryption. ")
         log.info(
             "You can use the scaffold subcommand to initialize a new project.")
         log.info(
-            "%sDon't forget to verify your email and complete your profile before going on%s",
-            bcolors.WARNING, bcolors.ENDC)
+            "%sDon't forget to verify your email and "
+            "complete your profile before going on%s", bcolors.WARNING,
+            bcolors.ENDC)
 
 
 def get_user_info(user: UserConf) -> User:
+    """Get the user information from its token."""
     r: requests.Response = get_me(conn=user.get_connection())
 
     if not r.ok:
-        raise Exception("Unknown or unconfigured account.")
+        raise NameError("Unknown or unconfigured account.")
 
     me = r.json()
     if not me:
-        return None
+        raise NameError("Unknown or unconfigured account.")
 
     return User.from_json_dict(me)
 
@@ -205,9 +209,8 @@ def gen_code_verifier() -> str:
 def gen_code_challenge(code_verifier: str) -> str:
     """Generate the code challenge."""
     code_challenge = hashlib.sha256(code_verifier.encode('utf-8')).digest()
-    code_challenge = base64.urlsafe_b64encode(code_challenge).decode('utf-8')
-    code_challenge = code_challenge.replace('=', '')
-    return code_challenge
+    return base64.urlsafe_b64encode(code_challenge).decode('utf-8').replace(
+        '=', '')
 
 
 def open_webbrowser(address):
@@ -215,7 +218,7 @@ def open_webbrowser(address):
     try:
         webbrowser.open(url=address, new=1)
     except webbrowser.Error as e:
-        raise Exception(f"Unable to open the web browser: {e}")
+        raise Exception(f"Unable to open the web browser: {e}") from e
 
 
 def _b64_decode(data):

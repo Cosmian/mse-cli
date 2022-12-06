@@ -7,4 +7,4 @@ from mse_ctl.api.auth import Connection
 
 def me(conn: Connection) -> requests.Response:
     """GET `/users/me`."""
-    return conn.get(url=f"/users/me")
+    return conn.get(url="/users/me")

@@ -1,13 +1,13 @@
 """User configuration file module."""
 
-from ast import Dict
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Dict
 
 import toml
 from pydantic import BaseModel
 
-from mse_ctl import MSE_AUTH0_CLIENT_ID, MSE_AUTH0_DOMAIN_NAME, MSE_BACKEND_URL, MSE_CONF_DIR
+from mse_ctl import (MSE_AUTH0_CLIENT_ID, MSE_AUTH0_DOMAIN_NAME,
+                     MSE_BACKEND_URL, MSE_CONF_DIR)
 from mse_ctl.api.auth import Connection
 
 
