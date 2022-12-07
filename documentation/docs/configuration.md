@@ -60,10 +60,11 @@ For more information about the SSL information. See [Scenarii](scenarii.md).
 | private_key |     ✔️     |  str  |                     The private key (PEM format) of the SSL connection                     |
 | certificate |     ✔️     |  str  |                    The full chain certificate  (PEM format) of the SSL                     |
 
-Find below the procedure to generate the certificate with *LetsEncrypt* for your own mse app domain name (here: *example.domain.com*).
+Find below the procedure to generate the certificate with *LetsEncrypt* for your own MSE app's domain name (here: *example.domain.com*).
 
-1. In your DNS provider interface, register a `A` field *example.domain.com* for the cosmian proxy ip address: `57.128.36.109`. This registration must be effective before running any `mse-ctl deploy`.
+1. In your DNS provider interface, register a `A` field *example.domain.com* for the Cosmian proxy (IP address: `57.128.36.109`). This registration must be effective before running any `mse-ctl deploy`.
 2. To generate a certificate, the DNS-001 challenge will be used. With `certbot` run:
+
 ```console
 # apt install certbot
 # certbot certonly -d example.domain.com --manual --preferred-challenges dns -m tech@domain.com  --agree-tos
@@ -103,4 +104,4 @@ These files will be updated when the certificate renews.
 [...]
 ```
 3. As you can see in the `stdout`, a DNS `TXT` record should be registered under a given name in your DNS provider interface. After doing that, the certificate will be generated. Delete this record at the end of the process.
-4. Read the two pem files and create your own `ssl` section in the mse configuration file. You are now ready to deploy your app using: `mse-ctl deploy`.
+4. Read the two PEM files and create your own `ssl` section in the MSE configuration file. You are now ready to deploy your app using: `mse-ctl deploy`.
