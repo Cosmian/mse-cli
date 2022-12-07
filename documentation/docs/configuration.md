@@ -3,13 +3,13 @@ The configuration of an MSE app is written in a TOML file. This file is read in 
 Let's remind the quick start example app configuration file:
 
 ```{.bash}
-$ cat my_new_hello_world/mse.toml 
+$ cat my_new_hello_world/mse.toml
 ───────┬──────────────────────────────
    1   │ name = "my_new_hello_world"
    2   │ version = "0.1.0"
    3   │ project = "default"
    4   │ plan = "free"
-   5   │ 
+   5   │
    6   │ [code]
    7   │ location = "/home/user/some/path/my_new_hello_world/code"
    8   │ python_application = "app:app"
@@ -17,7 +17,7 @@ $ cat my_new_hello_world/mse.toml
 ───────┴──────────────────────────────
 ```
 
-Find below the description of the configuration file. 
+Find below the description of the configuration file.
 
 ## The main section
 
@@ -34,11 +34,11 @@ Find below the description of the configuration file.
 
 When the expiration date is reached, the application will be shutdown. Mainly because the SSL certificate needs to be renewed. It requires a new deployment because of our implement security measures to garantee zero trust environment.
 
-If the plan is `free` then the expiration date will be overwritten to the value inherited from this plan: **1  day**. 
+If the plan is `free` then the expiration date will be overwritten to the value inherited from this plan: **1  day**.
 
 In case the SSL certificate is provided by the app owner, this value should be lower than the expiration date of the certificate.
 
-If no `expiration_date` is specified in the configuration file, the expiration date of the application is the expiration date of the certificate if some. Otherwise, it takes the value inherited from the chosen plan. 
+If no `expiration_date` is specified in the configuration file, the expiration date of the application is the expiration date of the certificate if some. Otherwise, it takes the value inherited from the chosen plan.
 
 In dev mode, the expiration date is infinite.
 
@@ -62,7 +62,7 @@ For more information about the SSL information. See [Scenarii](scenarii.md).
 
 Find below the procedure to generate the certificate with *LetsEncrypt* for your own MSE app's domain name (here: *example.domain.com*).
 
-1. In your DNS provider interface, register a `A` field *example.domain.com* for the Cosmian proxy (IP address: `57.128.36.109`). This registration must be effective before running any `mse-ctl deploy`.
+1. In your DNS provider interface, register a `CNAME` field *example.domain.com* to the Cosmian proxy (domain name: `proxy.mse.cosmian.com`). This registration must be effective before running any `mse-ctl deploy`.
 2. To generate a certificate, the DNS-001 challenge will be used. With `certbot` run:
 
 ```console
