@@ -11,6 +11,22 @@ $ pip install -r requirements.txt
 $ pip install -U .
 ```
 
+Your python version must use Openssl.
+You can check your ssl lib from python's console :
+
+```console
+$ >>> import ssl
+$ >>> ssl.OPENSSL_VERSION
+```
+
+For Mac users, your might have to install another Python version and not to use de default one (which is probably Libssl).
+
+```console
+$ brew install python@3.x
+// Update your export PATH to switch to this new version
+$ pip3.x install  -U .
+```
+
 ## Usage
 
 ### Pre-requisites
@@ -21,7 +37,7 @@ First of all sign up or sign in using:
 $ mse-ctl login
 ```
 
-Then, download the [mse-app-demo](http://gitlab.cosmian.com/core/mse-app-demo) repository. And go to the `helloworld` directory.
+Download the [mse-app-demo](http://gitlab.cosmian.com/core/mse-app-demo) repository. And go to the `helloworld` directory.
 
 You can find an example of `flask` application and a `mse.toml` configuration file.
 
@@ -54,7 +70,7 @@ You can use these following env variables:
 - `MSE_AUTH0_DOMAIN_NAME` to specify another auth0 login url
 - `MSE_AUTH0_CLIENT_ID` to specify another auth0 tenant client id
 - `MSE_AUTH0_AUDIENCE` to specify another tenant audience
-- `MSE_CTL_CONSOLE_URL` to specify another console URL 
+- `MSE_CTL_CONSOLE_URL` to specify another console URL
 
 ## Documentation
 
@@ -64,4 +80,3 @@ $ mkdocs serve
 ```
 
 then open your browser on: `http://127.0.0.1:8003/`
-
