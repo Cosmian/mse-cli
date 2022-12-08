@@ -47,7 +47,6 @@ extra_javascript:
   - javascripts/extra.js
 nav:
   - Getting started: getting_started.md
-  - Scaffold a new project: subcommand/scaffold.md
   - Configuration: configuration.md
   - Advanced options:
       - Context: subcommand/context.md
@@ -60,4 +59,4 @@ nav:
       - Scenarii: scenarii.md
       - Deployment: how_it_works_deploy.md
       - Usage: how_it_works_use.md
-      - Security explain: security.md
+      - Security: security.md

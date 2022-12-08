@@ -28,13 +28,13 @@ The HTML is generated using mkdocs.
 
 1. Install it locally
 
-```sh
-pip3 install pydoc-markdown git+https://github.com/twardoch/mkdocs-combine.git mkdocs-kroki-plugin mkdocs-material pandoc-latex-admonition install markdown-katex git+https://gitlab.com/myriacore/pandoc-kroki-filter.git
+```console
+pip3 install mkdocs mkdocs-material markdown-katex mkdocs-kroki-plugin pydoc-markdown
 ```
 
 2. From the project root, run a local server
 
-```sh
+```console
 mkdocs serve
 ```
 
