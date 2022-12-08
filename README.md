@@ -19,7 +19,7 @@ $ >>> import ssl
 $ >>> ssl.OPENSSL_VERSION
 ```
 
-For Mac users, your might have to install another Python version and not to use de default one (which is probably Libssl).
+For Mac users, your might have to install another Python version and not use the default one (which is probably `Libssl`).
 
 ```console
 $ brew install python@3.x
@@ -50,7 +50,7 @@ $ cd helloworld
 $ mse-ctl deploy --path conf/dev.toml
 ```
 
-`mse_ctl` creates `<uuid>.toml` in `$MSE_CTL_CONF_PATH/context` for each new deployment containing some context data.
+`mse_ctl` creates `<uuid>.toml` in `$MSE_CTL_CONF_PATH/context` for each new deployment which contains some context data.
 
 If `--path` is not provided, `mse_ctl` is expecting a `mse.toml` in the current directory when using `deploy` subcommand.
 

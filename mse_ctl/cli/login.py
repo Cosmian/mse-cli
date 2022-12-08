@@ -78,7 +78,7 @@ def run_server(port, auth_url, state) -> str:
             assassin.start()
 
     httpd = HTTPServer(('', port), LocalHTTPRequestHandler)
-    # Open the browser on the authorize url to let the user login
+    # Open the browser on the authorization url to let the user login
     open_webbrowser(auth_url)
     log.info("Waiting for session... ")
     # Wait for the code from Auth0
@@ -110,7 +110,7 @@ def run(args) -> None:
                 bcolors.ENDC)
         return
 
-    log.info("You are now redirected to your browser to login...")
+    log.info("The browser will open-up to login through Cosmian website...")
 
     code_verifier = gen_code_verifier()
     code_challenge = gen_code_challenge(code_verifier)
@@ -131,7 +131,7 @@ def run(args) -> None:
         "state": state
     }
 
-    # Run the server, open the brower and query auth0 "authorized"
+    # Run the server, open the brower and query auth0 "authorize"
     code = run_server(port,
                       f"{MSE_AUTH0_DOMAIN_NAME}/authorize?" + urlencode(params),
                       state)
@@ -171,7 +171,7 @@ def run(args) -> None:
         me = get_user_info(user)
         log.info("Welcome back to Microservice Encryption %s", me.first_name)
     except NameError:
-        log.info("\nWelcome to Microservice Encryption. ")
+        log.info("\nWelcome to Microservice Encryption.")
         log.info(
             "You can use the scaffold subcommand to initialize a new project.")
         log.info(

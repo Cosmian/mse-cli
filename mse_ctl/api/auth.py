@@ -40,7 +40,7 @@ class Connection(Session):
     Parameters
     ----------------
     auth0_base_url : str
-        Auth0 nase URL of the connection.
+        Auth0 base URL of the connection.
     base_url : str
         Base URL of the connection.
     client_id: str
@@ -51,7 +51,7 @@ class Connection(Session):
     Attributes
     -----------
     auth0_base_url : str
-        Auth0 nase URL of the connection.
+        Auth0 base URL of the connection.
     base_url : str
         Base URL of the connection.
     refresh_token : str
@@ -89,7 +89,7 @@ class Connection(Session):
         self.client_id: str = client_id
         self.refresh_token: str = refresh_token
 
-        assert self.auth0_base_url, "Auth0URL must be provided!"
+        assert self.auth0_base_url, "Auth0 URL must be provided!"
         assert self.base_url, "URL must be provided!"
         assert self.client_id, "ClientID must be provided!"
         assert self.refresh_token, "Refresh token must be provided!"

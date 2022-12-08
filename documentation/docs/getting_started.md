@@ -12,7 +12,6 @@
 $ pip install mse-ctl
 ```
 
-## Sign up
 
 ## Login
 

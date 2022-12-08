@@ -29,7 +29,7 @@ MSE_DOCKER_IMAGE_URL = os.getenv("MSE_CTL_DOCKER_REMOTE_URL",
 MSE_BACKEND_URL = os.getenv('MSE_CTL_BASE_URL',
                             default="https://backend.mse.cosmian.com")
 
-# The URL to auth0 login page
+# The URL of Auth0 login page
 MSE_AUTH0_DOMAIN_NAME = os.getenv('MSE_CTL_AUTH0_DOMAIN_NAME',
                                   default="https://console-dev.eu.auth0.com")
 
@@ -37,7 +37,7 @@ MSE_AUTH0_DOMAIN_NAME = os.getenv('MSE_CTL_AUTH0_DOMAIN_NAME',
 MSE_AUTH0_CLIENT_ID = os.getenv('MSE_CTL_AUTH0_CLIENT_ID',
                                 default="bx2WlLrS7qr35iyNqUVTs9jMo834o8mC")
 
-# The URL of the auth0 audiance
+# The URL of the Auth0 audience
 MSE_AUTH0_AUDIENCE = os.getenv(
     'MSE_CTL_AUTH0_AUDIENCE',
     default="https://console-dev.eu.auth0.com/api/v2/")
