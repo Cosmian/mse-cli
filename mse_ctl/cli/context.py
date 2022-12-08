@@ -47,7 +47,7 @@ def add_subparser(subparsers):
         'the trustworthiness of the app.')
 
 
-def run(args):
+def run(args) -> None:
     """Run the subcommand."""
     if args.clean:
         log.info("Removing context file for %s...", args.clean)

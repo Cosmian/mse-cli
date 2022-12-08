@@ -27,7 +27,7 @@ def add_subparser(subparsers):
     group.add_argument('--name', type=str, help='The name of the MSE project.')
 
 
-def run(args):
+def run(args) -> None:
     """Run the subcommand."""
     user_conf = UserConf.from_toml()
     conn = user_conf.get_connection()

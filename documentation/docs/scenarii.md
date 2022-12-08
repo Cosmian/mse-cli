@@ -34,8 +34,6 @@ banking application in the cloud:
 
 ![](./images/scenario_1.png)
 
-TODO: remove cloudproof encryption
-
 The bank (*app owner*) doesn't want to make its code public especially from Cosmian or the cloud provider. 
 
 The bank's customer (*app user*) already trusts the bank through the banking application or website. They already shares their data or computation results with no one but the bank.

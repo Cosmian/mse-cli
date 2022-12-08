@@ -211,7 +211,7 @@ class Context(BaseModel):
             ssl_certificate_origin=ssl_certificate_origin,
             nonces=nonces)
 
-    def save(self):
+    def save(self) -> None:
         """Dump the current object to a file."""
         with open(self.path, "w", encoding="utf8") as f:
             dataMap: Dict[str, Any] = {
@@ -253,7 +253,8 @@ class Context(BaseModel):
             toml.dump(dataMap, f)
 
         # Also save the tar code in the context folder
-        shutil.copyfile(
-            self.tar_code_path,
-            Context.get_dirpath(self.instance.id) /
-            Context.get_tar_code_filename())
+        if self.instance:
+            shutil.copyfile(
+                self.tar_code_path,
+                Context.get_dirpath(self.instance.id) /
+                Context.get_tar_code_filename())

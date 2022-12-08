@@ -3,6 +3,7 @@
 from datetime import datetime
 import re
 from pathlib import Path
+import socket
 import ssl
 from typing import Dict, List, Optional, Set, Tuple
 from uuid import UUID
@@ -183,7 +184,18 @@ def compute_mr_enclave(context: Context, tar_path: Path) -> str:
 
 def get_certificate(domain_name: str) -> str:
     """Get the certificate from `domain_name`."""
-    return ssl.get_server_certificate((domain_name, 443))
+    # We don't use `get_server_certificate` because
+    # for some openssl version, the server_hostname is not induced
+    # from domain_name... So we need to set it explictly
+    # Otherwise we could have done:
+    #   return ssl.get_server_certificate((domain_name, 443))
+    with socket.create_connection((domain_name, 443)) as sock:
+        context = ssl.SSLContext()
+        with context.wrap_socket(sock, server_hostname=domain_name) as ssock:
+            cert = ssock.getpeercert(True)
+            if not cert:
+                raise Exception("Can't get peer certificate")
+            return ssl.DER_cert_to_PEM_cert(cert)
 
 
 def verify_app(mrenclave: Optional[str], ca_data: str):

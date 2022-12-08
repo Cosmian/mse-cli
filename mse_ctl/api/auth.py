@@ -39,17 +39,25 @@ class Connection(Session):
 
     Parameters
     ----------------
+    auth0_base_url : str
+        Auth0 base URL of the connection.
     base_url : str
         Base URL of the connection.
+    client_id: str
+        Auth0 client id.
     refresh_token : str
         Refresh Token used to get an Access Token.
 
     Attributes
     -----------
+    auth0_base_url : str
+        Auth0 base URL of the connection.
     base_url : str
         Base URL of the connection.
     refresh_token : str
         Refresh Token used to get an Access Token.
+    client_id: str
+        Auth0 client id.
     auth : AccessTokenAuth
         Class to auto include authorization bearer.
 
@@ -73,17 +81,23 @@ class Connection(Session):
 
             return wrapper
 
-    def __init__(self, base_url: str, refresh_token: str) -> None:
+    def __init__(self, auth0_base_url: str, base_url: str, client_id: str,
+                 refresh_token: str) -> None:
         """Init constructor of Connection."""
+        self.auth0_base_url: str = auth0_base_url
         self.base_url: str = base_url
+        self.client_id: str = client_id
         self.refresh_token: str = refresh_token
 
+        assert self.auth0_base_url, "Auth0 URL must be provided!"
         assert self.base_url, "URL must be provided!"
+        assert self.client_id, "ClientID must be provided!"
         assert self.refresh_token, "Refresh token must be provided!"
 
         super().__init__()
 
-        access_token: str = get_access_token(self.base_url, self.refresh_token)
+        access_token: str = get_access_token(self.auth0_base_url,
+                                             self.client_id, self.refresh_token)
         self.auth: AccessTokenAuth = AccessTokenAuth(access_token)
         retry = Retry(
             total=5,
@@ -103,7 +117,8 @@ class Connection(Session):
         """Fetch new access token."""
         assert self.auth, "No auth found in session, can't connect!"
 
-        self.auth.access_token = get_access_token(self.base_url,
+        self.auth.access_token = get_access_token(self.auth0_base_url,
+                                                  self.client_id,
                                                   self.refresh_token)
 
     @AccessToken.auto_refresh
@@ -170,14 +185,17 @@ class Connection(Session):
                             **kwargs)
 
 
-def get_access_token(url: str, refresh_token: str) -> str:
+def get_access_token(url: str, client_id: str, refresh_token: str) -> str:
     """Fetch new access token from `refresh_token`."""
-    r: Response = requests.post(url=f"{url}/oauth/token",
-                                json={
-                                    "type": "refresh_token",
-                                    "refresh_token": refresh_token,
-                                },
-                                timeout=30)
+    r: Response = requests.post(
+        url=f"{url}/oauth/token",
+        headers={'Content-Type': 'application/x-www-form-urlencoded'},
+        data={
+            "grant_type": "refresh_token",
+            "client_id": client_id,
+            "refresh_token": refresh_token,
+        },
+        timeout=30)
 
     if not r.ok:
         raise Exception(

@@ -1,4 +1,5 @@
 """App configuration file module."""
+from __future__ import annotations
 
 import os
 from datetime import datetime, timezone
@@ -69,7 +70,7 @@ class AppConf(BaseModel):
 
     @validator('expiration_date', pre=False, always=True)
     # pylint: disable=no-self-argument,unused-argument
-    def set_expiration_date(cls, v, values, **kwargs):
+    def set_expiration_date(cls, v, values, **kwargs) -> Optional[datetime]:
         """Set timezone for expiration_date from a value for pydantic."""
         if not v:
             return None
@@ -107,7 +108,7 @@ class AppConf(BaseModel):
         return f"{self.name}-{self.version}"
 
     @staticmethod
-    def from_toml(path: Optional[Path] = None):
+    def from_toml(path: Optional[Path] = None) -> AppConf:
         """Build a AppConf object from a Toml file."""
         if not path:
             path = Path(os.getcwd()) / "mse.toml"
@@ -159,7 +160,7 @@ class AppConf(BaseModel):
 
             return app
 
-    def save(self, folder: Path):
+    def save(self, folder: Path) -> None:
         """Dump the current object to a file."""
         with open(folder / "mse.toml", "w", encoding="utf8") as f:
             dataMap: Dict[str, Any] = {
@@ -188,7 +189,7 @@ class AppConf(BaseModel):
             toml.dump(dataMap, f)
 
     @staticmethod
-    def default(name: str, code_path: Path):
+    def default(name: str, code_path: Path) -> AppConf:
         """Generate a default configuration."""
         code = CodeConf(location=code_path.expanduser().resolve() / "code",
                         python_application="app:app",
@@ -200,7 +201,7 @@ class AppConf(BaseModel):
                        plan="free",
                        code=code)
 
-    def into_payload(self):
+    def into_payload(self) -> Dict[str, Any]:
         """Convert it into a mse-backend payload as a dict."""
         d = None
         if self.expiration_date:

@@ -11,8 +11,8 @@ filterwarnings("ignore")  # noqa: E402
 import argparse
 import pkg_resources
 
-from mse_ctl.cli import (context, deploy, list_all, login, init, remove,
-                         scaffold, signup, status, stop, verify)
+from mse_ctl.cli import (context, deploy, list_all, init, remove, scaffold,
+                         login, status, stop, verify)
 from mse_ctl.log import setup_logging
 
 
@@ -37,7 +37,6 @@ def main():
     login.add_subparser(subparsers)
     remove.add_subparser(subparsers)
     scaffold.add_subparser(subparsers)
-    signup.add_subparser(subparsers)
     status.add_subparser(subparsers)
     stop.add_subparser(subparsers)
     verify.add_subparser(subparsers)

@@ -17,7 +17,7 @@ def add_subparser(subparsers):
     parser.add_argument('name', type=str, help='The name of the new app.')
 
 
-def run(args):
+def run(args) -> None:
     """Run the subcommand."""
     project_dir = Path(os.getcwd()) / args.name
     os.makedirs(project_dir, exist_ok=False)

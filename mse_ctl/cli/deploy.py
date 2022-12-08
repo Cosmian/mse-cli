@@ -37,7 +37,7 @@ def add_subparser(subparsers):
     parser.set_defaults(func=run)
 
 
-def run(args):
+def run(args) -> None:
     """Run the subcommand."""
     user_conf = UserConf.from_toml()
     app_conf = AppConf.from_toml(path=args.path)

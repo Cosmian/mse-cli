@@ -61,4 +61,3 @@ nav:
       - Deployment: how_it_works_deploy.md
       - Usage: how_it_works_use.md
       - Security explain: security.md
-  - Python API: python/
