@@ -50,13 +50,13 @@ def run(args) -> None:
                                          AppStatus.Running, AppStatus.OnError
                                      ])
 
+    if not r.ok:
+        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+
     log.info("\n%s | %s | %12s | %s ", "App UUID".center(36),
              "Creation date".center(32), "Status".center(12),
              "App summary".center(36))
     log.info(("-" * 126))
-
-    if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
 
     list_app = r.json()
     for app in list_app:

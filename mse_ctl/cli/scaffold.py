@@ -7,6 +7,13 @@ from mse_ctl.conf.app import AppConf
 from mse_ctl.log import LOGGER as log
 
 
+def non_empty_string(s):
+    """Check if a string is empty for argparse cmdline."""
+    if not s:
+        raise ValueError("Must not be empty string")
+    return s
+
+
 def add_subparser(subparsers):
     """Define the subcommand."""
     parser = subparsers.add_parser(
@@ -14,7 +21,9 @@ def add_subparser(subparsers):
 
     parser.set_defaults(func=run)
 
-    parser.add_argument('name', type=str, help='The name of the new app.')
+    parser.add_argument('name',
+                        type=non_empty_string,
+                        help='The name of the new app.')
 
 
 def run(args) -> None:
