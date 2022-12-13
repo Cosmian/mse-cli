@@ -94,10 +94,11 @@ class Context(BaseModel):
         return path
 
     @staticmethod
-    def get_dirpath(uuid: UUID) -> Path:
+    def get_dirpath(uuid: UUID, create=True) -> Path:
         """Get the directory path of that context."""
         path = Context.get_root_dirpath() / str(uuid)
-        os.makedirs(path, exist_ok=True)
+        if create:
+            os.makedirs(path, exist_ok=True)
         return path
 
     @staticmethod
@@ -111,9 +112,10 @@ class Context(BaseModel):
         return "code.tar"
 
     @staticmethod
-    def get_context_filepath(uuid: UUID) -> Path:
+    def get_context_filepath(uuid: UUID, create=True) -> Path:
         """Get the path of the context file."""
-        return Context.get_dirpath(uuid) / Context.get_context_filename()
+        return Context.get_dirpath(uuid,
+                                   create) / Context.get_context_filename()
 
     @property
     def path(self) -> Path:
@@ -163,7 +165,8 @@ class Context(BaseModel):
     @staticmethod
     def clean(uuid: UUID, ignore_errors: bool = False):
         """Remove the context directory."""
-        shutil.rmtree(Context.get_dirpath(uuid), ignore_errors=ignore_errors)
+        shutil.rmtree(Context.get_dirpath(uuid, create=False),
+                      ignore_errors=ignore_errors)
 
     @staticmethod
     def from_app_conf(conf: AppConf):

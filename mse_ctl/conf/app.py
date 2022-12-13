@@ -147,7 +147,12 @@ class AppConf(BaseModel):
                     SubjectAlternativeName)
                 domains = ext.value.get_values_for_type(x509.DNSName)
 
-                if app.ssl.domain_name not in domains:
+                # Create a wildcard domain from the ssl domain
+                wildcard_s = app.ssl.domain_name.split(".")
+                wildcard_s[0] = "*"
+                wildcard = ".".join(wildcard_s)
+
+                if wildcard not in domains and app.ssl.domain_name not in domains:
                     raise Exception(
                         f"{app.ssl.domain_name} should be present in the "
                         f"SSL certificate as a Subject Alternative Name ({domains})"

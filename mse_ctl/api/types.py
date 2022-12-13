@@ -82,7 +82,6 @@ class Plan(BaseModel):
     name: str
     memory: int
     cores: float
-    price: float
 
     @staticmethod
     def from_json_dict(json: dict):
