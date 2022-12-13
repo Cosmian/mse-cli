@@ -20,7 +20,7 @@ setup(name="mse-ctl",
           "requests>=2.28.1,<3.0.0", "cryptography>=38.0.1,<39.0.0",
           "pyjwt>=2.5.0,<2.6.0", "urllib3>=1.26.12,<1.27.0",
           "pydantic>=1.10.0,<2.0.0", "toml>=0.10.0,<0.11.0",
-          "docker>=6.0.0,<7.0.0", "intel-sgx-ra==0.4",
+          "docker>=6.0.0,<7.0.0", "intel-sgx-ra>=0.5,<0.6",
           "mse-lib-crypto>=0.3,<0.4"
       ],
       entry_points={
