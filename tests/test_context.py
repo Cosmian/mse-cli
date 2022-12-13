@@ -1,3 +1,5 @@
+"""Test conf/context.py."""
+
 import filecmp
 import os
 from pathlib import Path

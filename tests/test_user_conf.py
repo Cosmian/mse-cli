@@ -1,3 +1,4 @@
+"""Test conf/user.py."""
 from pathlib import Path
 
 from mse_ctl.conf.user import UserConf

@@ -19,7 +19,7 @@ $ >>> import ssl
 $ >>> ssl.OPENSSL_VERSION
 ```
 
-For Mac users, your might have to install another Python version and not use the default one (which is probably `Libssl`).
+For Mac users, your might have to install another Python version and not use the default one (which is probably `LibreSSL`).
 
 ```console
 $ brew install python@3.x

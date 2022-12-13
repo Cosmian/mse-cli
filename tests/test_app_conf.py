@@ -1,3 +1,5 @@
+"""Test conf/app.py."""
+
 from pathlib import Path
 from datetime import datetime, timezone
 import tempfile
