@@ -4,7 +4,7 @@ import pytest
 import io
 from mse_ctl.log import setup_logging, LOGGER as log
 
-# f should be shared between all tests (to not close by any tests)
+# cmd_log_str should be shared between all tests (to not close by any tests)
 cmd_log_str = None
 
 

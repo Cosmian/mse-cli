@@ -125,7 +125,7 @@ def test_deploy_non_free(cmd_log):
                 {"path": Path(__file__).parent / "data" /
                          "non_free_plan.toml"}))
 
-    assert "no plan green subscribed for the project" in str(exception.value)
+    assert "Cannot find the plan with name green" in str(exception.value)
 
 
 def test_deploy_bad_projet_name(cmd_log):

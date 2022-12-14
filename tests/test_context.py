@@ -13,7 +13,7 @@ from mse_ctl.conf.context import Context, ContextConf, ContextInstance
 
 def test_from_toml():
     """Test `from_toml` function."""
-    toml = Path("tests/data/context.toml")
+    toml = Path(__file__).parent / "data/context.toml"
     conf = Context.from_toml(path=toml)
 
     ref_context_conf = Context(
@@ -43,7 +43,7 @@ def test_from_toml():
 
 def test_from_app_conf():
     """Test `from_app_conf` function."""
-    toml = Path("tests/data/context.toml")
+    toml = Path(__file__).parent / "data/context.toml"
 
     code = CodeConf(location="/tmp/code",
                     encrypted=True,
@@ -79,7 +79,7 @@ def test_from_app_conf():
 
 def test_run():
     """Test `from_app_conf` function."""
-    toml = Path("tests/data/context.toml")
+    toml = Path(__file__).parent / "data/context.toml"
     ref_context_conf = Context.from_toml(path=toml)
 
     code = CodeConf(location="/tmp/code",
@@ -115,7 +115,7 @@ def test_run():
 
 def test_save():
     """Test the `save` method."""
-    toml = Path("tests/data/context.toml")
+    toml = Path(__file__).parent / "data/context.toml"
     conf = Context.from_toml(path=toml)
     os.makedirs(conf.workspace, exist_ok=True)
     code = conf.workspace / "code.tar"
@@ -132,7 +132,7 @@ def test_save():
 
 def test_path():
     """Test path handling methods."""
-    toml = Path("tests/data/context.toml")
+    toml = Path(__file__).parent / "data/context.toml"
     conf = Context.from_toml(path=toml)
     workspace = conf.workspace
 
