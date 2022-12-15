@@ -1,6 +1,5 @@
 """Deploy subparser definition."""
 
-import time
 from pathlib import Path
 from typing import Optional
 from uuid import UUID
@@ -19,6 +18,7 @@ from mse_ctl.conf.context import Context
 from mse_ctl.conf.user import UserConf
 from mse_ctl.log import LOGGER as log
 from mse_ctl.utils.color import bcolors
+from mse_ctl.utils.spinner import Spinner
 
 
 def add_subparser(subparsers):
@@ -102,8 +102,9 @@ def run(args) -> None:
 
 def wait_app_start(conn: Connection, uuid: UUID) -> App:
     """Wait for the app to be started."""
+    spinner = Spinner(3)
     while True:
-        time.sleep(3)
+        spinner.wait()
         app = get_app(conn=conn, uuid=uuid)
 
         if app.status == AppStatus.Spawning:
@@ -121,6 +122,7 @@ def wait_app_start(conn: Connection, uuid: UUID) -> App:
             raise Exception("The app creation stopped because it "
                             "has been stopped in the meantime...")
 
+    spinner.reset()
     return app
 
 
@@ -172,8 +174,10 @@ def deploy_app(conn: Connection, app_conf: AppConf, tar_path: Path) -> App:
 
 def wait_app_creation(conn: Connection, uuid: UUID) -> App:
     """Wait for the app to be deployed."""
+    spinner = Spinner(3)
     while True:
-        time.sleep(3)
+        spinner.wait()
+
         app = get_app(conn=conn, uuid=uuid)
 
         if app.status == AppStatus.Initializing:
@@ -191,6 +195,7 @@ def wait_app_creation(conn: Connection, uuid: UUID) -> App:
             raise Exception("The app creation stopped because it "
                             "has been stopped in the meantime...")
 
+    spinner.reset()
     return app
 
 
