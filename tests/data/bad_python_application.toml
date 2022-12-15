@@ -1,0 +1,9 @@
+name = "bad_app"
+version = "1.0.0"
+project = "default"
+plan = "free"
+
+[code]
+location = "/tmp/code"
+python_application = "app:app"
+health_check_endpoint = "/"

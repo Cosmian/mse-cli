@@ -1,0 +1,9 @@
+name = "non_free"
+version = "1.0.0"
+project = "default"
+plan = "green"
+
+[code]
+location = "code/"
+python_application = "app:app"
+health_check_endpoint = "/"

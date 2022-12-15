@@ -19,7 +19,7 @@ $ >>> import ssl
 $ >>> ssl.OPENSSL_VERSION
 ```
 
-For Mac users, your might have to install another Python version and not use the default one (which is probably `Libssl`).
+For Mac users, your might have to install another Python version and not use the default one (which is probably `LibreSSL`).
 
 ```console
 $ brew install python@3.x
@@ -71,6 +71,22 @@ You can use these following env variables:
 - `MSE_AUTH0_CLIENT_ID` to specify another auth0 tenant client id
 - `MSE_AUTH0_AUDIENCE` to specify another tenant audience
 - `MSE_CTL_CONSOLE_URL` to specify another console URL
+
+## Test
+
+You first need to login in in order to generate a session. Then run the test.
+```console
+$ mse-ctl login
+$ set -a
+$ source .env.test
+$ pytest
+```
+
+Also, if your test environment is not the default one, you can run the tests as follow:
+
+```
+$ MSE_CTL_BASE_URL="https://example.backend.dev.mse.cosmian.com" pytest
+```
 
 ## Documentation
 

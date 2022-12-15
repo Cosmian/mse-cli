@@ -5,6 +5,7 @@ TODO.md
 examples/services
 examples/contexts
 my_first_app
+.env*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

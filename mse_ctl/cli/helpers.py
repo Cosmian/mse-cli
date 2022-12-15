@@ -190,7 +190,7 @@ def get_certificate(domain_name: str) -> str:
     # Otherwise we could have done:
     #   return ssl.get_server_certificate((domain_name, 443))
     with socket.create_connection((domain_name, 443)) as sock:
-        context = ssl.SSLContext()
+        context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
         with context.wrap_socket(sock, server_hostname=domain_name) as ssock:
             cert = ssock.getpeercert(True)
             if not cert:

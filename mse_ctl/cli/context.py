@@ -71,7 +71,7 @@ def run(args) -> None:
         shutil.rmtree(Context.get_root_dirpath())
 
     if args.export:
-        path = Context.get_context_filepath(args.export)
+        path = Context.get_context_filepath(args.export, create=False)
         target_filename = "context.mse"
 
         log.info("Exporting %s context in %s...", args.export, target_filename)
