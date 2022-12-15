@@ -19,6 +19,9 @@ workflow:
   rules:
     # Run pipeline MR
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    # Run if triggered
+    - if: $CI_PIPELINE_SOURCE == 'pipeline' && $TRIGGERED != null
+      when: always
     # Remove pipeline branch if MR open
     - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
       when: never
@@ -29,6 +32,9 @@ workflow:
 
 code_format:
   stage: lint
+  rules:
+    # Don't run if TRIGGERED is set by a parent pipeline
+    - if: $TRIGGERED == null
   before_script:
     - python --version
     - pip install virtualenv
@@ -40,6 +46,8 @@ code_format:
 
 code_style:
   stage: lint
+  rules:
+    - if: $TRIGGERED == null
   before_script:
     - python --version
     - pip install virtualenv
@@ -53,6 +61,8 @@ code_style:
 
 doc_style:
   stage: lint
+  rules:
+    - if: $TRIGGERED == null
   before_script:
     - python --version
     - pip install virtualenv
@@ -66,6 +76,8 @@ doc_style:
 
 static_analysis:
   stage: lint
+  rules:
+    - if: $TRIGGERED == null
   before_script:
     - python --version
     - pip install virtualenv
@@ -79,6 +91,8 @@ static_analysis:
 
 type_check:
   stage: lint
+  rules:
+    - if: $TRIGGERED == null
   before_script:
     - python --version
     - pip install virtualenv
@@ -89,6 +103,47 @@ type_check:
     - pip install .
   script:
     - mypy mse_ctl/
+
+test_unit:
+  stage: test
+  rules:
+    - if: $TRIGGERED == null
+  before_script:
+    - python3 --version
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt
+    - pip install -r requirements-dev.txt
+    - pip install .
+  script:
+    - pytest -m "not slow"
+
+test_e2e:
+  stage: test_e2e
+  # This job has the shell tag because it runs dockers
+  tags: [shell]
+  when: manual
+  allow_failure: false
+  variables:
+    # The job is manual, so if you set the variable in the gitlab UI, it will override that one
+    BASE_URL: "https://ci.backend.dev.mse.cosmian.com"
+  before_script:
+    - python3 --version
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt
+    - pip install -r requirements-dev.txt
+    - pip install .
+    - CONF_TMP_DIR=$(mktemp -d)
+    - echo 'email = "alice@cosmian.com"' > ${CONF_TMP_DIR}/login.toml
+    - echo "refresh_token = \"${ALICE_REFRESH_TOKEN}\"" >> ${CONF_TMP_DIR}/login.toml
+  script:
+    - echo "Running tests using ${BASE_URL}"
+    - MSE_CTL_CONF_PATH=${CONF_TMP_DIR} MSE_CTL_BASE_URL=${BASE_URL} pytest -m slow
+  after_script:
+    - rm $CONF_TMP_DIR
 
 .doc:
   stage: build
@@ -102,7 +157,8 @@ type_check:
       variables:
         REMOTE_HOST: "ui.sc.test.cosmian.com"
         CI_COMMIT_TAG: "dev"
-    - when: on_success
+    - if: $TRIGGERED == null
+      when: on_success
   allow_failure: false
   before_script:
     - apt update -y
@@ -134,7 +190,7 @@ type_check:
 release_wheel:
   stage: build
   rules:
-    - if: $CI_COMMIT_TAG =~ /^\d+\.\d+(\.\d+)?([\.\-\_])?((a(lpha)?|b(eta)?|c|r(c|ev)?|pre(view)?)\d*)?(\.?(post|dev)\d*)?$/
+    - if: $TRIGGERED == null && $CI_COMMIT_TAG =~ /^\d+\.\d+(\.\d+)?([\.\-\_])?((a(lpha)?|b(eta)?|c|r(c|ev)?|pre(view)?)\d*)?(\.?(post|dev)\d*)?$/
   before_script:
     - python --version
     - pip install virtualenv
@@ -155,51 +211,13 @@ release_wheel:
     paths:
       - dist/*.whl
 
-test_unit:
-  stage: test
-  before_script:
-    - python3 --version
-    - pip install virtualenv
-    - virtualenv venv
-    - source venv/bin/activate
-    - pip install -r requirements.txt
-    - pip install -r requirements-dev.txt
-    - pip install .
-  script:
-    - pytest -m "not slow"
-
-test_e2e:
-  stage: test_e2e
-  # This job has the shell tag because it runs dockers
-  tags: [shell]
-  when: manual
-  variables:
-    # The job is manual, so if you set the variable in the gitlab UI, it will override that one
-    BASE_URL: "https://ci.backend.dev.mse.cosmian.com"
-  before_script:
-    - python3 --version
-    - pip install virtualenv
-    - virtualenv venv
-    - source venv/bin/activate
-    - pip install -r requirements.txt
-    - pip install -r requirements-dev.txt
-    - pip install .
-    - CONF_TMP_DIR=$(mktemp -d)
-    - echo 'email = "alice@cosmian.com"' > ${CONF_TMP_DIR}/login.toml
-    - echo "refresh_token = \"${ALICE_REFRESH_TOKEN}\"" >> ${CONF_TMP_DIR}/login.toml
-  script:
-    - echo "Running tests using ${BASE_URL}"
-    - MSE_CTL_CONF_PATH=${CONF_TMP_DIR} MSE_CTL_BASE_URL=${BASE_URL} pytest -m slow
-  after_script:
-    - rm $CONF_TMP_DIR
-
 # Triggers public_documentation to rebuild the doc
 documentation:
   image: alpine:3.16
   stage: deploy
   rules:
-    - if: $CI_COMMIT_BRANCH == 'main'
-    - if: $CI_COMMIT_BRANCH == 'develop'
+    - if: $TRIGGERED == null && $CI_COMMIT_BRANCH == 'main'
+    - if: $TRIGGERED == null && $CI_COMMIT_BRANCH == 'develop'
   before_script:
     - echo $CI_COMMIT_BRANCH
     - apk add --update curl
