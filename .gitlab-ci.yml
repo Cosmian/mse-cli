@@ -4,6 +4,7 @@ stages:
   - lint
   - build
   - test
+  - test_e2e
   - deploy
 
 variables:
@@ -157,7 +158,7 @@ release_wheel:
 test_unit:
   stage: test
   before_script:
-    - python --version
+    - python3 --version
     - pip install virtualenv
     - virtualenv venv
     - source venv/bin/activate
@@ -166,6 +167,31 @@ test_unit:
     - pip install .
   script:
     - pytest -m "not slow"
+
+test_e2e:
+  stage: test_e2e
+  # This job has the shell tag because it runs dockers
+  tags: [shell]
+  when: manual
+  variables:
+    # The job is manual, so if you set the variable in the gitlab UI, it will override that one
+    BASE_URL: "https://ci.backend.dev.mse.cosmian.com"
+  before_script:
+    - python3 --version
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt
+    - pip install -r requirements-dev.txt
+    - pip install .
+    - CONF_TMP_DIR=$(mktemp -d)
+    - echo 'email = "alice@cosmian.com"' > ${CONF_TMP_DIR}/login.toml
+    - echo "refresh_token = \"${ALICE_REFRESH_TOKEN}\"" >> ${CONF_TMP_DIR}/login.toml
+  script:
+    - echo "Running tests using ${BASE_URL}"
+    - MSE_CTL_CONF_PATH=${CONF_TMP_DIR} MSE_CTL_BASE_URL=${BASE_URL} pytest -m slow
+  after_script:
+    - rm $CONF_TMP_DIR
 
 # Triggers public_documentation to rebuild the doc
 documentation:

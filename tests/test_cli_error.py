@@ -16,6 +16,7 @@ from mse_ctl.cli.context import run as run_context
 from conftest import capture_logs
 
 
+@pytest.mark.slow
 def test_status_bad_uuid(cmd_log):
     """Test status with the error: valid id but no exists."""
     with pytest.raises(Exception) as exception:
@@ -28,6 +29,7 @@ def test_status_bad_uuid(cmd_log):
     assert "Cannot find the app with UUID " in str(exception.value)
 
 
+@pytest.mark.slow
 def test_scaffold_bad_name(cmd_log):
     """Test scaffold with the error: bad name."""
     with pytest.raises(Exception) as exception:
@@ -36,6 +38,7 @@ def test_scaffold_bad_name(cmd_log):
     assert "File exists" in str(exception.value)
 
 
+@pytest.mark.slow
 def test_list_bad_project_name(cmd_log):
     """Test list with the error: project name does not exist."""
     with pytest.raises(Exception) as exception:
@@ -53,6 +56,7 @@ def test_list_bad_project_name(cmd_log):
     assert "Cannot find the project with UUID" in str(exception.value)
 
 
+@pytest.mark.slow
 def test_context_bad_id(cmd_log):
     """Test context with the error: id does not exist."""
     with pytest.raises(FileNotFoundError) as exception:
@@ -80,6 +84,7 @@ def test_context_bad_id(cmd_log):
     assert "Can't find context for app" in str(exception.value)
 
 
+@pytest.mark.slow
 def test_remove_bad_uuid(cmd_log):
     """Test remove with the error: valid id but no exists."""
     with pytest.raises(Exception) as exception:
@@ -90,6 +95,7 @@ def test_remove_bad_uuid(cmd_log):
     assert "Cannot find the app with UUID " in str(exception.value)
 
 
+@pytest.mark.slow
 def test_stop_bad_uuid(cmd_log):
     """Test stop with the error: valid id but no exists."""
     with pytest.raises(Exception) as exception:
@@ -100,6 +106,7 @@ def test_stop_bad_uuid(cmd_log):
     assert "Cannot find the app with UUID " in str(exception.value)
 
 
+@pytest.mark.slow
 def test_verify_bad_domain(cmd_log):
     """Test verify with the error: valid domain but no exists."""
     with pytest.raises(Exception) as exception:
@@ -113,9 +120,12 @@ def test_verify_bad_domain(cmd_log):
                     "domain_name": "notexist.cosmian.app"
                 }))
 
-    assert "TLS/SSL connection has been closed (EOF)" in str(exception.value)
+    assert "TLS/SSL connection has been closed (EOF)" in str(
+        exception.value) or "EOF occurred in violation of protocol" in str(
+            exception.value)
 
 
+@pytest.mark.slow
 def test_deploy_non_free(cmd_log):
     """Test deploy with the error: non free plan but no payment."""
     with pytest.raises(Exception) as exception:
@@ -128,6 +138,7 @@ def test_deploy_non_free(cmd_log):
     assert "Cannot find the plan with name green" in str(exception.value)
 
 
+@pytest.mark.slow
 def test_deploy_bad_projet_name(cmd_log):
     """Test deploy with the error: project name does not exist."""
     with pytest.raises(Exception) as exception:
@@ -139,6 +150,7 @@ def test_deploy_bad_projet_name(cmd_log):
     assert "Project notexist does not exist" in str(exception.value)
 
 
+@pytest.mark.slow
 def test_deploy_bad_app(cmd_log):
     """Test deploy with the error: bad python app."""
     with pytest.raises(Exception) as exception:

@@ -269,16 +269,19 @@ def _test_mse_ctl(f: io.StringIO, ssl_certificate_origin: SSLCertificateOrigin):
     assert not Context.get_dirpath(app_uuid, False).exists()
 
 
+@pytest.mark.slow
 def test_mse_ctl_self_signed(cmd_log):
     """Test a complete deployment flow for dev mode."""
     _test_mse_ctl(cmd_log, SSLCertificateOrigin.Self)
 
 
+@pytest.mark.slow
 def test_mse_ctl_with_ssl(cmd_log):
     """Test a complete deployment flow for dev mode."""
     _test_mse_ctl(cmd_log, SSLCertificateOrigin.Owner)
 
 
+@pytest.mark.slow
 def test_mse_ctl_dev_mode(cmd_log):
     """Test a complete deployment flow for dev mode."""
     _test_mse_ctl(cmd_log, SSLCertificateOrigin.Operator)
