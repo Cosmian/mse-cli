@@ -72,20 +72,25 @@ You can use these following env variables:
 - `MSE_AUTH0_AUDIENCE` to specify another tenant audience
 - `MSE_CTL_CONSOLE_URL` to specify another console URL
 
-## Test
+## Developpement & Test
 
-You first need to login in in order to generate a session. Then run the test.
+To work with the development/test environment, you shall edit the following variables with their proper values:
+
+- `MSE_CTL_CONF_PATH`
+- `MSE_CTL_AUTH0_CLIENT_ID`
+- `MSE_CTL_AUTH0_DOMAIN_NAME`
+- `MSE_CTL_BASE_URL`
+- `MSE_CTL_AUTH0_AUDIENCE`
+- `MSE_CTL_CONSOLE_URL`
+
+Do the same, if you need to use de staging environment.
+
+Then you first need to login in in order to generate a session. Then run the test.
 ```console
 $ mse-ctl login
-$ set -a
-$ source .env.test
+$ export MSE_TEST_PRIVATE_KEY="EDIT"
+$ export MSE_TEST_PUBLIC_KEY="EDIT"
 $ pytest
-```
-
-Also, if your test environment is not the default one, you can run the tests as follow:
-
-```
-$ MSE_CTL_BASE_URL="https://example.backend.dev.mse.cosmian.com" pytest
 ```
 
 ## Documentation

@@ -19,6 +19,7 @@ workflow:
   rules:
     # Run pipeline MR
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_PIPELINE_SOURCE == 'schedule'
     # Run if triggered
     - if: $CI_PIPELINE_SOURCE == 'pipeline' && $TRIGGERED != null
       when: always
@@ -120,14 +121,35 @@ test_unit:
     - pytest -m "not slow"
 
 test_e2e:
-  stage: test_e2e
-  # This job has the shell tag because it runs dockers
-  tags: [shell]
+  extends: .test_e2e_template
   when: manual
-  allow_failure: false
   variables:
     # The job is manual, so if you set the variable in the gitlab UI, it will override that one
     BASE_URL: "https://ci.backend.dev.mse.cosmian.com"
+    AUTH0_CLIENT_ID: "bx2WlLrS7qr35iyNqUVTs9jMo834o8mC"
+    AUTH0_DOMAIN_NAME: "https://console-dev.eu.auth0.com"
+    AUTH0_AUDIENCE: "https://console-dev.eu.auth0.com/api/v2/"
+    REFRESH_TOKEN: ${DEV_ALICE_REFRESH_TOKEN}
+  except:
+    - schedules
+
+test_e2e_scheduled:
+  extends: .test_e2e_template
+  variables:
+    # The job is manual, so if you set the variable in the gitlab UI, it will override that one
+    BASE_URL: "https://backend.staging.mse.cosmian.com"
+    AUTH0_CLIENT_ID: "Vm94ZbQn7fFpf5IbA6511S8yp3DQeau2"
+    AUTH0_DOMAIN_NAME: "https://mse-console-test.eu.auth0.com"
+    AUTH0_AUDIENCE: "https://mse-console-test.eu.auth0.com/api/v2/"
+    REFRESH_TOKEN: ${STAGING_ALICE_REFRESH_TOKEN}
+  only:
+    - schedules
+
+.test_e2e_template:
+  stage: test_e2e
+  # This job has the shell tag because it runs dockers
+  tags: [shell]
+  allow_failure: false
   before_script:
     - python3 --version
     - pip install virtualenv
@@ -138,10 +160,16 @@ test_e2e:
     - pip install .
     - CONF_TMP_DIR=$(mktemp -d)
     - echo 'email = "alice@cosmian.com"' > ${CONF_TMP_DIR}/login.toml
-    - echo "refresh_token = \"${ALICE_REFRESH_TOKEN}\"" >> ${CONF_TMP_DIR}/login.toml
+    - echo "refresh_token = \"${REFRESH_TOKEN}\"" >> ${CONF_TMP_DIR}/login.toml
   script:
     - echo "Running tests using ${BASE_URL}"
-    - MSE_CTL_CONF_PATH=${CONF_TMP_DIR} MSE_CTL_BASE_URL=${BASE_URL} pytest -m slow
+    - >
+      MSE_CTL_CONF_PATH=${CONF_TMP_DIR} 
+      MSE_CTL_BASE_URL=${BASE_URL}
+      MSE_CTL_AUTH0_CLIENT_ID=${AUTH0_CLIENT_ID}
+      MSE_CTL_AUTH0_DOMAIN_NAME=${AUTH0_DOMAIN_NAME}
+      MSE_CTL_AUTH0_AUDIENCE=${AUTH0_AUDIENCE}
+      pytest -m slow
   after_script:
     - rm $CONF_TMP_DIR
 

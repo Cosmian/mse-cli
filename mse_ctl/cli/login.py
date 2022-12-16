@@ -116,7 +116,7 @@ def run(args) -> None:
     code_challenge = gen_code_challenge(code_verifier)
     state = gen_state()
 
-    port = 5655
+    port = 5355
     redirect_uri = f"http://localhost:{port}/"
 
     params = {
