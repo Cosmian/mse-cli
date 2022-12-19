@@ -36,6 +36,7 @@ code_style:
     # Only run on merge requests and schedule jobs
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
     - if: $CI_PIPELINE_SOURCE == 'schedule'
+
   before_script:
     - python --version
     - pip install virtualenv
@@ -53,6 +54,7 @@ doc_style:
     # Only run on merge requests and schedule jobs
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
     - if: $CI_PIPELINE_SOURCE == 'schedule'
+
   before_script:
     - python --version
     - pip install virtualenv
@@ -120,7 +122,6 @@ test_e2e:
   rules:
     # Only run on merge requests and schedule jobs
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-      when: manual
     - if: $CI_PIPELINE_SOURCE == 'pipeline'
       when: manual
   variables:
@@ -133,6 +134,8 @@ test_e2e:
 
 test_e2e_scheduled:
   extends: .test_e2e_template
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'schedule'
   variables:
     # The job is manual, so if you set the variable in the gitlab UI, it will override that one
     BASE_URL: "https://backend.staging.mse.cosmian.com"
@@ -140,8 +143,6 @@ test_e2e_scheduled:
     AUTH0_DOMAIN_NAME: "https://mse-console-test.eu.auth0.com"
     AUTH0_AUDIENCE: "https://mse-console-test.eu.auth0.com/api/v2/"
     REFRESH_TOKEN: ${STAGING_ALICE_REFRESH_TOKEN}
-  only:
-    - schedules
 
 .test_e2e_template:
   stage: test_e2e
@@ -200,7 +201,7 @@ documentation:
   image: alpine:3.16
   stage: deploy
   rules:
-    - if: $CI_COMMIT_BRANCH == 'develop'
+    - if: $CI_COMMIT_BRANCH == 'develop' && $CI_PIPELINE_SOURCE != 'schedule'
   before_script:
     - echo $CI_COMMIT_BRANCH
     - apk add --update curl
