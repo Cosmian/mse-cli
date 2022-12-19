@@ -42,11 +42,11 @@ In dev mode, the expiratation date is not used because the certificate is the on
 
 ### Code section
 
-|         Keys          | Mandatory | Types |                    Description                     |
-| :-------------------: | :-------: | :---: |:--------------------------------------------------:|
-|       location        |     ✔️     |  str  |    Relative path to the application code folder    |
-|  python_application   |     ✔️     |  str  |          module_name:flask_variable_name           |
-| health_check_endpoint |     ✔️     |  str  | Endpoint used to check if the application is ready |
+|         Keys          | Mandatory | Types |                     Description                     |
+| :-------------------: | :-------: | :---: |:---------------------------------------------------:|
+|       location        |     ✔️     |  str  |    Relative path to the application code folder     |
+|  python_application   |     ✔️     |  str  |           module_name:flask_variable_name           |
+| health_check_endpoint |     ✔️     |  str  | `GET` endpoint to check if the application is ready |
 
 ### SSL section
 
