@@ -1,5 +1,5 @@
 The configuration of an MSE application is written in a TOML file.
-The `mse.toml` file is used with `mse-ctl deploy` subcommand, you can specify another TOML file with argument `--path` if needed.
+The `mse.toml` file located in the current directory is used with `mse-ctl deploy` subcommand, you can specify another TOML file with argument `--path` if needed.
 
 ```{.bash}
 $ cat my_project/mse.toml
@@ -29,7 +29,7 @@ $ cat my_project/mse.toml
 
 ### Expiration date of the application
 
-The expiration data is tied to the self-signed certificate. When the expiration date is reached, the application will not be available.
+The expiration date is tied to the self-signed certificate. When the expiration date is reached, the application will not be available.
 
 If the plan is `free` then the expiration date will be overwritten to **1  day**.
 
