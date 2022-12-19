@@ -34,8 +34,9 @@ workflow:
 code_format:
   stage: lint
   rules:
-    # Don't run if TRIGGERED is set by a parent pipeline
-    - if: $TRIGGERED == null
+    # Only run on merge requests and schedule jobs
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_PIPELINE_SOURCE == 'schedule'
   before_script:
     - python --version
     - pip install virtualenv
@@ -48,7 +49,9 @@ code_format:
 code_style:
   stage: lint
   rules:
-    - if: $TRIGGERED == null
+    # Only run on merge requests and schedule jobs
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_PIPELINE_SOURCE == 'schedule'
   before_script:
     - python --version
     - pip install virtualenv
@@ -63,7 +66,9 @@ code_style:
 doc_style:
   stage: lint
   rules:
-    - if: $TRIGGERED == null
+    # Only run on merge requests and schedule jobs
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_PIPELINE_SOURCE == 'schedule'
   before_script:
     - python --version
     - pip install virtualenv
@@ -78,7 +83,9 @@ doc_style:
 static_analysis:
   stage: lint
   rules:
-    - if: $TRIGGERED == null
+    # Only run on merge requests and schedule jobs
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_PIPELINE_SOURCE == 'schedule'
   before_script:
     - python --version
     - pip install virtualenv
@@ -93,7 +100,9 @@ static_analysis:
 type_check:
   stage: lint
   rules:
-    - if: $TRIGGERED == null
+    # Only run on merge requests and schedule jobs
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_PIPELINE_SOURCE == 'schedule'
   before_script:
     - python --version
     - pip install virtualenv
@@ -108,7 +117,9 @@ type_check:
 test_unit:
   stage: test
   rules:
-    - if: $TRIGGERED == null
+    # Only run on merge requests and schedule jobs
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_PIPELINE_SOURCE == 'schedule'
   before_script:
     - python3 --version
     - pip install virtualenv
@@ -122,7 +133,12 @@ test_unit:
 
 test_e2e:
   extends: .test_e2e_template
-  when: manual
+  rules:
+    # Only run on merge requests and schedule jobs
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: manual
+    - if: $CI_PIPELINE_SOURCE == 'pipeline'
+      when: manual
   variables:
     # The job is manual, so if you set the variable in the gitlab UI, it will override that one
     BASE_URL: "https://ci.backend.dev.mse.cosmian.com"
@@ -171,7 +187,7 @@ test_e2e_scheduled:
       MSE_CTL_AUTH0_AUDIENCE=${AUTH0_AUDIENCE}
       pytest -m slow
   after_script:
-    - rm $CONF_TMP_DIR
+    - rm -f $CONF_TMP_DIR
 
 .doc:
   stage: build
@@ -185,8 +201,7 @@ test_e2e_scheduled:
       variables:
         REMOTE_HOST: "ui.sc.test.cosmian.com"
         CI_COMMIT_TAG: "dev"
-    - if: $TRIGGERED == null
-      when: on_success
+    - when: on_success
   allow_failure: false
   before_script:
     - apt update -y
