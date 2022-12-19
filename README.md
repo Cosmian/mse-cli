@@ -1,4 +1,4 @@
-# Microservice Encryption Control (CLI)
+# Microservice Encryption Control (MSE-CTL)
 
 ## Overview
 
