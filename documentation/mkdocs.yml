@@ -55,8 +55,7 @@ nav:
       - Remove: subcommand/remove.md
       - Status: subcommand/status.md
       - Stop: subcommand/stop.md
-  - About:
-      - Scenarii: scenarii.md
-      - Deployment: how_it_works_deploy.md
-      - Usage: how_it_works_use.md
-      - Security: security.md
+  - Scenarii: scenarii.md
+  - Security: security.md
+  - Deployment: how_it_works_deploy.md
+  - Usage: how_it_works_use.md

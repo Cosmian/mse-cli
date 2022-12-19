@@ -19,7 +19,7 @@ $ cat my_project/mse.toml
 ### Main section
 
 |      Keys       | Mandatory |            Types            |                                      Description                                      |
-| :-------------: | :-------: |:---------------------------:|:-------------------------------------------------------------------------------------:|
+| :-------------: | :-------: | :-------------------------: | :-----------------------------------------------------------------------------------: |
 |      name       |     ✔️     |             str             |              Name of the application. It should be unique per `project`               |
 |     version     |     ✔️     |             str             | Version of the application. Useful if multiple version of the same application exists |
 |     project     |     ✔️     |      `default` or str       |                    Project name to regroup application for payment                    |
@@ -42,11 +42,11 @@ In dev mode, the expiratation date is not used because the certificate is the on
 
 ### Code section
 
-|         Keys          | Mandatory | Types |                     Description                     |
-| :-------------------: | :-------: | :---: |:---------------------------------------------------:|
-|       location        |     ✔️     |  str  |    Relative path to the application code folder     |
-|  python_application   |     ✔️     |  str  |           module_name:flask_variable_name           |
-| health_check_endpoint |     ✔️     |  str  | `GET` endpoint to check if the application is ready |
+|         Keys          | Mandatory | Types |                                          Description                                           |
+| :-------------------: | :-------: | :---: | :--------------------------------------------------------------------------------------------: |
+|       location        |     ✔️     |  str  |                          Relative path to the application code folder                          |
+|  python_application   |     ✔️     |  str  |                                module_name:flask_variable_name                                 |
+| health_check_endpoint |     ✔️     |  str  | `GET` endpoint to check if the application is ready. This endpoint should be un-authenticated. |
 
 ### SSL section
 
@@ -54,7 +54,7 @@ Needed if you want to use your own custom domain name.
 For more information, see [scenarii](scenarii.md).
 
 |    Keys     | Mandatory | Types |                                                 Description                                                  |
-| :---------: | :-------: | :---: |:------------------------------------------------------------------------------------------------------------:|
+| :---------: | :-------: | :---: | :----------------------------------------------------------------------------------------------------------: |
 | domain_name |     ✔️     |  str  | Custom domain name of your application. Should also be in CN and Subject Alternative Name of the certificate |
 | private_key |     ✔️     |  str  |                                Private key of the SSL connection (PEM format)                                |
 | certificate |     ✔️     |  str  |                         Full certification chain of the SSL connection (PEM format)                          |
