@@ -131,9 +131,12 @@ def test_deploy_non_free(cmd_log):
     with pytest.raises(Exception) as exception:
         run_deploy(
             Namespace(
-                **
-                {"path": Path(__file__).parent / "data" /
-                         "non_free_plan.toml"}))
+                **{
+                    "path":
+                        Path(__file__).parent / "data" / "non_free_plan.toml",
+                    "force":
+                        False
+                }))
 
     assert "Cannot find the plan with name green" in str(exception.value)
 
@@ -143,9 +146,14 @@ def test_deploy_bad_projet_name(cmd_log):
     """Test deploy with the error: project name does not exist."""
     with pytest.raises(Exception) as exception:
         run_deploy(
-            Namespace(**{
-                "path": Path(__file__).parent / "data" / "bad_project_name.toml"
-            }))
+            Namespace(
+                **{
+                    "path":
+                        Path(__file__).parent / "data" /
+                        "bad_project_name.toml",
+                    "force":
+                        False
+                }))
 
     assert "Project notexist does not exist" in str(exception.value)
 
@@ -159,7 +167,9 @@ def test_deploy_bad_app(cmd_log):
                 **{
                     "path":
                         Path(__file__).parent / "data" /
-                        "bad_python_application.toml"
+                        "bad_python_application.toml",
+                    "force":
+                        False
                 }))
 
     assert "Flask module 'app' not found in directory" in str(exception.value)
