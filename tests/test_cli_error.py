@@ -1,6 +1,7 @@
 """Test error scenari on cli/*.py."""
 
 from argparse import Namespace
+import os
 from pathlib import Path
 
 import pytest
@@ -113,11 +114,16 @@ def test_verify_bad_domain(cmd_log):
         run_verify(
             Namespace(
                 **{
-                    "skip_fingerprint": True,
-                    "fingerprint": None,
-                    "context": None,
-                    "code": None,
-                    "domain_name": "notexist.cosmian.app"
+                    "skip_fingerprint":
+                        True,
+                    "fingerprint":
+                        None,
+                    "context":
+                        None,
+                    "code":
+                        None,
+                    "domain_name":
+                        f"notexist.{os.getenv('MSE_TEST_DOMAIN_NAME')}"
                 }))
 
     assert "TLS/SSL connection has been closed (EOF)" in str(
