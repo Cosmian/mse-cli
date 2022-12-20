@@ -34,12 +34,10 @@ def add_subparser(subparsers):
         metavar='path/to/mse/app/mse.toml',
         help='Path to the mse app to deploy (current directory if not set)')
 
-    parser.add_argument(
-        '--force',
-        action='store_true',
-        help=
-        'Do not ask to stop the application if a similar one is running. Stop it anyway.'
-    )
+    parser.add_argument('--force',
+                        action='store_true',
+                        help='Do not ask to stop the application '
+                        'if a similar one is running. Stop it anyway.')
 
     parser.set_defaults(func=run)
 
