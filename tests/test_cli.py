@@ -154,9 +154,10 @@ def _test_mse_ctl(f: io.StringIO, ssl_certificate_origin: SSLCertificateOrigin):
     app_conf = AppConf.from_toml(conf)
     if ssl_certificate_origin == SSLCertificateOrigin.Owner:
         assert not app_conf.ssl
-        app_conf.ssl = SSLConf(domain_name=f"{app_conf.name}.cosmilink.com",
-                               private_key=os.getenv("MSE_TEST_PRIVATE_KEY"),
-                               certificate=os.getenv("MSE_TEST_PUBLIC_KEY"))
+        app_conf.ssl = SSLConf(
+            domain_name=f"{app_conf.name}.{os.getenv('MSE_TEST_DOMAIN_NAME')}",
+            private_key=os.getenv("MSE_TEST_PRIVATE_KEY"),
+            certificate=os.getenv("MSE_TEST_PUBLIC_KEY"))
         app_conf.save(conf.parent)
     elif ssl_certificate_origin == SSLCertificateOrigin.Operator:
         assert not app_conf.dev

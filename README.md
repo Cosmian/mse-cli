@@ -72,6 +72,7 @@ Do the same, if you need to use de staging environment.
 Then you first need to login in in order to generate a session. Then run the test.
 ```console
 $ mse-ctl login
+$ export MSE_TEST_DOMAIN_NAME="EDIT"
 $ export MSE_TEST_PRIVATE_KEY="EDIT"
 $ export MSE_TEST_PUBLIC_KEY="EDIT"
 $ pytest

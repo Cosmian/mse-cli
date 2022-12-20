@@ -122,6 +122,7 @@ test_e2e:
   rules:
     # Only run on merge requests and triggered jobs
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: manual
     - if: $CI_PIPELINE_SOURCE == 'pipeline'
       when: manual
   variables:
@@ -131,6 +132,9 @@ test_e2e:
     AUTH0_DOMAIN_NAME: "https://console-dev.eu.auth0.com"
     AUTH0_AUDIENCE: "https://console-dev.eu.auth0.com/api/v2/"
     REFRESH_TOKEN: ${DEV_ALICE_REFRESH_TOKEN}
+    MSE_TEST_DOMAIN_NAME: ${DEV_MSE_TEST_DOMAIN_NAME}
+    MSE_TEST_PRIVATE_KEY: ${DEV_MSE_TEST_PRIVATE_KEY}
+    MSE_TEST_PUBLIC_KEY: ${DEV_MSE_TEST_PUBLIC_KEY}
 
 test_e2e_scheduled:
   extends: .test_e2e_template
@@ -143,6 +147,9 @@ test_e2e_scheduled:
     AUTH0_DOMAIN_NAME: "https://mse-console-test.eu.auth0.com"
     AUTH0_AUDIENCE: "https://mse-console-test.eu.auth0.com/api/v2/"
     REFRESH_TOKEN: ${STAGING_ALICE_REFRESH_TOKEN}
+    MSE_TEST_DOMAIN_NAME: ${STAGING_MSE_TEST_DOMAIN_NAME}
+    MSE_TEST_PRIVATE_KEY: ${STAGING_MSE_TEST_PRIVATE_KEY}
+    MSE_TEST_PUBLIC_KEY: ${STAGING_MSE_TEST_PUBLIC_KEY}
 
 .test_e2e_template:
   stage: test_e2e
