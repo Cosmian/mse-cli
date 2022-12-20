@@ -46,7 +46,7 @@ In dev mode, the expiratation date is not used because the certificate is the on
 | :-------------------: | :-------: | :---: | :--------------------------------------------------------------------------------------------: |
 |       location        |     ✔️     |  str  |                          Relative path to the application code folder                          |
 |  python_application   |     ✔️     |  str  |                                module_name:flask_variable_name                                 |
-| health_check_endpoint |     ✔️     |  str  | `GET` endpoint to check if the application is ready. This endpoint should be un-authenticated. |
+| health_check_endpoint |     ✔️     |  str  | `GET` endpoint to check if the application is ready. This endpoint should be unauthenticated. |
 
 ### SSL section
 

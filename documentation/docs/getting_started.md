@@ -64,7 +64,7 @@ $ tree mse-app-demo/helloworld
 └── README.md
 ```
 
-The `app.py` is a basic flask app with no extra code. Mse-ify your application is pretty straightforward, it doesn't require any modification of your own application:
+The file `app.py` is a basic flask application with no extra code and adapt your own application to MSE does not require any modification to your python code:
 
 ```python
 from flask import Flask
@@ -79,7 +79,8 @@ def hello():
 
 Let's deploy it. 
 
-Using a `free` plan, the deployment takes about 60 seconds. For non-free plans, the deployment takes few seconds only. On use also, the performance of your application depends on the chosen plan which determines the amount of memory and CPU dedicated to your own application.
+Using a `free` plan is longer to deploy than non-free plans because the memory and CPU dedicated are limited.
+It should take around 60 seconds to deploy against a few seconds with non-free plans.
 
 ```
 $ mse-ctl deploy --path mse-app-demo/helloworld/config/zero_trust.toml
@@ -114,7 +115,7 @@ $ curl "https://$MSE_UUID.cosmian.app" --cacert /tmp/tmpntxibdo6/cert.conf.pem
 
 ## Scaffold your own project
 
-The `scaffold` subcommand allows you to prepare your own project starting with a new fresh Flask application with only one endpoint `/`. See also the [init](subcommand/init.md) subcommand which enables you to initialize  the config file on a interactive way. 
+The `scaffold` subcommand allows you to prepare your own project starting with a new fresh Flask application with only one endpoint `/`. See also the [init](subcommand/init.md) subcommand which enables you to initialize  the config file in an interactive way. 
 
 ```{.bash}
 $ mse-ctl scaffold my_project
@@ -128,10 +129,10 @@ my_project
 1 directory, 3 files
 ```
 
-!!! warning "Micro service applications only"
+!!! warning "Compatibility with ASGI"
 
 
-    To be mse compliant, your app should be a python micro service (using flask for instance). You can't deploy a standalone program under mse. 
+    To be compliant with MSE your Python application must be an [ASGI](https://asgi.readthedocs.io) application. It is not possible to deploy a standalone Python program. 
 
 
 Edit the `app.py` with your own code and edit the default configuration file `mse.toml` as needed (see [Configuration](configuration.md)).
