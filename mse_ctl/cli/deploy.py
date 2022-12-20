@@ -34,6 +34,11 @@ def add_subparser(subparsers):
         metavar='path/to/mse/app/mse.toml',
         help='Path to the mse app to deploy (current directory if not set)')
 
+    parser.add_argument('--force',
+                        action='store_true',
+                        help='Do not ask to stop the application '
+                        'if a similar one is running. Stop it anyway.')
+
     parser.set_defaults(func=run)
 
 
@@ -43,7 +48,7 @@ def run(args) -> None:
     app_conf = AppConf.from_toml(path=args.path)
     conn = user_conf.get_connection()
 
-    if not check_app_conf(conn, app_conf):
+    if not check_app_conf(conn, app_conf, args.force):
         return
 
     (enclave_size, cores) = get_enclave_resources(conn, app_conf.plan)
@@ -126,7 +131,9 @@ def wait_app_start(conn: Connection, uuid: UUID) -> App:
     return app
 
 
-def check_app_conf(conn: Connection, app_conf: AppConf) -> bool:
+def check_app_conf(conn: Connection,
+                   app_conf: AppConf,
+                   force: bool = False) -> bool:
     """Check app conf: project exist, app name exist, etc."""
     # Check that the project exists
     project = get_project_from_name(conn, app_conf.project)
@@ -145,13 +152,17 @@ def check_app_conf(conn: Connection, app_conf: AppConf) -> bool:
         log.info(
             "An application with the same name in that project is already running..."
         )
-        answer = input("Would you like to replace it [yes/no]? ")
-        if answer.lower() in ["y", "yes"]:
-            log.info("Stopping the previous app...")
+        if force:
+            log.info("Stopping the previous app (force mode enabled)...")
             stop_app(conn, app.uuid)
         else:
-            log.info("Your deployment has been stopped!")
-            return False
+            answer = input("Would you like to replace it [yes/no]? ")
+            if answer.lower() in ["y", "yes"]:
+                log.info("Stopping the previous app...")
+                stop_app(conn, app.uuid)
+            else:
+                log.info("Your deployment has been stopped!")
+                return False
 
     if not (app_conf.code.location /
             (app_conf.python_module.replace(".", "/") + ".py")).exists():
