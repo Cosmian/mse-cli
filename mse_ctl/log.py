@@ -1,6 +1,7 @@
 """mse_ctl.log module."""
 
 import logging
+import sys
 
 LOGGER = logging.getLogger("mse")
 
@@ -8,5 +9,5 @@ LOGGER = logging.getLogger("mse")
 def setup_logging(debug: bool = False):
     """Configure basic logging."""
     # logging.basicConfig(format="[%(asctime)s] [%(name)36s] => %(message)s")
-    logging.basicConfig(format="%(message)s")
+    logging.basicConfig(stream=sys.stdout, format="%(message)s")
     LOGGER.setLevel(logging.DEBUG if debug else logging.INFO)

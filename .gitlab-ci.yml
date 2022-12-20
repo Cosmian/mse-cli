@@ -120,7 +120,7 @@ test_unit:
 test_e2e:
   extends: .test_e2e_template
   rules:
-    # Only run on merge requests and schedule jobs
+    # Only run on merge requests and triggered jobs
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
     - if: $CI_PIPELINE_SOURCE == 'pipeline'
       when: manual

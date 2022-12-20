@@ -11,22 +11,6 @@ $ pip install -r requirements.txt
 $ pip install -U .
 ```
 
-Your python version must use Openssl.
-You can check your ssl lib from python's console :
-
-```console
-$ >>> import ssl
-$ >>> ssl.OPENSSL_VERSION
-```
-
-For Mac users, your might have to install another Python version and not use the default one (which is probably `LibreSSL`).
-
-```console
-$ brew install python@3.x
-// Update your export PATH to switch to this new version
-$ pip3.x install  -U .
-```
-
 ## Usage
 
 ### Pre-requisites
