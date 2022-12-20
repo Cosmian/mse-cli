@@ -3,7 +3,6 @@
 
     To launch your first confidential microservice, follow this tutorial in your favorite terminal.
 
-
 ## Install
 
 The CLI tool `mse-ctl` requires at least [Python](https://www.python.org/downloads/) 3.8 and [OpenSSL](https://www.openssl.org/source/) 1.1.1 series.
@@ -55,26 +54,68 @@ Let's start with a simple Flask Hello World application:
 
 ```{.bash}
 $ git clone http://gitlab.cosmian.com/core/mse-app-demo
+$ tree mse-app-demo/helloworld
+├── code
+│   ├── app.py
+│   └── requirements.txt
+├── config
+│   ├── dev.toml
+│   └── zero_trust.toml
+└── README.md
+```
+
+The file `app.py` is a basic flask application with no extra code and adapt your own application to MSE does not require any modification to your python code:
+
+```python
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def hello():
+    """Get a simple example."""
+    return "Hello world"
+```
+
+Let's deploy it. 
+
+Using a `free` plan is longer to deploy than non-free plans because the memory and CPU dedicated are limited.
+It should take around 60 seconds to deploy against a few seconds with non-free plans.
+
+```
 $ mse-ctl deploy --path mse-app-demo/helloworld/config/zero_trust.toml
+An application with the same name in that project is already running...
+Temporary workspace is: /tmp/tmpntxibdo6
+Encrypting your source code...
+Deploying your app...
+App creating for helloworld:1.0.0 with 512M EPC memory and 0.38 CPU cores...
+✅ App created with uuid: <uuid>
+Checking app trustworthiness...
+The code fingerprint is dc54c709ab979543625ea8cbb30ae945ff50b9a86b9c3d97a53dbc8a883c5998
+Verification: success
+✅ The verified certificate has been saved at: /tmp/tmpntxibdo6/cert.conf.pem
+Unsealing your private data from your mse instance...
+Waiting for application to be ready...
+Your application is now fully deployed and started...
+✅ It's now ready to be used on https://<uuid>.cosmian.app until 2022-12-19 19:06:07.212101+01:00
+The context of this creation can be retrieved using `mse-ctl context --export <uuid>`
 ```
 
 That's it!
 
-Your microservice will be up in a few seconds at `https://{uuid}.cosmian.app` (replace `{uuid}` with the one from `mse-ctl deploy` command output).
+Your microservice is up at `https://{uuid}.cosmian.app` (replace `{uuid}` with the one from `mse-ctl deploy` command output).
 
-Check the status with `openssl` and `curl`:
+You can test your app using `curl`:
 
 ```{.console}
 $ export MSE_UUID="..." # your UUID here
-$ # save SSL certificate of the app in sgx_cert.pem
-$ openssl s_client -showcerts -connect "$MSE_UUID.cosmian.app:443" </dev/null 2>/dev/null | openssl x509 -outform PEM >sgx_cert.pem
-$ # force curl CA bundle to be sgx_cert.pem
-$ curl "https://$MSE_UUID.cosmian.app" --cacert sgx_cert.pem
+$ # force curl CA bundle to be /tmp/tmpntxibdo6/cert.conf.pem
+$ curl "https://$MSE_UUID.cosmian.app" --cacert /tmp/tmpntxibdo6/cert.conf.pem
 ```
 
-## Scaffold a new project
+## Scaffold your own project
 
-The `scaffold` subcommand allows you to prepare your own project starting with a new fresh Flask application with only one endpoint `/`.
+The `scaffold` subcommand allows you to prepare your own project starting with a new fresh Flask application with only one endpoint `/`. See also the [init](subcommand/init.md) subcommand which enables you to initialize  the config file in an interactive way. 
 
 ```{.bash}
 $ mse-ctl scaffold my_project
@@ -88,7 +129,13 @@ my_project
 1 directory, 3 files
 ```
 
-Edit the default configuration file `mse.toml` as needed (see [Configuration)](configuration.md)).
+!!! warning "Compatibility with ASGI"
+
+
+    To be compliant with MSE your Python application must be an [ASGI](https://asgi.readthedocs.io) application. It is not possible to deploy a standalone Python program. 
+
+
+Edit the `app.py` with your own code and edit the default configuration file `mse.toml` as needed (see [Configuration](configuration.md)).
 
 ```{.bash}
 $ cat my_project/mse.toml 
@@ -104,3 +151,9 @@ $ cat my_project/mse.toml
    9   │ health_check_endpoint = "/"
 ───────┴──────────────────────────────
 ```
+
+It's a good practice before deploying your app, to test it locally:
+
+//TODO\\
+
+You can now deploy your app as described previously.
