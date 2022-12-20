@@ -82,6 +82,12 @@ Let's deploy it.
 Using a `free` plan is longer to deploy than non-free plans because the memory and CPU dedicated are limited.
 It should take around 60 seconds to deploy against a few seconds with non-free plans.
 
+
+!!! info "Pre-requisites"
+
+    Before deploying an app, verify that docker service is up and your current user can use the docker client without privilege
+
+
 ```
 $ mse-ctl deploy --path mse-app-demo/helloworld/config/zero_trust.toml
 An application with the same name in that project is already running...
