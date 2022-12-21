@@ -31,7 +31,7 @@ You can deploy this application as follow:
 
 ```console
 $ cd helloworld
-$ mse-ctl deploy --path conf/dev.toml
+$ mse-ctl deploy --path config/dev.toml
 ```
 
 `mse_ctl` creates `<uuid>.toml` in `$MSE_CTL_CONF_PATH/context` for each new deployment which contains some context data.
