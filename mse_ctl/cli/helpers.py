@@ -232,3 +232,10 @@ def verify_app(mrenclave: Optional[str], ca_data: str):
         raise Exception("Enclave signer is wrong "
                         f"(read {bytes(quote.report_body.mr_signer).hex()} "
                         f"but should be {bytes(mrsigner).hex()})")
+
+
+def non_empty_string(s):
+    """Check if a string is empty for argparse cmdline."""
+    if not s:
+        raise ValueError("Must not be empty string")
+    return s

@@ -6,7 +6,7 @@ import requests
 
 from mse_ctl.api.project import list_apps
 from mse_ctl.api.types import App, AppStatus
-from mse_ctl.cli.helpers import get_project_from_name
+from mse_ctl.cli.helpers import get_project_from_name, non_empty_string
 from mse_ctl.conf.user import UserConf
 from mse_ctl.log import LOGGER as log
 from mse_ctl.utils.color import bcolors
@@ -19,12 +19,9 @@ def add_subparser(subparsers):
 
     parser.set_defaults(func=run)
 
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument('--id',
-                       type=uuid.UUID,
-                       help='The id of the MSE project.')
-
-    group.add_argument('--name', type=str, help='The name of the MSE project.')
+    parser.add_argument('project_name',
+                        type=non_empty_string,
+                        help='The name of the MSE project.')
 
 
 def run(args) -> None:
@@ -32,18 +29,14 @@ def run(args) -> None:
     user_conf = UserConf.from_toml()
     conn = user_conf.get_connection()
 
-    if args.name:
-        project = get_project_from_name(conn, args.name)
-        if not project:
-            raise Exception(f"Project {args.name} does not exist")
-        project_uuid = project.uuid
-    else:
-        project_uuid = args.id
+    project = get_project_from_name(conn, args.project_name)
+    if not project:
+        raise Exception(f"Project {args.project_name} does not exist")
 
-    log.info("Fetching the project %s...", project_uuid)
+    log.info("Fetching the project %s...", project.uuid)
 
     r: requests.Response = list_apps(conn=conn,
-                                     project_uuid=project_uuid,
+                                     project_uuid=project.uuid,
                                      status=[
                                          AppStatus.Spawning,
                                          AppStatus.Initializing,

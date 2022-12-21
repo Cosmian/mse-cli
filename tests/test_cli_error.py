@@ -43,18 +43,9 @@ def test_scaffold_bad_name(cmd_log):
 def test_list_bad_project_name(cmd_log):
     """Test list with the error: project name does not exist."""
     with pytest.raises(Exception) as exception:
-        run_list(Namespace(**{"name": "notexist", "id": None}))
+        run_list(Namespace(**{"project_name": "notexist"}))
 
     assert "Project notexist does not exist" in str(exception.value)
-
-    with pytest.raises(Exception) as exception:
-        run_list(
-            Namespace(**{
-                "name": None,
-                "id": "00000000-0000-0000-0000-000000000000"
-            }))
-
-    assert "Cannot find the project with UUID" in str(exception.value)
 
 
 @pytest.mark.slow

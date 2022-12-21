@@ -141,7 +141,7 @@ def _test_status(f: io.StringIO, app_uuid: UUID, expecting_status: str):
 def _test_list(f: io.StringIO, project_name: str, app_uuid: UUID,
                expecting_result: bool):
     """Test list subcommand."""
-    run_list(Namespace(**{"name": project_name}))
+    run_list(Namespace(**{"project_name": project_name}))
 
     output = capture_logs(f)
     assert (app_uuid in output) == expecting_result
