@@ -5,6 +5,7 @@ import uuid
 from mse_ctl.cli.helpers import stop_app
 from mse_ctl.conf.user import UserConf
 from mse_ctl.log import LOGGER as log
+from mse_ctl.utils.color import bcolors
 
 
 def add_subparser(subparsers):
@@ -23,3 +24,5 @@ def run(args) -> None:
     log.info("Stopping and destroying the app...")
 
     stop_app(user_conf.get_connection(), args.id)
+
+    log.info("✅ %sApp stopped and destroyed!%s", bcolors.OKGREEN, bcolors.ENDC)

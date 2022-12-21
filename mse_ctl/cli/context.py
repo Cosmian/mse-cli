@@ -52,6 +52,7 @@ def run(args) -> None:
     if args.clean:
         log.info("Removing context file for %s...", args.clean)
         Context.clean(args.clean)
+        log.info("✅ %sContext file removed!%s", bcolors.OKGREEN, bcolors.ENDC)
 
     if args.list:
         for path in ls(Context.get_root_dirpath()):
@@ -69,6 +70,8 @@ def run(args) -> None:
     if args.purge:
         log.info("Removing all the context files...")
         shutil.rmtree(Context.get_root_dirpath())
+        log.info("✅ %sAll context files removed!%s", bcolors.OKGREEN,
+                 bcolors.ENDC)
 
     if args.export:
         path = Context.get_context_filepath(args.export, create=False)
