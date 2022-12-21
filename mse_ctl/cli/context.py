@@ -30,7 +30,7 @@ def add_subparser(subparsers):
 
     group.add_argument(
         '--clean',
-        metavar="APP_UUID",
+        metavar="app_id",
         type=uuid.UUID,
         help='The id of the MSE context to remove from your store.')
 
@@ -40,7 +40,7 @@ def add_subparser(subparsers):
 
     group.add_argument(
         '--export',
-        metavar="APP_UUID",
+        metavar="app_id",
         type=uuid.UUID,
         help='Extract a context file from your store with all the data '
         'to share with an app user wishing to verify '

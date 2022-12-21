@@ -14,7 +14,7 @@ def add_subparser(subparsers):
 
     parser.set_defaults(func=run)
 
-    parser.add_argument('id', type=uuid.UUID, help='The id of the MSE app.')
+    parser.add_argument('app_id', type=uuid.UUID, help='The id of the MSE app.')
 
 
 def run(args) -> None:
@@ -23,6 +23,6 @@ def run(args) -> None:
 
     log.info("Stopping and destroying the app...")
 
-    stop_app(user_conf.get_connection(), args.id)
+    stop_app(user_conf.get_connection(), args.app_id)
 
     log.info("✅ %sApp stopped and destroyed!%s", bcolors.OKGREEN, bcolors.ENDC)
