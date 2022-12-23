@@ -21,7 +21,7 @@ def add_subparser(subparsers):
 
     parser.set_defaults(func=run)
 
-    parser.add_argument('id', type=uuid.UUID, help='The id of the MSE app.')
+    parser.add_argument('app_id', type=uuid.UUID, help='The id of the MSE app.')
     parser.add_argument('--log',
                         action='store_true',
                         help='Print the log of the app.')
@@ -31,10 +31,10 @@ def run(args) -> None:
     """Run the subcommand."""
     user_conf = UserConf.from_toml()
 
-    log.info("Fetching the app status for %s...", args.id)
+    log.info("Fetching the app status for %s...", args.app_id)
 
     conn = user_conf.get_connection()
-    app = get_app(conn=conn, uuid=args.id)
+    app = get_app(conn=conn, uuid=args.app_id)
 
     (enclave_size, cores) = get_enclave_resources(conn, app.plan)
 

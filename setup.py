@@ -5,7 +5,7 @@ from pathlib import Path
 from setuptools import setup, find_packages
 
 setup(name="mse-ctl",
-      version="0.3.5",
+      version="0.3.6",
       url="https://cosmian.com",
       license="MIT",
       author="Cosmian Tech",

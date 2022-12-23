@@ -62,7 +62,7 @@ def _test_scaffold() -> Path:
     os.chdir(path)
 
     # Run scaffold
-    run_scaffold(Namespace(**{"name": unique_name}))
+    run_scaffold(Namespace(**{"app_name": unique_name}))
 
     # Check creation of files
     conf = path / unique_name / "mse.toml"
@@ -132,7 +132,7 @@ def _test_context(f: io.StringIO, app_uuid: UUID) -> Context:
 
 def _test_status(f: io.StringIO, app_uuid: UUID, expecting_status: str):
     """Test status subcommand."""
-    run_status(Namespace(**{"id": app_uuid, "log": True}))
+    run_status(Namespace(**{"app_id": app_uuid, "log": True}))
 
     output = capture_logs(f)
     assert expecting_status in output
@@ -141,7 +141,7 @@ def _test_status(f: io.StringIO, app_uuid: UUID, expecting_status: str):
 def _test_list(f: io.StringIO, project_name: str, app_uuid: UUID,
                expecting_result: bool):
     """Test list subcommand."""
-    run_list(Namespace(**{"name": project_name}))
+    run_list(Namespace(**{"project_name": project_name}))
 
     output = capture_logs(f)
     assert (app_uuid in output) == expecting_result
@@ -239,7 +239,7 @@ def _test_mse_ctl(f: io.StringIO, ssl_certificate_origin: SSLCertificateOrigin):
     _test_list(f, app_conf.project, app_uuid, True)
 
     # Test stop app
-    run_stop(Namespace(**{"id": app_uuid}))
+    run_stop(Namespace(**{"app_id": app_uuid}))
 
     # Test status subcommand
     _test_status(f, app_uuid, "stopped")
@@ -248,7 +248,7 @@ def _test_mse_ctl(f: io.StringIO, ssl_certificate_origin: SSLCertificateOrigin):
     _test_list(f, app_conf.project, app_uuid, False)
 
     # Test remove app
-    run_remove(Namespace(**{"id": app_uuid}))
+    run_remove(Namespace(**{"app_id": app_uuid}))
 
     # Test status subcommand
     with pytest.raises(Exception) as exception:
