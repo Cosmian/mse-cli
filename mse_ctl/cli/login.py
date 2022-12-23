@@ -110,6 +110,20 @@ def run(args) -> None:
                 bcolors.ENDC)
         return
 
+    # Before proceeding with the login process, let's check if the user is already logged in
+    if UserConf.path().exists():
+        user_conf = UserConf.from_toml()
+        try:
+            me = get_user_info(user_conf)
+        except NameError:
+            log.info(
+                "%sDon't forget to verify your email and "
+                "complete your profile before going on%s", bcolors.WARNING,
+                bcolors.ENDC)
+        log.info("Your are already logged in as: %s", user_conf.email)
+        return
+
+    # Otherwise, start the login process
     log.info("The browser will open-up to login through Cosmian website...")
 
     code_verifier = gen_code_verifier()
