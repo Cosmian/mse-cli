@@ -11,24 +11,24 @@ It is recommended to use [pyenv](https://github.com/pyenv/pyenv) to manage diffe
 ```{.bash}
 $ pip3 install mse-ctl
 $ mse-ctl --help     
-usage: mse-ctl [-h] [--version] {context,deploy,init,list,login,remove,scaffold,signup,status,stop,verify} ...
+usage: mse-ctl [-h] [--version] {context,deploy,init,list,login,logout,remove,scaffold,status,stop,verify} ...
 
 Microservice Encryption Control.
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   --version             The version of the CLI
 
 subcommands:
-  {context,deploy,init,list,login,remove,scaffold,signup,status,stop,verify}
+  {context,deploy,init,list,login,logout,remove,scaffold,status,stop,verify}
     context             Manage your MSE context files
     deploy              Deploy the application from the current directory into a MSE node
     init                Create a configuration file in the current directory.
     list                Print the list of apps from a project
-    login               Login an existing user
+    login               Sign up or login a user
+    logout              Log out the current user
     remove              Stop and remove the MSE app from the project
     scaffold            Create a new empty app in the current directory
-    signup              Sign up a new user
     status              Print the status of a MSE app
     stop                Stop a MSE app
     verify              Verify the trustworthiness of an MSE app (no sign-in required)

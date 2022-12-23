@@ -30,6 +30,9 @@ class UserConf(BaseModel):
         if not path:
             path = UserConf.path()
 
+        if not path.exists():
+            raise FileNotFoundError("You shall login before proceed")
+
         with open(path, encoding="utf8") as f:
             dataMap = toml.load(f)
 

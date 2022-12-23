@@ -30,7 +30,7 @@ def add_subparser(subparsers):
 
     group.add_argument(
         '--clean',
-        metavar="APP_UUID",
+        metavar="app_id",
         type=uuid.UUID,
         help='The id of the MSE context to remove from your store.')
 
@@ -40,7 +40,7 @@ def add_subparser(subparsers):
 
     group.add_argument(
         '--export',
-        metavar="APP_UUID",
+        metavar="app_id",
         type=uuid.UUID,
         help='Extract a context file from your store with all the data '
         'to share with an app user wishing to verify '
@@ -52,6 +52,7 @@ def run(args) -> None:
     if args.clean:
         log.info("Removing context file for %s...", args.clean)
         Context.clean(args.clean)
+        log.info("✅ %sContext file removed!%s", bcolors.OKGREEN, bcolors.ENDC)
 
     if args.list:
         for path in ls(Context.get_root_dirpath()):
@@ -69,6 +70,8 @@ def run(args) -> None:
     if args.purge:
         log.info("Removing all the context files...")
         shutil.rmtree(Context.get_root_dirpath())
+        log.info("✅ %sAll context files removed!%s", bcolors.OKGREEN,
+                 bcolors.ENDC)
 
     if args.export:
         path = Context.get_context_filepath(args.export, create=False)

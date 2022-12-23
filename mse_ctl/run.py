@@ -12,7 +12,7 @@ import argparse
 import pkg_resources
 
 from mse_ctl.cli import (context, deploy, list_all, init, remove, scaffold,
-                         login, status, stop, verify)
+                         login, logout, status, stop, verify)
 from mse_ctl.log import setup_logging
 
 
@@ -35,6 +35,7 @@ def main():
     init.add_subparser(subparsers)
     list_all.add_subparser(subparsers)
     login.add_subparser(subparsers)
+    logout.add_subparser(subparsers)
     remove.add_subparser(subparsers)
     scaffold.add_subparser(subparsers)
     status.add_subparser(subparsers)

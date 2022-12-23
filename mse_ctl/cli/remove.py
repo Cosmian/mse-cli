@@ -8,6 +8,7 @@ from mse_ctl.api.app import remove
 from mse_ctl.conf.context import Context
 from mse_ctl.conf.user import UserConf
 from mse_ctl.log import LOGGER as log
+from mse_ctl.utils.color import bcolors
 
 
 def add_subparser(subparsers):
@@ -17,7 +18,7 @@ def add_subparser(subparsers):
 
     parser.set_defaults(func=run)
 
-    parser.add_argument('id', type=uuid.UUID, help='The id of the MSE app.')
+    parser.add_argument('app_id', type=uuid.UUID, help='The id of the MSE app.')
 
 
 def run(args) -> None:
@@ -26,10 +27,13 @@ def run(args) -> None:
 
     log.info("Removing your application from the project...")
 
-    r: requests.Response = remove(conn=user_conf.get_connection(), uuid=args.id)
+    r: requests.Response = remove(conn=user_conf.get_connection(),
+                                  uuid=args.app_id)
 
     if not r.ok:
         raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
 
     # Remove the context file
-    Context.clean(args.id, ignore_errors=True)
+    Context.clean(args.app_id, ignore_errors=True)
+
+    log.info("✅ %sApp removed!%s", bcolors.OKGREEN, bcolors.ENDC)

@@ -2,16 +2,10 @@
 
 import os
 from pathlib import Path
+from mse_ctl.cli.helpers import non_empty_string
 
 from mse_ctl.conf.app import AppConf
 from mse_ctl.log import LOGGER as log
-
-
-def non_empty_string(s):
-    """Check if a string is empty for argparse cmdline."""
-    if not s:
-        raise ValueError("Must not be empty string")
-    return s
 
 
 def add_subparser(subparsers):
@@ -21,18 +15,18 @@ def add_subparser(subparsers):
 
     parser.set_defaults(func=run)
 
-    parser.add_argument('name',
+    parser.add_argument('app_name',
                         type=non_empty_string,
                         help='The name of the new app.')
 
 
 def run(args) -> None:
     """Run the subcommand."""
-    project_dir = Path(os.getcwd()) / args.name
+    project_dir = Path(os.getcwd()) / args.app_name
     os.makedirs(project_dir, exist_ok=False)
 
     # Saving the configuration file
-    app_conf = AppConf.default(args.name, project_dir)
+    app_conf = AppConf.default(args.app_name, project_dir)
     app_conf.save(project_dir)
 
     # Saving the python code
