@@ -110,7 +110,7 @@ def run(args) -> None:
                 bcolors.ENDC)
         return
 
-    # Before proceeding with the login process, let's check if the user is already logged in
+    # Before processing the login, let's check if the user is already logged in
     if UserConf.path().exists():
         user_conf = UserConf.from_toml()
         try:

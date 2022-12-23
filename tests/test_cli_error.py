@@ -23,7 +23,7 @@ def test_status_bad_uuid(cmd_log):
     with pytest.raises(Exception) as exception:
         run_status(
             Namespace(**{
-                "id": "00000000-0000-0000-0000-000000000000",
+                "app_id": "00000000-0000-0000-0000-000000000000",
                 "log": False
             }))
 
@@ -34,7 +34,7 @@ def test_status_bad_uuid(cmd_log):
 def test_scaffold_bad_name(cmd_log):
     """Test scaffold with the error: bad name."""
     with pytest.raises(Exception) as exception:
-        run_scaffold(Namespace(**{"name": ""}))
+        run_scaffold(Namespace(**{"app_name": ""}))
 
     assert "File exists" in str(exception.value)
 
@@ -80,9 +80,10 @@ def test_context_bad_id(cmd_log):
 def test_remove_bad_uuid(cmd_log):
     """Test remove with the error: valid id but no exists."""
     with pytest.raises(Exception) as exception:
-        run_remove(Namespace(**{
-            "id": "00000000-0000-0000-0000-000000000000",
-        }))
+        run_remove(
+            Namespace(**{
+                "app_id": "00000000-0000-0000-0000-000000000000",
+            }))
 
     assert "Cannot find the app with UUID " in str(exception.value)
 
@@ -91,9 +92,10 @@ def test_remove_bad_uuid(cmd_log):
 def test_stop_bad_uuid(cmd_log):
     """Test stop with the error: valid id but no exists."""
     with pytest.raises(Exception) as exception:
-        run_stop(Namespace(**{
-            "id": "00000000-0000-0000-0000-000000000000",
-        }))
+        run_stop(
+            Namespace(**{
+                "app_id": "00000000-0000-0000-0000-000000000000",
+            }))
 
     assert "Cannot find the app with UUID " in str(exception.value)
 

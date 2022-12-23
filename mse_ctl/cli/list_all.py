@@ -1,7 +1,5 @@
 """List subparser definition."""
 
-import uuid
-
 import requests
 
 from mse_ctl.api.project import list_apps
