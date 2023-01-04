@@ -8,10 +8,11 @@
 The CLI tool `mse-ctl` requires at least [Python](https://www.python.org/downloads/) 3.8 and [OpenSSL](https://www.openssl.org/source/) 1.1.1 series.
 It is recommended to use [pyenv](https://github.com/pyenv/pyenv) to manage different Python interpreters.
 
-```{.bash}
+```{.console}
 $ pip3 install mse-ctl
 $ mse-ctl --help     
-usage: mse-ctl [-h] [--version] {context,deploy,init,list,login,logout,remove,scaffold,status,stop,verify} ...
+usage: mse-ctl [-h] [--version]
+               {context,deploy,init,list,login,logout,remove,scaffold,status,stop,test,verify} ...
 
 Microservice Encryption Control.
 
@@ -20,7 +21,7 @@ options:
   --version             The version of the CLI
 
 subcommands:
-  {context,deploy,init,list,login,logout,remove,scaffold,status,stop,verify}
+  {context,deploy,init,list,login,logout,remove,scaffold,status,stop,test,verify}
     context             Manage your MSE context files
     deploy              Deploy the application from the current directory into a MSE node
     init                Create a configuration file in the current directory.
@@ -31,12 +32,13 @@ subcommands:
     scaffold            Create a new empty app in the current directory
     status              Print the status of a MSE app
     stop                Stop a MSE app
+    test                Test locally the application in the MSE docker
     verify              Verify the trustworthiness of an MSE app (no sign-in required)
 ```
 
 ## Log in
 
-```{.bash}
+```{.console}
 $ mse-ctl login
 ```
 
@@ -52,12 +54,11 @@ The credential tokens are saved in `~/.config` on Linux/MacOS and `C:\Users\<use
 
 Let's start with a simple Flask Hello World application:
 
-```{.bash}
+```{.console}
 $ git clone http://gitlab.cosmian.com/core/mse-app-demo
 $ tree mse-app-demo/helloworld
 ├── code
-│   ├── app.py
-│   └── requirements.txt
+│   └── app.py
 ├── config
 │   ├── dev.toml
 │   └── zero_trust.toml
@@ -82,14 +83,20 @@ Let's deploy it.
 Using a `free` plan is longer to deploy than non-free plans because the memory and CPU dedicated are limited.
 It should take around 60 seconds to deploy against a few seconds with non-free plans.
 
-```
+
+!!! info "Pre-requisites"
+
+    Before deploying an app, verify that docker service is up and your current user can use the docker client without privilege
+
+
+```{.console}
 $ mse-ctl deploy --path mse-app-demo/helloworld/config/zero_trust.toml
 An application with the same name in that project is already running...
 Temporary workspace is: /tmp/tmpntxibdo6
 Encrypting your source code...
 Deploying your app...
-App creating for helloworld:1.0.0 with 512M EPC memory and 0.38 CPU cores...
-✅ App created with uuid: <uuid>
+App <uuid> creating for helloworld:1.0.0 with 512M EPC memory and 0.38 CPU cores...
+✅ App created! 
 Checking app trustworthiness...
 The code fingerprint is dc54c709ab979543625ea8cbb30ae945ff50b9a86b9c3d97a53dbc8a883c5998
 Verification: success
@@ -117,13 +124,12 @@ $ curl "https://$MSE_UUID.cosmian.app" --cacert /tmp/tmpntxibdo6/cert.conf.pem
 
 The `scaffold` subcommand allows you to prepare your own project starting with a new fresh Flask application with only one endpoint `/`. See also the [init](subcommand/init.md) subcommand which enables you to initialize  the config file in an interactive way. 
 
-```{.bash}
+```{.console}
 $ mse-ctl scaffold my_project
 $ tree my_project            
 my_project
 ├── code
-│   ├── app.py
-│   └── requirements.txt
+│   └── app.py
 └── mse.toml
 
 1 directory, 3 files
@@ -149,11 +155,17 @@ $ cat my_project/mse.toml
    7   │ location = "my_project/code"
    8   │ python_application = "app:app"
    9   │ health_check_endpoint = "/"
+   10  | docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
 ───────┴──────────────────────────────
 ```
 
 It's a good practice before deploying your app, to test it locally:
 
-//TODO\\
+```{.console}
+$ cd my_project
+$ mse-ctl test --path mse.toml
+$ curl http://localhost:5000/
+$ pytest
+```
 
 You can now deploy your app as described previously.

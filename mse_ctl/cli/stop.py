@@ -15,7 +15,7 @@ def add_subparser(subparsers):
 
     parser.set_defaults(func=run)
 
-    parser.add_argument("uuid",
+    parser.add_argument("app_uuid",
                         type=uuid.UUID,
                         help="identifier of the MSE web application to stop")
 

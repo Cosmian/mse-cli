@@ -37,7 +37,7 @@ class App(BaseModel):
     owner_uuid: UUID
     domain_name: str
     config_domain_name: str
-    docker_version: str
+    docker: str
     created_at: datetime.datetime
     ready_at: Optional[datetime.datetime]
     deleted_at: Optional[datetime.datetime]

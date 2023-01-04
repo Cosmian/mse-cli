@@ -13,6 +13,7 @@ $ cat my_project/mse.toml
    7   │ location = "my_project/code"
    8   │ python_application = "app:app"
    9   │ health_check_endpoint = "/"
+   10  | docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
 ───────┴──────────────────────────────
 ```
 
@@ -27,7 +28,7 @@ $ cat my_project/mse.toml
 |       dev       |           | `True` / `False` (default)  |    Developer mode allows to use Cosmian certificate for testing before production     |
 | expiration_date |           |      YY-MM-DD HH/mm/ss      |                 Expiration date (UTC) before the application shutdown                 |
 
-### Expiration date of the application
+#### Expiration date of the application
 
 The expiration date is tied to the self-signed certificate. When the expiration date is reached, the application will not be available.
 
@@ -45,8 +46,23 @@ In dev mode, the expiratation date is not used because the certificate is the on
 |         Keys          | Mandatory | Types |                                          Description                                           |
 | :-------------------: | :-------: | :---: | :--------------------------------------------------------------------------------------------: |
 |       location        |     ✔️     |  str  |                          Relative path to the application code folder                          |
+|        docker         |     ✔️     |  str  |                                  URL to the mse docker to run                                  |
 |  python_application   |     ✔️     |  str  |                                module_name:flask_variable_name                                 |
 | health_check_endpoint |     ✔️     |  str  | `GET` endpoint to check if the application is ready. This endpoint should be unauthenticated. |
+
+#### MSE docker
+
+The MSE docker parameter defines which docker image will run in the MSE node. *Cosmian* offers one docker: 
+
+- [ghcr.io/cosmian/mse-pytorch:20230104085621](https://github.com/Cosmian/mse-docker-pytorch/pkgs/container/mse-pytorch). This docker contains plenty of flask and machine learning dependencies.
+
+You can test that your code properly runs inside this docker using [`mse-ctl test`](subcommand/test.md).
+
+If you need to install other dependencies, you can create a new docker from [ghcr.io/cosmian/mse-base:20230104084742](https://github.com/Cosmian/mse-docker-base). 
+This docker will be allowed to be started in an MSE architecture after a review by a *Cosmian* member. To do so, please contact tech@cosmian.com and provide your `Dockerfile` and the link to your docker image.
+
+Note that, the `requirements.txt` from your source code directory won't be read. Your dependencies must be installed in this docker.
+
 
 ### SSL section
 
@@ -65,7 +81,7 @@ Here is the procedure to generate the certificate with *LetsEncrypt* (e.g. *exam
 
 1. In your DNS provider interface, register a `CNAME` field *example.domain.com* to the Cosmian proxy `proxy.mse.cosmian.com`. This registration must be effective before running `mse-ctl deploy`.
 2. To generate a certificate, the DNS-001 challenge will be used. With `certbot` run:
-```console
+```{.console}
 $ sudo certbot certonly -d example.domain.com --manual --preferred-challenges dns -m tech@domain.com --agree-tos
 Saving debug log to /var/log/letsencrypt/letsencrypt.log
 

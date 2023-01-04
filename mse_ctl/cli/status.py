@@ -21,7 +21,7 @@ def add_subparser(subparsers):
     parser.set_defaults(func=run)
 
     parser.add_argument(
-        "uuid",
+        "app_uuid",
         type=uuid.UUID,
         help="identifier of the MSE web application to display status")
     parser.add_argument("--log",
@@ -46,15 +46,14 @@ def run(args) -> None:
     LOG.info("\tDomain name  = %s", app.domain_name)
     LOG.info("\tBilling plan = %s", app.plan)
     LOG.info("\tApplication  = %s", app.python_application)
+    LOG.info("\tMSE docker   = %s", app.docker)
     LOG.info("\tHealthcheck  = %s", app.health_check_endpoint)
 
     LOG.info("\n> Deployement status")
     LOG.info("\tUUID               = %s", app.uuid)
-    LOG.info("\tMSE docker version = %s", app.docker_version)
     LOG.info("\tCertificate origin = %s", app.ssl_certificate_origin.value)
     LOG.info("\tEnclave size       = %sM", enclave_size)
     LOG.info("\tCores amount       = %s", cores)
-
     LOG.info("\tCreated at         = %s", app.created_at.astimezone())
 
     # Note: we print the date in the current local timezone (instead of utc)
@@ -91,7 +90,7 @@ def run(args) -> None:
         LOG.info("\tStatus             = %s%s%s", bcolors.OKBLUE,
                  app.status.value, bcolors.ENDC)
 
-    if args.LOG and app.status != AppStatus.Deleted:
+    if args.log and app.status != AppStatus.Deleted:
         r: requests.Response = get_app_logs(conn=conn, uuid=app.uuid)
         if not r.ok:
             raise Exception(
