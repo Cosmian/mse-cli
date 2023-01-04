@@ -1,40 +1,38 @@
-"""Signup/Login subparser definition."""
+"""mse_ctl.cli.login module."""
 
+import base64
 import hashlib
 import json
-import secrets
-import base64
-import threading
 import re
+import secrets
+import threading
 import webbrowser
-
-from typing import Optional
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from urllib.parse import parse_qs, urlparse, urlencode
+from typing import Optional
+from urllib.parse import parse_qs, urlencode, urlparse
 
 import requests
 
 from mse_ctl import (MSE_AUTH0_AUDIENCE, MSE_AUTH0_CLIENT_ID,
                      MSE_AUTH0_DOMAIN_NAME, MSE_CONSOLE_URL)
 from mse_ctl.api.types import User
-from mse_ctl.log import LOGGER as log
-from mse_ctl.conf.user import UserConf
 from mse_ctl.api.user import me as get_me
-
+from mse_ctl.conf.user import UserConf
+from mse_ctl.log import LOGGER as LOG
 from mse_ctl.utils.color import bcolors
+
+CODE: Optional[str] = None
 
 
 def add_subparser(subparsers):
     """Define the subcommand."""
-    parser = subparsers.add_parser("login", help="Sign up or login a user")
-    parser.add_argument('--whoami',
-                        action='store_true',
-                        help='Print who is currently logged in.')
+    parser = subparsers.add_parser(
+        "login", help="sign up or login to console.cosmian.com")
+    parser.add_argument("--whoami",
+                        action="store_true",
+                        help="display user currently logged in")
 
     parser.set_defaults(func=run)
-
-
-CODE: Optional[str] = None
 
 
 def run_server(port, auth_url, state) -> str:
@@ -56,16 +54,16 @@ def run_server(port, auth_url, state) -> str:
             query = urlparse(self.path).query
             parsed_query = parse_qs(query)
 
-            if 'code' not in parsed_query or 'state' not in parsed_query:
+            if "code" not in parsed_query or "state" not in parsed_query:
                 self.send_response(400)
                 return
 
-            if state != parsed_query['state'][0]:
+            if state != parsed_query["state"][0]:
                 self.send_response(400)
                 return
 
             global CODE  # pylint: disable=global-statement
-            CODE = parsed_query['code'][0]
+            CODE = parsed_query["code"][0]
             self.send_response(301)
             self.send_header("location", f"{MSE_CONSOLE_URL}/?origin=ctl")
             self.end_headers()
@@ -77,10 +75,10 @@ def run_server(port, auth_url, state) -> str:
             assassin.daemon = True
             assassin.start()
 
-    httpd = HTTPServer(('', port), LocalHTTPRequestHandler)
+    httpd = HTTPServer(("", port), LocalHTTPRequestHandler)
     # Open the browser on the authorization url to let the user login
     open_webbrowser(auth_url)
-    log.info("Waiting for session... ")
+    LOG.info("Waiting for session... ")
     # Wait for the code from Auth0
     httpd.serve_forever()
 
@@ -96,15 +94,15 @@ def run(args) -> None:
         try:
             user_conf = UserConf.from_toml()
         except FileNotFoundError:
-            log.info("You are not logged in yet!")
+            LOG.info("You are not logged in yet!")
             return
 
-        log.info("Your are currently logged in as: %s", user_conf.email)
+        LOG.info("Your are currently logged in as: %s", user_conf.email)
 
         try:
             me = get_user_info(user_conf)
         except NameError:
-            log.info(
+            LOG.info(
                 "%sDon't forget to verify your email and "
                 "complete your profile before going on%s", bcolors.WARNING,
                 bcolors.ENDC)
@@ -114,17 +112,17 @@ def run(args) -> None:
     if UserConf.path().exists():
         user_conf = UserConf.from_toml()
         try:
-            me = get_user_info(user_conf)
+            _ = get_user_info(user_conf)
         except NameError:
-            log.info(
+            LOG.info(
                 "%sDon't forget to verify your email and "
                 "complete your profile before going on%s", bcolors.WARNING,
                 bcolors.ENDC)
-        log.info("Your are already logged in as: %s", user_conf.email)
+        LOG.info("Your are already logged in as: %s", user_conf.email)
         return
 
     # Otherwise, start the login process
-    log.info("The browser will open-up to login through Cosmian website...")
+    LOG.info("The browser will open-up to login through Cosmian website...")
 
     code_verifier = gen_code_verifier()
     code_challenge = gen_code_challenge(code_verifier)
@@ -160,7 +158,7 @@ def run(args) -> None:
             "code": code,
             "redirect_uri": redirect_uri
         },
-        headers={'Content-Type': 'application/x-www-form-urlencoded'},
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
         timeout=60)
 
     if not r.ok:
@@ -176,19 +174,19 @@ def run(args) -> None:
     user = UserConf(email=id_token["email"], refresh_token=js["refresh_token"])
     user.save()
 
-    log.info("✅%s Successfully logged in as %s%s", bcolors.OKGREEN, user.email,
+    LOG.info("✅%s Successfully logged in as %s%s", bcolors.OKGREEN, user.email,
              bcolors.ENDC)
 
-    log.info("Your refresh token is now saved into: %s", UserConf.path())
+    LOG.info("Your refresh token is now saved into: %s", UserConf.path())
 
     try:
         me = get_user_info(user)
-        log.info("Welcome back to Microservice Encryption %s", me.first_name)
+        LOG.info("Welcome back to Microservice Encryption %s", me.first_name)
     except NameError:
-        log.info("\nWelcome to Microservice Encryption.")
-        log.info(
+        LOG.info("\nWelcome to Microservice Encryption.")
+        LOG.info(
             "You can use the scaffold subcommand to initialize a new project.")
-        log.info(
+        LOG.info(
             "%sDon't forget to verify your email and "
             "complete your profile before going on%s", bcolors.WARNING,
             bcolors.ENDC)
@@ -205,26 +203,26 @@ def get_user_info(user: UserConf) -> User:
     if not me:
         raise NameError("Unknown or unconfigured account.")
 
-    return User.from_json_dict(me)
+    return User.from_dict(me)
 
 
 def gen_state() -> str:
     """Generate the state field."""
-    return base64.b64encode(secrets.token_bytes(43)).decode('utf-8')
+    return base64.b64encode(secrets.token_bytes(43)).decode("utf-8")
 
 
 def gen_code_verifier() -> str:
     """Generate the code verifier."""
     code_verifier = base64.urlsafe_b64encode(
-        secrets.token_bytes(62)).decode('utf-8')
-    return re.sub('[^a-zA-Z0-9]+', '', code_verifier)
+        secrets.token_bytes(62)).decode("utf-8")
+    return re.sub("[^a-zA-Z0-9]+", "", code_verifier)
 
 
 def gen_code_challenge(code_verifier: str) -> str:
     """Generate the code challenge."""
-    code_challenge = hashlib.sha256(code_verifier.encode('utf-8')).digest()
-    return base64.urlsafe_b64encode(code_challenge).decode('utf-8').replace(
-        '=', '')
+    code_challenge = hashlib.sha256(code_verifier.encode("utf-8")).digest()
+    return base64.urlsafe_b64encode(code_challenge).decode("utf-8").replace(
+        "=", "")
 
 
 def open_webbrowser(address):
@@ -237,11 +235,11 @@ def open_webbrowser(address):
 
 def _b64_decode(data):
     """Decode the data from base64 by adding the padding."""
-    data += '=' * (4 - len(data) % 4)
-    return base64.b64decode(data).decode('utf-8')
+    data += "=" * (4 - len(data) % 4)
+    return base64.b64decode(data).decode("utf-8")
 
 
 def jwt_payload_decode(jwt):
     """Decode a jwt payload."""
-    _, payload, _ = jwt.split('.')
+    _, payload, _ = jwt.split(".")
     return json.loads(_b64_decode(payload))

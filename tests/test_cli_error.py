@@ -23,7 +23,7 @@ def test_status_bad_uuid(cmd_log):
     with pytest.raises(Exception) as exception:
         run_status(
             Namespace(**{
-                "app_id": "00000000-0000-0000-0000-000000000000",
+                "app_uuid": "00000000-0000-0000-0000-000000000000",
                 "log": False
             }))
 
@@ -56,7 +56,7 @@ def test_context_bad_id(cmd_log):
             Namespace(
                 **{
                     "list": False,
-                    "clean": "00000000-0000-0000-0000-000000000000",
+                    "remove": "00000000-0000-0000-0000-000000000000",
                     "purge": False,
                     "export": None
                 }))
@@ -68,7 +68,7 @@ def test_context_bad_id(cmd_log):
             Namespace(
                 **{
                     "list": False,
-                    "clean": None,
+                    "remove": None,
                     "purge": False,
                     "export": "00000000-0000-0000-0000-000000000000"
                 }))
@@ -82,7 +82,7 @@ def test_remove_bad_uuid(cmd_log):
     with pytest.raises(Exception) as exception:
         run_remove(
             Namespace(**{
-                "app_id": "00000000-0000-0000-0000-000000000000",
+                "app_uuid": "00000000-0000-0000-0000-000000000000",
             }))
 
     assert "Cannot find the app with UUID " in str(exception.value)
@@ -94,7 +94,7 @@ def test_stop_bad_uuid(cmd_log):
     with pytest.raises(Exception) as exception:
         run_stop(
             Namespace(**{
-                "app_id": "00000000-0000-0000-0000-000000000000",
+                "app_uuid": "00000000-0000-0000-0000-000000000000",
             }))
 
     assert "Cannot find the app with UUID " in str(exception.value)

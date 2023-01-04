@@ -1,4 +1,4 @@
-"""Spinner module."""
+"""mse_ctl.utils.spinner module."""
 
 import itertools
 import sys

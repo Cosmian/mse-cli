@@ -2,7 +2,7 @@
 
 import calendar
 from datetime import datetime, timezone
-from importlib.metadata import version
+from typing import Any, Callable
 
 import jwt
 import requests
@@ -11,6 +11,8 @@ from requests.adapters import HTTPAdapter
 from requests.auth import AuthBase
 from requests.sessions import Session
 from urllib3.util import Retry
+
+import mse_ctl
 
 
 class AccessTokenAuth(AuthBase):
@@ -22,12 +24,12 @@ class AccessTokenAuth(AuthBase):
         self.exp: int = int(
             jwt.decode(self.access_token,
                        options={"verify_signature": False})["exp"])
-        self.version = version("mse_ctl")
+        self.version = mse_ctl.__version__
 
     def __call__(self, r):
         """Call used by `Session.request()` method."""
         r.headers["Authorization"] = f"Bearer {self.access_token}"
-        r.headers["User-Agent"] = f"mse-python/{self.version}"
+        r.headers["User-Agent"] = f"mse-ctl/{self.version}"
 
         return r
 
@@ -67,10 +69,10 @@ class Connection(Session):
         """AccessToken subclass."""
 
         @staticmethod
-        def auto_refresh(func):
+        def auto_refresh(func: Callable[..., Any]) -> Callable[..., Any]:
             """Refresh access token depending on expiration time."""
 
-            def wrapper(obj, *args, **kwargs):
+            def wrapper(obj, *args, **kwargs) -> Any:
                 """Wrap `func` method."""
                 current_unix_timestamp: int = calendar.timegm(
                     datetime.now(tz=timezone.utc).timetuple())

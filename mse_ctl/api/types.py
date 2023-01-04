@@ -2,7 +2,7 @@
 
 import datetime
 from enum import Enum
-from typing import Optional
+from typing import Any, Dict, Optional
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -19,7 +19,7 @@ class AppStatus(Enum):
     Stopped = "stopped"
 
 
-class SSLCertificateOrigin(str, Enum):
+class SSLCertificateOrigin(Enum):
     """SSLCertificateOrigin enum."""
 
     Self = "self"
@@ -28,7 +28,7 @@ class SSLCertificateOrigin(str, Enum):
 
 
 class App(BaseModel):
-    """App class."""
+    """App model."""
 
     uuid: UUID
     name: str
@@ -51,13 +51,13 @@ class App(BaseModel):
     health_check_endpoint: str
 
     @staticmethod
-    def from_json_dict(json: dict):
-        """Build an App object from a json dict."""
-        return App(**json)
+    def from_dict(dct: Dict[str, Any]):
+        """Build an App object from a dictionnary."""
+        return App(**dct)
 
 
 class Project(BaseModel):
-    """Project class."""
+    """Project model."""
 
     uuid: UUID
     name: str
@@ -71,26 +71,26 @@ class Project(BaseModel):
     deleted_at: Optional[datetime.datetime]
 
     @staticmethod
-    def from_json_dict(json: dict):
-        """Build a Project object from a json dict."""
-        return Project(**json)
+    def from_dict(dct: Dict[str, Any]):
+        """Build a Project object from a dictionnary."""
+        return Project(**dct)
 
 
 class Plan(BaseModel):
-    """Plan class."""
+    """Plan model."""
 
     name: str
     memory: int
     cores: float
 
     @staticmethod
-    def from_json_dict(json: dict):
-        """Build a Plan object from a json dict."""
-        return Plan(**json)
+    def from_dict(dct: Dict[str, Any]):
+        """Build a Plan object from a dictionnary."""
+        return Plan(**dct)
 
 
 class User(BaseModel):
-    """User class."""
+    """User model."""
 
     uuid: UUID
     first_name: str
@@ -99,6 +99,6 @@ class User(BaseModel):
     created_at: datetime.datetime
 
     @staticmethod
-    def from_json_dict(json: dict):
-        """Build a User object from a json dict."""
-        return User(**json)
+    def from_dict(dct: Dict[str, Any]):
+        """Build a User object from a dictionnary."""
+        return User(**dct)

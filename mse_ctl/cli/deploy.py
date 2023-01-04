@@ -1,4 +1,4 @@
-"""Deploy subparser definition."""
+"""mse_ctl.cli.deploy module."""
 
 from pathlib import Path
 from typing import Optional
@@ -16,7 +16,7 @@ from mse_ctl.cli.helpers import (compute_mr_enclave, exists_in_project, get_app,
 from mse_ctl.conf.app import AppConf
 from mse_ctl.conf.context import Context
 from mse_ctl.conf.user import UserConf
-from mse_ctl.log import LOGGER as log
+from mse_ctl.log import LOGGER as LOG
 from mse_ctl.utils.color import bcolors
 from mse_ctl.utils.spinner import Spinner
 
@@ -24,20 +24,19 @@ from mse_ctl.utils.spinner import Spinner
 def add_subparser(subparsers):
     """Define the subcommand."""
     parser = subparsers.add_parser("deploy",
-                                   help="Deploy the application from the "
-                                   "current directory into a MSE node")
+                                   help="deploy an ASGI web application to MSE")
+
+    parser.add_argument("--path",
+                        type=Path,
+                        required=False,
+                        metavar="FILE",
+                        help="path to the MSE toml config file to deploy "
+                        "(if not in the current directory)")
 
     parser.add_argument(
-        '--path',
-        type=Path,
-        required=False,
-        metavar='path/to/mse/app/mse.toml',
-        help='Path to the mse app to deploy (current directory if not set)')
-
-    parser.add_argument('--force',
-                        action='store_true',
-                        help='Do not ask to stop the application '
-                        'if a similar one is running. Stop it anyway.')
+        "--force",
+        action="store_true",
+        help="force to stop the application if it already exists")
 
     parser.set_defaults(func=run)
 
@@ -53,15 +52,15 @@ def run(args) -> None:
 
     (enclave_size, cores) = get_enclave_resources(conn, app_conf.plan)
     context = Context.from_app_conf(app_conf)
-    log.info("Temporary workspace is: %s", context.workspace)
+    LOG.info("Temporary workspace is: %s", context.workspace)
 
-    log.info("Encrypting your source code...")
+    LOG.info("Encrypting your source code...")
     (tar_path, nonces) = prepare_code(app_conf.code.location, context)
 
-    log.info("Deploying your app...")
+    LOG.info("Deploying your app...")
     app = deploy_app(conn, app_conf, tar_path)
 
-    log.info("App creating for %s:%s with %dM EPC memory and %.2f CPU cores...",
+    LOG.info("App creating for %s:%s with %dM EPC memory and %.2f CPU cores...",
              app.name, app.version, enclave_size, cores)
     app = wait_app_creation(conn, app.uuid)
 
@@ -69,38 +68,38 @@ def run(args) -> None:
                 app.docker_version, app.expires_at, app.ssl_certificate_origin,
                 nonces)
 
-    log.info("✅%s App created with uuid: %s%s", bcolors.OKGREEN, app.uuid,
+    LOG.info("✅%s App created with uuid: %s%s", bcolors.OKGREEN, app.uuid,
              bcolors.ENDC)
 
     selfsigned_cert = get_certificate(app.config_domain_name)
     context.config_cert_path.write_text(selfsigned_cert)
 
-    log.info("Checking app trustworthiness...")
+    LOG.info("Checking app trustworthiness...")
     mr_enclave = compute_mr_enclave(context, tar_path)
-    log.info("The code fingerprint is %s", mr_enclave)
+    LOG.info("The code fingerprint is %s", mr_enclave)
     verify_app(mr_enclave, selfsigned_cert)
-    log.info("Verification: %ssuccess%s", bcolors.OKGREEN, bcolors.ENDC)
+    LOG.info("Verification: %ssuccess%s", bcolors.OKGREEN, bcolors.ENDC)
 
     if app.ssl_certificate_origin == SSLCertificateOrigin.Self:
-        log.info("✅%s The verified certificate has been saved at: %s%s",
+        LOG.info("✅%s The verified certificate has been saved at: %s%s",
                  bcolors.OKGREEN, context.config_cert_path, bcolors.ENDC)
 
-    log.info("Unsealing your private data from your mse instance...")
+    LOG.info("Unsealing your private data from your mse instance...")
     unseal_private_data(
         context,
         ssl_private_key=app_conf.ssl.private_key if app_conf.ssl else None)
 
-    log.info("Waiting for application to be ready...")
+    LOG.info("Waiting for application to be ready...")
     app = wait_app_start(conn, app.uuid)
 
-    log.info("Your application is now fully deployed and started...")
-    log.info("✅%s It's now ready to be used on https://%s until %s%s",
+    LOG.info("Your application is now fully deployed and started...")
+    LOG.info("✅%s It's now ready to be used on https://%s until %s%s",
              bcolors.OKGREEN, app.domain_name, app.expires_at.astimezone(),
              bcolors.ENDC)
 
     context.save()
 
-    log.info(
+    LOG.info(
         "The context of this creation can be retrieved using "
         "`mse-ctl context --export %s`", app.uuid)
 
@@ -149,19 +148,19 @@ def check_app_conf(conn: Connection,
     ])
 
     if app:
-        log.info(
+        LOG.info(
             "An application with the same name in that project is already running..."
         )
         if force:
-            log.info("Stopping the previous app (force mode enabled)...")
+            LOG.info("Stopping the previous app (force mode enabled)...")
             stop_app(conn, app.uuid)
         else:
             answer = input("Would you like to replace it [yes/no]? ")
             if answer.lower() in ["y", "yes"]:
-                log.info("Stopping the previous app...")
+                LOG.info("Stopping the previous app...")
                 stop_app(conn, app.uuid)
             else:
-                log.info("Your deployment has been stopped!")
+                LOG.info("Your deployment has been stopped!")
                 return False
 
     if not (app_conf.code.location /
@@ -180,7 +179,7 @@ def deploy_app(conn: Connection, app_conf: AppConf, tar_path: Path) -> App:
     if not r.ok:
         raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
 
-    return App.from_json_dict(r.json())
+    return App.from_dict(r.json())
 
 
 def wait_app_creation(conn: Connection, uuid: UUID) -> App:
@@ -225,7 +224,7 @@ def unseal_private_data(context: Context,
 
     r = requests.post(url=f"https://{context.instance.config_domain_name}",
                       json=data,
-                      headers={'Content-Type': 'application/json'},
+                      headers={"Content-Type": "application/json"},
                       verify=str(context.config_cert_path),
                       timeout=60)
 
