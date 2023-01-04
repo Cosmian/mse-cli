@@ -1,14 +1,16 @@
 """mse_ctl.main module."""
 
 import argparse
-from warnings import filterwarnings
 
+from warnings import filterwarnings  # noqa: E402
+
+filterwarnings("ignore")  # noqa: E402
+
+# pylint: disable=wrong-import-position
 import mse_ctl
 from mse_ctl.cli import (context, deploy, init, list_all, login, logout, remove,
                          scaffold, status, stop, test, verify)
 from mse_ctl.log import setup_logging
-
-filterwarnings("ignore")
 
 
 def main() -> int:

@@ -132,7 +132,7 @@ $ mse-ctl context --purge
 
 ### Export
 
-If you want an app users to verify the trustworthiness of your apps, they will need this context file from the context directory which can be exported using:
+If you want app users to verify the trustworthiness of your apps, they will need this context file from the context directory which can be exported using:
 
 ```console
 $ mse-ctl context --export 852a4256-fffa-457a-80ed-329166a652af

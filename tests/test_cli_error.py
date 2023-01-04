@@ -73,7 +73,7 @@ def test_context_bad_id(cmd_log):
                     "export": "00000000-0000-0000-0000-000000000000"
                 }))
 
-    assert "Can't find context for app" in str(exception.value)
+    assert "Can't find context for UUID" in str(exception.value)
 
 
 @pytest.mark.slow

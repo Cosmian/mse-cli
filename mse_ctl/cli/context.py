@@ -49,7 +49,7 @@ def run(args) -> None:
     if args.remove:
         LOG.info("Removing context %s...", args.remove)
         Context.clean(args.remove)
-        LOG.info("%sContext successfully removed%s", bcolors.OKGREEN,
+        LOG.info("✅%sContext successfully removed%s", bcolors.OKGREEN,
                  bcolors.ENDC)
 
     if args.list:
@@ -68,7 +68,7 @@ def run(args) -> None:
     if args.purge:
         LOG.info("Removing all contexts...")
         shutil.rmtree(Context.get_root_dirpath())
-        LOG.info("%sAll context successfully removed%s", bcolors.OKGREEN,
+        LOG.info("✅%sAll context successfully removed%s", bcolors.OKGREEN,
                  bcolors.ENDC)
 
     if args.export:
@@ -82,5 +82,5 @@ def run(args) -> None:
 
         LOG.info("Exporting context to %s...", target_filename)
         shutil.copyfile(context_path, target_filename)
-        LOG.info("%sContext successfully exported%s", bcolors.OKGREEN,
+        LOG.info("✅%sContext successfully exported%s", bcolors.OKGREEN,
                  bcolors.ENDC)

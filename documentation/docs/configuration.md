@@ -52,7 +52,7 @@ In dev mode, the expiratation date is not used because the certificate is the on
 
 #### MSE docker
 
-The MSE docker parameter defines the docker to run in the MSE node. *Cosmian* offers one docker: 
+The MSE docker parameter defines which docker image will run in the MSE node. *Cosmian* offers one docker: 
 
 - [ghcr.io/cosmian/mse-pytorch:20230104085621](https://github.com/Cosmian/mse-docker-pytorch/pkgs/container/mse-pytorch). This docker contains plenty of flask and machine learning dependencies.
 

@@ -125,7 +125,7 @@ def _test_context(f: io.StringIO, app_uuid: UUID) -> Context:
         }))
 
     _ = capture_logs(f)
-    context_path = Path("context.mse")
+    context_path = Path(f"{app_uuid}.toml")
     assert context_path.exists()
     return Context.from_toml(context_path)
 
@@ -266,7 +266,7 @@ def _test_mse_ctl(f: io.StringIO, ssl_certificate_origin: SSLCertificateOrigin):
         }))
 
     output = capture_logs(f)
-    assert app_uuid not in output
+    assert str(app_uuid) not in output
     assert not Context.get_dirpath(app_uuid, False).exists()
 
 

@@ -21,7 +21,7 @@ def add_subparser(subparsers):
     parser.set_defaults(func=run)
 
     parser.add_argument(
-        "uuid",
+        "app_uuid",
         type=uuid.UUID,
         help="identifier of the MSE web application to display status")
     parser.add_argument("--log",
@@ -90,7 +90,7 @@ def run(args) -> None:
         LOG.info("\tStatus             = %s%s%s", bcolors.OKBLUE,
                  app.status.value, bcolors.ENDC)
 
-    if args.LOG and app.status != AppStatus.Deleted:
+    if args.log and app.status != AppStatus.Deleted:
         r: requests.Response = get_app_logs(conn=conn, uuid=app.uuid)
         if not r.ok:
             raise Exception(

@@ -18,7 +18,7 @@ def add_subparser(subparsers):
     parser.set_defaults(func=run)
 
     parser.add_argument(
-        "name",
+        "project_name",
         type=non_empty_string,
         help="name of the project with MSE applications to list")
 
@@ -28,9 +28,9 @@ def run(args) -> None:
     user_conf = UserConf.from_toml()
     conn = user_conf.get_connection()
 
-    project = get_project_from_name(conn, args.name)
+    project = get_project_from_name(conn, args.project_name)
     if not project:
-        raise Exception(f"Project {args.name} does not exist")
+        raise Exception(f"Project {args.project_name} does not exist")
 
     LOG.info("Fetching the project %s...", project.uuid)
 

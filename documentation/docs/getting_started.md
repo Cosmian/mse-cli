@@ -32,7 +32,7 @@ subcommands:
     scaffold            Create a new empty app in the current directory
     status              Print the status of a MSE app
     stop                Stop a MSE app
-    test                Test locally the application in the mse docker
+    test                Test locally the application in the MSE docker
     verify              Verify the trustworthiness of an MSE app (no sign-in required)
 ```
 
