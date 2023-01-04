@@ -106,12 +106,12 @@ $ mse-ctl context --list
 [...]
 ```
 
-### Clean
+### Remove
 
 You can remove the context directory of an app using:
 
 ```console
-$ mse-ctl context --clean 852a4256-fffa-457a-80ed-329166a652af 
+$ mse-ctl context --remove 852a4256-fffa-457a-80ed-329166a652af
 [...]
 ```
 

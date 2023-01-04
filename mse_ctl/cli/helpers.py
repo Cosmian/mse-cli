@@ -1,10 +1,10 @@
-"""Handlers functions."""
+"""mse_ctl.cli.helpers module."""
 
-from datetime import datetime
 import re
-from pathlib import Path
 import socket
 import ssl
+from datetime import datetime
+from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
 from uuid import UUID
 
@@ -18,11 +18,12 @@ from mse_lib_crypto.xsalsa20_poly1305 import encrypt_directory
 from mse_ctl import MSE_CERTIFICATES_URL, MSE_DOCKER_IMAGE_URL, MSE_PCCS_URL
 from mse_ctl.api.app import get, stop
 from mse_ctl.api.auth import Connection
-from mse_ctl.api.project import get_app_from_name, get_from_name
 from mse_ctl.api.plan import get as get_plan
-from mse_ctl.api.types import App, AppStatus, Plan, Project, SSLCertificateOrigin
+from mse_ctl.api.project import get_app_from_name, get_from_name
+from mse_ctl.api.types import (App, AppStatus, Plan, Project,
+                               SSLCertificateOrigin)
 from mse_ctl.conf.context import Context
-from mse_ctl.log import LOGGER as log
+from mse_ctl.log import LOGGER as LOG
 from mse_ctl.utils.color import bcolors
 from mse_ctl.utils.fs import tar
 
@@ -33,7 +34,7 @@ def get_app(conn: Connection, uuid: UUID) -> App:
     if not r.ok:
         raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
 
-    return App.from_json_dict(r.json())
+    return App.from_dict(r.json())
 
 
 def get_enclave_resources(conn: Connection,
@@ -44,8 +45,8 @@ def get_enclave_resources(conn: Connection,
     if not r.ok:
         raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
 
-    plan = Plan.from_json_dict(r.json())
-    return (plan.memory, plan.cores)
+    plan = Plan.from_dict(r.json())
+    return plan.memory, plan.cores
 
 
 def get_project_from_name(conn: Connection, name: str) -> Optional[Project]:
@@ -59,7 +60,7 @@ def get_project_from_name(conn: Connection, name: str) -> Optional[Project]:
     if not project:
         return None
 
-    return Project.from_json_dict(project[0])
+    return Project.from_dict(project[0])
 
 
 def prepare_code(
@@ -70,7 +71,7 @@ def prepare_code(
     dir_exceptions: Optional[List[str]] = None
 ) -> Tuple[Path, Dict[str, bytes]]:
     """Tar and encrypt (if required) the app python code."""
-    log.debug("Encrypt code in %s to %s...", src_path,
+    LOG.debug("Encrypt code in %s to %s...", src_path,
               context.encrypted_code_path)
 
     whitelist: Set[str] = {"requirements.txt"}
@@ -88,9 +89,9 @@ def prepare_code(
     tar_path = tar(dir_path=context.encrypted_code_path,
                    tar_path=context.tar_code_path)
 
-    log.debug("Tar encrypted code in '%s'", tar_path.name)
+    LOG.debug("Tar encrypted code in '%s'", tar_path.name)
 
-    return (tar_path, nonces)
+    return tar_path, nonces
 
 
 def exists_in_project(conn: Connection, project_uuid: UUID, name: str,
@@ -108,10 +109,10 @@ def exists_in_project(conn: Connection, project_uuid: UUID, name: str,
     if not app:
         return None
 
-    return App.from_json_dict(app[0])
+    return App.from_dict(app[0])
 
 
-def stop_app(conn: Connection, app_uuid: UUID):
+def stop_app(conn: Connection, app_uuid: UUID) -> None:
     """Stop the app remotly."""
     r: requests.Response = stop(conn=conn, uuid=app_uuid)
 
@@ -167,7 +168,7 @@ def compute_mr_enclave(context: Context, tar_path: Path) -> str:
     )
 
     # Save the docker output
-    log.debug("Write docker logs in: %s", context.docker_log_path)
+    LOG.debug("Write docker logs in: %s", context.docker_log_path)
     context.docker_log_path.write_bytes(container)
 
     # Get the mr_enclave from the docker output
@@ -183,14 +184,17 @@ def compute_mr_enclave(context: Context, tar_path: Path) -> str:
 
 
 def get_certificate(domain_name: str) -> str:
-    """Get the certificate from `domain_name`."""
-    # We don't use `get_server_certificate` because
-    # for some openssl version, the server_hostname is not induced
-    # from domain_name... So we need to set it explictly
-    # Otherwise we could have done:
-    #   return ssl.get_server_certificate((domain_name, 443))
+    """Get TLS certificate from `domain_name`.
+
+    Notes
+    -----
+    Don't use `ssl.get_server_certificate()` because there are some
+    issues with Server Name Indication (SNI) extension on some
+    OpenSSL/LibreSSL versions (particularly MacOS).
+
+    """
     with socket.create_connection((domain_name, 443)) as sock:
-        context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS)
         with context.wrap_socket(sock, server_hostname=domain_name) as ssock:
             cert = ssock.getpeercert(True)
             if not cert:
@@ -199,36 +203,36 @@ def get_certificate(domain_name: str) -> str:
 
 
 def verify_app(mrenclave: Optional[str], ca_data: str):
-    """Verify the app by proceeding the remote attestion."""
-    # Compute MRSIGNER
+    """Verify the app by proceeding the remote attestation."""
     r = requests.get(url=MSE_CERTIFICATES_URL, timeout=60)
     if not r.ok:
         raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+    # Compute MRSIGNER value from public key
     mrsigner = mr_signer_from_pk(r.content)
 
-    # Get the quote
+    # Check certificate's public key in quote's user report data
     quote = ratls_verification(ca_data.encode('utf8'))
 
-    # Proceed the RA.
+    # Proceed RA
     try:
         remote_attestation(quote=quote, base_url=MSE_PCCS_URL)
-    except Exception as e:
-        log.info("Verification: %sfailure%s", bcolors.FAIL, bcolors.ENDC)
-        raise e
+    except Exception as exc:
+        LOG.info("Verification: %sfailure%s", bcolors.FAIL, bcolors.ENDC)
+        raise exc
 
     if mrenclave:
         if quote.report_body.mr_enclave != bytes.fromhex(mrenclave):
-            log.info("Verification: %sfailure%s", bcolors.FAIL, bcolors.ENDC)
+            LOG.info("Verification: %sfailure%s", bcolors.FAIL, bcolors.ENDC)
             raise Exception(
                 "Code fingerprint is wrong "
                 f"(read {bytes(quote.report_body.mr_enclave).hex()} "
                 f"but should be {mrenclave})")
     else:
-        log.info("%sCode fingerprint check skipped!%s", bcolors.WARNING,
+        LOG.info("%sCode fingerprint check skipped!%s", bcolors.WARNING,
                  bcolors.ENDC)
 
     if quote.report_body.mr_signer != mrsigner:
-        log.info("Verification: %sfailure%s", bcolors.FAIL, bcolors.ENDC)
+        LOG.info("Verification: %sfailure%s", bcolors.FAIL, bcolors.ENDC)
         raise Exception("Enclave signer is wrong "
                         f"(read {bytes(quote.report_body.mr_signer).hex()} "
                         f"but should be {bytes(mrsigner).hex()})")
@@ -237,5 +241,5 @@ def verify_app(mrenclave: Optional[str], ca_data: str):
 def non_empty_string(s):
     """Check if a string is empty for argparse cmdline."""
     if not s:
-        raise ValueError("Must not be empty string")
+        raise ValueError("String cannot be empty")
     return s

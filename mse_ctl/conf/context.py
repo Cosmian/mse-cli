@@ -1,16 +1,16 @@
-"""Context file."""
+"""mse_ctl.conf.context module."""
 
-from datetime import datetime
 import os
 import shutil
 import tempfile
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Optional
 from uuid import UUID
 
 import toml
-from pydantic import BaseModel, validator
 from mse_lib_crypto.xsalsa20_poly1305 import random_key
+from pydantic import BaseModel, validator
 
 from mse_ctl import MSE_CONF_DIR
 from mse_ctl.api.types import SSLCertificateOrigin

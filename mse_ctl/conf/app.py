@@ -1,10 +1,11 @@
-"""App configuration file module."""
+"""mse_ctl.conf.app module."""
+
 from __future__ import annotations
 
 import os
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 import toml
 from cryptography import x509

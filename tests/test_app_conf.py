@@ -119,7 +119,7 @@ def test_ssl():
                            project="default",
                            plan="free",
                            expiration_date=datetime(2023,
-                                                    1,
+                                                    2,
                                                     1,
                                                     0,
                                                     0,
@@ -165,7 +165,7 @@ def test_expiration_date():
         project="default",
         plan="free",
         code=code,
-        expiration_date=datetime(2023, 1, 1, 0, 0, 0, tzinfo=timezone.utc),
+        expiration_date=datetime(2023, 2, 1, 0, 0, 0, tzinfo=timezone.utc),
     )
 
     assert conf == ref_app_conf
@@ -280,7 +280,7 @@ def test_into_payload():
         "project": "default",
         "health_check_endpoint": "/",
         "python_application": "app:app",
-        "expires_at": '2023-01-01T00:00:00.000000Z',
+        "expires_at": '2023-02-01T00:00:00.000000Z',
         "dev_mode": False,
         "ssl_certificate": CERTIFICATE,
         "domain_name": "demo.cosmian.app",

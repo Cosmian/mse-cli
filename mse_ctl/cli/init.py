@@ -1,22 +1,24 @@
-"""Init subparser definition."""
+"""mse_ctl.cli.init module."""
 
 import os
 from pathlib import Path
+
 from mse_ctl.conf.app import AppConf, CodeConf
-from mse_ctl.log import LOGGER as log
+from mse_ctl.log import LOGGER as LOG
 
 
 def add_subparser(subparsers):
     """Define the subcommand."""
-    parser = subparsers.add_parser(
-        "init", help="Create a configuration file in the current directory.")
+    parser = subparsers.add_parser("init",
+                                   help="create a new configuration file in "
+                                   "the current directory")
 
     parser.set_defaults(func=run)
 
 
 def run(_args):
     """Run the subcommand."""
-    log.info("We need you to fill in the following fields\n")
+    LOG.info("We need you to fill in the following fields\n")
 
     app_name = input("App name: ")
     app_version = input("App version: ")
@@ -39,4 +41,4 @@ def run(_args):
 
     path = Path(os.getcwd())
     app.save(path)
-    log.info("Your app configuration has been saved in: %s", path / "mse.toml")
+    LOG.info("Your app configuration has been saved in: %s", path / "mse.toml")
