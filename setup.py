@@ -5,6 +5,7 @@ import re
 
 from setuptools import setup, find_packages
 
+<<<<<<< HEAD
 name = "mse_ctl"
 
 version = re.search(
@@ -19,6 +20,10 @@ version = re.search(
 
 setup(name=name,
       version=version["number"],
+=======
+setup(name="mse-ctl",
+      version="0.4.0",
+>>>>>>> cc2e63b (:sparkles: update conf with the docker field)
       url="https://cosmian.com",
       license="MIT",
       author="Cosmian Tech",

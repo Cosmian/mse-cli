@@ -60,16 +60,15 @@ def run(args) -> None:
     LOG.info("Deploying your app...")
     app = deploy_app(conn, app_conf, tar_path)
 
-    LOG.info("App creating for %s:%s with %dM EPC memory and %.2f CPU cores...",
-             app.name, app.version, enclave_size, cores)
+    LOG.info(
+        "App %s creating for %s:%s with %dM EPC memory and %.2f CPU cores...",
+        app.uuid, app.name, app.version, enclave_size, cores)
     app = wait_app_creation(conn, app.uuid)
 
-    context.run(app.uuid, enclave_size, app.config_domain_name,
-                app.docker_version, app.expires_at, app.ssl_certificate_origin,
-                nonces)
+    context.run(app.uuid, enclave_size, app.config_domain_name, app.expires_at,
+                app.ssl_certificate_origin, nonces)
 
-    LOG.info("✅%s App created with uuid: %s%s", bcolors.OKGREEN, app.uuid,
-             bcolors.ENDC)
+    LOG.info("✅%s App created!%s", bcolors.OKGREEN, bcolors.ENDC)
 
     selfsigned_cert = get_certificate(app.config_domain_name)
     context.config_cert_path.write_text(selfsigned_cert)

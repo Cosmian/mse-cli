@@ -15,7 +15,7 @@ from intel_sgx_ra.ratls import ratls_verification
 from intel_sgx_ra.signer import mr_signer_from_pk
 from mse_lib_crypto.xsalsa20_poly1305 import encrypt_directory
 
-from mse_ctl import MSE_CERTIFICATES_URL, MSE_DOCKER_IMAGE_URL, MSE_PCCS_URL
+from mse_ctl import MSE_CERTIFICATES_URL, MSE_PCCS_URL
 from mse_ctl.api.app import get, stop
 from mse_ctl.api.auth import Connection
 from mse_ctl.api.plan import get as get_plan
@@ -129,10 +129,8 @@ def compute_mr_enclave(context: Context, tar_path: Path) -> str:
 
     assert context.instance
 
-    image = f"{MSE_DOCKER_IMAGE_URL}:{context.instance.docker_version}"
-
     # Pull always before running
-    client.images.pull(image)
+    client.images.pull(context.config.docker)
 
     command = [
         "--size", f"{context.instance.enclave_size}M", "--code", "/tmp/app.tar",
@@ -158,9 +156,10 @@ def compute_mr_enclave(context: Context, tar_path: Path) -> str:
             context.instance.expires_at))))
 
     container = client.containers.run(
-        image,
+        context.config.docker,
         command=command,
         volumes=volumes,
+        entrypoint="mse-run",
         remove=True,
         detach=False,
         stdout=True,

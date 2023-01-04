@@ -46,10 +46,6 @@ def hello():
     return "Hello world"
 """)
 
-    # Saving the requirements
-    requirements = Path(app_conf.code.location) / "requirements.txt"
-    requirements.write_text("flask==2.2.2")
-
     LOG.info("An empty app has been generated in the current directory.")
     LOG.info("You can configure your mse application in: %s",
              project_dir / 'mse.toml')

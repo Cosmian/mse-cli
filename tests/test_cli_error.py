@@ -180,6 +180,28 @@ def test_deploy_bad_docker(cmd_log):
     with pytest.raises(Exception) as exception:
         run_deploy(
             Namespace(
-                **{"path": Path(__file__).parent / "data" / "bad_docker.toml"}))
+                **{
+                    "path": Path(__file__).parent / "data" / "bad_docker.toml",
+                    "force": False
+                }))
 
-    assert "Flask module 'app' not found in directory" in str(exception.value)
+    assert "Docker ghcr.io/cosmian/mse-pytorch:notexist is not approved or supported yet." in str(
+        exception.value)
+
+
+@pytest.mark.slow
+def test_deploy_latest_docker(cmd_log):
+    """Test deploy with the error: latest docker name."""
+    with pytest.raises(Exception) as exception:
+        run_deploy(
+            Namespace(
+                **{
+                    "path":
+                        Path(__file__).parent / "data" /
+                        "bad_docker_latest.toml",
+                    "force":
+                        False
+                }))
+
+    assert "You shouldn\\\'t use latest tag for the docker image" in str(
+        exception.value)

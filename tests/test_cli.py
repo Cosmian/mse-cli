@@ -81,8 +81,7 @@ def _test_deploy(f: io.StringIO, conf: Path) -> Tuple[UUID, str, str]:
     output = capture_logs(f)
 
     try:
-        app_uuid = re.search('App created with uuid: ([a-z0-9-]+)',
-                             output).group(1)
+        app_uuid = re.search('App ([a-z0-9-]+) creating for', output).group(1)
 
         domain_name = re.search(
             'It\'s now ready to be used on https://(.+) until', output).group(1)

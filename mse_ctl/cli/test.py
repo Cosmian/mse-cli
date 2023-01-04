@@ -4,7 +4,6 @@ from pathlib import Path
 
 import docker
 
-from mse_ctl import MSE_DOCKER_IMAGE_URL
 from mse_ctl.conf.app import AppConf
 from mse_ctl.log import LOGGER as log
 
@@ -18,7 +17,7 @@ def add_subparser(subparsers):
         '--path',
         type=Path,
         required=False,
-        metavar='path/to/mse/app/mse.toml',
+        metavar='PATH',
         help='Path to the mse app to test (current directory if not set)')
 
     parser.set_defaults(func=run)
@@ -26,38 +25,40 @@ def add_subparser(subparsers):
 
 def run(args) -> None:
     """Run the subcommand."""
-    app_conf = AppConf.from_toml(path=args.path)
+    app = AppConf.from_toml(path=args.path)
 
-    log.info("Starting the docker: %s")
-    log.info("You can run: `curl http://localhost:5000/`")
+    log.info("Starting the docker: %s...", app.code.docker)
 
-    run_test(app_conf)
-
-
-def run_test(app: AppConf):
-    """Run the application in the docker."""
     client = docker.from_env()
 
-    image = f"{MSE_DOCKER_IMAGE_URL}:51aee992"  # TODO: get that from app conf
-
     # Pull always before running
-    client.images.pull(image)
+    client.images.pull(app.code.docker)
+
+    log.info("You can stop the docker at any times typing CTRL^C")
+    log.info("You can now run: `curl http://localhost:5000%s`",
+             app.code.health_check_endpoint)
 
     command = ["--application", app.code.python_application, "--debug"]
 
     volumes = {f"{app.code.location}": {'bind': '/app/code', 'mode': 'rw'}}
 
     container = client.containers.run(
-        image,
+        app.code.docker,
         command=command,
         volumes=volumes,
         entrypoint="mse-test",
         ports={'5000/tcp': 5000},
         remove=True,
-        detach=False,
+        detach=True,
         stdout=True,
         stderr=True,
     )
 
-    # Save the docker output
-    log.info("%s", container)
+    try:
+        # Print logs until the docker is up
+        for line in container.logs(stream=True):
+            log.info(line.decode('utf-8').strip())
+    except KeyboardInterrupt:
+        # Stop the docker when user types CTRL^C
+        log.info("Stopping the docker container...")
+        container.stop(timeout=1)
