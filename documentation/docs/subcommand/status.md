@@ -10,15 +10,18 @@ Microservice
         Domain name  = demo.cosmian.app
         Billing plan = free
         Application  = app:app
+        MSE docker   = ghcr.io/cosmian/mse-pytorch:20230104085621
         Healthcheck  = /
 
 Deployement status
         UUID               = 4e3f9969-0fb3-45dd-a230-ef7b82d1f283
-        MSE docker version = e1d88756
         Certificate origin = self
+        Enclave size       = 1024M
+        Cores amount       = 1
         Created at         = 2022-11-17 09:04:17.414325+00:00
         Expires at         = 2022-11-18 09:04:17.414190+00:00 (-1 days remaining)
         Status             = running
         Online since       = 2022-11-17 09:04:34.043340+00:00
 ```
 
+You can also get your application logs (stdout/stderr) adding `--log`.
