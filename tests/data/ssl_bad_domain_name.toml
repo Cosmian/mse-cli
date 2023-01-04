@@ -7,6 +7,7 @@ plan = "free"
 location = "/tmp/code"
 python_application = "app:app"
 health_check_endpoint = "/"
+docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
 
 [ssl]
 domain_name = "noexist.cosmian.app"

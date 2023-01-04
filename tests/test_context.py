@@ -24,6 +24,7 @@ def test_from_toml():
             project="default",
             code_sealed_key=
             "a389f8baf2e03cebd445d99f03600b29ca259faa9a3964e529c03effef206135",
+            docker="ghcr.io/cosmian/mse-pytorch:20230104085621",
             python_application="app:app",
             ssl_app_certificate="-----BEGIN CERTIFICATE"),
         instance=ContextInstance(
@@ -32,7 +33,6 @@ def test_from_toml():
             enclave_size=1,
             expires_at=datetime.strptime("2022-11-18 16:22:11.516125",
                                          "%Y-%m-%d %H:%M:%S.%f"),
-            docker_version="11d789bf",
             ssl_certificate_origin=SSLCertificateOrigin.Owner,
             nonces={
                 "app.py": "f33f4a1a1555660f9396aea7811b0ff7b0f19503a7485914"
@@ -46,9 +46,9 @@ def test_from_app_conf():
     toml = Path(__file__).parent / "data/context.toml"
 
     code = CodeConf(location="/tmp/code",
-                    encrypted=True,
                     python_application="app:app",
-                    health_check_endpoint="/")
+                    health_check_endpoint="/",
+                    docker="ghcr.io/cosmian/mse-pytorch:20230104085621")
 
     ssl = SSLConf(domain_name="demo.cosmian.app",
                   private_key="-----BEGIN PRIVATE",
@@ -70,7 +70,8 @@ def test_from_app_conf():
                            project="default",
                            code_sealed_key=conf.config.code_sealed_key,
                            python_application="app:app",
-                           ssl_app_certificate="-----BEGIN CERTIFICATE"),
+                           ssl_app_certificate="-----BEGIN CERTIFICATE",
+                           docker="ghcr.io/cosmian/mse-pytorch:20230104085621"),
         instance=None)
 
     assert conf == ref_context_conf
@@ -83,9 +84,9 @@ def test_run():
     ref_context_conf = Context.from_toml(path=toml)
 
     code = CodeConf(location="/tmp/code",
-                    encrypted=True,
                     python_application="app:app",
-                    health_check_endpoint="/")
+                    health_check_endpoint="/",
+                    docker="ghcr.io/cosmian/mse-pytorch:20230104085621")
 
     ssl = SSLConf(domain_name="demo.cosmian.app",
                   private_key="-----BEGIN PRIVATE",
@@ -104,7 +105,6 @@ def test_run():
         uuid=UUID("d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e"),
         enclave_size=1,
         config_domain_name="demo.cosmian.app",
-        docker_version="11d789bf",
         expires_at=datetime.strptime("2022-11-18T16:22:11.516125",
                                      "%Y-%m-%dT%H:%M:%S.%f"),
         ssl_certificate_origin=SSLCertificateOrigin.Owner,

@@ -8,6 +8,7 @@ expiration_date = "2023-02-01 00:00:00+00:00"
 location = "/tmp/code"
 python_application = "app:app"
 health_check_endpoint = "/"
+docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
 
 [ssl]
 domain_name = "demo.cosmian.app"

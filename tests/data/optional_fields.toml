@@ -5,5 +5,6 @@ plan = "free"
 
 [code]
 location = "/tmp/code"
+docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
 python_application = "app:ppa"
 health_check_endpoint = "/"

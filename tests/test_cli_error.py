@@ -172,3 +172,14 @@ def test_deploy_bad_app(cmd_log):
                 }))
 
     assert "Flask module 'app' not found in directory" in str(exception.value)
+
+
+@pytest.mark.slow
+def test_deploy_bad_docker(cmd_log):
+    """Test deploy with the error: bad docker name."""
+    with pytest.raises(Exception) as exception:
+        run_deploy(
+            Namespace(
+                **{"path": Path(__file__).parent / "data" / "bad_docker.toml"}))
+
+    assert "Flask module 'app' not found in directory" in str(exception.value)
