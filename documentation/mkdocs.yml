@@ -56,7 +56,7 @@ nav:
       - Status: subcommand/status.md
       - Stop: subcommand/stop.md
       - Test: subcommand/test.md
-  - Scenarii: scenarii.md
+  - Security Scenarios: scenarios.md
   - Security: security.md
   - Deployment: how_it_works_deploy.md
   - Usage: how_it_works_use.md
