@@ -1,15 +1,18 @@
-"""App configuration file module."""
+"""mse_ctl.conf.app module."""
+
 from __future__ import annotations
 
 import os
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 import toml
 from cryptography import x509
 from cryptography.x509.extensions import SubjectAlternativeName
 from pydantic import BaseModel, constr, validator
+
+from mse_ctl import MSE_DEFAULT_DOCKER
 
 if TYPE_CHECKING:
     Str255 = str
@@ -41,6 +44,8 @@ class CodeConf(BaseModel):
     python_application: Str255
     # Endpoint to use to check if the application is up and sane
     health_check_endpoint: Str255
+    # Mse docker to use (containing all requirements)
+    docker: StrUnlimited
 
 
 class AppConf(BaseModel):
@@ -175,6 +180,7 @@ class AppConf(BaseModel):
                 "plan": self.plan,
                 "code": {
                     "location": str(self.code.location),
+                    "docker": self.code.docker,
                     "python_application": self.code.python_application,
                     "health_check_endpoint": self.code.health_check_endpoint
                 },
@@ -198,7 +204,8 @@ class AppConf(BaseModel):
         """Generate a default configuration."""
         code = CodeConf(location=code_path.expanduser().resolve() / "code",
                         python_application="app:app",
-                        health_check_endpoint="/")
+                        health_check_endpoint="/",
+                        docker=MSE_DEFAULT_DOCKER)
 
         return AppConf(name=name,
                        version="0.1.0",
@@ -208,10 +215,8 @@ class AppConf(BaseModel):
 
     def into_payload(self) -> Dict[str, Any]:
         """Convert it into a mse-backend payload as a dict."""
-        d = None
-        if self.expiration_date:
-            d = self.expiration_date.astimezone(
-                tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        d = self.expiration_date.astimezone(tz=timezone.utc).strftime(
+            "%Y-%m-%dT%H:%M:%S.%fZ") if self.expiration_date else None
 
         return {
             "name": self.name,
@@ -224,4 +229,5 @@ class AppConf(BaseModel):
             "ssl_certificate": self.ssl.certificate if self.ssl else None,
             "domain_name": self.ssl.domain_name if self.ssl else None,
             "plan": self.plan,
+            "docker": self.code.docker,
         }  # Do not send the private_key or location code

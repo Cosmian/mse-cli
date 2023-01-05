@@ -32,13 +32,13 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
     version = "1.0.0"
     project = "default"
     python_application = "app:app"
+    docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
 
     [instance]
     id = "0b41c2a4-470e-4602-99e2-58a6bf7b123d"
     config_domain_name = "demo.cosmian.app"
     enclave_size = 1
     expires_at = "2022-11-19 09:47:26.931077+00:00"
-    docker_version = "e1d88756"
     ssl_certificate_origin = "self"
 
     [instance.nonces]
@@ -55,6 +55,7 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
     version = "1.0.0"
     project = "default"
     python_application = "app:app"
+    docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
     code_sealed_key = "a389f8baf2e03cebd445d99f03600b29ca259faa9a3964e529c03effef206135"
     ssl_app_certificate = "-----BEGIN CERTIFICATE[...]"
 
@@ -63,7 +64,6 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
     config_domain_name = "demo.cosmian.app"
     enclave_size = 1
     expires_at = "2022-11-18 16:22:11.516125"
-    docker_version = "11d789bf"
     ssl_certificate_origin = "owner"
 
     [instance.nonces]
@@ -80,6 +80,7 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
     version = "1.0.0"
     project = "default"
     python_application = "app:app"
+    docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
     code_sealed_key = "23a143da6cdabadfba914e2bfc29272dbb90e8346f2bde9fab4c7b3f135ed4ad"
 
     [instance]
@@ -87,7 +88,6 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
     config_domain_name = "demo.cosmian.app"
     enclave_size = 1
     expires_at = "2022-11-18 16:00:43.352980"
-    docker_version = "e1d88756"
     ssl_certificate_origin = "operator"
 
     [instance.nonces]
@@ -106,12 +106,12 @@ $ mse-ctl context --list
 [...]
 ```
 
-### Clean
+### Remove
 
 You can remove the context directory of an app using:
 
 ```console
-$ mse-ctl context --clean 852a4256-fffa-457a-80ed-329166a652af 
+$ mse-ctl context --remove 852a4256-fffa-457a-80ed-329166a652af
 [...]
 ```
 
@@ -132,7 +132,7 @@ $ mse-ctl context --purge
 
 ### Export
 
-If you want an app user to verify the trustworthiness of your apps, they will need this context file from the context directory which can be exported using:
+If you want app users to verify the trustworthiness of your apps, they will need this context file from the context directory which can be exported using:
 
 ```console
 $ mse-ctl context --export 852a4256-fffa-457a-80ed-329166a652af

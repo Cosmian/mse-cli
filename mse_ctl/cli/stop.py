@@ -1,28 +1,31 @@
-"""Remove subparser definition."""
+"""mse_ctl.cli.stop module.."""
 
 import uuid
 
 from mse_ctl.cli.helpers import stop_app
 from mse_ctl.conf.user import UserConf
-from mse_ctl.log import LOGGER as log
+from mse_ctl.log import LOGGER as LOG
 from mse_ctl.utils.color import bcolors
 
 
 def add_subparser(subparsers):
     """Define the subcommand."""
-    parser = subparsers.add_parser("stop", help="Stop a MSE app")
+    parser = subparsers.add_parser("stop",
+                                   help="stop a specific MSE web application")
 
     parser.set_defaults(func=run)
 
-    parser.add_argument('app_id', type=uuid.UUID, help='The id of the MSE app.')
+    parser.add_argument("app_uuid",
+                        type=uuid.UUID,
+                        help="identifier of the MSE web application to stop")
 
 
 def run(args) -> None:
     """Run the subcommand."""
     user_conf = UserConf.from_toml()
 
-    log.info("Stopping and destroying the app...")
+    LOG.info("Stopping and destroying the app...")
 
-    stop_app(user_conf.get_connection(), args.app_id)
+    stop_app(user_conf.get_connection(), args.app_uuid)
 
-    log.info("✅ %sApp stopped and destroyed!%s", bcolors.OKGREEN, bcolors.ENDC)
+    LOG.info("✅ %sApp stopped and destroyed!%s", bcolors.OKGREEN, bcolors.ENDC)

@@ -4,11 +4,12 @@ from argparse import Namespace
 from pathlib import Path
 import tempfile
 from typing import Optional, Tuple
-import pytest
 import os
-import requests
-from mse_ctl.api.types import SSLCertificateOrigin
 
+import pytest
+import requests
+
+from mse_ctl.api.types import SSLCertificateOrigin
 from mse_ctl.cli.deploy import run as run_deploy
 from mse_ctl.cli.verify import run as run_verify
 from mse_ctl.cli.status import run as run_status
@@ -73,15 +74,14 @@ def _test_scaffold() -> Path:
     return conf
 
 
-def _test_deploy(f: io.StringIO, conf: Path) -> Tuple[str, str, str]:
+def _test_deploy(f: io.StringIO, conf: Path) -> Tuple[UUID, str, str]:
     """Test the deploy subcommand."""
     run_deploy(Namespace(**{"path": conf, "force": False}))
 
     output = capture_logs(f)
 
     try:
-        app_uuid = re.search('App created with uuid: ([a-z0-9-]+)',
-                             output).group(1)
+        app_uuid = re.search('App ([a-z0-9-]+) creating for', output).group(1)
 
         domain_name = re.search(
             'It\'s now ready to be used on https://(.+) until', output).group(1)
@@ -93,7 +93,7 @@ def _test_deploy(f: io.StringIO, conf: Path) -> Tuple[str, str, str]:
         print(output)
         assert False
 
-    return (app_uuid, domain_name, mr_enclave)
+    return UUID(app_uuid), domain_name, mr_enclave
 
 
 def _test_context(f: io.StringIO, app_uuid: UUID) -> Context:
@@ -107,32 +107,32 @@ def _test_context(f: io.StringIO, app_uuid: UUID) -> Context:
     run_context(
         Namespace(**{
             "list": True,
-            "clean": False,
+            "remove": False,
             "purge": False,
             "export": None
         }))
 
     output = capture_logs(f)
-    assert app_uuid in output
+    assert str(app_uuid) in output
 
     # Check the context subcommand (exporting)
     run_context(
         Namespace(**{
             "list": False,
-            "clean": False,
+            "remove": False,
             "purge": False,
             "export": app_uuid
         }))
 
-    output = capture_logs(f)
-    context_path = Path("context.mse")
+    _ = capture_logs(f)
+    context_path = Path(f"{app_uuid}.toml")
     assert context_path.exists()
     return Context.from_toml(context_path)
 
 
 def _test_status(f: io.StringIO, app_uuid: UUID, expecting_status: str):
     """Test status subcommand."""
-    run_status(Namespace(**{"app_id": app_uuid, "log": True}))
+    run_status(Namespace(**{"app_uuid": app_uuid, "log": True}))
 
     output = capture_logs(f)
     assert expecting_status in output
@@ -144,7 +144,7 @@ def _test_list(f: io.StringIO, project_name: str, app_uuid: UUID,
     run_list(Namespace(**{"project_name": project_name}))
 
     output = capture_logs(f)
-    assert (app_uuid in output) == expecting_result
+    assert (str(app_uuid) in output) == expecting_result
 
 
 def _test_mse_ctl(f: io.StringIO, ssl_certificate_origin: SSLCertificateOrigin):
@@ -239,7 +239,7 @@ def _test_mse_ctl(f: io.StringIO, ssl_certificate_origin: SSLCertificateOrigin):
     _test_list(f, app_conf.project, app_uuid, True)
 
     # Test stop app
-    run_stop(Namespace(**{"app_id": app_uuid}))
+    run_stop(Namespace(**{"app_uuid": app_uuid}))
 
     # Test status subcommand
     _test_status(f, app_uuid, "stopped")
@@ -248,10 +248,10 @@ def _test_mse_ctl(f: io.StringIO, ssl_certificate_origin: SSLCertificateOrigin):
     _test_list(f, app_conf.project, app_uuid, False)
 
     # Test remove app
-    run_remove(Namespace(**{"app_id": app_uuid}))
+    run_remove(Namespace(**{"app_uuid": app_uuid}))
 
     # Test status subcommand
-    with pytest.raises(Exception) as exception:
+    with pytest.raises(Exception):
         _test_status(f, app_uuid, "removed")
 
     f.truncate(0)
@@ -260,13 +260,13 @@ def _test_mse_ctl(f: io.StringIO, ssl_certificate_origin: SSLCertificateOrigin):
     run_context(
         Namespace(**{
             "list": True,
-            "clean": False,
+            "remove": False,
             "purge": False,
             "export": None
         }))
 
     output = capture_logs(f)
-    assert app_uuid not in output
+    assert str(app_uuid) not in output
     assert not Context.get_dirpath(app_uuid, False).exists()
 
 

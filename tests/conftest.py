@@ -2,7 +2,7 @@ import logging
 import pytest
 
 import io
-from mse_ctl.log import setup_logging, LOGGER as log
+from mse_ctl.log import setup_logging, LOGGER as LOG
 
 # cmd_log_str should be shared between all tests (to not close by any tests)
 cmd_log_str = None
@@ -17,7 +17,7 @@ def cmd_log() -> io.StringIO:
         ch = logging.StreamHandler(cmd_log_str)
         ch.setLevel(logging.DEBUG)
         setup_logging()
-        log.addHandler(ch)
+        LOG.addHandler(ch)
     yield cmd_log_str
 
 

@@ -2,9 +2,10 @@ name = "helloworld"
 version = "1.0.0"
 project = "default"
 plan = "free"
-expiration_date = "2023-01-01 00:00:00+00:00"
+expiration_date = "2023-02-01 00:00:00+00:00"
 
 [code]
 location = "/tmp/code"
+docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
 python_application = "app:app"
 health_check_endpoint = "/"

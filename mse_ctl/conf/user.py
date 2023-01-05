@@ -1,7 +1,7 @@
-"""User configuration file module."""
+"""mse_ctl.conf.user module."""
 
 from pathlib import Path
-from typing import Optional, Dict
+from typing import Dict, Optional
 
 import toml
 from pydantic import BaseModel

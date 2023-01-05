@@ -4,6 +4,7 @@ version = "1.0"
 name = "helloworld"
 version = "1.0.0"
 project = "default"
+docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
 python_application = "app:app"
 code_sealed_key = "a389f8baf2e03cebd445d99f03600b29ca259faa9a3964e529c03effef206135"
 ssl_app_certificate = "-----BEGIN CERTIFICATE"
@@ -13,7 +14,6 @@ id = "d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e"
 config_domain_name = "demo.cosmian.app"
 enclave_size = 1
 expires_at = "2022-11-18 16:22:11.516125"
-docker_version = "11d789bf"
 ssl_certificate_origin = "owner"
 
 [instance.nonces]

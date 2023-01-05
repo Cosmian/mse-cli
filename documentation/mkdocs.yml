@@ -55,6 +55,7 @@ nav:
       - Remove: subcommand/remove.md
       - Status: subcommand/status.md
       - Stop: subcommand/stop.md
+      - Test: subcommand/test.md
   - Scenarii: scenarii.md
   - Security: security.md
   - Deployment: how_it_works_deploy.md

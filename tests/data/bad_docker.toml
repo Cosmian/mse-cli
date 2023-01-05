@@ -1,10 +1,10 @@
-name = "bad_app"
+name = "bad_docker"
 version = "1.0.0"
 project = "default"
 plan = "free"
 
 [code]
-location = "/tmp/code"
+location = "code/"
 python_application = "app:app"
 health_check_endpoint = "/"
-docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
+docker = "ghcr.io/cosmian/mse-pytorch:notexist"

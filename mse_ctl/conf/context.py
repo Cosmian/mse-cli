@@ -1,16 +1,16 @@
-"""Context file."""
+"""mse_ctl.conf.context module."""
 
-from datetime import datetime
 import os
 import shutil
 import tempfile
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Optional
 from uuid import UUID
 
 import toml
-from pydantic import BaseModel, validator
 from mse_lib_crypto.xsalsa20_poly1305 import random_key
+from pydantic import BaseModel, validator
 
 from mse_ctl import MSE_CONF_DIR
 from mse_ctl.api.types import SSLCertificateOrigin
@@ -28,8 +28,6 @@ class ContextInstance(BaseModel):
     enclave_size: int
     # Shutdown date of the spawned enclave
     expires_at: datetime
-    # The mse-docker version
-    docker_version: str
     # The origin of the app SSL certificate
     ssl_certificate_origin: SSLCertificateOrigin
     # The nounces of the encrypted files
@@ -61,6 +59,8 @@ class ContextConf(BaseModel):
     project: str
     # Symetric key used to encrypt the code
     code_sealed_key: bytes
+    # Mse docker to use (containing all requirements)
+    docker: str
     # from python_flask_module import python_flask_variable_name
     python_application: str
     # The certificate of the app if origin = Owner
@@ -184,6 +184,7 @@ class Context(BaseModel):
                                version=conf.version,
                                project=conf.project,
                                python_application=conf.code.python_application,
+                               docker=conf.code.docker,
                                code_sealed_key=bytes(random_key()).hex(),
                                ssl_app_certificate=cert))
 
@@ -201,15 +202,13 @@ class Context(BaseModel):
         return Context(**dataMap)
 
     def run(self, uuid: UUID, enclave_size: int, config_domain_name: str,
-            docker_version: str, expires_at: datetime,
-            ssl_certificate_origin: SSLCertificateOrigin, nonces: Dict[str,
-                                                                       bytes]):
+            expires_at: datetime, ssl_certificate_origin: SSLCertificateOrigin,
+            nonces: Dict[str, bytes]):
         """Complete the context since the app is now running."""
         self.instance = ContextInstance(
             id=uuid,
             config_domain_name=config_domain_name,
             enclave_size=enclave_size,
-            docker_version=docker_version,
             expires_at=expires_at,
             ssl_certificate_origin=ssl_certificate_origin,
             nonces=nonces)
@@ -223,6 +222,7 @@ class Context(BaseModel):
                     "name": self.config.name,
                     "version": self.config.version,
                     "project": self.config.project,
+                    "docker": self.config.docker,
                     "python_application": self.config.python_application,
                     "code_sealed_key": bytes(self.config.code_sealed_key).hex()
                 }
@@ -243,8 +243,6 @@ class Context(BaseModel):
                         self.instance.enclave_size,
                     "expires_at":
                         str(self.instance.expires_at),
-                    "docker_version":
-                        self.instance.docker_version,
                     "ssl_certificate_origin":
                         origin,
                     "nonces":

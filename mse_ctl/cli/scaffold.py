@@ -1,23 +1,23 @@
-"""Scaffold subparser definition."""
+"""mse_ctl.cli.scaffold module."""
 
 import os
 from pathlib import Path
-from mse_ctl.cli.helpers import non_empty_string
 
+from mse_ctl.cli.helpers import non_empty_string
 from mse_ctl.conf.app import AppConf
-from mse_ctl.log import LOGGER as log
+from mse_ctl.log import LOGGER as LOG
 
 
 def add_subparser(subparsers):
     """Define the subcommand."""
     parser = subparsers.add_parser(
-        "scaffold", help="Create a new empty app in the current directory")
+        "scaffold", help="create a new boilerplate MSE web application")
 
     parser.set_defaults(func=run)
 
-    parser.add_argument('app_name',
+    parser.add_argument("name",
                         type=non_empty_string,
-                        help='The name of the new app.')
+                        help="name of the MSE web application to create")
 
 
 def run(args) -> None:
@@ -46,10 +46,6 @@ def hello():
     return "Hello world"
 """)
 
-    # Saving the requirements
-    requirements = Path(app_conf.code.location) / "requirements.txt"
-    requirements.write_text("flask==2.2.0")
-
-    log.info("An empty app has been generated in the current directory.")
-    log.info("You can configure your mse application in: %s",
+    LOG.info("An empty app has been generated in the current directory.")
+    LOG.info("You can configure your mse application in: %s",
              project_dir / 'mse.toml')
