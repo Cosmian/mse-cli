@@ -22,7 +22,7 @@ $ cat my_project/mse.toml
 |      Keys       | Mandatory |            Types            |                                      Description                                      |
 | :-------------: | :-------: | :-------------------------: | :-----------------------------------------------------------------------------------: |
 |      name       |     ✔️     |             str             |              Name of the application. It should be unique per `project`               |
-|     version     |     ✔️     |             str             | Version of the application. Useful if multiple version of the same application exists |
+|     version     |     ✔️     |             str             | Version of the application. Useful if multiple versions of the same application exist |
 |     project     |     ✔️     |      `default` or str       |                    Project name to regroup application for payment                    |
 |      plan       |     ✔️     | `free` or other plans names |                            Plan used for your application                             |
 |       dev       |           | `True` / `False` (default)  |    Developer mode allows to use Cosmian certificate for testing before production     |
@@ -30,7 +30,7 @@ $ cat my_project/mse.toml
 
 #### Expiration date of the application
 
-The expiration date is tied to the self-signed certificate. When the expiration date is reached, the application will not be available.
+The expiration date is tied to the self-signed certificate. When the expiration date is reached, the application is not available anymore.
 
 If the plan is `free` then the expiration date will be overwritten to **1  day**.
 
@@ -39,15 +39,15 @@ In case the SSL certificate is provided by the application owner, this value sho
 If no `expiration_date` is specified in the configuration file, the expiration date of the application is the expiration date of the certificate.
 Otherwise, it takes the value inherited from the chosen plan.
 
-In dev mode, the expiratation date is not used because the certificate is the one provided by Cosmian.
+In dev mode, the expiration date is not used because the certificate is the one provided by Cosmian.
 
 ### Code section
 
-|         Keys          | Mandatory | Types |                                          Description                                           |
-| :-------------------: | :-------: | :---: | :--------------------------------------------------------------------------------------------: |
-|       location        |     ✔️     |  str  |                          Relative path to the application code folder                          |
-|        docker         |     ✔️     |  str  |                                  URL to the mse docker to run                                  |
-|  python_application   |     ✔️     |  str  |                                module_name:flask_variable_name                                 |
+|         Keys          | Mandatory | Types |                                          Description                                          |
+| :-------------------: | :-------: | :---: | :-------------------------------------------------------------------------------------------: |
+|       location        |     ✔️     |  str  |                         Relative path to the application code folder                          |
+|        docker         |     ✔️     |  str  |                                 URL to the mse docker to run                                  |
+|  python_application   |     ✔️     |  str  |                                module_name:flask_variable_name                                |
 | health_check_endpoint |     ✔️     |  str  | `GET` endpoint to check if the application is ready. This endpoint should be unauthenticated. |
 
 #### MSE docker

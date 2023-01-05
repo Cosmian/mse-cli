@@ -159,7 +159,7 @@ $ cat my_project/mse.toml
 ───────┴──────────────────────────────
 ```
 
-It's a good practice before deploying your app, to test it locally:
+It's a good practice to test your application before deploying it:
 
 ```{.console}
 $ cd my_project
