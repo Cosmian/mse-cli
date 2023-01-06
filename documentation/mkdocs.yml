@@ -52,6 +52,7 @@ nav:
       - Context: subcommand/context.md
       - Init: subcommand/init.md
       - List: subcommand/list.md
+      - Logs: subcommand/logs.md
       - Remove: subcommand/remove.md
       - Status: subcommand/status.md
       - Stop: subcommand/stop.md

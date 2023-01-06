@@ -9,7 +9,7 @@ filterwarnings("ignore")  # noqa: E402
 # pylint: disable=wrong-import-position
 import mse_cli
 from mse_cli.command import (context, deploy, init, list_all, login, logout,
-                             remove, scaffold, status, stop, test, verify)
+                             logs, remove, scaffold, status, stop, test, verify)
 from mse_cli.log import setup_logging
 
 
@@ -33,6 +33,7 @@ def main() -> int:
     list_all.add_subparser(subparsers)
     login.add_subparser(subparsers)
     logout.add_subparser(subparsers)
+    logs.add_subparser(subparsers)
     remove.add_subparser(subparsers)
     scaffold.add_subparser(subparsers)
     status.add_subparser(subparsers)
@@ -42,7 +43,12 @@ def main() -> int:
 
     args = parser.parse_args()
 
-    args.func(args)
+    try:
+        func = args.func
+    except AttributeError:
+        parser.error("too few arguments")
+
+    func(args)
 
     return 0
 

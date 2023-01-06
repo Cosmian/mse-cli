@@ -9,6 +9,7 @@ import pytest
 from mse_cli.command.deploy import run as run_deploy
 from mse_cli.command.verify import run as run_verify
 from mse_cli.command.status import run as run_status
+from mse_cli.command.logs import run as run_logs
 from mse_cli.command.list_all import run as run_list
 from mse_cli.command.stop import run as run_stop
 from mse_cli.command.remove import run as run_remove
@@ -24,7 +25,18 @@ def test_status_bad_uuid(cmd_log):
         run_status(
             Namespace(**{
                 "app_uuid": "00000000-0000-0000-0000-000000000000",
-                "log": False
+            }))
+
+    assert "Cannot find the app with UUID " in str(exception.value)
+
+
+@pytest.mark.slow
+def test_logs_bad_uuid(cmd_log):
+    """Test status with the error: valid id but no exists."""
+    with pytest.raises(Exception) as exception:
+        run_logs(
+            Namespace(**{
+                "app_uuid": "00000000-0000-0000-0000-000000000000",
             }))
 
     assert "Cannot find the app with UUID " in str(exception.value)
