@@ -93,15 +93,28 @@ def run(args) -> None:
     app = wait_app_start(conn, app.uuid)
 
     LOG.info("Your application is now fully deployed and started...")
-    LOG.info("✅%s It's now ready to be used on https://%s until %s%s",
-             bcolors.OKGREEN, app.domain_name, app.expires_at.astimezone(),
-             bcolors.ENDC)
+    LOG.info(
+        "✅%s It's now ready to be used on https://%s until %s%s. "
+        "The application will be automatically undeployed after this date.",
+        bcolors.OKGREEN, app.domain_name, app.expires_at.astimezone(),
+        bcolors.ENDC)
 
     context.save()
 
     LOG.info(
         "The context of this creation can be retrieved using "
-        "`mse-cli context --export %s`", app.uuid)
+        "`mse context --export %s`", app.uuid)
+
+    if app.ssl_certificate_origin == SSLCertificateOrigin.Self:
+        LOG.info(
+            "%sYou can now quickly test your application doing: `curl https://%s%s --cacert %s`%s",
+            bcolors.OKBLUE, app.domain_name, app.health_check_endpoint,
+            context.config_cert_path, bcolors.ENDC)
+    else:
+        LOG.info(
+            "%sYou can now quickly test your application doing: `curl https://%s%s`%s",
+            bcolors.OKBLUE, app.domain_name, app.health_check_endpoint,
+            bcolors.ENDC)
 
 
 def wait_app_start(conn: Connection, uuid: UUID) -> App:
