@@ -6,9 +6,9 @@ from pathlib import Path
 from uuid import UUID
 from datetime import datetime
 
-from mse_ctl.api.types import SSLCertificateOrigin
-from mse_ctl.conf.app import AppConf, CodeConf, SSLConf
-from mse_ctl.conf.context import Context, ContextConf, ContextInstance
+from mse_cli.api.types import SSLCertificateOrigin
+from mse_cli.conf.app import AppConf, CodeConf, SSLConf
+from mse_cli.conf.context import Context, ContextConf, ContextInstance
 
 
 def test_from_toml():
@@ -146,5 +146,5 @@ def test_path():
     assert conf.encrypted_code_path.exists()
     assert conf.tar_code_path == workspace / "code.tar"
     assert conf.path == Path(
-        "~/.config/mse-ctl/context/d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e/context.mse"
+        "~/.config/mse/context/d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e/context.mse"
     ).expanduser()

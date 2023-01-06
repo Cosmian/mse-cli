@@ -28,7 +28,7 @@ code_format:
     - source venv/bin/activate
     - pip install -r requirements-dev.txt
   script:
-    - yapf -d -r mse_ctl/
+    - yapf -d -r mse_cli/
 
 code_style:
   stage: lint
@@ -46,7 +46,7 @@ code_style:
     - pip install -r requirements-dev.txt
     - pip install .
   script:
-    - pycodestyle mse_ctl/
+    - pycodestyle mse_cli/
 
 doc_style:
   stage: lint
@@ -64,7 +64,7 @@ doc_style:
     - pip install -r requirements-dev.txt
     - pip install .
   script:
-    - pydocstyle mse_ctl/
+    - pydocstyle mse_cli/
 
 static_analysis:
   stage: lint
@@ -81,7 +81,7 @@ static_analysis:
     - pip install -r requirements-dev.txt
     - pip install .
   script:
-    - pylint --rcfile=setup.cfg mse_ctl/
+    - pylint --rcfile=setup.cfg mse_cli/
 
 type_check:
   stage: lint
@@ -98,7 +98,7 @@ type_check:
     - pip install -r requirements-dev.txt
     - pip install .
   script:
-    - mypy mse_ctl/
+    - mypy mse_cli/
 
 test_unit:
   stage: test
@@ -170,11 +170,11 @@ test_e2e_scheduled:
   script:
     - echo "Running tests using ${BASE_URL}"
     - >
-      MSE_CTL_CONF_PATH=${CONF_TMP_DIR} 
-      MSE_CTL_BASE_URL=${BASE_URL}
-      MSE_CTL_AUTH0_CLIENT_ID=${AUTH0_CLIENT_ID}
-      MSE_CTL_AUTH0_DOMAIN_NAME=${AUTH0_DOMAIN_NAME}
-      MSE_CTL_AUTH0_AUDIENCE=${AUTH0_AUDIENCE}
+      MSE_CONF_PATH=${CONF_TMP_DIR} 
+      MSE_BASE_URL=${BASE_URL}
+      MSE_AUTH0_CLIENT_ID=${AUTH0_CLIENT_ID}
+      MSE_AUTH0_DOMAIN_NAME=${AUTH0_DOMAIN_NAME}
+      MSE_AUTH0_AUDIENCE=${AUTH0_AUDIENCE}
       pytest -m slow
   after_script:
     - rm -f $CONF_TMP_DIR

@@ -9,22 +9,22 @@ import os
 import pytest
 import requests
 
-from mse_ctl.api.types import SSLCertificateOrigin
-from mse_ctl.cli.deploy import run as run_deploy
-from mse_ctl.cli.verify import run as run_verify
-from mse_ctl.cli.status import run as run_status
-from mse_ctl.cli.list_all import run as run_list
-from mse_ctl.cli.stop import run as run_stop
-from mse_ctl.cli.remove import run as run_remove
-from mse_ctl.cli.scaffold import run as run_scaffold
-from mse_ctl.cli.context import run as run_context
+from mse_cli.api.types import SSLCertificateOrigin
+from mse_cli.command.deploy import run as run_deploy
+from mse_cli.command.verify import run as run_verify
+from mse_cli.command.status import run as run_status
+from mse_cli.command.list_all import run as run_list
+from mse_cli.command.stop import run as run_stop
+from mse_cli.command.remove import run as run_remove
+from mse_cli.command.scaffold import run as run_scaffold
+from mse_cli.command.context import run as run_context
 
-from mse_ctl.conf.app import AppConf, SSLConf
+from mse_cli.conf.app import AppConf, SSLConf
 
 import re
 import io
 from uuid import UUID, uuid4
-from mse_ctl.conf.context import Context
+from mse_cli.conf.context import Context
 from conftest import capture_logs
 
 
@@ -147,7 +147,7 @@ def _test_list(f: io.StringIO, project_name: str, app_uuid: UUID,
     assert (str(app_uuid) in output) == expecting_result
 
 
-def _test_mse_ctl(f: io.StringIO, ssl_certificate_origin: SSLCertificateOrigin):
+def _test_mse_cli(f: io.StringIO, ssl_certificate_origin: SSLCertificateOrigin):
     """Test a complete deployment flow."""
     # Test the scaffold subcommand
     conf = _test_scaffold()
@@ -271,18 +271,18 @@ def _test_mse_ctl(f: io.StringIO, ssl_certificate_origin: SSLCertificateOrigin):
 
 
 @pytest.mark.slow
-def test_mse_ctl_self_signed(cmd_log):
+def test_mse_cli_self_signed(cmd_log):
     """Test a complete deployment flow for dev mode."""
-    _test_mse_ctl(cmd_log, SSLCertificateOrigin.Self)
+    _test_mse_cli(cmd_log, SSLCertificateOrigin.Self)
 
 
 @pytest.mark.slow
-def test_mse_ctl_with_ssl(cmd_log):
+def test_mse_cli_with_ssl(cmd_log):
     """Test a complete deployment flow for dev mode."""
-    _test_mse_ctl(cmd_log, SSLCertificateOrigin.Owner)
+    _test_mse_cli(cmd_log, SSLCertificateOrigin.Owner)
 
 
 @pytest.mark.slow
-def test_mse_ctl_dev_mode(cmd_log):
+def test_mse_cli_dev_mode(cmd_log):
     """Test a complete deployment flow for dev mode."""
-    _test_mse_ctl(cmd_log, SSLCertificateOrigin.Operator)
+    _test_mse_cli(cmd_log, SSLCertificateOrigin.Operator)

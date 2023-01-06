@@ -1,5 +1,5 @@
 The configuration of an MSE application is written in a TOML file.
-The `mse.toml` file located in the current directory is used with `mse-ctl deploy` subcommand, you can specify another TOML file with argument `--path` if needed.
+The `mse.toml` file located in the current directory is used with `mse deploy` subcommand, you can specify another TOML file with argument `--path` if needed.
 
 ```{.bash}
 $ cat my_project/mse.toml
@@ -25,7 +25,7 @@ $ cat my_project/mse.toml
 |     version     |     ✔️     |             str             | Version of the application. Useful if multiple version of the same application exists |
 |     project     |     ✔️     |      `default` or str       |                    Project name to regroup application for payment                    |
 |      plan       |     ✔️     | `free` or other plans names |                            Plan used for your application                             |
-|       dev       |           | `True` / `False` (default)  |    Developer mode allows to use Cosmian certificate for testing before production     |
+|       dev       |           | `true` / `false` (default)  |    Developer mode allows to use Cosmian certificate for testing before production     |
 | expiration_date |           |      YY-MM-DD HH/mm/ss      |                 Expiration date (UTC) before the application shutdown                 |
 
 #### Expiration date of the application
@@ -43,11 +43,11 @@ In dev mode, the expiratation date is not used because the certificate is the on
 
 ### Code section
 
-|         Keys          | Mandatory | Types |                                          Description                                           |
-| :-------------------: | :-------: | :---: | :--------------------------------------------------------------------------------------------: |
-|       location        |     ✔️     |  str  |                          Relative path to the application code folder                          |
-|        docker         |     ✔️     |  str  |                                  URL to the mse docker to run                                  |
-|  python_application   |     ✔️     |  str  |                                module_name:flask_variable_name                                 |
+|         Keys          | Mandatory | Types |                                          Description                                          |
+| :-------------------: | :-------: | :---: | :-------------------------------------------------------------------------------------------: |
+|       location        |     ✔️     |  str  |                         Relative path to the application code folder                          |
+|        docker         |     ✔️     |  str  |                                 URL to the mse docker to run                                  |
+|  python_application   |     ✔️     |  str  |                                module_name:flask_variable_name                                |
 | health_check_endpoint |     ✔️     |  str  | `GET` endpoint to check if the application is ready. This endpoint should be unauthenticated. |
 
 #### MSE docker
@@ -56,7 +56,7 @@ The MSE docker parameter defines which docker image will run in the MSE node. *C
 
 - [ghcr.io/cosmian/mse-pytorch:20230104085621](https://github.com/Cosmian/mse-docker-pytorch/pkgs/container/mse-pytorch). This docker contains plenty of flask and machine learning dependencies.
 
-You can test that your code properly runs inside this docker using [`mse-ctl test`](subcommand/test.md).
+You can test that your code properly runs inside this docker using [`mse test`](subcommand/test.md).
 
 If you need to install other dependencies, you can create a new docker from [ghcr.io/cosmian/mse-base:20230104084742](https://github.com/Cosmian/mse-docker-base). 
 This docker will be allowed to be started in an MSE architecture after a review by a *Cosmian* member. To do so, please contact tech@cosmian.com and provide your `Dockerfile` and the link to your docker image.
@@ -79,7 +79,7 @@ For more information, see [scenarii](scenarii.md).
 
 Here is the procedure to generate the certificate with *LetsEncrypt* (e.g. *example.domain.com*).
 
-1. In your DNS provider interface, register a `CNAME` field *example.domain.com* to the Cosmian proxy `proxy.mse.cosmian.com`. This registration must be effective before running `mse-ctl deploy`.
+1. In your DNS provider interface, register a `CNAME` field *example.domain.com* to the Cosmian proxy `proxy.mse.cosmian.com`. This registration must be effective before running `mse deploy`.
 2. To generate a certificate, the DNS-001 challenge will be used. With `certbot` run:
 ```{.console}
 $ sudo certbot certonly -d example.domain.com --manual --preferred-challenges dns -m tech@domain.com --agree-tos
@@ -120,4 +120,4 @@ These files will be updated when the certificate renews.
 ```
 
 3. A DNS `TXT` record should be registered under a given name in your DNS provider interface. After doing that, the certificate will be generated. Delete this record at the end of the process.
-4. Read the two PEM files and create your own `ssl` section in the MSE configuration file. You are now ready to deploy your app using: `mse-ctl deploy`.
+4. Read the two PEM files and create your own `ssl` section in the MSE configuration file. You are now ready to deploy your app using: `mse deploy`.

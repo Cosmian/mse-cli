@@ -1,7 +1,7 @@
 You can create, in an interactive way, a new configuration file for your app as follow:
 
 ```console
-$ mse-ctl init
+$ mse init
 We need you to fill in the following fields
 
 App name: test

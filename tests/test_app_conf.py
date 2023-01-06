@@ -4,7 +4,7 @@ from pathlib import Path
 from datetime import datetime, timezone
 import tempfile
 
-from mse_ctl.conf.app import AppConf, SSLConf, CodeConf
+from mse_cli.conf.app import AppConf, SSLConf, CodeConf
 import pytest
 import filecmp
 

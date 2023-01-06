@@ -1,7 +1,7 @@
 """Test conf/user.py."""
 from pathlib import Path
 
-from mse_ctl.conf.user import UserConf
+from mse_cli.conf.user import UserConf
 
 
 def test_from_toml():
