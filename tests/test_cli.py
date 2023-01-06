@@ -77,7 +77,7 @@ def _test_scaffold() -> Path:
 
 def _test_deploy(f: io.StringIO, conf: Path) -> Tuple[UUID, str, str]:
     """Test the deploy subcommand."""
-    run_deploy(Namespace(**{"path": conf, "force": False}))
+    run_deploy(Namespace(**{"path": conf, "force": False, "insecure": False}))
 
     output = capture_logs(f)
 

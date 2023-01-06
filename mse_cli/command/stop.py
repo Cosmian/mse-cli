@@ -28,4 +28,4 @@ def run(args) -> None:
 
     stop_app(user_conf.get_connection(), args.app_uuid)
 
-    LOG.info("✅ %sApp stopped and destroyed!%s", bcolors.OKGREEN, bcolors.ENDC)
+    LOG.info("✅ %sApp gracefully stopped!%s", bcolors.OKGREEN, bcolors.ENDC)

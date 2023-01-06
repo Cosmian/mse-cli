@@ -12,8 +12,6 @@ from cryptography import x509
 from cryptography.x509.extensions import SubjectAlternativeName
 from pydantic import BaseModel, constr, validator
 
-from mse_cli import MSE_DEFAULT_DOCKER
-
 if TYPE_CHECKING:
     Str255 = str
     Str16 = str
@@ -198,24 +196,6 @@ class AppConf(BaseModel):
                 }
 
             toml.dump(dataMap, f)
-
-    @staticmethod
-    def default(name: str) -> AppConf:
-        """Generate a default configuration."""
-        # The `code_path` is relative from cwd
-        # and not an absolute path. Indeed, the config file should be
-        # independant from the current tree.
-        # For example if we commit it into a git repo.
-        code = CodeConf(location="mse_code",
-                        python_application="app:app",
-                        health_check_endpoint="/",
-                        docker=MSE_DEFAULT_DOCKER)
-
-        return AppConf(name=name,
-                       version="0.1.0",
-                       project="default",
-                       plan="free",
-                       code=code)
 
     def into_payload(self) -> Dict[str, Any]:
         """Convert it into a mse-backend payload as a dict."""
