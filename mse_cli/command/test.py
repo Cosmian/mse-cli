@@ -32,8 +32,9 @@ def run(args) -> None:
 
     client = docker.from_env()
 
-    # Pull always before running
-    client.images.pull(app.code.docker)
+    # Pull always before running (not for local docker)
+    if "/" not in app.code.docker:
+        client.images.pull(app.code.docker)
 
     LOG.info("You can stop the test at any time typing CTRL^C")
     LOG.info(

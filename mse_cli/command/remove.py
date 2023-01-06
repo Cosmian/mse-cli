@@ -38,5 +38,5 @@ def run(args) -> None:
     # Remove the context file
     Context.clean(args.app_uuid, ignore_errors=True)
 
-    LOG.info("✅%sApplication successfully removed%s", bcolors.OKGREEN,
+    LOG.info("✅ %sApplication successfully removed%s", bcolors.OKGREEN,
              bcolors.ENDC)
