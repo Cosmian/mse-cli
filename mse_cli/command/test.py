@@ -2,9 +2,8 @@
 
 from pathlib import Path
 
-import docker
-
 from mse_cli.conf.app import AppConf
+from mse_cli.command.helpers import get_client_docker
 from mse_cli.log import LOGGER as LOG
 from mse_cli.utils.color import bcolors
 
@@ -30,10 +29,10 @@ def run(args) -> None:
 
     LOG.info("Starting the docker: %s...", app.code.docker)
 
-    client = docker.from_env()
+    client = get_client_docker()
 
     # Pull always before running (not for local docker)
-    if "/" not in app.code.docker:
+    if "/" in app.code.docker:
         client.images.pull(app.code.docker)
 
     LOG.info("You can stop the test at any time typing CTRL^C")

@@ -3,6 +3,7 @@
 import re
 import socket
 import ssl
+import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
@@ -26,6 +27,15 @@ from mse_cli.conf.context import Context
 from mse_cli.log import LOGGER as LOG
 from mse_cli.utils.color import bcolors
 from mse_cli.utils.fs import tar
+
+
+def get_client_docker() -> docker.client.DockerClient:
+    """Create a docker client or exit if daemon is down."""
+    try:
+        return docker.from_env()
+    except docker.errors.DockerException:
+        print("Docker looks not running. Please enable docker daemon")
+        sys.exit(1)
 
 
 def get_app(conn: Connection, uuid: UUID) -> App:
@@ -125,7 +135,7 @@ def stop_app(conn: Connection, app_uuid: UUID) -> None:
 
 def compute_mr_enclave(context: Context, tar_path: Path) -> str:
     """Compute the MR enclave of an enclave."""
-    client = docker.from_env()
+    client = get_client_docker()
 
     assert context.instance
 

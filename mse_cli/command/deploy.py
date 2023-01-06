@@ -11,7 +11,7 @@ from mse_cli.api.auth import Connection
 from mse_cli.api.types import App, AppStatus, SSLCertificateOrigin
 from mse_cli.command.helpers import (compute_mr_enclave, exists_in_project,
                                      get_app, get_certificate,
-                                     get_enclave_resources,
+                                     get_enclave_resources, get_client_docker,
                                      get_project_from_name, prepare_code,
                                      stop_app, verify_app)
 from mse_cli.conf.app import AppConf
@@ -47,6 +47,9 @@ def run(args) -> None:
     user_conf = UserConf.from_toml()
     app_conf = AppConf.from_toml(path=args.path)
     conn = user_conf.get_connection()
+
+    # Check docker daemon is running
+    _ = get_client_docker()
 
     if not check_app_conf(conn, app_conf, args.force):
         return
