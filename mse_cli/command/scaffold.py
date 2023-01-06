@@ -2,10 +2,15 @@
 
 import os
 from pathlib import Path
+import shutil
+from jinja2 import Template
+import pkg_resources
 
 from mse_cli.command.helpers import non_empty_string
 from mse_cli.conf.app import AppConf
 from mse_cli.log import LOGGER as LOG
+from mse_cli import MSE_DEFAULT_DOCKER
+from mse_cli.utils.color import bcolors
 
 
 def add_subparser(subparsers):
@@ -23,29 +28,57 @@ def add_subparser(subparsers):
 def run(args) -> None:
     """Run the subcommand."""
     project_dir = Path(os.getcwd()) / args.app_name
-    os.makedirs(project_dir, exist_ok=False)
 
-    app_conf = AppConf.default(args.app_name)
-    # Saving the configuration file
-    app_conf.save(project_dir)
+    # Copy the template files
+    shutil.copytree(pkg_resources.resource_filename('mse_cli', 'template'),
+                    project_dir)
 
-    # Saving the python code
+    template_conf_file = project_dir / "mse.toml.template"
+    conf_file = template_conf_file.with_suffix('')  # Remove .template extension
+
+    # Initialize the configuration file
+    tm = Template(template_conf_file.read_text())
+    content = tm.render(name=args.app_name, docker=MSE_DEFAULT_DOCKER)
+    conf_file.write_text(content)
+    template_conf_file.unlink()
+
+    app_conf = AppConf.from_toml(conf_file)
+
+    # Initialize the python code file
     code_dir = project_dir / app_conf.code.location
-    os.makedirs(code_dir, exist_ok=False)
+    template_code_file = code_dir / (app_conf.python_module + ".py.template")
+    code_file = template_code_file.with_suffix('')
 
-    python_module = code_dir / (app_conf.python_module + ".py")
-    python_module.write_text(f"""
-from flask import Flask
+    tm = Template(template_code_file.read_text())
+    content = tm.render(app=app_conf.python_variable)
+    code_file.write_text(content)
+    template_code_file.unlink()
 
-{app_conf.python_variable} = Flask(__name__)
+    # Initialize the pytest code files
+    pytest_dir = project_dir / "tests"
+    template_pytest_file = pytest_dir / "conftest.py.template"
+    pytest_file = template_pytest_file.with_suffix('')
 
+    tm = Template(template_pytest_file.read_text())
+    content = tm.render()
+    pytest_file.write_text(content)
+    template_pytest_file.unlink()
 
-@{app_conf.python_variable}.route('/')
-def hello():
-    \"\"\"Get a simple example.\"\"\"
-    return "Hello world"
-""")
+    pytest_dir = project_dir / "tests"
+    template_pytest_file = pytest_dir / "test_app.py.template"
+    pytest_file = template_pytest_file.with_suffix('')
 
-    LOG.info("An empty app has been generated in the current directory.")
-    LOG.info("You can configure your mse application in: %s",
-             project_dir / 'mse.toml')
+    tm = Template(template_pytest_file.read_text())
+    content = tm.render(
+        health_check_endpoint=app_conf.code.health_check_endpoint)
+    pytest_file.write_text(content)
+    template_pytest_file.unlink()
+
+    LOG.info("An example app has been generated in the current directory.")
+    LOG.info("You can configure your mse application in: %s", conf_file)
+    LOG.info(
+        "%sYou can now test it locally from '%s/' directory using: `mse test` "
+        "then `pytest`%s", bcolors.OKBLUE, args.app_name, bcolors.ENDC)
+    LOG.info("%sOr deploy it from '%s/' directory using: `mse deploy`%s",
+             bcolors.OKBLUE, args.app_name, bcolors.ENDC)
+    LOG.info("Refer to the '%s/README.md' for more details.", args.app_name)

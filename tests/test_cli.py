@@ -229,14 +229,11 @@ def _test_mse_cli(f: io.StringIO, ssl_certificate_origin: SSLCertificateOrigin):
     if context.instance.ssl_certificate_origin == SSLCertificateOrigin.Self:
         assert cert_path is not None
         # Check the url is working with the proper certificate
-        r = requests.get(
-            url=f"https://{domain_name}{app_conf.code.health_check_endpoint}",
-            verify=cert_path,
-            timeout=10)
+        r = requests.get(url=f"https://{domain_name}/",
+                         verify=cert_path,
+                         timeout=10)
     else:
-        r = requests.get(
-            url=f"https://{domain_name}{app_conf.code.health_check_endpoint}",
-            timeout=10)
+        r = requests.get(url=f"https://{domain_name}/", timeout=10)
 
     assert r.ok
     assert r.text == "Hello world"
