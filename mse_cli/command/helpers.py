@@ -1,4 +1,4 @@
-"""mse_cli.cli.helpers module."""
+"""mse_cli.command.helpers module."""
 
 import re
 import socket

@@ -1,4 +1,4 @@
-"""mse_cli.cli.verify module."""
+"""mse_cli.command.verify module."""
 
 import os
 from pathlib import Path

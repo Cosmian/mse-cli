@@ -1,4 +1,4 @@
-"""mse_cli.cli.status module."""
+"""mse_cli.command.status module."""
 
 import uuid
 from datetime import datetime, timezone

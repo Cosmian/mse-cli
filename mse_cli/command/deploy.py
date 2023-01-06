@@ -1,4 +1,4 @@
-"""mse_cli.cli.deploy module."""
+"""mse_cli.command.deploy module."""
 
 from pathlib import Path
 from typing import Optional

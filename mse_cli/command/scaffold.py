@@ -1,4 +1,4 @@
-"""mse_cli.cli.scaffold module."""
+"""mse_cli.command.scaffold module."""
 
 import os
 from pathlib import Path

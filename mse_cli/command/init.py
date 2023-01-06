@@ -1,4 +1,4 @@
-"""mse_cli.cli.init module."""
+"""mse_cli.command.init module."""
 
 import os
 from pathlib import Path

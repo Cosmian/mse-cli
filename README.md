@@ -55,7 +55,7 @@ You can use these following env variables:
 - `MSE_AUTH0_AUDIENCE` to specify another tenant audience
 - `MSE_CONSOLE_URL` to specify another console URL
 
-## Developpement & Test
+## Development & Test
 
 To work with the development/test environment, you shall edit the following variables with their proper values:
 

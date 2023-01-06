@@ -1,4 +1,4 @@
-"""mse_cli.cli.remove module."""
+"""mse_cli.command.remove module."""
 
 import uuid
 

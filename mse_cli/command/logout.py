@@ -1,4 +1,4 @@
-"""mse_cli.cli.logout module."""
+"""mse_cli.command.logout module."""
 
 import os
 

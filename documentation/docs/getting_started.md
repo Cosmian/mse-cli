@@ -14,7 +14,7 @@ $ mse --help
 usage: mse [-h] [--version]
                {context,deploy,init,list,login,logout,remove,scaffold,status,stop,test,verify} ...
 
-Microservice Encryption Control.
+Microservice Encryption CLI.
 
 options:
   -h, --help            show this help message and exit
@@ -54,7 +54,7 @@ The credential tokens are saved in `~/.config` on Linux/MacOS and `C:\Users\<use
 
 !!! Examples
 
-    Visit [mse-app-examples](https://github.com/Cosmian/mse-app-examples) to find mse app examples.
+    Visit [mse-app-examples](https://github.com/Cosmian/mse-app-examples) to find MSE application examples.
 
 
 Let's start with a simple Flask Hello World application:

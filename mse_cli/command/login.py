@@ -1,4 +1,4 @@
-"""mse_cli.cli.login module."""
+"""mse_cli.command.login module."""
 
 import base64
 import hashlib

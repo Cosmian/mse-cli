@@ -1,4 +1,4 @@
-"""mse_cli.cli.list_all module."""
+"""mse_cli.command.list_all module."""
 
 import requests
 
