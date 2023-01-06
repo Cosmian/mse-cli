@@ -17,9 +17,8 @@ def main() -> int:
     """Entrypoint of the CLI."""
     setup_logging(False)
 
-    parser = argparse.ArgumentParser(
-        description="MicroService Encryption control CLI"
-        f" - {mse_cli.__version__}")
+    parser = argparse.ArgumentParser(description="MicroService Encryption CLI"
+                                     f" - {mse_cli.__version__}")
 
     parser.add_argument("--version",
                         action="version",
