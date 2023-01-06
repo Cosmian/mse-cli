@@ -69,7 +69,7 @@ def _test_scaffold() -> Path:
     # Check creation of files
     conf = path / unique_name / "mse.toml"
     assert conf.exists()
-    assert (path / unique_name / "code").exists()
+    assert (path / unique_name / "mse_code").exists()
 
     # The viability (is that runnable?) of the code will be tested later
     return conf

@@ -259,9 +259,9 @@ def test_save():
 
 def test_default():
     """Test `default` function."""
-    conf = AppConf.default("helloworld", Path("."))
+    conf = AppConf.default("helloworld")
 
-    code = CodeConf(location=Path("./code").resolve(),
+    code = CodeConf(location=Path("mse_code"),
                     python_application="app:app",
                     health_check_endpoint="/",
                     docker="ghcr.io/cosmian/mse-pytorch:20230104085621")

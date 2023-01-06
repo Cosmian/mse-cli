@@ -200,9 +200,13 @@ class AppConf(BaseModel):
             toml.dump(dataMap, f)
 
     @staticmethod
-    def default(name: str, code_path: Path) -> AppConf:
+    def default(name: str) -> AppConf:
         """Generate a default configuration."""
-        code = CodeConf(location=code_path.expanduser().resolve() / "code",
+        # The `code_path` is relative from cwd
+        # and not an absolute path. Indeed, the config file should be
+        # independant from the current tree.
+        # For example if we commit it into a git repo.
+        code = CodeConf(location="mse_code",
                         python_application="app:app",
                         health_check_endpoint="/",
                         docker=MSE_DEFAULT_DOCKER)

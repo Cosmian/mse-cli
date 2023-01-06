@@ -15,7 +15,7 @@ def add_subparser(subparsers):
 
     parser.set_defaults(func=run)
 
-    parser.add_argument("name",
+    parser.add_argument("app_name",
                         type=non_empty_string,
                         help="name of the MSE web application to create")
 
@@ -25,15 +25,15 @@ def run(args) -> None:
     project_dir = Path(os.getcwd()) / args.app_name
     os.makedirs(project_dir, exist_ok=False)
 
+    app_conf = AppConf.default(args.app_name)
     # Saving the configuration file
-    app_conf = AppConf.default(args.app_name, project_dir)
     app_conf.save(project_dir)
 
     # Saving the python code
-    os.makedirs(app_conf.code.location, exist_ok=False)
+    code_dir = project_dir / app_conf.code.location
+    os.makedirs(code_dir, exist_ok=False)
 
-    python_module = Path(
-        app_conf.code.location) / (app_conf.python_module + ".py")
+    python_module = code_dir / (app_conf.python_module + ".py")
     python_module.write_text(f"""
 from flask import Flask
 
