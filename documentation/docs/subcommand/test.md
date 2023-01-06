@@ -1,7 +1,7 @@
 You can run your application inside the same docker as MSE environment:
 
 ```{.console}
-$ mse-ctl test --path mse-app-demo/helloworld/config/zero_trust.toml
+$ mse test --path mse-app-examples/helloworld/config/zero_trust.toml
 ```
 
 The docker will start your Flask server. At this point, you can interact with the endpoints or run local unit tests.

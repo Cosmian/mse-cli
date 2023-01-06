@@ -6,14 +6,14 @@ from pathlib import Path
 
 import pytest
 
-from mse_ctl.cli.deploy import run as run_deploy
-from mse_ctl.cli.verify import run as run_verify
-from mse_ctl.cli.status import run as run_status
-from mse_ctl.cli.list_all import run as run_list
-from mse_ctl.cli.stop import run as run_stop
-from mse_ctl.cli.remove import run as run_remove
-from mse_ctl.cli.scaffold import run as run_scaffold
-from mse_ctl.cli.context import run as run_context
+from mse_cli.command.deploy import run as run_deploy
+from mse_cli.command.verify import run as run_verify
+from mse_cli.command.status import run as run_status
+from mse_cli.command.list_all import run as run_list
+from mse_cli.command.stop import run as run_stop
+from mse_cli.command.remove import run as run_remove
+from mse_cli.command.scaffold import run as run_scaffold
+from mse_cli.command.context import run as run_context
 from conftest import capture_logs
 
 

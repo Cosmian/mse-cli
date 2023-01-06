@@ -5,7 +5,7 @@ import re
 
 from setuptools import setup, find_packages
 
-name = "mse_ctl"
+name = "mse_cli"
 
 version = re.search(
     r"""(?x)
@@ -37,7 +37,7 @@ setup(name=name,
           "mse-lib-crypto>=0.3,<0.4"
       ],
       entry_points={
-          "console_scripts": ["mse-ctl = mse_ctl.main:main"],
+          "console_scripts": ["mse = mse_cli.main:main"],
       },
       tests_require=["pytest>=7.2.0,<7.3.0"],
       classifiers=[

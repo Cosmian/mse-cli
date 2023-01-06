@@ -2,7 +2,7 @@
 You can get information about a given application as follow:
 
 ```console
-$ mse-ctl status 4e3f9969-0fb3-45dd-a230-ef7b82d1f283
+$ mse status 4e3f9969-0fb3-45dd-a230-ef7b82d1f283
 
 Microservice
         Name         = float_average

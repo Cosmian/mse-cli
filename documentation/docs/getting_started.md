@@ -5,16 +5,16 @@
 
 ## Install
 
-The CLI tool `mse-ctl` requires at least [Python](https://www.python.org/downloads/) 3.8 and [OpenSSL](https://www.openssl.org/source/) 1.1.1 series.
+The CLI tool `mse` requires at least [Python](https://www.python.org/downloads/) 3.8 and [OpenSSL](https://www.openssl.org/source/) 1.1.1 series.
 It is recommended to use [pyenv](https://github.com/pyenv/pyenv) to manage different Python interpreters.
 
 ```{.console}
-$ pip3 install mse-ctl
-$ mse-ctl --help     
-usage: mse-ctl [-h] [--version]
+$ pip3 install mse-cli
+$ mse --help     
+usage: mse [-h] [--version]
                {context,deploy,init,list,login,logout,remove,scaffold,status,stop,test,verify} ...
 
-Microservice Encryption Control.
+Microservice Encryption CLI.
 
 options:
   -h, --help            show this help message and exit
@@ -39,7 +39,7 @@ subcommands:
 ## Log in
 
 ```{.console}
-$ mse-ctl login
+$ mse login
 ```
 
 It will open your browser to sign up and/or log in on [console.cosmian.com](https://console.cosmian.com).
@@ -52,11 +52,16 @@ The credential tokens are saved in `~/.config` on Linux/MacOS and `C:\Users\<use
 
 ## Deploy your first web application
 
+!!! Examples
+
+    Visit [mse-app-examples](https://github.com/Cosmian/mse-app-examples) to find MSE application examples.
+
+
 Let's start with a simple Flask Hello World application:
 
 ```{.console}
-$ git clone http://gitlab.cosmian.com/core/mse-app-demo
-$ tree mse-app-demo/helloworld
+$ git clone https://github.com/Cosmian/mse-app-examples
+$ tree mse-app-examples/helloworld
 ├── code
 │   └── app.py
 ├── config
@@ -90,7 +95,7 @@ It should take around 60 seconds to deploy against a few seconds with non-free p
 
 
 ```{.console}
-$ mse-ctl deploy --path mse-app-demo/helloworld/config/zero_trust.toml
+$ mse deploy --path mse-app-examples/helloworld/config/zero_trust.toml
 An application with the same name in that project is already running...
 Temporary workspace is: /tmp/tmpntxibdo6
 Encrypting your source code...
@@ -105,12 +110,12 @@ Unsealing your private data from your mse instance...
 Waiting for application to be ready...
 Your application is now fully deployed and started...
 ✅ It's now ready to be used on https://<uuid>.cosmian.app until 2022-12-19 19:06:07.212101+01:00
-The context of this creation can be retrieved using `mse-ctl context --export <uuid>`
+The context of this creation can be retrieved using `mse context --export <uuid>`
 ```
 
 That's it!
 
-Your microservice is up at `https://{uuid}.cosmian.app` (replace `{uuid}` with the one from `mse-ctl deploy` command output).
+Your microservice is up at `https://{uuid}.cosmian.app` (replace `{uuid}` with the one from `mse deploy` command output).
 
 You can test your app using `curl`:
 
@@ -125,7 +130,7 @@ $ curl "https://$MSE_UUID.cosmian.app" --cacert /tmp/tmpntxibdo6/cert.conf.pem
 The `scaffold` subcommand allows you to prepare your own project starting with a new fresh Flask application with only one endpoint `/`. See also the [init](subcommand/init.md) subcommand which enables you to initialize  the config file in an interactive way. 
 
 ```{.console}
-$ mse-ctl scaffold my_project
+$ mse scaffold my_project
 $ tree my_project            
 my_project
 ├── code
@@ -163,7 +168,7 @@ It's a good practice to test your application before deploying it:
 
 ```{.console}
 $ cd my_project
-$ mse-ctl test --path mse.toml
+$ mse test --path mse.toml
 $ curl http://localhost:5000/
 $ pytest
 ```

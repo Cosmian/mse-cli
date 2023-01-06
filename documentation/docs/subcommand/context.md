@@ -1,9 +1,9 @@
 
-`mse-ctl` uses various directories to save information about the deployed applications. 
+`mse` uses various directories to save information about the deployed applications. 
 
 ## Login
 
-The user login information is stored in: `$HOME/.config/mse-ctl/login.toml` on Linux/Darwin and `%APPDATA%\mse-ctl\login.toml` on Windows. 
+The user login information is stored in: `$HOME/.config/mse/login.toml` on Linux/Darwin and `%APPDATA%\mse\login.toml` on Windows. 
 
 ## Workspace
 
@@ -16,7 +16,7 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
 
 ## Context
 
-`mse-ctl` also creates a directory `$HOME/.config/mse-ctl/context/uuid/` when a deployment is sucessfully completed. This directory contains:
+`mse` also creates a directory `$HOME/.config/mse/context/uuid/` when a deployment is sucessfully completed. This directory contains:
 
 - The tarball of the encrypted code
 - A TOML file with contains the details required for a user to verify the trustworthiness of the app
@@ -101,7 +101,7 @@ This directory is designed to be shared with any app users wishing to verify the
 You can list the contexts saved on your local host using:
 
 ```console
-$ mse-ctl context --list
+$ mse context --list
 852a4256-fffa-457a-80ed-329166a652af -> helloworld-1.0.0 (2022-11-23 16:22:34.621387)
 [...]
 ```
@@ -111,7 +111,7 @@ $ mse-ctl context --list
 You can remove the context directory of an app using:
 
 ```console
-$ mse-ctl context --remove 852a4256-fffa-457a-80ed-329166a652af
+$ mse context --remove 852a4256-fffa-457a-80ed-329166a652af
 [...]
 ```
 
@@ -123,7 +123,7 @@ $ mse-ctl context --remove 852a4256-fffa-457a-80ed-329166a652af
 You can also remove all your context directories:
 
 ```console
-$ mse-ctl context --purge
+$ mse context --purge
 [...]
 ```
 
@@ -135,7 +135,7 @@ $ mse-ctl context --purge
 If you want app users to verify the trustworthiness of your apps, they will need this context file from the context directory which can be exported using:
 
 ```console
-$ mse-ctl context --export 852a4256-fffa-457a-80ed-329166a652af
+$ mse context --export 852a4256-fffa-457a-80ed-329166a652af
 Exporting 852a4256-fffa-457a-80ed-329166a652af context in context.mse...
 You can now transfer this file to your app user.
 ```

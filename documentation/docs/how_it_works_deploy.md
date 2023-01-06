@@ -14,12 +14,12 @@ The deployment is breaking down into two stages:
 - The second one consists in interacting right with the spawned MSE node
   ![](./images/deploy-stage-2.png)
 
-When you use `mse-ctl deploy` these two stages are merged into this single subcommand.
+When you use `mse deploy` these two stages are merged into this single subcommand.
 
 
 ## Deployment process
 
-Let's describe in a deeper way what happens when the *app owner* uses: `mse-ctl deploy`.
+Let's describe in a deeper way what happens when the *app owner* uses: `mse deploy`.
 
 ![](./images/deploy-process.png)
 
@@ -39,7 +39,7 @@ Between stage 1 and stage 2, the app owner should verify the MSE app, that is to
 - check that this **enclave belongs to Cosmian**
 - check that the **code is exactly theirs**
 
-If not, the app owner shouldn't proceed with stage 2 (`mse-ctl deploy` won't proceed). The stage 2 consists in sending the secret data which can be done only if we are sure the TLS connection is trusted.
+If not, the app owner shouldn't proceed with stage 2 (`mse deploy` won't proceed). The stage 2 consists in sending the secret data which can be done only if we are sure the TLS connection is trusted.
 
 For more details about this step, read [security](security.md).
 
