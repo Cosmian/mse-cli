@@ -3,7 +3,7 @@ The scenario is selected through the settings of the app configuration file.
 
 !!! info "In the case of the SaaS MSE offering, Cosmian is the operator and either Azure or OVH is the cloud provider."
 
-## Zero trust: confidential collaborative computation (CCC)
+## Zero trust: collaborative confidential computation (CCC)
 
 In this scenario, no participant trusts any other participant.
 
@@ -12,15 +12,15 @@ In this scenario, no participant trusts any other participant.
 | The app owner trusts |       ❌       |    ❌    |    NA     |      ❌       |
 | The app user trusts  |       ❌       |    ❌    |    ❌     |      ❌       |
 
-A real-world example is the generation of anonymized biomarkers in Healthcare: extraction of medical biomarkers from patient data while keeping the patient data private:
+A real-world example is the collaboration between an algorithm provider (typically an AI/ML company: Medtech, Biotech, Fintech,...) and a data provider (hospital, bank, industrial,...).
 
-![](./images/zero-trust-scenario.png)
+![](./images/ccc_scenario.png)
 
-The Biotech company (_app owner_) wishes to keep its biomarker selection code private from everyone.
+The Algorithm Provider (_app owner_) wishes to offer the prediction/analysis capabilities of its algorithms but wants to protect its intellectual property.
 
-The hospital (_app user_) doesn't want to share its identified data with anyone.
+The Data Provider (_app user_) wishes to operate the algorithms on its data but wants to keep them private from everyone (algorithm provider, operator, cloud provider, and another potential data provider).
 
-!!! info "It's the **default mode** of the `deploy` subcommand."
+!!! info "This scenario is the **default mode** of the `deploy` subcommand."
 
 ## App owner trusted: fully encrypted SaaS
 
@@ -43,7 +43,7 @@ However, the customer and the bank wish to keep the data private from the operat
 
 !!! info "The app owner has to provide an SSL certificate when deploying its application, using the `ssl` paragraph in the config file."
 
-## The user trusts everybody: development mode:
+## The app user trusts everybody: development mode
 
 In this scenario, the app user trusts everyone.
 
