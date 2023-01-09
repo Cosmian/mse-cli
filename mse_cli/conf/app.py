@@ -59,9 +59,6 @@ class AppConf(BaseModel):
     # MSE plan (defining the enclave memory, cpu, etc.)
     plan: Str16
 
-    # Dev mode
-    dev: bool = False
-
     # The application will stop at this date
     expiration_date: Optional[datetime]
 
@@ -123,9 +120,6 @@ class AppConf(BaseModel):
 
             app = AppConf(**dataMap)
 
-            if app.dev and app.ssl:
-                raise Exception("`ssl` param is not allowed when `dev` is true")
-
             # Make the app code location path absolute from path.parent and not cwd
             if not app.code.location.is_absolute():
                 app.code.location = (path.parent / app.code.location).resolve()
@@ -184,8 +178,6 @@ class AppConf(BaseModel):
                 },
             }
 
-            if self.dev:
-                dataMap['dev'] = self.dev
             if self.expiration_date:
                 dataMap['expiration_date'] = str(self.expiration_date)
             if self.ssl:
@@ -197,21 +189,23 @@ class AppConf(BaseModel):
 
             toml.dump(dataMap, f)
 
-    def into_payload(self) -> Dict[str, Any]:
+    def into_payload(self, untrusted_ssl: bool = False) -> Dict[str, Any]:
         """Convert it into a mse-backend payload as a dict."""
         d = self.expiration_date.astimezone(tz=timezone.utc).strftime(
             "%Y-%m-%dT%H:%M:%S.%fZ") if self.expiration_date else None
+
+        set_ssl = not untrusted_ssl and self.ssl
 
         return {
             "name": self.name,
             "version": self.version,
             "project": self.project,
-            "dev_mode": self.dev,
+            "dev_mode": untrusted_ssl,
             "health_check_endpoint": self.code.health_check_endpoint,
             "python_application": self.code.python_application,
             "expires_at": d,
-            "ssl_certificate": self.ssl.certificate if self.ssl else None,
-            "domain_name": self.ssl.domain_name if self.ssl else None,
+            "ssl_certificate": self.ssl.certificate if set_ssl else None,
+            "domain_name": self.ssl.domain_name if set_ssl else None,
             "plan": self.plan,
             "docker": self.code.docker,
-        }  # Do not send the private_key or location code
+        }  # Do not send the private_key or code location

@@ -45,6 +45,11 @@ def add_subparser(subparsers):
         help="speed up the deployment by skipping the app trustworthiness check"
     )
 
+    parser.add_argument(
+        "--untrusted-ssl",  # TODO: better name?
+        action="store_true",
+        help="use operator ssl certificates which is unsecure for production")
+
     parser.set_defaults(func=run)
 
 
@@ -68,8 +73,10 @@ def run(args) -> None:
     LOG.info("Encrypting your source code...")
     (tar_path, nonces) = prepare_code(app_conf.code.location, context)
 
+    # TODO: add a warning saying [SSL] is ignore since --no-trust-ssl
+
     LOG.info("Deploying your app...")
-    app = deploy_app(conn, app_conf, tar_path)
+    app = deploy_app(conn, app_conf, tar_path, args.untrusted_ssl)
 
     LOG.info(
         "App %s creating for %s:%s with %dM EPC memory and %.2f CPU cores...",
@@ -214,9 +221,15 @@ def check_app_conf(conn: Connection,
     return True
 
 
-def deploy_app(conn: Connection, app_conf: AppConf, tar_path: Path) -> App:
-    """Deploy the app to a mse node."""
-    r: requests.Response = new(conn=conn, conf=app_conf, code_tar_path=tar_path)
+def deploy_app(conn: Connection,
+               app_conf: AppConf,
+               tar_path: Path,
+               untrusted_ssl: bool = False) -> App:
+    """Deploy the app to a MSE node."""
+    r: requests.Response = new(conn=conn,
+                               conf=app_conf,
+                               code_tar_path=tar_path,
+                               untrusted_ssl=untrusted_ssl)
 
     if not r.ok:
         raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
