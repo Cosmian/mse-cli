@@ -61,6 +61,8 @@ class ContextConf(BaseModel):
     code_sealed_key: bytes
     # Mse docker to use (containing all requirements)
     docker: str
+    # Install deps from requirements.txt
+    install_requirements: bool
     # from python_flask_module import python_flask_variable_name
     python_application: str
     # The certificate of the app if origin = Owner
@@ -170,23 +172,19 @@ class Context(BaseModel):
 
     @staticmethod
     def from_app_conf(conf: AppConf):
-        """Build a Context object from an app conf.
-
-        Parameters
-        ----------
-        purge: bool
-            Whether to remove the content of tmp workspace if it exists
-        """
+        """Build a Context object from an app conf."""
         cert = conf.ssl.certificate if conf.ssl else None
 
-        context = Context(
-            config=ContextConf(name=conf.name,
-                               version=conf.version,
-                               project=conf.project,
-                               python_application=conf.code.python_application,
-                               docker=conf.code.docker,
-                               code_sealed_key=bytes(random_key()).hex(),
-                               ssl_app_certificate=cert))
+        context = Context(config=ContextConf(
+            name=conf.name,
+            version=conf.version,
+            project=conf.project,
+            python_application=conf.code.python_application,
+            docker=conf.code.docker,
+            install_requirements=conf.code.install_requirements,
+            code_sealed_key=bytes(random_key()).hex(),
+            ssl_app_certificate=cert)
+                         )  # TODO: should I override it when --unsecure-ssl?
 
         if cert:
             context.app_cert_path.write_text(cert)
@@ -223,6 +221,7 @@ class Context(BaseModel):
                     "version": self.config.version,
                     "project": self.config.project,
                     "docker": self.config.docker,
+                    "install_requirements": self.config.install_requirements,
                     "python_application": self.config.python_application,
                     "code_sealed_key": bytes(self.config.code_sealed_key).hex()
                 }
@@ -234,21 +233,17 @@ class Context(BaseModel):
 
             if self.instance:
                 origin = self.instance.ssl_certificate_origin.value
+                nonces = dict(
+                    map(lambda item: (item[0], bytes(item[1]).hex()),
+                        self.instance.nonces.items()))
+
                 dataMap["instance"] = {
-                    "id":
-                        str(self.instance.id),
-                    "config_domain_name":
-                        self.instance.config_domain_name,
-                    "enclave_size":
-                        self.instance.enclave_size,
-                    "expires_at":
-                        str(self.instance.expires_at),
-                    "ssl_certificate_origin":
-                        origin,
-                    "nonces":
-                        dict(
-                            map(lambda item: (item[0], bytes(item[1]).hex()),
-                                self.instance.nonces.items()))
+                    "id": str(self.instance.id),
+                    "config_domain_name": self.instance.config_domain_name,
+                    "enclave_size": self.instance.enclave_size,
+                    "expires_at": str(self.instance.expires_at),
+                    "ssl_certificate_origin": origin,
+                    "nonces": nonces
                 }
 
             toml.dump(dataMap, f)

@@ -44,6 +44,8 @@ class CodeConf(BaseModel):
     health_check_endpoint: Str255
     # Mse docker to use (containing all requirements)
     docker: StrUnlimited
+    # Install deps from requirements.txt
+    install_requirements: bool = False
 
 
 class AppConf(BaseModel):
@@ -55,16 +57,12 @@ class AppConf(BaseModel):
     version: Str16
     # Name of the parent project
     project: Str255
-
     # MSE plan (defining the enclave memory, cpu, etc.)
     plan: Str16
-
     # The application will stop at this date
     expiration_date: Optional[datetime]
-
     # Configuration of the code
     code: CodeConf
-
     # Configuration of the ssl
     ssl: Optional[SSLConf] = None
 
@@ -174,7 +172,8 @@ class AppConf(BaseModel):
                     "location": str(self.code.location),
                     "docker": self.code.docker,
                     "python_application": self.code.python_application,
-                    "health_check_endpoint": self.code.health_check_endpoint
+                    "health_check_endpoint": self.code.health_check_endpoint,
+                    "install_requirements": self.code.install_requirements
                 },
             }
 
@@ -208,4 +207,5 @@ class AppConf(BaseModel):
             "domain_name": self.ssl.domain_name if set_ssl else None,
             "plan": self.plan,
             "docker": self.code.docker,
+            "install_requirements": self.code.install_requirements
         }  # Do not send the private_key or code location
