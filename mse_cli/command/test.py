@@ -2,10 +2,10 @@
 
 from pathlib import Path
 
-import docker
-
 from mse_cli.conf.app import AppConf
+from mse_cli.command.helpers import get_client_docker
 from mse_cli.log import LOGGER as LOG
+from mse_cli.utils.color import bcolors
 
 
 def add_subparser(subparsers):
@@ -29,14 +29,17 @@ def run(args) -> None:
 
     LOG.info("Starting the docker: %s...", app.code.docker)
 
-    client = docker.from_env()
+    client = get_client_docker()
 
-    # Pull always before running
-    client.images.pull(app.code.docker)
+    # Pull always before running (not for local docker)
+    if "/" in app.code.docker:
+        client.images.pull(app.code.docker)
 
-    LOG.info("You can stop the docker at any time typing CTRL^C")
-    LOG.info("You can now run: `curl http://localhost:5000%s`",
-             app.code.health_check_endpoint)
+    LOG.info("You can stop the test at any time by typing CTRL^C")
+    LOG.info(
+        "%sFrom another terminal, you can now run: "
+        "`curl http://localhost:5000%s` or `pytest`%s", bcolors.OKBLUE,
+        app.code.health_check_endpoint, bcolors.ENDC)
 
     command = ["--application", app.code.python_application, "--debug"]
 
@@ -47,7 +50,7 @@ def run(args) -> None:
         command=command,
         volumes=volumes,
         entrypoint="mse-test",
-        ports={'5000/tcp': 5000},
+        ports={'5000/tcp': ('127.0.0.1', 5000)},
         remove=True,
         detach=True,
         stdout=True,

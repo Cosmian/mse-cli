@@ -11,7 +11,7 @@ from mse_cli.api.auth import Connection
 from mse_cli.api.types import App, AppStatus, SSLCertificateOrigin
 from mse_cli.command.helpers import (compute_mr_enclave, exists_in_project,
                                      get_app, get_certificate,
-                                     get_enclave_resources,
+                                     get_enclave_resources, get_client_docker,
                                      get_project_from_name, prepare_code,
                                      stop_app, verify_app)
 from mse_cli.conf.app import AppConf
@@ -39,6 +39,11 @@ def add_subparser(subparsers):
         action="store_true",
         help="force to stop the application if it already exists")
 
+    parser.add_argument(
+        "--insecure",
+        action="store_true",
+        help="speed up the deployment by not verifying the app trustworthiness")
+
     parser.set_defaults(func=run)
 
 
@@ -47,6 +52,10 @@ def run(args) -> None:
     user_conf = UserConf.from_toml()
     app_conf = AppConf.from_toml(path=args.path)
     conn = user_conf.get_connection()
+
+    if not args.insecure:
+        # Check docker daemon is running
+        _ = get_client_docker()
 
     if not check_app_conf(conn, app_conf, args.force):
         return
@@ -71,18 +80,37 @@ def run(args) -> None:
 
     LOG.info("✅%s App created!%s", bcolors.OKGREEN, bcolors.ENDC)
 
+    if app.ssl_certificate_origin == SSLCertificateOrigin.Operator:
+        LOG.info(
+            "%sThis app runs in dev mode with an operator certificate. "
+            "The operator may access all communications with the app. "
+            "See Documentation > Security Model for more details.%s",
+            bcolors.WARNING, bcolors.ENDC)
+    elif app.ssl_certificate_origin == SSLCertificateOrigin.Owner:
+        LOG.info(
+            "%sThis app runs with an app owner certificate. "
+            "The app provider may decrypt all communications with the app. "
+            "See Documentation > Security Model for more details.%s",
+            bcolors.WARNING, bcolors.ENDC)
+
     selfsigned_cert = get_certificate(app.config_domain_name)
     context.config_cert_path.write_text(selfsigned_cert)
 
-    LOG.info("Checking app trustworthiness...")
-    mr_enclave = compute_mr_enclave(context, tar_path)
-    LOG.info("The code fingerprint is %s", mr_enclave)
-    verify_app(mr_enclave, selfsigned_cert)
-    LOG.info("Verification: %ssuccess%s", bcolors.OKGREEN, bcolors.ENDC)
+    if not args.insecure:
+        LOG.info("Checking app trustworthiness...")
+        mr_enclave = compute_mr_enclave(context, tar_path)
+        LOG.info("The code fingerprint is %s", mr_enclave)
+        verify_app(mr_enclave, selfsigned_cert)
+        LOG.info("Verification: %ssuccess%s", bcolors.OKGREEN, bcolors.ENDC)
 
-    if app.ssl_certificate_origin == SSLCertificateOrigin.Self:
-        LOG.info("✅%s The verified certificate has been saved at: %s%s",
-                 bcolors.OKGREEN, context.config_cert_path, bcolors.ENDC)
+        if app.ssl_certificate_origin == SSLCertificateOrigin.Self:
+            LOG.info("✅%s The verified certificate has been saved at: %s%s",
+                     bcolors.OKGREEN, context.config_cert_path, bcolors.ENDC)
+    else:
+        LOG.info(
+            "%sApp trustworthiness checking skipped. This deployment is "
+            "insecured and shouldn't be used in production mode!!!%s",
+            bcolors.WARNING, bcolors.ENDC)
 
     LOG.info("Unsealing your private data from your mse instance...")
     unseal_private_data(
@@ -93,15 +121,28 @@ def run(args) -> None:
     app = wait_app_start(conn, app.uuid)
 
     LOG.info("Your application is now fully deployed and started...")
-    LOG.info("✅%s It's now ready to be used on https://%s until %s%s",
-             bcolors.OKGREEN, app.domain_name, app.expires_at.astimezone(),
-             bcolors.ENDC)
+    LOG.info(
+        "✅%s It's now ready to be used on https://%s until %s%s. "
+        "The application will be automatically stopped after this date.",
+        bcolors.OKGREEN, app.domain_name, app.expires_at.astimezone(),
+        bcolors.ENDC)
 
     context.save()
 
     LOG.info(
         "The context of this creation can be retrieved using "
-        "`mse-cli context --export %s`", app.uuid)
+        "`mse context --export %s`", app.uuid)
+
+    if app.ssl_certificate_origin == SSLCertificateOrigin.Self:
+        LOG.info(
+            "%sYou can now quickly test your application doing: `curl https://%s%s "
+            "--cacert %s`%s", bcolors.OKBLUE, app.domain_name,
+            app.health_check_endpoint, context.config_cert_path, bcolors.ENDC)
+    else:
+        LOG.info(
+            "%sYou can now quickly test your application doing: `curl https://%s%s`%s",
+            bcolors.OKBLUE, app.domain_name, app.health_check_endpoint,
+            bcolors.ENDC)
 
 
 def wait_app_start(conn: Connection, uuid: UUID) -> App:

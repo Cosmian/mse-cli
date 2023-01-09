@@ -34,11 +34,12 @@ setup(name=name,
           "pyjwt>=2.6.0,<2.7.0", "urllib3>=1.26.13,<1.27.0",
           "pydantic>=1.10.2,<2.0.0", "toml>=0.10.2,<0.11.0",
           "docker>=6.0.1,<7.0.0", "intel-sgx-ra>=0.5,<0.6",
-          "mse-lib-crypto>=0.3,<0.4"
+          "mse-lib-crypto>=0.3,<0.4", "jinja2>=3.0,<3.1"
       ],
       entry_points={
           "console_scripts": ["mse = mse_cli.main:main"],
       },
+      package_data={"mse_cli": ['template/*', 'template/**/*']},
       tests_require=["pytest>=7.2.0,<7.3.0"],
       classifiers=[
           "Development Status :: 5 - Production/Stable",

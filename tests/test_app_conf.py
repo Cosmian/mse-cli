@@ -257,24 +257,6 @@ def test_save():
     assert filecmp.cmp(toml, saved_path / "mse.toml")
 
 
-def test_default():
-    """Test `default` function."""
-    conf = AppConf.default("helloworld", Path("."))
-
-    code = CodeConf(location=Path("./code").resolve(),
-                    python_application="app:app",
-                    health_check_endpoint="/",
-                    docker="ghcr.io/cosmian/mse-pytorch:20230104085621")
-
-    app_ref = AppConf(name="helloworld",
-                      version="0.1.0",
-                      project="default",
-                      plan="free",
-                      code=code)
-
-    assert app_ref == conf
-
-
 def test_into_payload():
     """Test `into_payload` function."""
     toml = Path("tests/data/ssl.toml")

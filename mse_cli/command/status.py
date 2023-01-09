@@ -3,9 +3,6 @@
 import uuid
 from datetime import datetime, timezone
 
-import requests
-
-from mse_cli.api.app import log as get_app_logs
 from mse_cli.api.types import AppStatus
 from mse_cli.command.helpers import get_app, get_enclave_resources
 from mse_cli.conf.user import UserConf
@@ -24,9 +21,6 @@ def add_subparser(subparsers):
         "app_uuid",
         type=uuid.UUID,
         help="identifier of the MSE web application to display status")
-    parser.add_argument("--log",
-                        action="store_true",
-                        help="output log of the MSE web application")
 
 
 def run(args) -> None:
@@ -89,13 +83,3 @@ def run(args) -> None:
     elif app.status in (AppStatus.Initializing, AppStatus.Spawning):
         LOG.info("\tStatus             = %s%s%s", bcolors.OKBLUE,
                  app.status.value, bcolors.ENDC)
-
-    if args.log and app.status != AppStatus.Deleted:
-        r: requests.Response = get_app_logs(conn=conn, uuid=app.uuid)
-        if not r.ok:
-            raise Exception(
-                f"Unexpected response ({r.status_code}): {r.content!r}")
-
-        logs = r.json()
-        LOG.info("\n> Stdout (last 64kB)")
-        LOG.info(logs["stdout"])

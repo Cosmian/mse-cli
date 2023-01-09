@@ -23,5 +23,3 @@ Deployement status
         Status             = running
         Online since       = 2022-11-17 09:04:34.043340+00:00
 ```
-
-You can also get your application logs (stdout/stderr) adding `--log`.

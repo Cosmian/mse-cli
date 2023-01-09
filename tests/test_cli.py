@@ -13,6 +13,7 @@ from mse_cli.api.types import SSLCertificateOrigin
 from mse_cli.command.deploy import run as run_deploy
 from mse_cli.command.verify import run as run_verify
 from mse_cli.command.status import run as run_status
+from mse_cli.command.logs import run as run_logs
 from mse_cli.command.list_all import run as run_list
 from mse_cli.command.stop import run as run_stop
 from mse_cli.command.remove import run as run_remove
@@ -68,7 +69,7 @@ def _test_scaffold() -> Path:
     # Check creation of files
     conf = path / unique_name / "mse.toml"
     assert conf.exists()
-    assert (path / unique_name / "code").exists()
+    assert (path / unique_name / "mse_code").exists()
 
     # The viability (is that runnable?) of the code will be tested later
     return conf
@@ -76,7 +77,7 @@ def _test_scaffold() -> Path:
 
 def _test_deploy(f: io.StringIO, conf: Path) -> Tuple[UUID, str, str]:
     """Test the deploy subcommand."""
-    run_deploy(Namespace(**{"path": conf, "force": False}))
+    run_deploy(Namespace(**{"path": conf, "force": False, "insecure": False}))
 
     output = capture_logs(f)
 
@@ -132,10 +133,18 @@ def _test_context(f: io.StringIO, app_uuid: UUID) -> Context:
 
 def _test_status(f: io.StringIO, app_uuid: UUID, expecting_status: str):
     """Test status subcommand."""
-    run_status(Namespace(**{"app_uuid": app_uuid, "log": True}))
+    run_status(Namespace(**{"app_uuid": app_uuid}))
 
     output = capture_logs(f)
     assert expecting_status in output
+
+
+def _test_logs(f: io.StringIO, app_uuid: UUID, expecting_output: str):
+    """Test logs subcommand."""
+    run_logs(Namespace(**{"app_uuid": app_uuid}))
+
+    output = capture_logs(f)
+    assert expecting_output in output
 
 
 def _test_list(f: io.StringIO, project_name: str, app_uuid: UUID,
@@ -220,20 +229,18 @@ def _test_mse_cli(f: io.StringIO, ssl_certificate_origin: SSLCertificateOrigin):
     if context.instance.ssl_certificate_origin == SSLCertificateOrigin.Self:
         assert cert_path is not None
         # Check the url is working with the proper certificate
-        r = requests.get(
-            url=f"https://{domain_name}{app_conf.code.health_check_endpoint}",
-            verify=cert_path,
-            timeout=10)
+        r = requests.get(url=f"https://{domain_name}/",
+                         verify=cert_path,
+                         timeout=10)
     else:
-        r = requests.get(
-            url=f"https://{domain_name}{app_conf.code.health_check_endpoint}",
-            timeout=10)
+        r = requests.get(url=f"https://{domain_name}/", timeout=10)
 
     assert r.ok
     assert r.text == "Hello world"
 
     # Test status subcommand
     _test_status(f, app_uuid, "running")
+    _test_logs(f, app_uuid, "GET / HTTP/1.1\" 200")
 
     # Test list subcommand
     _test_list(f, app_conf.project, app_uuid, True)
@@ -243,6 +250,7 @@ def _test_mse_cli(f: io.StringIO, ssl_certificate_origin: SSLCertificateOrigin):
 
     # Test status subcommand
     _test_status(f, app_uuid, "stopped")
+    _test_logs(f, app_uuid, "GET / HTTP/1.1\" 200")
 
     # Test list subcommand
     _test_list(f, app_conf.project, app_uuid, False)
@@ -253,6 +261,7 @@ def _test_mse_cli(f: io.StringIO, ssl_certificate_origin: SSLCertificateOrigin):
     # Test status subcommand
     with pytest.raises(Exception):
         _test_status(f, app_uuid, "removed")
+        _test_logs(f, app_uuid, "removed")
 
     f.truncate(0)
 

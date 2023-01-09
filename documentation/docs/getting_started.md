@@ -131,13 +131,19 @@ The `scaffold` subcommand allows you to prepare your own project starting with a
 
 ```{.console}
 $ mse scaffold my_project
-$ tree my_project            
+$ tree my_project    
 my_project
-├── code
+├── mse_code
 │   └── app.py
-└── mse.toml
+├── mse.toml
+├── README.md
+├── requirements-dev.txt
+└── tests
+    ├── conftest.py
+    └── test_app.py
 
-1 directory, 3 files
+
+2 directories, 3 files
 ```
 
 !!! warning "Compatibility with ASGI"
