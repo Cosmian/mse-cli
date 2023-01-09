@@ -50,7 +50,7 @@ def run(args) -> None:
         command=command,
         volumes=volumes,
         entrypoint="mse-test",
-        ports={'5000/tcp': 5000},
+        ports={'5000/tcp': ('127.0.0.1', 5000)},
         remove=True,
         detach=True,
         stdout=True,
