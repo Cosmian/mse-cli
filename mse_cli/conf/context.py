@@ -58,20 +58,18 @@ class ContextConf(BaseModel):
     # Project parent of the app
     project: str
     # Symetric key used to encrypt the code
-    code_sealed_key: bytes
-    # Mse docker to use (containing all requirements)
+    code_secret_key: bytes
+    # Mse docker to use
     docker: str
-    # Install deps from requirements.txt
-    install_requirements: bool
     # from python_flask_module import python_flask_variable_name
     python_application: str
     # The certificate of the app if origin = Owner
     ssl_app_certificate: Optional[str] = None
 
-    @validator('code_sealed_key', pre=True, always=True)
+    @validator('code_secret_key', pre=True, always=True)
     # pylint: disable=no-self-argument,unused-argument
-    def set_code_sealed_key(cls, v, values, **kwargs):
-        """Set code_sealed_key from a value for pydantic."""
+    def set_code_secret_key(cls, v, values, **kwargs):
+        """Set code_secret_key from a value for pydantic."""
         return bytes.fromhex(v) if isinstance(v, str) else v
 
 
@@ -181,8 +179,7 @@ class Context(BaseModel):
             project=conf.project,
             python_application=conf.code.python_application,
             docker=conf.code.docker,
-            install_requirements=conf.code.install_requirements,
-            code_sealed_key=bytes(random_key()).hex(),
+            code_secret_key=bytes(random_key()).hex(),
             ssl_app_certificate=cert)
                          )  # TODO: should I override it when --unsecure-ssl?
 
@@ -221,9 +218,8 @@ class Context(BaseModel):
                     "version": self.config.version,
                     "project": self.config.project,
                     "docker": self.config.docker,
-                    "install_requirements": self.config.install_requirements,
                     "python_application": self.config.python_application,
-                    "code_sealed_key": bytes(self.config.code_sealed_key).hex()
+                    "code_secret_key": bytes(self.config.code_secret_key).hex()
                 }
             }
 

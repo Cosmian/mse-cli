@@ -91,7 +91,7 @@ def prepare_code(
     nonces = encrypt_directory(
         dir_path=src_path,
         patterns=(["*"] if patterns is None else patterns),
-        key=context.config.code_sealed_key,
+        key=context.config.code_secret_key,
         nonces=context.instance.nonces if context.instance else None,
         exceptions=(list(whitelist) if file_exceptions is None else
                     list(set(file_exceptions) | whitelist)),

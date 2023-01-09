@@ -270,7 +270,7 @@ def unseal_private_data(context: Context,
     assert context.instance
 
     data = {
-        "code_sealed_key": context.config.code_sealed_key.hex(),
+        "code_secret_key": context.config.code_secret_key.hex(),
         "uuid": str(context.instance.id)
     }
 

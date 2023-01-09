@@ -41,11 +41,9 @@ class CodeConf(BaseModel):
     # from python_flask_module import python_flask_variable_name
     python_application: Str255
     # Endpoint to use to check if the application is up and sane
-    health_check_endpoint: Str255
+    healthcheck_endpoint: Str255
     # Mse docker to use (containing all requirements)
     docker: StrUnlimited
-    # Install deps from requirements.txt
-    install_requirements: bool = False
 
 
 class AppConf(BaseModel):
@@ -172,8 +170,7 @@ class AppConf(BaseModel):
                     "location": str(self.code.location),
                     "docker": self.code.docker,
                     "python_application": self.code.python_application,
-                    "health_check_endpoint": self.code.health_check_endpoint,
-                    "install_requirements": self.code.install_requirements
+                    "healthcheck_endpoint": self.code.healthcheck_endpoint,
                 },
             }
 
@@ -200,12 +197,11 @@ class AppConf(BaseModel):
             "version": self.version,
             "project": self.project,
             "dev_mode": untrusted_ssl,
-            "health_check_endpoint": self.code.health_check_endpoint,
+            "healthcheck_endpoint": self.code.healthcheck_endpoint,
             "python_application": self.code.python_application,
             "expires_at": d,
             "ssl_certificate": self.ssl.certificate if set_ssl else None,
             "domain_name": self.ssl.domain_name if set_ssl else None,
             "plan": self.plan,
             "docker": self.code.docker,
-            "install_requirements": self.code.install_requirements
         }  # Do not send the private_key or code location
