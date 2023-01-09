@@ -35,14 +35,15 @@ def add_subparser(subparsers):
                         "(if not in the current directory)")
 
     parser.add_argument(
-        "--force",
+        "-y",
         action="store_true",
         help="force to stop the application if it already exists")
 
     parser.add_argument(
-        "--insecure",
+        "--no-verify",
         action="store_true",
-        help="speed up the deployment by not verifying the app trustworthiness")
+        help="speed up the deployment by skipping the app trustworthiness check"
+    )
 
     parser.set_defaults(func=run)
 
@@ -53,11 +54,11 @@ def run(args) -> None:
     app_conf = AppConf.from_toml(path=args.path)
     conn = user_conf.get_connection()
 
-    if not args.insecure:
+    if not args.no_verify:
         # Check docker daemon is running
         _ = get_client_docker()
 
-    if not check_app_conf(conn, app_conf, args.force):
+    if not check_app_conf(conn, app_conf, args.y):
         return
 
     (enclave_size, cores) = get_enclave_resources(conn, app_conf.plan)
@@ -96,7 +97,7 @@ def run(args) -> None:
     selfsigned_cert = get_certificate(app.config_domain_name)
     context.config_cert_path.write_text(selfsigned_cert)
 
-    if not args.insecure:
+    if not args.no_verify:
         LOG.info("Checking app trustworthiness...")
         mr_enclave = compute_mr_enclave(context, tar_path)
         LOG.info("The code fingerprint is %s", mr_enclave)
