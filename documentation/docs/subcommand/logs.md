@@ -1,5 +1,5 @@
 
-You can get the application logs as follow:
+Application logs can be fetched as follow:
 
 ```console
 $ mse logs bf2575d2-d3a3-4a5f-8d48-4a97a9a07c83

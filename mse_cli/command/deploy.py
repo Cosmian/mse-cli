@@ -123,7 +123,7 @@ def run(args) -> None:
     LOG.info("Your application is now fully deployed and started...")
     LOG.info(
         "✅%s It's now ready to be used on https://%s until %s%s. "
-        "The application will be automatically undeployed after this date.",
+        "The application will be automatically stopped after this date.",
         bcolors.OKGREEN, app.domain_name, app.expires_at.astimezone(),
         bcolors.ENDC)
 

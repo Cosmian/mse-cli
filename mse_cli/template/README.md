@@ -1,8 +1,8 @@
 # Example application
 
-Basic example of an mse application containing:
-- A simple helloworld flask application
-- An mse app config file
+Basic example of an MSE application containing:
+- A simple helloworld Flask application
+- An MSE app config file
 - Unit tests
 
 ## Test it locally

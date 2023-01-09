@@ -30,12 +30,12 @@ from mse_cli.utils.fs import tar
 
 
 def get_client_docker() -> docker.client.DockerClient:
-    """Create a docker client or exit if daemon is down."""
+    """Create a Docker client or exit if daemon is down."""
     try:
         return docker.from_env()
     except docker.errors.DockerException:
-        LOG.info("Docker looks not running. Please enable docker daemon.")
-        LOG.info("MSE needs docker to verify the app trustworthiness.")
+        LOG.info("Docker looks not running. Please enable Docker daemon.")
+        LOG.info("MSE needs Docker to verify the app trustworthiness.")
         LOG.info("Please refer to the documentation for more details.")
         sys.exit(1)
 

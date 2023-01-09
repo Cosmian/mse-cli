@@ -35,7 +35,7 @@ def run(args) -> None:
     if "/" in app.code.docker:
         client.images.pull(app.code.docker)
 
-    LOG.info("You can stop the test at any time typing CTRL^C")
+    LOG.info("You can stop the test at any time by typing CTRL^C")
     LOG.info(
         "%sFrom another terminal, you can now run: "
         "`curl http://localhost:5000%s` or `pytest`%s", bcolors.OKBLUE,

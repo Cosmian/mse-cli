@@ -143,7 +143,7 @@ my_project
     └── test_app.py
 
 
-1 directory, 3 files
+2 directories, 3 files
 ```
 
 !!! warning "Compatibility with ASGI"
