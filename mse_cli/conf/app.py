@@ -45,6 +45,13 @@ class CodeConf(BaseModel):
     # Mse docker to use (containing all requirements)
     docker: StrUnlimited
 
+    @validator('healthcheck_endpoint', pre=False)
+    def check_healthcheck_endpoint(cls, v: str):
+        """Validate that `healthcheck_endpoint` is an endpoint."""
+        if v.startswith("/"):
+            return v
+        raise ValueError('healthcheck_endpoint should start with a "/"')
+
 
 class AppConf(BaseModel):
     """Definition of an app by a user."""
