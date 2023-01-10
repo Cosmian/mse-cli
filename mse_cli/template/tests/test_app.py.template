@@ -8,5 +8,5 @@ def test_hello(url, certificate):
 
 
 def test_health(url, certificate):
-    response = requests.get(f"{url}{{ health_check_endpoint }}", verify=certificate)
+    response = requests.get(f"{url}{{ healthcheck_endpoint }}", verify=certificate)
     assert response.status_code == 200

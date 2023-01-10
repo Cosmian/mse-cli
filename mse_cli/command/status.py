@@ -41,7 +41,7 @@ def run(args) -> None:
     LOG.info("\tBilling plan = %s", app.plan)
     LOG.info("\tApplication  = %s", app.python_application)
     LOG.info("\tMSE docker   = %s", app.docker)
-    LOG.info("\tHealthcheck  = %s", app.health_check_endpoint)
+    LOG.info("\tHealthcheck  = %s", app.healthcheck_endpoint)
 
     LOG.info("\n> Deployement status")
     LOG.info("\tUUID               = %s", app.uuid)

@@ -5,7 +5,7 @@ from flask import Flask, Response
 {{ app }} = Flask(__name__)
 
 
-@{{ app }}.get("/health")
+@{{ app }}.get("{{ healthcheck_endpoint }}")
 def health_check():
     """Health check of the application."""
     return Response(status=HTTPStatus.OK)
@@ -17,5 +17,5 @@ def hello():
     return "Hello world"
 
 
-if __name__ == "__main_":
+if __name__ == "__main__":
     app.run(debug=True)

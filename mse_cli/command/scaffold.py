@@ -50,7 +50,8 @@ def run(args) -> None:
     code_file = template_code_file.with_suffix('')
 
     tm = Template(template_code_file.read_text())
-    content = tm.render(app=app_conf.python_variable)
+    content = tm.render(app=app_conf.python_variable,
+                        healthcheck_endpoint=app_conf.code.healthcheck_endpoint)
     code_file.write_text(content)
     template_code_file.unlink()
 
@@ -69,16 +70,15 @@ def run(args) -> None:
     pytest_file = template_pytest_file.with_suffix('')
 
     tm = Template(template_pytest_file.read_text())
-    content = tm.render(
-        health_check_endpoint=app_conf.code.health_check_endpoint)
+    content = tm.render(healthcheck_endpoint=app_conf.code.healthcheck_endpoint)
     pytest_file.write_text(content)
     template_pytest_file.unlink()
 
-    LOG.info("An example app has been generated in the current directory.")
+    LOG.info("An example app has been generated in the current directory")
     LOG.info("You can configure your mse application in: %s", conf_file)
     LOG.info(
-        "%sYou can now test it locally from '%s/' directory using: `mse test` "
+        "%sYou can now test it locally from the '%s/' directory using: `mse test` "
         "then `pytest`%s", bcolors.OKBLUE, args.app_name, bcolors.ENDC)
-    LOG.info("%sOr deploy it from '%s/' directory using: `mse deploy`%s",
+    LOG.info("%sOr deploy it from the '%s/' directory using: `mse deploy`%s",
              bcolors.OKBLUE, args.app_name, bcolors.ENDC)
-    LOG.info("Refer to the '%s/README.md' for more details.", args.app_name)
+    LOG.info("Refer to the '%s/README.md' for more details", args.app_name)

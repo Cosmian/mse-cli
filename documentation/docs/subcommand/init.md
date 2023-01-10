@@ -27,6 +27,6 @@ plan = "free"
 [code]
 location = "."
 python_application = "app:app"
-health_check_endpoint = "/"
+healthcheck_endpoint = "/"
 docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
 ```

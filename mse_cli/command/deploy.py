@@ -145,11 +145,11 @@ def run(args) -> None:
         LOG.info(
             "%sYou can now quickly test your application doing: `curl https://%s%s "
             "--cacert %s`%s", bcolors.OKBLUE, app.domain_name,
-            app.health_check_endpoint, context.config_cert_path, bcolors.ENDC)
+            app.healthcheck_endpoint, context.config_cert_path, bcolors.ENDC)
     else:
         LOG.info(
             "%sYou can now quickly test your application doing: `curl https://%s%s`%s",
-            bcolors.OKBLUE, app.domain_name, app.health_check_endpoint,
+            bcolors.OKBLUE, app.domain_name, app.healthcheck_endpoint,
             bcolors.ENDC)
 
 
