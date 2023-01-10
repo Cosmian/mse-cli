@@ -45,7 +45,7 @@ Otherwise, it takes the value inherited from the chosen plan.
 |       location       |     ✔️     |          str          |                                     Relative path to the application code folder                                      |
 |        docker        |     ✔️     |          str          | URL to the mse docker to run. It could be a local docker to run local test but it must be a remote url when deploying |
 |  python_application  |     ✔️     |          str          |                                            module_name:flask_variable_name                                            |
-| healthcheck_endpoint |     ✔️     | str starting by a '/' |             `GET` endpoint to check if the application is ready. This endpoint should be unauthenticated.             |
+| healthcheck_endpoint |     ✔️     | str starting with a '/' |             `GET` endpoint to check if the application is ready. This endpoint should be unauthenticated.             |
 
 #### MSE docker
 

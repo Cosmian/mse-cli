@@ -126,7 +126,7 @@ $ curl http://127.0.0.1:5000
 $ pytest
 ```
 
-Let's now deploy it! 
+Now let's deploy it! 
 
 !!! warning "Free plan"
 
@@ -183,7 +183,7 @@ At this point, you can write your own Flask application and deploy it into MSE.
     Before deploying the app, verify that docker service is up and your current user can use the docker client without privilege
 
 
-In this step, we will redeploy your previous app by removing the argument `--no-verify` which is insecure. When you deploy an app, you need to verify that the running app is well your code and is running inside an intel sgx enclave signed by Cosmian. For more details, please refer to [the security model](security.md).
+In this step, we will redeploy your previous app but without the insecure argument `--no-verify`. When you deploy an app, you need to verify that the running app is well your code and is running inside an intel sgx enclave signed by Cosmian. For more details, please refer to [the security model](security.md).
 
 
 ```{.console}
@@ -214,7 +214,7 @@ As you can see, the warning message has been removed for the output of your prev
 
 ## Secure the SSL connection (remove `--untrusted-ssl`)
 
-In this step, we will redeploy your previous app by removing the argument `--untrusted-ssl` which is insecure. You need to use an end-to-end SSL connection from you to the application. That way, no one but the enclave can read the content of the queries. For more details, please refer to [the app deployment flow](how_it_works_deploy.md) and [the app usage flow](how_it_works_use.md).
+In this step, we will redeploy your previous app but without the insecure argument `--untrusted-ssl`. You need to use an end-to-end SSL connection from you to the application. That way, no one but the enclave can read the content of the queries. For more details, please refer to [the app deployment flow](how_it_works_deploy.md) and [the app usage flow](how_it_works_use.md).
 
 
 ```{.console}
@@ -250,13 +250,13 @@ $ # force curl CA bundle to be /tmp/tmpntxibdo6/cert.conf.pem
 $ curl "https://$MSE_UUID.cosmian.app" --cacert /tmp/tmpntxibdo6/cert.conf.pem
 ```
 
-This way to deploy should be your production deployment method.
+This deployment method must be your preferred way to deploy in production.
 
 ## Test your application locally
 
 This method is well-suited to test the remote environment when deploying your app.
 
-We recall that your application is deployed into a constraints environement under a specific architecture. This method emulates as close as possible this production environment. 
+We recall that your application is deployed into a constraint environment under a specific architecture. This method emulates as close as possible this production environment. 
 
 Before any deployment, it's strongly recommanded to test your application locally against the mse docker image specified into your `mse.toml`. It enables you to verify that your application is compatible with the MSE environment and all required dependencies are installed. 
 
