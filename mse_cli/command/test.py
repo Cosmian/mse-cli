@@ -43,7 +43,7 @@ def run(args) -> None:
 
     command = ["--application", app.code.python_application, "--debug"]
 
-    volumes = {f"{app.code.location}": {'bind': '/app/code', 'mode': 'rw'}}
+    volumes = {f"{app.code.location}": {'bind': '/mse-app', 'mode': 'rw'}}
 
     container = client.containers.run(
         app.code.docker,
