@@ -40,6 +40,7 @@ def run(args) -> None:
                 f"Unexpected response ({r.status_code}): {r.content!r}")
 
         logs = r.json()
+        LOG.info("")
         LOG.info(logs["stdout"])
     else:
         LOG.info("Application has been removed!")

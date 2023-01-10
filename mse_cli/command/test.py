@@ -39,11 +39,11 @@ def run(args) -> None:
     LOG.info(
         "%sFrom another terminal, you can now run: "
         "`curl http://localhost:5000%s` or `pytest`%s", bcolors.OKBLUE,
-        app.code.health_check_endpoint, bcolors.ENDC)
+        app.code.healthcheck_endpoint, bcolors.ENDC)
 
     command = ["--application", app.code.python_application, "--debug"]
 
-    volumes = {f"{app.code.location}": {'bind': '/app/code', 'mode': 'rw'}}
+    volumes = {f"{app.code.location}": {'bind': '/mse-app', 'mode': 'rw'}}
 
     container = client.containers.run(
         app.code.docker,

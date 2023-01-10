@@ -12,11 +12,11 @@ The TLS connection is specific to each scenario:
 **App owner trust approach**
 ![](./images/use-app-owner-trust.png)
 
-**Any trust approach**
+**Application deployed using `--untrusted-ssl`**
 ![](./images/use-any-trust.png)
 
 
-In *App owner trust approach* and *Any trust approach* the user trusts the app owner. Therefore, the user does not need to verify the MSE app. So, the user can use the app as if it is running inside a classic cloud. 
+In all scenarios but *Zero trust approach* the user trusts the app owner. Therefore, the user does not need to verify the MSE app. So, the user can use the app as if it is running inside a classic cloud. 
 
 ```console
 $ curl https://my_app.cosmian.app/

@@ -58,18 +58,18 @@ class ContextConf(BaseModel):
     # Project parent of the app
     project: str
     # Symetric key used to encrypt the code
-    code_sealed_key: bytes
-    # Mse docker to use (containing all requirements)
+    code_secret_key: bytes
+    # Mse docker to use
     docker: str
     # from python_flask_module import python_flask_variable_name
     python_application: str
     # The certificate of the app if origin = Owner
     ssl_app_certificate: Optional[str] = None
 
-    @validator('code_sealed_key', pre=True, always=True)
+    @validator('code_secret_key', pre=True, always=True)
     # pylint: disable=no-self-argument,unused-argument
-    def set_code_sealed_key(cls, v, values, **kwargs):
-        """Set code_sealed_key from a value for pydantic."""
+    def set_code_secret_key(cls, v, values, **kwargs):
+        """Set code_secret_key from a value for pydantic."""
         return bytes.fromhex(v) if isinstance(v, str) else v
 
 
@@ -170,13 +170,7 @@ class Context(BaseModel):
 
     @staticmethod
     def from_app_conf(conf: AppConf):
-        """Build a Context object from an app conf.
-
-        Parameters
-        ----------
-        purge: bool
-            Whether to remove the content of tmp workspace if it exists
-        """
+        """Build a Context object from an app conf."""
         cert = conf.ssl.certificate if conf.ssl else None
 
         context = Context(
@@ -185,7 +179,7 @@ class Context(BaseModel):
                                project=conf.project,
                                python_application=conf.code.python_application,
                                docker=conf.code.docker,
-                               code_sealed_key=bytes(random_key()).hex(),
+                               code_secret_key=bytes(random_key()).hex(),
                                ssl_app_certificate=cert))
 
         if cert:
@@ -224,7 +218,7 @@ class Context(BaseModel):
                     "project": self.config.project,
                     "docker": self.config.docker,
                     "python_application": self.config.python_application,
-                    "code_sealed_key": bytes(self.config.code_sealed_key).hex()
+                    "code_secret_key": bytes(self.config.code_secret_key).hex()
                 }
             }
 
@@ -234,21 +228,17 @@ class Context(BaseModel):
 
             if self.instance:
                 origin = self.instance.ssl_certificate_origin.value
+                nonces = dict(
+                    map(lambda item: (item[0], bytes(item[1]).hex()),
+                        self.instance.nonces.items()))
+
                 dataMap["instance"] = {
-                    "id":
-                        str(self.instance.id),
-                    "config_domain_name":
-                        self.instance.config_domain_name,
-                    "enclave_size":
-                        self.instance.enclave_size,
-                    "expires_at":
-                        str(self.instance.expires_at),
-                    "ssl_certificate_origin":
-                        origin,
-                    "nonces":
-                        dict(
-                            map(lambda item: (item[0], bytes(item[1]).hex()),
-                                self.instance.nonces.items()))
+                    "id": str(self.instance.id),
+                    "config_domain_name": self.instance.config_domain_name,
+                    "enclave_size": self.instance.enclave_size,
+                    "expires_at": str(self.instance.expires_at),
+                    "ssl_certificate_origin": origin,
+                    "nonces": nonces
                 }
 
             toml.dump(dataMap, f)

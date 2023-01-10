@@ -108,7 +108,7 @@ def test_ssl():
 
     code = CodeConf(location="/tmp/code",
                     python_application="app:app",
-                    health_check_endpoint="/",
+                    healthcheck_endpoint="/",
                     docker="ghcr.io/cosmian/mse-pytorch:20230104085621")
 
     ssl = SSLConf(domain_name="demo.cosmian.app",
@@ -139,7 +139,7 @@ def test_ssl_optionals():
 
     code = CodeConf(location="/tmp/code",
                     python_application="app:ppa",
-                    health_check_endpoint="/",
+                    healthcheck_endpoint="/",
                     docker="ghcr.io/cosmian/mse-pytorch:20230104085621")
 
     ref_app_conf = AppConf(name="helloworld",
@@ -159,7 +159,7 @@ def test_expiration_date():
 
     code = CodeConf(location="/tmp/code",
                     python_application="app:app",
-                    health_check_endpoint="/",
+                    healthcheck_endpoint="/",
                     docker="ghcr.io/cosmian/mse-pytorch:20230104085621")
 
     ref_app_conf = AppConf(
@@ -208,7 +208,7 @@ def test_python_variable():
 
     code = CodeConf(location="/tmp/code",
                     python_application="bad",
-                    health_check_endpoint="/",
+                    healthcheck_endpoint="/",
                     docker="ghcr.io/cosmian/mse-pytorch:20230104085621")
 
     conf = AppConf(name="helloworld",
@@ -265,7 +265,7 @@ def test_into_payload():
         "name": "helloworld",
         "version": "1.0.0",
         "project": "default",
-        "health_check_endpoint": "/",
+        "healthcheck_endpoint": "/",
         "python_application": "app:app",
         "docker": "ghcr.io/cosmian/mse-pytorch:20230104085621",
         "expires_at": '2023-02-01T00:00:00.000000Z',

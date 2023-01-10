@@ -35,14 +35,20 @@ def add_subparser(subparsers):
                         "(if not in the current directory)")
 
     parser.add_argument(
-        "--force",
+        "-y",
         action="store_true",
         help="force to stop the application if it already exists")
 
     parser.add_argument(
-        "--insecure",
+        "--no-verify",
         action="store_true",
-        help="speed up the deployment by not verifying the app trustworthiness")
+        help="speed up the deployment by skipping the app trustworthiness check"
+    )
+
+    parser.add_argument(
+        "--untrusted-ssl",
+        action="store_true",
+        help="use operator ssl certificates which is unsecure for production")
 
     parser.set_defaults(func=run)
 
@@ -53,12 +59,22 @@ def run(args) -> None:
     app_conf = AppConf.from_toml(path=args.path)
     conn = user_conf.get_connection()
 
-    if not args.insecure:
+    if not args.no_verify:
         # Check docker daemon is running
         _ = get_client_docker()
 
-    if not check_app_conf(conn, app_conf, args.force):
+    if not check_app_conf(conn, app_conf, args.y):
         return
+
+    if args.untrusted_ssl:
+        LOG.info(
+            "⚠️%s This app runs in untrusted-ssl mode with an operator certificate. "
+            "The operator may access all communications with the app. "
+            "See Documentation > Security Model for more details.%s",
+            bcolors.WARNING, bcolors.ENDC)
+        if app_conf.ssl:
+            LOG.info("%sSSL conf paragraph is ignored.%s", bcolors.WARNING,
+                     bcolors.ENDC)
 
     (enclave_size, cores) = get_enclave_resources(conn, app_conf.plan)
     context = Context.from_app_conf(app_conf)
@@ -68,11 +84,15 @@ def run(args) -> None:
     (tar_path, nonces) = prepare_code(app_conf.code.location, context)
 
     LOG.info("Deploying your app...")
-    app = deploy_app(conn, app_conf, tar_path)
+    app = deploy_app(conn, app_conf, tar_path, args.untrusted_ssl)
 
     LOG.info(
         "App %s creating for %s:%s with %dM EPC memory and %.2f CPU cores...",
         app.uuid, app.name, app.version, enclave_size, cores)
+
+    LOG.info("%sYou can now run `mse logs %s` if necessary%s", bcolors.OKBLUE,
+             app.uuid, bcolors.ENDC)
+
     app = wait_app_creation(conn, app.uuid)
 
     context.run(app.uuid, enclave_size, app.config_domain_name, app.expires_at,
@@ -80,15 +100,9 @@ def run(args) -> None:
 
     LOG.info("✅%s App created!%s", bcolors.OKGREEN, bcolors.ENDC)
 
-    if app.ssl_certificate_origin == SSLCertificateOrigin.Operator:
+    if app.ssl_certificate_origin == SSLCertificateOrigin.Owner:
         LOG.info(
-            "%sThis app runs in dev mode with an operator certificate. "
-            "The operator may access all communications with the app. "
-            "See Documentation > Security Model for more details.%s",
-            bcolors.WARNING, bcolors.ENDC)
-    elif app.ssl_certificate_origin == SSLCertificateOrigin.Owner:
-        LOG.info(
-            "%sThis app runs with an app owner certificate. "
+            "⚠️% sThis app runs with an app owner certificate. "
             "The app provider may decrypt all communications with the app. "
             "See Documentation > Security Model for more details.%s",
             bcolors.WARNING, bcolors.ENDC)
@@ -96,7 +110,7 @@ def run(args) -> None:
     selfsigned_cert = get_certificate(app.config_domain_name)
     context.config_cert_path.write_text(selfsigned_cert)
 
-    if not args.insecure:
+    if not args.no_verify:
         LOG.info("Checking app trustworthiness...")
         mr_enclave = compute_mr_enclave(context, tar_path)
         LOG.info("The code fingerprint is %s", mr_enclave)
@@ -108,12 +122,12 @@ def run(args) -> None:
                      bcolors.OKGREEN, context.config_cert_path, bcolors.ENDC)
     else:
         LOG.info(
-            "%sApp trustworthiness checking skipped. This deployment is "
-            "insecured and shouldn't be used in production mode!!!%s",
+            "⚠️%s App trustworthiness checking skipped. The app integrity has "
+            "not been checked and shouldn't be used in production mode!%s",
             bcolors.WARNING, bcolors.ENDC)
 
-    LOG.info("Unsealing your private data from your mse instance...")
-    unseal_private_data(
+    LOG.info("Sending secret key and decrypting the application code...")
+    decrypt_private_data(
         context,
         ssl_private_key=app_conf.ssl.private_key if app_conf.ssl else None)
 
@@ -137,11 +151,11 @@ def run(args) -> None:
         LOG.info(
             "%sYou can now quickly test your application doing: `curl https://%s%s "
             "--cacert %s`%s", bcolors.OKBLUE, app.domain_name,
-            app.health_check_endpoint, context.config_cert_path, bcolors.ENDC)
+            app.healthcheck_endpoint, context.config_cert_path, bcolors.ENDC)
     else:
         LOG.info(
             "%sYou can now quickly test your application doing: `curl https://%s%s`%s",
-            bcolors.OKBLUE, app.domain_name, app.health_check_endpoint,
+            bcolors.OKBLUE, app.domain_name, app.healthcheck_endpoint,
             bcolors.ENDC)
 
 
@@ -213,9 +227,15 @@ def check_app_conf(conn: Connection,
     return True
 
 
-def deploy_app(conn: Connection, app_conf: AppConf, tar_path: Path) -> App:
-    """Deploy the app to a mse node."""
-    r: requests.Response = new(conn=conn, conf=app_conf, code_tar_path=tar_path)
+def deploy_app(conn: Connection,
+               app_conf: AppConf,
+               tar_path: Path,
+               untrusted_ssl: bool = False) -> App:
+    """Deploy the app to a MSE node."""
+    r: requests.Response = new(conn=conn,
+                               conf=app_conf,
+                               code_tar_path=tar_path,
+                               untrusted_ssl=untrusted_ssl)
 
     if not r.ok:
         raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
@@ -250,13 +270,13 @@ def wait_app_creation(conn: Connection, uuid: UUID) -> App:
     return app
 
 
-def unseal_private_data(context: Context,
-                        ssl_private_key: Optional[str] = None):
+def decrypt_private_data(context: Context,
+                         ssl_private_key: Optional[str] = None):
     """Send the ssl private key and the key which was used to encrypt the code."""
     assert context.instance
 
     data = {
-        "code_sealed_key": context.config.code_sealed_key.hex(),
+        "code_secret_key": context.config.code_secret_key.hex(),
         "uuid": str(context.instance.id)
     }
 

@@ -12,8 +12,8 @@ $ cat my_project/mse.toml
    6   │ [code]
    7   │ location = "my_project/code"
    8   │ python_application = "app:app"
-   9   │ health_check_endpoint = "/"
-   10  | docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
+   9   │ healthcheck_endpoint = "/"
+   10  | docker = "ghcr.io/cosmian/mse-flask:20230110142022"
 ───────┴──────────────────────────────
 ```
 
@@ -25,7 +25,6 @@ $ cat my_project/mse.toml
 |     version     |     ✔️     |             str             | Version of the application. Useful if multiple versions of the same application exist |
 |     project     |     ✔️     |      `default` or str       |                    Project name to regroup application for payment                    |
 |      plan       |     ✔️     | `free` or other plans names |                            Plan used for your application                             |
-|       dev       |           | `true` / `false` (default)  |    Developer mode allows to use Cosmian certificate for testing before production     |
 | expiration_date |           |      YY-MM-DD HH/mm/ss      |                 Expiration date (UTC) before the application shutdown                 |
 
 #### Expiration date of the application
@@ -39,35 +38,34 @@ In case the SSL certificate is provided by the application owner, this value sho
 If no `expiration_date` is specified in the configuration file, the expiration date of the application is the expiration date of the certificate.
 Otherwise, it takes the value inherited from the chosen plan.
 
-In dev mode, the expiration date is not used because the certificate is the one provided by Cosmian.
-
 ### Code section
 
-|         Keys          | Mandatory | Types |                                          Description                                          |
-| :-------------------: | :-------: | :---: | :-------------------------------------------------------------------------------------------: |
-|       location        |     ✔️     |  str  |                         Relative path to the application code folder                          |
-|        docker         |     ✔️     |  str  |                                 URL to the mse docker to run                                  |
-|  python_application   |     ✔️     |  str  |                                module_name:flask_variable_name                                |
-| health_check_endpoint |     ✔️     |  str  | `GET` endpoint to check if the application is ready. This endpoint should be unauthenticated. |
+|         Keys         | Mandatory |         Types         |                                                      Description                                                      |
+| :------------------: | :-------: | :-------------------: | :-------------------------------------------------------------------------------------------------------------------: |
+|       location       |     ✔️     |          str          |                                     Relative path to the application code folder                                      |
+|        docker        |     ✔️     |          str          | URL to the mse docker to run. It could be a local docker to run local test but it must be a remote url when deploying |
+|  python_application  |     ✔️     |          str          |                                            module_name:flask_variable_name                                            |
+| healthcheck_endpoint |     ✔️     | str starting with a '/' |             `GET` endpoint to check if the application is ready. This endpoint should be unauthenticated.             |
 
 #### MSE docker
 
-The MSE docker parameter defines which docker image will run in the MSE node. *Cosmian* offers one docker: 
+The MSE docker parameter defines which docker image will run in the MSE node. *Cosmian* offers several dockers (use the tag with the most recent date): 
 
-- [ghcr.io/cosmian/mse-pytorch:20230104085621](https://github.com/Cosmian/mse-docker-pytorch/pkgs/container/mse-pytorch). This docker contains plenty of flask and machine learning dependencies.
+- [mse-flask](https://github.com/Cosmian/mse-docker-flask/pkgs/container/mse-flask): this docker contains plenty of flask dependencies.
+- [mse-pytorch](https://github.com/Cosmian/mse-docker-pytorch/pkgs/container/mse-pytorch): this docker contains plenty of flask and machine learning dependencies.
 
-You can test that your code properly runs inside this docker using [`mse test`](subcommand/test.md).
+You can test your code properly runs inside this docker using [`mse test`](subcommand/test.md).
 
-If you need to install other dependencies, you can create a new docker from [ghcr.io/cosmian/mse-base:20230104084742](https://github.com/Cosmian/mse-docker-base). 
+If you need to install other dependencies, you can create a new docker by forking [mse-docker-flask](https://github.com/Cosmian/mse-docker-flask). 
 This docker will be allowed to be started in an MSE architecture after a review by a *Cosmian* member. To do so, please contact tech@cosmian.com and provide your `Dockerfile` and the link to your docker image.
 
-Note that, the `requirements.txt` from your source code directory won't be read. Your dependencies must be installed in this docker.
+Note that, the `requirements.txt` from your source code directory will still be read when the docker will run. We strongly recommand to put all your requirements into the docker and remove the `requirements.txt` from your source code.
 
 
 ### SSL section
 
 Needed if you want to use your own custom domain name. 
-For more information, see [scenarii](scenarii.md).
+For more information, see [scenarii](scenarios.md).
 
 |    Keys     | Mandatory | Types |                                                 Description                                                  |
 | :---------: | :-------: | :---: | :----------------------------------------------------------------------------------------------------------: |

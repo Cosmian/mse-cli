@@ -32,14 +32,15 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
     version = "1.0.0"
     project = "default"
     python_application = "app:app"
-    docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
+    docker = "ghcr.io/cosmian/mse-flask:20230110142022"
+    code_secret_key = "a389f8baf2e03cebd445d99f03600b29ca259faa9a3964e529c03effef206135"
 
     [instance]
     id = "0b41c2a4-470e-4602-99e2-58a6bf7b123d"
     config_domain_name = "demo.cosmian.app"
-    enclave_size = 1
+    enclave_size = 1024
     expires_at = "2022-11-19 09:47:26.931077+00:00"
-    ssl_certificate_origin = "self"
+    ssl_secret_origin = "self"
 
     [instance.nonces]
     "app.py" = "f33f4a1a1555660f9396aea7811b0ff7b0f19503a7485914"
@@ -55,14 +56,14 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
     version = "1.0.0"
     project = "default"
     python_application = "app:app"
-    docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
-    code_sealed_key = "a389f8baf2e03cebd445d99f03600b29ca259faa9a3964e529c03effef206135"
+    docker = "ghcr.io/cosmian/mse-flask:20230110142022"
+    code_secret_key = "a389f8baf2e03cebd445d99f03600b29ca259faa9a3964e529c03effef206135"
     ssl_app_certificate = "-----BEGIN CERTIFICATE[...]"
 
     [instance]
     id = "d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e"
     config_domain_name = "demo.cosmian.app"
-    enclave_size = 1
+    enclave_size = 1024
     expires_at = "2022-11-18 16:22:11.516125"
     ssl_certificate_origin = "owner"
 
@@ -70,7 +71,7 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
     "app.py" = "f33f4a1a1555660f9396aea7811b0ff7b0f19503a7485914"
     ```
 
-=== "Dev mode"
+=== "Deploying using `--untrusted-ssl`"
 
     ```toml
     version = "1.0"
@@ -80,13 +81,13 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
     version = "1.0.0"
     project = "default"
     python_application = "app:app"
-    docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
-    code_sealed_key = "23a143da6cdabadfba914e2bfc29272dbb90e8346f2bde9fab4c7b3f135ed4ad"
+    docker = "ghcr.io/cosmian/mse-flask:20230110142022"
+    code_secret_key = "23a143da6cdabadfba914e2bfc29272dbb90e8346f2bde9fab4c7b3f135ed4ad"
 
     [instance]
     id = "c54a6b71-257e-4b24-bd63-cbbb38429beb"
     config_domain_name = "demo.cosmian.app"
-    enclave_size = 1
+    enclave_size = 1024
     expires_at = "2022-11-18 16:00:43.352980"
     ssl_certificate_origin = "operator"
 

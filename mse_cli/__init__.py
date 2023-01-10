@@ -4,7 +4,7 @@ import os
 import sys
 from pathlib import Path
 
-__version__ = "0.5.1"
+__version__ = "0.6.0"
 
 # This directory contains the login information of the user
 # and the context of all its deployments
@@ -44,4 +44,4 @@ MSE_CONSOLE_URL = os.getenv("MSE_CONSOLE_URL",
                             default="https://console.staging.mse.cosmian.com")
 
 # The URL of the default MSE Docker
-MSE_DEFAULT_DOCKER = "ghcr.io/cosmian/mse-pytorch:20230104085621"
+MSE_DEFAULT_DOCKER = "ghcr.io/cosmian/mse-flask:20230110142022"

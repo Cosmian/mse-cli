@@ -4,7 +4,7 @@ project = "default"
 plan = "free"
 
 [code]
-location = "mse_code"
+location = "mse_src"
 docker = "{{ docker }}"
 python_application = "app:app"
-health_check_endpoint = "/health"
+healthcheck_endpoint = "/health"

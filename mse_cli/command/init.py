@@ -30,7 +30,7 @@ def run(_args):
     docker = input(f"Docker url [{MSE_DEFAULT_DOCKER}]: ") or MSE_DEFAULT_DOCKER
     code_location = input("Code location [.]:") or "."
     python_application = input("Python application [app:app]: ") or "app:app"
-    health_check_endpoint = input("Health check endpoint [/]: ") or "/"
+    healthcheck_endpoint = input("Health check endpoint [/]: ") or "/"
 
     app = AppConf(name=app_name,
                   version=app_version,
@@ -39,7 +39,7 @@ def run(_args):
                   dev=dev,
                   code=CodeConf(location=code_location,
                                 python_application=python_application,
-                                health_check_endpoint=health_check_endpoint,
+                                healthcheck_endpoint=healthcheck_endpoint,
                                 docker=docker))
 
     path = Path(os.getcwd())

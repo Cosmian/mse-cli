@@ -48,7 +48,7 @@ class App(BaseModel):
     ssl_certificate_origin: SSLCertificateOrigin
     expires_at: datetime.datetime
     python_application: str
-    health_check_endpoint: str
+    healthcheck_endpoint: str
 
     @staticmethod
     def from_dict(dct: Dict[str, Any]):

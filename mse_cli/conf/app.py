@@ -41,9 +41,17 @@ class CodeConf(BaseModel):
     # from python_flask_module import python_flask_variable_name
     python_application: Str255
     # Endpoint to use to check if the application is up and sane
-    health_check_endpoint: Str255
+    healthcheck_endpoint: Str255
     # Mse docker to use (containing all requirements)
     docker: StrUnlimited
+
+    @validator('healthcheck_endpoint', pre=False)
+    # pylint: disable=no-self-argument,unused-argument
+    def check_healthcheck_endpoint(cls, v: str):
+        """Validate that `healthcheck_endpoint` is an endpoint."""
+        if v.startswith("/"):
+            return v
+        raise ValueError('healthcheck_endpoint should start with a "/"')
 
 
 class AppConf(BaseModel):
@@ -55,19 +63,12 @@ class AppConf(BaseModel):
     version: Str16
     # Name of the parent project
     project: Str255
-
     # MSE plan (defining the enclave memory, cpu, etc.)
     plan: Str16
-
-    # Dev mode
-    dev: bool = False
-
     # The application will stop at this date
     expiration_date: Optional[datetime]
-
     # Configuration of the code
     code: CodeConf
-
     # Configuration of the ssl
     ssl: Optional[SSLConf] = None
 
@@ -123,9 +124,6 @@ class AppConf(BaseModel):
 
             app = AppConf(**dataMap)
 
-            if app.dev and app.ssl:
-                raise Exception("`ssl` param is not allowed when `dev` is true")
-
             # Make the app code location path absolute from path.parent and not cwd
             if not app.code.location.is_absolute():
                 app.code.location = (path.parent / app.code.location).resolve()
@@ -180,12 +178,10 @@ class AppConf(BaseModel):
                     "location": str(self.code.location),
                     "docker": self.code.docker,
                     "python_application": self.code.python_application,
-                    "health_check_endpoint": self.code.health_check_endpoint
+                    "healthcheck_endpoint": self.code.healthcheck_endpoint,
                 },
             }
 
-            if self.dev:
-                dataMap['dev'] = self.dev
             if self.expiration_date:
                 dataMap['expiration_date'] = str(self.expiration_date)
             if self.ssl:
@@ -197,21 +193,34 @@ class AppConf(BaseModel):
 
             toml.dump(dataMap, f)
 
-    def into_payload(self) -> Dict[str, Any]:
+    def into_payload(self, untrusted_ssl: bool = False) -> Dict[str, Any]:
         """Convert it into a mse-backend payload as a dict."""
         d = self.expiration_date.astimezone(tz=timezone.utc).strftime(
             "%Y-%m-%dT%H:%M:%S.%fZ") if self.expiration_date else None
 
         return {
-            "name": self.name,
-            "version": self.version,
-            "project": self.project,
-            "dev_mode": self.dev,
-            "health_check_endpoint": self.code.health_check_endpoint,
-            "python_application": self.code.python_application,
-            "expires_at": d,
-            "ssl_certificate": self.ssl.certificate if self.ssl else None,
-            "domain_name": self.ssl.domain_name if self.ssl else None,
-            "plan": self.plan,
-            "docker": self.code.docker,
-        }  # Do not send the private_key or location code
+            "name":
+                self.name,
+            "version":
+                self.version,
+            "project":
+                self.project,
+            "dev_mode":
+                untrusted_ssl,
+            "healthcheck_endpoint":
+                self.code.healthcheck_endpoint,
+            "python_application":
+                self.code.python_application,
+            "expires_at":
+                d,
+            "ssl_certificate":
+                self.ssl.certificate
+                if not untrusted_ssl and self.ssl else None,
+            "domain_name":
+                self.ssl.domain_name
+                if not untrusted_ssl and self.ssl else None,
+            "plan":
+                self.plan,
+            "docker":
+                self.code.docker,
+        }  # Do not send the private_key or code location

@@ -15,7 +15,6 @@ from mse_cli.command.stop import run as run_stop
 from mse_cli.command.remove import run as run_remove
 from mse_cli.command.scaffold import run as run_scaffold
 from mse_cli.command.context import run as run_context
-from conftest import capture_logs
 
 
 @pytest.mark.slow
@@ -145,9 +144,11 @@ def test_deploy_non_free(cmd_log):
                 **{
                     "path":
                         Path(__file__).parent / "data" / "non_free_plan.toml",
-                    "force":
+                    "y":
                         False,
-                    "insecure":
+                    "no_verify":
+                        False,
+                    "untrusted_ssl":
                         False
                 }))
 
@@ -164,9 +165,11 @@ def test_deploy_bad_projet_name(cmd_log):
                     "path":
                         Path(__file__).parent / "data" /
                         "bad_project_name.toml",
-                    "force":
+                    "y":
                         False,
-                    "insecure":
+                    "no_verify":
+                        False,
+                    "untrusted_ssl":
                         False
                 }))
 
@@ -183,9 +186,11 @@ def test_deploy_bad_app(cmd_log):
                     "path":
                         Path(__file__).parent / "data" /
                         "bad_python_application.toml",
-                    "force":
+                    "y":
                         False,
-                    "insecure":
+                    "no_verify":
+                        False,
+                    "untrusted_ssl":
                         False
                 }))
 
@@ -200,8 +205,9 @@ def test_deploy_bad_docker(cmd_log):
             Namespace(
                 **{
                     "path": Path(__file__).parent / "data" / "bad_docker.toml",
-                    "force": False,
-                    "insecure": False
+                    "y": False,
+                    "no_verify": False,
+                    "untrusted_ssl": False
                 }))
 
     assert "Docker ghcr.io/cosmian/mse-pytorch:notexist is not approved or supported yet." in str(
@@ -218,9 +224,11 @@ def test_deploy_latest_docker(cmd_log):
                     "path":
                         Path(__file__).parent / "data" /
                         "bad_docker_latest.toml",
-                    "force":
+                    "y":
                         False,
-                    "insecure":
+                    "no_verify":
+                        False,
+                    "untrusted_ssl":
                         False
                 }))
 
