@@ -69,15 +69,23 @@ def _test_scaffold() -> Path:
     # Check creation of files
     conf = path / unique_name / "mse.toml"
     assert conf.exists()
-    assert (path / unique_name / "mse_code").exists()
+    assert (path / unique_name / "mse_src").exists()
 
     # The viability (is that runnable?) of the code will be tested later
     return conf
 
 
-def _test_deploy(f: io.StringIO, conf: Path) -> Tuple[UUID, str, str]:
+def _test_deploy(f: io.StringIO, conf: Path,
+                 untrusted_ssl: bool) -> Tuple[UUID, str, str]:
     """Test the deploy subcommand."""
-    run_deploy(Namespace(**{"path": conf, "y": False, "no_verify": False}))
+    run_deploy(
+        Namespace(
+            **{
+                "path": conf,
+                "y": False,
+                "no_verify": False,
+                "untrusted_ssl": untrusted_ssl
+            }))
 
     output = capture_logs(f)
 
@@ -156,11 +164,14 @@ def _test_list(f: io.StringIO, project_name: str, app_uuid: UUID,
     assert (str(app_uuid) in output) == expecting_result
 
 
-def _test_mse_cli(f: io.StringIO, ssl_certificate_origin: SSLCertificateOrigin):
+def _test_mse_cli(f: io.StringIO,
+                  ssl_certificate_origin: SSLCertificateOrigin,
+                  untrusted_ssl=bool):
     """Test a complete deployment flow."""
     # Test the scaffold subcommand
     conf = _test_scaffold()
     app_conf = AppConf.from_toml(conf)
+
     if ssl_certificate_origin == SSLCertificateOrigin.Owner:
         assert not app_conf.ssl
         app_conf.ssl = SSLConf(
@@ -168,20 +179,14 @@ def _test_mse_cli(f: io.StringIO, ssl_certificate_origin: SSLCertificateOrigin):
             private_key=os.getenv("MSE_TEST_PRIVATE_KEY"),
             certificate=os.getenv("MSE_TEST_PUBLIC_KEY"))
         app_conf.save(conf.parent)
-    elif ssl_certificate_origin == SSLCertificateOrigin.Operator:
-        assert not app_conf.dev
-        app_conf.dev = True
-        app_conf.save(conf.parent)
     else:
         assert not app_conf.ssl
-        assert not app_conf.dev
 
     # Test the deploy subcommand
-    (app_uuid, domain_name, mr_enclave) = _test_deploy(f, conf)
+    (app_uuid, domain_name, mr_enclave) = _test_deploy(f, conf, untrusted_ssl)
 
     # Test the context subcommand
     context = _test_context(f, app_uuid)
-    assert context.instance.ssl_certificate_origin == ssl_certificate_origin
 
     # Test the verify subcommand
     # Skip MR Enclave computation
@@ -282,16 +287,22 @@ def _test_mse_cli(f: io.StringIO, ssl_certificate_origin: SSLCertificateOrigin):
 @pytest.mark.slow
 def test_mse_cli_self_signed(cmd_log):
     """Test a complete deployment flow for dev mode."""
-    _test_mse_cli(cmd_log, SSLCertificateOrigin.Self)
+    _test_mse_cli(cmd_log, SSLCertificateOrigin.Self, False)
 
 
 @pytest.mark.slow
 def test_mse_cli_with_ssl(cmd_log):
     """Test a complete deployment flow for dev mode."""
-    _test_mse_cli(cmd_log, SSLCertificateOrigin.Owner)
+    _test_mse_cli(cmd_log, SSLCertificateOrigin.Owner, False)
 
 
 @pytest.mark.slow
-def test_mse_cli_dev_mode(cmd_log):
-    """Test a complete deployment flow for dev mode."""
-    _test_mse_cli(cmd_log, SSLCertificateOrigin.Operator)
+def test_mse_cli_self_signed_untrusted(cmd_log):
+    """Test a complete deployment flow for untrusted ssl."""
+    _test_mse_cli(cmd_log, SSLCertificateOrigin.Self, True)
+
+
+@pytest.mark.slow
+def test_mse_cli_with_ssl_untrusted(cmd_log):
+    """Test a complete deployment flow for untrusted ssl."""
+    _test_mse_cli(cmd_log, SSLCertificateOrigin.Owner, True)

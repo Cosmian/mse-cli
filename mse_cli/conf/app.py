@@ -46,6 +46,7 @@ class CodeConf(BaseModel):
     docker: StrUnlimited
 
     @validator('healthcheck_endpoint', pre=False)
+    # pylint: disable=no-self-argument,unused-argument
     def check_healthcheck_endpoint(cls, v: str):
         """Validate that `healthcheck_endpoint` is an endpoint."""
         if v.startswith("/"):
@@ -197,18 +198,29 @@ class AppConf(BaseModel):
         d = self.expiration_date.astimezone(tz=timezone.utc).strftime(
             "%Y-%m-%dT%H:%M:%S.%fZ") if self.expiration_date else None
 
-        set_ssl = not untrusted_ssl and self.ssl
-
         return {
-            "name": self.name,
-            "version": self.version,
-            "project": self.project,
-            "dev_mode": untrusted_ssl,
-            "healthcheck_endpoint": self.code.healthcheck_endpoint,
-            "python_application": self.code.python_application,
-            "expires_at": d,
-            "ssl_certificate": self.ssl.certificate if set_ssl else None,
-            "domain_name": self.ssl.domain_name if set_ssl else None,
-            "plan": self.plan,
-            "docker": self.code.docker,
+            "name":
+                self.name,
+            "version":
+                self.version,
+            "project":
+                self.project,
+            "dev_mode":
+                untrusted_ssl,
+            "healthcheck_endpoint":
+                self.code.healthcheck_endpoint,
+            "python_application":
+                self.code.python_application,
+            "expires_at":
+                d,
+            "ssl_certificate":
+                self.ssl.certificate
+                if not untrusted_ssl and self.ssl else None,
+            "domain_name":
+                self.ssl.domain_name
+                if not untrusted_ssl and self.ssl else None,
+            "plan":
+                self.plan,
+            "docker":
+                self.code.docker,
         }  # Do not send the private_key or code location

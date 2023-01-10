@@ -7,7 +7,7 @@ You can run your application inside the same docker as MSE environment:
 
 ```{.console}
 $ mse test --path mse-app-examples/helloworld/config/zero_trust.toml
-Starting the docker: ghcr.io/cosmian/mse-pytorch:20230104085621...
+Starting the docker: ghcr.io/cosmian/mse-flask:20230110142022...
 You can stop the test at any time by typing CTRL^C
 From another terminal, you can now run: `curl http://localhost:5000/health` or `pytest`
 Reading args: --application app:app --debug

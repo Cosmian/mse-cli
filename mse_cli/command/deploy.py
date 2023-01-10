@@ -46,7 +46,7 @@ def add_subparser(subparsers):
     )
 
     parser.add_argument(
-        "--untrusted-ssl",  # TODO: better name?
+        "--untrusted-ssl",
         action="store_true",
         help="use operator ssl certificates which is unsecure for production")
 
@@ -66,6 +66,16 @@ def run(args) -> None:
     if not check_app_conf(conn, app_conf, args.y):
         return
 
+    if args.untrusted_ssl:
+        LOG.info(
+            "⚠️%s This app runs in untrusted-ssl mode with an operator certificate. "
+            "The operator may access all communications with the app. "
+            "See Documentation > Security Model for more details.%s",
+            bcolors.WARNING, bcolors.ENDC)
+        if app_conf.ssl:
+            LOG.info("%sSSL conf paragraph is ignored.%s", bcolors.WARNING,
+                     bcolors.ENDC)
+
     (enclave_size, cores) = get_enclave_resources(conn, app_conf.plan)
     context = Context.from_app_conf(app_conf)
     LOG.info("Temporary workspace is: %s", context.workspace)
@@ -73,14 +83,16 @@ def run(args) -> None:
     LOG.info("Encrypting your source code...")
     (tar_path, nonces) = prepare_code(app_conf.code.location, context)
 
-    # TODO: add a warning saying [SSL] is ignore since --no-trust-ssl
-
     LOG.info("Deploying your app...")
     app = deploy_app(conn, app_conf, tar_path, args.untrusted_ssl)
 
     LOG.info(
         "App %s creating for %s:%s with %dM EPC memory and %.2f CPU cores...",
         app.uuid, app.name, app.version, enclave_size, cores)
+
+    LOG.info("%sYou can now run `mse logs %s` if necessary%s", bcolors.OKBLUE,
+             app.uuid, bcolors.ENDC)
+
     app = wait_app_creation(conn, app.uuid)
 
     context.run(app.uuid, enclave_size, app.config_domain_name, app.expires_at,
@@ -88,15 +100,9 @@ def run(args) -> None:
 
     LOG.info("✅%s App created!%s", bcolors.OKGREEN, bcolors.ENDC)
 
-    if app.ssl_certificate_origin == SSLCertificateOrigin.Operator:
+    if app.ssl_certificate_origin == SSLCertificateOrigin.Owner:
         LOG.info(
-            "%sThis app runs in dev mode with an operator certificate. "
-            "The operator may access all communications with the app. "
-            "See Documentation > Security Model for more details.%s",
-            bcolors.WARNING, bcolors.ENDC)
-    elif app.ssl_certificate_origin == SSLCertificateOrigin.Owner:
-        LOG.info(
-            "%sThis app runs with an app owner certificate. "
+            "⚠️% sThis app runs with an app owner certificate. "
             "The app provider may decrypt all communications with the app. "
             "See Documentation > Security Model for more details.%s",
             bcolors.WARNING, bcolors.ENDC)
@@ -116,12 +122,12 @@ def run(args) -> None:
                      bcolors.OKGREEN, context.config_cert_path, bcolors.ENDC)
     else:
         LOG.info(
-            "%sApp trustworthiness checking skipped. This deployment is "
-            "insecured and shouldn't be used in production mode!!!%s",
+            "⚠️%s App trustworthiness checking skipped. The app integrity has "
+            "not been checked and shouldn't be used in production mode!%s",
             bcolors.WARNING, bcolors.ENDC)
 
-    LOG.info("Unsealing your private data from your mse instance...")
-    unseal_private_data(
+    LOG.info("Sending secret key and decrypting the application code...")
+    decrypt_private_data(
         context,
         ssl_private_key=app_conf.ssl.private_key if app_conf.ssl else None)
 
@@ -264,8 +270,8 @@ def wait_app_creation(conn: Connection, uuid: UUID) -> App:
     return app
 
 
-def unseal_private_data(context: Context,
-                        ssl_private_key: Optional[str] = None):
+def decrypt_private_data(context: Context,
+                         ssl_private_key: Optional[str] = None):
     """Send the ssl private key and the key which was used to encrypt the code."""
     assert context.instance
 

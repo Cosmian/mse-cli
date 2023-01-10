@@ -13,7 +13,7 @@ $ cat my_project/mse.toml
    7   │ location = "my_project/code"
    8   │ python_application = "app:app"
    9   │ healthcheck_endpoint = "/"
-   10  | docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
+   10  | docker = "ghcr.io/cosmian/mse-flask:20230110142022"
 ───────┴──────────────────────────────
 ```
 
@@ -49,16 +49,17 @@ Otherwise, it takes the value inherited from the chosen plan.
 
 #### MSE docker
 
-The MSE docker parameter defines which docker image will run in the MSE node. *Cosmian* offers one docker: 
+The MSE docker parameter defines which docker image will run in the MSE node. *Cosmian* offers several dockers (use the tag with the most recent date): 
 
-- [ghcr.io/cosmian/mse-pytorch:20230104085621](https://github.com/Cosmian/mse-docker-pytorch/pkgs/container/mse-pytorch). This docker contains plenty of flask and machine learning dependencies.
+- [mse-flask](https://github.com/Cosmian/mse-docker-flask/pkgs/container/mse-flask): this docker contains plenty of flask dependencies.
+- [mse-pytorch](https://github.com/Cosmian/mse-docker-pytorch/pkgs/container/mse-pytorch): this docker contains plenty of flask and machine learning dependencies.
 
-You can test that your code properly runs inside this docker using [`mse test`](subcommand/test.md).
+You can test your code properly runs inside this docker using [`mse test`](subcommand/test.md).
 
-If you need to install other dependencies, you can create a new docker from [ghcr.io/cosmian/mse-base:20230104084742](https://github.com/Cosmian/mse-docker-base). 
+If you need to install other dependencies, you can create a new docker by forking [mse-docker-flask](https://github.com/Cosmian/mse-docker-flask). 
 This docker will be allowed to be started in an MSE architecture after a review by a *Cosmian* member. To do so, please contact tech@cosmian.com and provide your `Dockerfile` and the link to your docker image.
 
-Note that, the `requirements.txt` from your source code directory won't be read. Your dependencies must be installed in this docker.
+Note that, the `requirements.txt` from your source code directory will still be read when the docker will run. We strongly recommand to put all your requirements into the docker and remove the `requirements.txt` from your source code.
 
 
 ### SSL section

@@ -10,7 +10,7 @@ Microservice
         Domain name  = demo.cosmian.app
         Billing plan = free
         Application  = app:app
-        MSE docker   = ghcr.io/cosmian/mse-pytorch:20230104085621
+        MSE docker   = ghcr.io/cosmian/mse-flask:20230110142022
         Healthcheck  = /
 
 Deployement status

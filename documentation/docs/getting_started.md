@@ -62,7 +62,7 @@ Or deploy it from 'helloworld/' directory using: `mse deploy`
 Refer to the 'helloworld/README.md' for more details.
 $ tree helloworld/
 helloworld/
-├── mse_code
+├── mse_src
 │   └── app.py
 ├── mse.toml
 ├── README.md
@@ -96,7 +96,7 @@ def hello():
     return "Hello world"
 
 
-if __name__ == "__main_":
+if __name__ == "__main__":
     app.run(debug=True)
 
 ```
@@ -110,8 +110,8 @@ project = "default"
 plan = "free"
 
 [code]
-location = "mse_code"
-docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
+location = "mse_src"
+docker = "ghcr.io/cosmian/mse-flask:20230110142022"
 python_application = "app:app"
 healthcheck_endpoint = "/health"
 ```
@@ -120,7 +120,7 @@ This project also contains a test directory enabling you to test this project lo
 
 ```{.console}
 $ cd helloworld
-$ python3 mse_code/app.py
+$ python3 mse_src/app.py
 $ # From another terminal
 $ curl http://127.0.0.1:5000
 $ pytest
@@ -137,8 +137,20 @@ For your first deployment, to make things easier to understand and faster to run
 ```{.console}
 $ cd helloworld
 $ mse deploy --no-verify --untrusted-ssl
-
-TODO
+⚠️ This app runs in untrusted-ssl mode with an operator certificate. The operator may access all communications with the app. See Documentation > Security Model for more details.
+Temporary workspace is: /tmp/tmpzdvizsb5
+Encrypting your source code...
+Deploying your app...
+App 04e9952c-981d-4601-a610-81152fe21315 creating for helloworld:0.1.0 with 512M EPC memory and 0.38 CPU cores...
+You can now run `mse logs 04e9952c-981d-4601-a610-81152fe21315` if necessary
+✅ App created!
+⚠️ App trustworthiness checking skipped. The app integrity has not been checked and shouldn't be used in production mode!
+Sending secret key and decrypting the application code...
+Waiting for application to be ready...
+Your application is now fully deployed and started...
+✅ It's now ready to be used on https://04e9952c-981d-4601-a610-81152fe21315.dev.cosmian.dev until 2023-01-10 20:30:36.860596+01:00. The application will be automatically stopped after this date.
+The context of this creation can be retrieved using `mse context --export 04e9952c-981d-4601-a610-81152fe21315`
+You can now quickly test your application doing: `curl https://04e9952c-981d-4601-a610-81152fe21315.dev.cosmian.dev/health`
 ```
 
 That's it!
@@ -164,38 +176,69 @@ At this point, you can write your own Flask application and deploy it into MSE.
     Visit [mse-app-examples](https://github.com/Cosmian/mse-app-examples) to find MSE application examples.
 
 
-## Remove `--no-verify`
-
-In this step, we will redeploy your previous app by removing the `--no-verify`. Using this argument is insecure: when you deploy an app, you need to verify if the running app is well your code and if it is running inside an intel sgx enclave signed by Cosmian. For more details, please refer to [the security model](security.md)
+## Verify the trustworthiness of your app (remove `--no-verify`)
 
 !!! info "Pre-requisites"
 
     Before deploying the app, verify that docker service is up and your current user can use the docker client without privilege
 
 
+In this step, we will redeploy your previous app by removing the argument `--no-verify` which is insecure. When you deploy an app, you need to verify that the running app is well your code and is running inside an intel sgx enclave signed by Cosmian. For more details, please refer to [the security model](security.md).
+
+
 ```{.console}
 $ cd helloworld
-$ mse deploy --untrusted-ssl
-
-TODO
+$ mse deploy -y --untrusted-ssl
+An application with the same name in that project is already running...
+Stopping the previous app (force mode enabled)...
+⚠️ This app runs in untrusted-ssl mode with an operator certificate. The operator may access all communications with the app. See Documentation > Security Model for more details.
+Temporary workspace is: /tmp/tmpucnl7zfd
+Encrypting your source code...
+Deploying your app...
+App 74638f07-c85c-41d3-be82-238d0099e2d3 creating for helloworld:0.1.0 with 8192M EPC memory and 6.00 CPU cores...
+You can now run `mse logs 74638f07-c85c-41d3-be82-238d0099e2d3` if necessary
+✅ App created!
+Checking app trustworthiness...
+The code fingerprint is 9bb0342fa8a09c2707632ed8556accc5fac168515bf2453bf88992c9fa84e849
+Verification: success
+Sending secret key and decrypting the application code...
+Waiting for application to be ready...
+Your application is now fully deployed and started...
+✅ It's now ready to be used on https://74638f07-c85c-41d3-be82-238d0099e2d3.dev.cosmian.dev until 2023-01-10 21:23:28.929299+01:00. The application will be automatically stopped after this date.
+The context of this creation can be retrieved using `mse context --export 74638f07-c85c-41d3-be82-238d0099e2d3`
+You can now quickly test your application doing: `curl https://74638f07-c85c-41d3-be82-238d0099e2d3.dev.cosmian.dev/health`
 ```
 
 As you can see, the warning message has been removed for the output of your previous command and the trustworthiness of the app has been checked.
 
 
-## Remove `--untrusted-ssl` 
+## Secure the SSL connection (remove `--untrusted-ssl`)
 
-In this step, we will redeploy your previous app by removing the `--untrusted-ssl`. Using this argument is insecure: you need to use a direct SSL connection from you to the enclave. That way, no one, but the enclave can read the content of the queries. For more details, please refer to [the app deployment flow](how_it_works_deploy.md) and [the app usage flow](how_it_works_use.md).
+In this step, we will redeploy your previous app by removing the argument `--untrusted-ssl` which is insecure. You need to use an end-to-end SSL connection from you to the application. That way, no one but the enclave can read the content of the queries. For more details, please refer to [the app deployment flow](how_it_works_deploy.md) and [the app usage flow](how_it_works_use.md).
 
 
 ```{.console}
 $ cd helloworld
-$ mse deploy
-
-TODO
+$ mse deploy -y
+An application with the same name in that project is already running...
+Stopping the previous app (force mode enabled)...
+Temporary workspace is: /tmp/tmp4u_gcjwk
+Encrypting your source code...
+Deploying your app...
+App 248fce63-bc05-49a6-816a-4436b456fa27 creating for helloworld:0.1.0 with 8192M EPC memory and 6.00 CPU cores...
+You can now run `mse logs 248fce63-bc05-49a6-816a-4436b456fa27` if necessary
+✅ App created!
+Checking app trustworthiness...
+The code fingerprint is ecd2ed83c65906bec65d5b8bc02e18d439c0d1401272e207fed254f7228eee7e
+Verification: success
+✅ The verified certificate has been saved at: /tmp/tmp4u_gcjwk/cert.conf.pem
+Sending secret key and decrypting the application code...
+Waiting for application to be ready...
+Your application is now fully deployed and started...
+✅ It's now ready to be used on https://248fce63-bc05-49a6-816a-4436b456fa27.dev.cosmian.app until 2023-01-10 21:24:28.162324+01:00. The application will be automatically stopped after this date.
+The context of this creation can be retrieved using `mse context --export 248fce63-bc05-49a6-816a-4436b456fa27`
+You can now quickly test your application doing: `curl https://248fce63-bc05-49a6-816a-4436b456fa27.dev.cosmian.app/health --cacert /tmp/tmp4u_gcjwk/cert.conf.pem`
 ```
-
-As you can see, the warning message has been removed for the output of your previous command. 
 
 Your microservice is up at `https://{uuid}.cosmian.app` (replace `{uuid}` with the one from `mse deploy` command output).
 
@@ -207,11 +250,17 @@ $ # force curl CA bundle to be /tmp/tmpntxibdo6/cert.conf.pem
 $ curl "https://$MSE_UUID.cosmian.app" --cacert /tmp/tmpntxibdo6/cert.conf.pem
 ```
 
+This way to deploy should be your production deployment method.
+
 ## Test your application locally
+
+This method is well-suited to test the remote environment when deploying your app.
+
+We recall that your application is deployed into a constraints environement under a specific architecture. This method emulates as close as possible this production environment. 
 
 Before any deployment, it's strongly recommanded to test your application locally against the mse docker image specified into your `mse.toml`. It enables you to verify that your application is compatible with the MSE environment and all required dependencies are installed. 
 
-Now you have installed docker on your own machine, you can run: 
+Since you have installed `docker` in the previous step on your own machine, you can run: 
 
 ```{.console}
 $ cd helloworld
@@ -223,17 +272,17 @@ $ pytest
 
 !!! info "Requirements"
 
-    The mse environment is running on `Ubuntu 22.04` with `python 3.8`.
+    The mse environment is running on `Ubuntu 20.04` with `python 3.8`.
 
 
 ## Build your own mse docker
 
-When you scaffold a new project, the configuration file contains a default docker containing minimal flask packages. For many reasons, this docker could be not enough to run your own application. If your `mse_code` directory contains a `requirements.txt`, these packages will be installed when running the docker. It enables you to quickly test your application in an MSE environment without generating a new docker. However:
+When you scaffold a new project, the configuration file contains a default docker including minimal flask packages. For many reasons, this docker could be not enough to run your own application. If your `mse_src` directory contains a `requirements.txt`, these packages will be installed when running the docker. It enables you to quickly test your application in an MSE environment without generating a new docker. However:
 
 - It could be hard to clearly define your dependencies and run them against the installed packages on the remote environment
 - It makes your installation not reproductible. Therefore after a deployment, it's strongly likely that your users won't be able to verify the trustworthiness of your application
   
-Then, we recommand to build your own docker from our [mse-base image](https://github.com/Cosmian/mse-docker-base) and integrates all your dependencies. 
+Then, we recommand to fork [mse-docker-flask](https://github.com/Cosmian/mse-docker-flask) to build your own docker by integrating all your dependencies. 
 You can test your application against your own docker by editing the field `docker` in your `mse.toml` and running: 
 
 ```{.console}

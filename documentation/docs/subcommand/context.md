@@ -32,7 +32,7 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
     version = "1.0.0"
     project = "default"
     python_application = "app:app"
-    docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
+    docker = "ghcr.io/cosmian/mse-flask:20230110142022"
     code_secret_key = "a389f8baf2e03cebd445d99f03600b29ca259faa9a3964e529c03effef206135"
 
     [instance]
@@ -56,7 +56,7 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
     version = "1.0.0"
     project = "default"
     python_application = "app:app"
-    docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
+    docker = "ghcr.io/cosmian/mse-flask:20230110142022"
     code_secret_key = "a389f8baf2e03cebd445d99f03600b29ca259faa9a3964e529c03effef206135"
     ssl_app_certificate = "-----BEGIN CERTIFICATE[...]"
 
@@ -81,7 +81,7 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
     version = "1.0.0"
     project = "default"
     python_application = "app:app"
-    docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
+    docker = "ghcr.io/cosmian/mse-flask:20230110142022"
     code_secret_key = "23a143da6cdabadfba914e2bfc29272dbb90e8346f2bde9fab4c7b3f135ed4ad"
 
     [instance]

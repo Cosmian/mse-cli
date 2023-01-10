@@ -9,7 +9,7 @@ App version: 1.0.0
 Project name [default]: 
 Plan id [free]: 
 Enable dev mode (yes/[no]): 
-Docker url [ghcr.io/cosmian/mse-pytorch:20230104085621]: 
+Docker url [ghcr.io/cosmian/mse-flask:20230110142022]: 
 Code location: .
 Python application [app:app]: 
 Health check endpoint [/]: 
@@ -28,5 +28,5 @@ plan = "free"
 location = "."
 python_application = "app:app"
 healthcheck_endpoint = "/"
-docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
+docker = "ghcr.io/cosmian/mse-flask:20230110142022"
 ```

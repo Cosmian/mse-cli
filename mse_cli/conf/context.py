@@ -173,15 +173,14 @@ class Context(BaseModel):
         """Build a Context object from an app conf."""
         cert = conf.ssl.certificate if conf.ssl else None
 
-        context = Context(config=ContextConf(
-            name=conf.name,
-            version=conf.version,
-            project=conf.project,
-            python_application=conf.code.python_application,
-            docker=conf.code.docker,
-            code_secret_key=bytes(random_key()).hex(),
-            ssl_app_certificate=cert)
-                         )  # TODO: should I override it when --unsecure-ssl?
+        context = Context(
+            config=ContextConf(name=conf.name,
+                               version=conf.version,
+                               project=conf.project,
+                               python_application=conf.code.python_application,
+                               docker=conf.code.docker,
+                               code_secret_key=bytes(random_key()).hex(),
+                               ssl_app_certificate=cert))
 
         if cert:
             context.app_cert_path.write_text(cert)

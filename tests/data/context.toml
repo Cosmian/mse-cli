@@ -6,7 +6,7 @@ version = "1.0.0"
 project = "default"
 docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
 python_application = "app:app"
-code_sealed_key = "a389f8baf2e03cebd445d99f03600b29ca259faa9a3964e529c03effef206135"
+code_secret_key = "a389f8baf2e03cebd445d99f03600b29ca259faa9a3964e529c03effef206135"
 ssl_app_certificate = "-----BEGIN CERTIFICATE"
 
 [instance]
