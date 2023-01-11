@@ -25,8 +25,6 @@ def run(_args):
     app_version = input("App version: ")
     project_name = input("Project name [default]: ") or "default"
     plan = input("Plan id [free]: ") or "free"
-    dev_input = input("Enable dev mode (yes/[no]): ")
-    dev = dev_input.lower() in ["y", "yes"]
     docker = input(f"Docker url [{MSE_DEFAULT_DOCKER}]: ") or MSE_DEFAULT_DOCKER
     code_location = input("Code location [.]:") or "."
     python_application = input("Python application [app:app]: ") or "app:app"
@@ -36,7 +34,6 @@ def run(_args):
                   version=app_version,
                   project=project_name,
                   plan=plan,
-                  dev=dev,
                   code=CodeConf(location=code_location,
                                 python_application=python_application,
                                 healthcheck_endpoint=healthcheck_endpoint,
@@ -44,4 +41,5 @@ def run(_args):
 
     path = Path(os.getcwd())
     app.save(path)
-    LOG.info("Your app configuration has been saved in: %s", path / "mse.toml")
+    LOG.success("Your app configuration has been saved in: %s",
+                path / "mse.toml")

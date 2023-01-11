@@ -25,7 +25,6 @@ from mse_cli.api.types import (App, AppStatus, Plan, Project,
                                SSLCertificateOrigin)
 from mse_cli.conf.context import Context
 from mse_cli.log import LOGGER as LOG
-from mse_cli.utils.color import bcolors
 from mse_cli.utils.fs import tar
 
 
@@ -34,7 +33,7 @@ def get_client_docker() -> docker.client.DockerClient:
     try:
         return docker.from_env()
     except docker.errors.DockerException:
-        LOG.info("Docker looks not running. Please enable Docker daemon.")
+        LOG.warning("Docker looks not running. Please enable Docker daemon.")
         LOG.info("MSE needs Docker to verify the app trustworthiness.")
         LOG.info("Please refer to the documentation for more details.")
         sys.exit(1)
@@ -228,22 +227,21 @@ def verify_app(mrenclave: Optional[str], ca_data: str):
     try:
         remote_attestation(quote=quote, base_url=MSE_PCCS_URL)
     except Exception as exc:
-        LOG.info("Verification: %sfailure%s", bcolors.FAIL, bcolors.ENDC)
+        LOG.error("Verification failed!")
         raise exc
 
     if mrenclave:
         if quote.report_body.mr_enclave != bytes.fromhex(mrenclave):
-            LOG.info("Verification: %sfailure%s", bcolors.FAIL, bcolors.ENDC)
+            LOG.error("Verification failed!")
             raise Exception(
                 "Code fingerprint is wrong "
                 f"(read {bytes(quote.report_body.mr_enclave).hex()} "
                 f"but should be {mrenclave})")
     else:
-        LOG.info("%sCode fingerprint check skipped!%s", bcolors.WARNING,
-                 bcolors.ENDC)
+        LOG.warning("Code fingerprint check skipped!")
 
     if quote.report_body.mr_signer != mrsigner:
-        LOG.info("Verification: %sfailure%s", bcolors.FAIL, bcolors.ENDC)
+        LOG.error("Verification failed!")
         raise Exception("Enclave signer is wrong "
                         f"(read {bytes(quote.report_body.mr_signer).hex()} "
                         f"but should be {bytes(mrsigner).hex()})")

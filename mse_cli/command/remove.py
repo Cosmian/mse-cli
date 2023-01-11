@@ -8,7 +8,6 @@ from mse_cli.api.app import remove
 from mse_cli.conf.context import Context
 from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
-from mse_cli.utils.color import bcolors
 
 
 def add_subparser(subparsers):
@@ -38,5 +37,4 @@ def run(args) -> None:
     # Remove the context file
     Context.clean(args.app_uuid, ignore_errors=True)
 
-    LOG.info("✅ %sApplication successfully removed%s", bcolors.OKGREEN,
-             bcolors.ENDC)
+    LOG.success("Application successfully removed%s")  # type: ignore

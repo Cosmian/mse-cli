@@ -159,7 +159,7 @@ class Context(BaseModel):
 
     @property
     def workspace(self) -> Path:
-        """Get the workspace path and create it."""
+        """Get the workspace path."""
         return self._workspace
 
     @staticmethod

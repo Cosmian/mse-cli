@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any, Dict, Optional
 import toml
 from cryptography import x509
 from cryptography.x509.extensions import SubjectAlternativeName
-from pydantic import BaseModel, constr, validator
+from pydantic import BaseModel, PrivateAttr, constr, validator
 
 if TYPE_CHECKING:
     Str255 = str
@@ -72,6 +72,14 @@ class AppConf(BaseModel):
     # Configuration of the ssl
     ssl: Optional[SSLConf] = None
 
+    # Enable untrusted ssl (ignore from pydantic)
+    _untrusted_ssl: bool = PrivateAttr(default=False)
+
+    @property
+    def untrusted_ssl(self) -> bool:
+        """Get the _untrusted_ssl."""
+        return self._untrusted_ssl
+
     @validator('expiration_date', pre=False, always=True)
     # pylint: disable=no-self-argument,unused-argument
     def set_expiration_date(cls, v, values, **kwargs) -> Optional[datetime]:
@@ -112,7 +120,8 @@ class AppConf(BaseModel):
         return f"{self.name}-{self.version}"
 
     @staticmethod
-    def from_toml(path: Optional[Path] = None) -> AppConf:
+    def from_toml(path: Optional[Path] = None,
+                  ignore_ssl: bool = False) -> AppConf:
         """Build a AppConf object from a Toml file."""
         if not path:
             path = Path(os.getcwd()) / "mse.toml"
@@ -122,7 +131,11 @@ class AppConf(BaseModel):
         with open(path, encoding="utf8") as f:
             dataMap = toml.load(f)
 
+            if ignore_ssl:
+                dataMap["ssl"] = None
+
             app = AppConf(**dataMap)
+            app._untrusted_ssl = ignore_ssl  # pylint: disable=protected-access
 
             # Make the app code location path absolute from path.parent and not cwd
             if not app.code.location.is_absolute():
@@ -193,34 +206,21 @@ class AppConf(BaseModel):
 
             toml.dump(dataMap, f)
 
-    def into_payload(self, untrusted_ssl: bool = False) -> Dict[str, Any]:
+    def into_payload(self) -> Dict[str, Any]:
         """Convert it into a mse-backend payload as a dict."""
         d = self.expiration_date.astimezone(tz=timezone.utc).strftime(
             "%Y-%m-%dT%H:%M:%S.%fZ") if self.expiration_date else None
 
         return {
-            "name":
-                self.name,
-            "version":
-                self.version,
-            "project":
-                self.project,
-            "dev_mode":
-                untrusted_ssl,
-            "healthcheck_endpoint":
-                self.code.healthcheck_endpoint,
-            "python_application":
-                self.code.python_application,
-            "expires_at":
-                d,
-            "ssl_certificate":
-                self.ssl.certificate
-                if not untrusted_ssl and self.ssl else None,
-            "domain_name":
-                self.ssl.domain_name
-                if not untrusted_ssl and self.ssl else None,
-            "plan":
-                self.plan,
-            "docker":
-                self.code.docker,
+            "name": self.name,
+            "version": self.version,
+            "project": self.project,
+            "dev_mode": self.untrusted_ssl,
+            "healthcheck_endpoint": self.code.healthcheck_endpoint,
+            "python_application": self.code.python_application,
+            "expires_at": d,
+            "ssl_certificate": self.ssl.certificate if self.ssl else None,
+            "domain_name": self.ssl.domain_name if self.ssl else None,
+            "plan": self.plan,
+            "docker": self.code.docker,
         }  # Do not send the private_key or code location

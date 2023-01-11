@@ -5,7 +5,6 @@ from pathlib import Path
 from mse_cli.conf.app import AppConf
 from mse_cli.command.helpers import get_client_docker
 from mse_cli.log import LOGGER as LOG
-from mse_cli.utils.color import bcolors
 
 
 def add_subparser(subparsers):
@@ -36,10 +35,10 @@ def run(args) -> None:
         client.images.pull(app.code.docker)
 
     LOG.info("You can stop the test at any time by typing CTRL^C")
-    LOG.info(
-        "%sFrom another terminal, you can now run: "
-        "`curl http://localhost:5000%s` or `pytest`%s", bcolors.OKBLUE,
-        app.code.healthcheck_endpoint, bcolors.ENDC)
+    LOG.advice(  # type: ignore
+        "From another terminal, you can now run: "
+        "`curl http://localhost:5000%s` or `pytest`",
+        app.code.healthcheck_endpoint)
 
     command = ["--application", app.code.python_application, "--debug"]
 
