@@ -159,8 +159,6 @@ def compute_mr_enclave(context: Context, tar_path: Path) -> str:
             'bind': '/tmp/cert.pem',
             'mode': 'rw'
         }
-    elif context.instance.ssl_certificate_origin == SSLCertificateOrigin.Operator:
-        command.append("--no-ssl")
     else:
         command.append("--self-signed")
         command.append(str(int(datetime.timestamp(
