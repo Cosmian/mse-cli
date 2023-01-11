@@ -27,4 +27,4 @@ def run(args) -> None:
 
     stop_app(user_conf.get_connection(), args.app_uuid)
 
-    LOG.success("App gracefully stopped!")  # type: ignore
+    LOG.success("App gracefully stopped")  # type: ignore

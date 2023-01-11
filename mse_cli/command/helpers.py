@@ -33,7 +33,7 @@ def get_client_docker() -> docker.client.DockerClient:
     try:
         return docker.from_env()
     except docker.errors.DockerException:
-        LOG.warning("Docker looks not running. Please enable Docker daemon.")
+        LOG.warning("Docker seems not running. Please enable Docker daemon.")
         LOG.info("MSE needs Docker to verify the app trustworthiness.")
         LOG.info("Please refer to the documentation for more details.")
         sys.exit(1)
