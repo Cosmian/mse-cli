@@ -1,7 +1,7 @@
-You can log out from `mse-ctl`:
+You can log out from `mse`:
 
 ```console
-$ mse-ctl logout
+$ mse logout
 You are now logged out.
 ```
 

@@ -2,9 +2,6 @@ TODO.md
 .vscode/
 .idea/
 .python-version
-examples/services
-examples/contexts
-my_first_app
 .env*
 
 # Byte-compiled / optimized / DLL files

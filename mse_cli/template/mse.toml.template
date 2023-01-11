@@ -1,0 +1,10 @@
+name = "{{ name }}"
+version = "0.1.0"
+project = "default"
+plan = "free"
+
+[code]
+location = "mse_src"
+docker = "{{ docker }}"
+python_application = "app:app"
+healthcheck_endpoint = "/health"

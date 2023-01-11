@@ -12,11 +12,11 @@ The TLS connection is specific to each scenario:
 **App owner trust approach**
 ![](./images/use-app-owner-trust.png)
 
-**Any trust approach**
+**Application deployed using `--untrusted-ssl`**
 ![](./images/use-any-trust.png)
 
 
-In *App owner trust approach* and *Any trust approach* the user trusts the app owner. Therefore, the user does not need to verify the MSE app. So, the user can use the app as if it is running inside a classic cloud. 
+In all scenarios but *Zero trust approach* the user trusts the app owner. Therefore, the user does not need to verify the MSE app. So, the user can use the app as if it is running inside a classic cloud. 
 
 ```console
 $ curl https://my_app.cosmian.app/
@@ -47,14 +47,14 @@ $ curl https://my_app.cosmian.app/ --cacert verified_cert.pem
 
 For more details about this step, read [security](security.md).
 
-This verification can be done using: `mse-ctl verify`: 
+This verification can be done using: `mse verify`: 
 
 - code fingerprint can be checked against a fingerprint provided by the app owner, with `--fingerprint FINGERPRINT`
 - code fingerprint can be computed by the user on their own, with the options `--context` and `--code`. The context file and the plain text code must be provided by the app owner to the user by their own means. See [the context subcommand](subcommand/context.md#export).
 - the verification of the code fingerprint can be omitted with `--skip-fingerprint`
 
 ```console
-$ mse-ctl verify my_app.cosmian.app
+$ mse verify my_app.cosmian.app
 Checking your app...
 Code fingerprint check skipped!
 Verification: success

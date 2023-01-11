@@ -2,7 +2,7 @@
 You can get information about a given application as follow:
 
 ```console
-$ mse-ctl status 4e3f9969-0fb3-45dd-a230-ef7b82d1f283
+$ mse status 4e3f9969-0fb3-45dd-a230-ef7b82d1f283
 
 Microservice
         Name         = float_average
@@ -10,7 +10,7 @@ Microservice
         Domain name  = demo.cosmian.app
         Billing plan = free
         Application  = app:app
-        MSE docker   = ghcr.io/cosmian/mse-pytorch:20230104085621
+        MSE docker   = ghcr.io/cosmian/mse-flask:20230110142022
         Healthcheck  = /
 
 Deployement status
@@ -23,5 +23,3 @@ Deployement status
         Status             = running
         Online since       = 2022-11-17 09:04:34.043340+00:00
 ```
-
-You can also get your application logs (stdout/stderr) adding `--log`.

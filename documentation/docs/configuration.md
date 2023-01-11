@@ -1,5 +1,5 @@
 The configuration of an MSE application is written in a TOML file.
-The `mse.toml` file located in the current directory is used with `mse-ctl deploy` subcommand, you can specify another TOML file with argument `--path` if needed.
+The `mse.toml` file located in the current directory is used with `mse deploy` subcommand, you can specify another TOML file with argument `--path` if needed.
 
 ```{.bash}
 $ cat my_project/mse.toml
@@ -12,8 +12,8 @@ $ cat my_project/mse.toml
    6   │ [code]
    7   │ location = "my_project/code"
    8   │ python_application = "app:app"
-   9   │ health_check_endpoint = "/"
-   10  | docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
+   9   │ healthcheck_endpoint = "/"
+   10  | docker = "ghcr.io/cosmian/mse-flask:20230110142022"
 ───────┴──────────────────────────────
 ```
 
@@ -22,15 +22,14 @@ $ cat my_project/mse.toml
 |      Keys       | Mandatory |            Types            |                                      Description                                      |
 | :-------------: | :-------: | :-------------------------: | :-----------------------------------------------------------------------------------: |
 |      name       |     ✔️     |             str             |              Name of the application. It should be unique per `project`               |
-|     version     |     ✔️     |             str             | Version of the application. Useful if multiple version of the same application exists |
+|     version     |     ✔️     |             str             | Version of the application. Useful if multiple versions of the same application exist |
 |     project     |     ✔️     |      `default` or str       |                    Project name to regroup application for payment                    |
 |      plan       |     ✔️     | `free` or other plans names |                            Plan used for your application                             |
-|       dev       |           | `True` / `False` (default)  |    Developer mode allows to use Cosmian certificate for testing before production     |
 | expiration_date |           |      YY-MM-DD HH/mm/ss      |                 Expiration date (UTC) before the application shutdown                 |
 
 #### Expiration date of the application
 
-The expiration date is tied to the self-signed certificate. When the expiration date is reached, the application will not be available.
+The expiration date is tied to the self-signed certificate. When the expiration date is reached, the application is not available anymore.
 
 If the plan is `free` then the expiration date will be overwritten to **1  day**.
 
@@ -39,35 +38,34 @@ In case the SSL certificate is provided by the application owner, this value sho
 If no `expiration_date` is specified in the configuration file, the expiration date of the application is the expiration date of the certificate.
 Otherwise, it takes the value inherited from the chosen plan.
 
-In dev mode, the expiratation date is not used because the certificate is the one provided by Cosmian.
-
 ### Code section
 
-|         Keys          | Mandatory | Types |                                          Description                                           |
-| :-------------------: | :-------: | :---: | :--------------------------------------------------------------------------------------------: |
-|       location        |     ✔️     |  str  |                          Relative path to the application code folder                          |
-|        docker         |     ✔️     |  str  |                                  URL to the mse docker to run                                  |
-|  python_application   |     ✔️     |  str  |                                module_name:flask_variable_name                                 |
-| health_check_endpoint |     ✔️     |  str  | `GET` endpoint to check if the application is ready. This endpoint should be unauthenticated. |
+|         Keys         | Mandatory |         Types         |                                                      Description                                                      |
+| :------------------: | :-------: | :-------------------: | :-------------------------------------------------------------------------------------------------------------------: |
+|       location       |     ✔️     |          str          |                                     Relative path to the application code folder                                      |
+|        docker        |     ✔️     |          str          | URL to the mse docker to run. It could be a local docker to run local test but it must be a remote url when deploying |
+|  python_application  |     ✔️     |          str          |                                            module_name:flask_variable_name                                            |
+| healthcheck_endpoint |     ✔️     | str starting with a '/' |             `GET` endpoint to check if the application is ready. This endpoint should be unauthenticated.             |
 
 #### MSE docker
 
-The MSE docker parameter defines which docker image will run in the MSE node. *Cosmian* offers one docker: 
+The MSE docker parameter defines which docker image will run in the MSE node. *Cosmian* offers several dockers (use the tag with the most recent date): 
 
-- [ghcr.io/cosmian/mse-pytorch:20230104085621](https://github.com/Cosmian/mse-docker-pytorch/pkgs/container/mse-pytorch). This docker contains plenty of flask and machine learning dependencies.
+- [mse-flask](https://github.com/Cosmian/mse-docker-flask/pkgs/container/mse-flask): this docker contains plenty of flask dependencies.
+- [mse-pytorch](https://github.com/Cosmian/mse-docker-pytorch/pkgs/container/mse-pytorch): this docker contains plenty of flask and machine learning dependencies.
 
-You can test that your code properly runs inside this docker using [`mse-ctl test`](subcommand/test.md).
+You can test your code properly runs inside this docker using [`mse test`](subcommand/test.md).
 
-If you need to install other dependencies, you can create a new docker from [ghcr.io/cosmian/mse-base:20230104084742](https://github.com/Cosmian/mse-docker-base). 
+If you need to install other dependencies, you can create a new docker by forking [mse-docker-flask](https://github.com/Cosmian/mse-docker-flask). 
 This docker will be allowed to be started in an MSE architecture after a review by a *Cosmian* member. To do so, please contact tech@cosmian.com and provide your `Dockerfile` and the link to your docker image.
 
-Note that, the `requirements.txt` from your source code directory won't be read. Your dependencies must be installed in this docker.
+Note that, the `requirements.txt` from your source code directory will still be read when the docker will run. We strongly recommand to put all your requirements into the docker and remove the `requirements.txt` from your source code.
 
 
 ### SSL section
 
 Needed if you want to use your own custom domain name. 
-For more information, see [scenarii](scenarii.md).
+For more information, see [scenarii](scenarios.md).
 
 |    Keys     | Mandatory | Types |                                                 Description                                                  |
 | :---------: | :-------: | :---: | :----------------------------------------------------------------------------------------------------------: |
@@ -79,7 +77,7 @@ For more information, see [scenarii](scenarii.md).
 
 Here is the procedure to generate the certificate with *LetsEncrypt* (e.g. *example.domain.com*).
 
-1. In your DNS provider interface, register a `CNAME` field *example.domain.com* to the Cosmian proxy `proxy.mse.cosmian.com`. This registration must be effective before running `mse-ctl deploy`.
+1. In your DNS provider interface, register a `CNAME` field *example.domain.com* to the Cosmian proxy `proxy.mse.cosmian.com`. This registration must be effective before running `mse deploy`.
 2. To generate a certificate, the DNS-001 challenge will be used. With `certbot` run:
 ```{.console}
 $ sudo certbot certonly -d example.domain.com --manual --preferred-challenges dns -m tech@domain.com --agree-tos
@@ -120,4 +118,4 @@ These files will be updated when the certificate renews.
 ```
 
 3. A DNS `TXT` record should be registered under a given name in your DNS provider interface. After doing that, the certificate will be generated. Delete this record at the end of the process.
-4. Read the two PEM files and create your own `ssl` section in the MSE configuration file. You are now ready to deploy your app using: `mse-ctl deploy`.
+4. Read the two PEM files and create your own `ssl` section in the MSE configuration file. You are now ready to deploy your app using: `mse deploy`.

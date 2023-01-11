@@ -6,9 +6,9 @@ from pathlib import Path
 from uuid import UUID
 from datetime import datetime
 
-from mse_ctl.api.types import SSLCertificateOrigin
-from mse_ctl.conf.app import AppConf, CodeConf, SSLConf
-from mse_ctl.conf.context import Context, ContextConf, ContextInstance
+from mse_cli.api.types import SSLCertificateOrigin
+from mse_cli.conf.app import AppConf, CodeConf, SSLConf
+from mse_cli.conf.context import Context, ContextConf, ContextInstance
 
 
 def test_from_toml():
@@ -22,7 +22,7 @@ def test_from_toml():
             name="helloworld",
             version="1.0.0",
             project="default",
-            code_sealed_key=
+            code_secret_key=
             "a389f8baf2e03cebd445d99f03600b29ca259faa9a3964e529c03effef206135",
             docker="ghcr.io/cosmian/mse-pytorch:20230104085621",
             python_application="app:app",
@@ -47,7 +47,7 @@ def test_from_app_conf():
 
     code = CodeConf(location="/tmp/code",
                     python_application="app:app",
-                    health_check_endpoint="/",
+                    healthcheck_endpoint="/",
                     docker="ghcr.io/cosmian/mse-pytorch:20230104085621")
 
     ssl = SSLConf(domain_name="demo.cosmian.app",
@@ -68,7 +68,7 @@ def test_from_app_conf():
         config=ContextConf(name="helloworld",
                            version="1.0.0",
                            project="default",
-                           code_sealed_key=conf.config.code_sealed_key,
+                           code_secret_key=conf.config.code_secret_key,
                            python_application="app:app",
                            ssl_app_certificate="-----BEGIN CERTIFICATE",
                            docker="ghcr.io/cosmian/mse-pytorch:20230104085621"),
@@ -85,7 +85,7 @@ def test_run():
 
     code = CodeConf(location="/tmp/code",
                     python_application="app:app",
-                    health_check_endpoint="/",
+                    healthcheck_endpoint="/",
                     docker="ghcr.io/cosmian/mse-pytorch:20230104085621")
 
     ssl = SSLConf(domain_name="demo.cosmian.app",
@@ -100,7 +100,7 @@ def test_run():
                            ssl=ssl)
 
     conf = Context.from_app_conf(conf=ref_app_conf)
-    ref_context_conf.config.code_sealed_key = conf.config.code_sealed_key
+    ref_context_conf.config.code_secret_key = conf.config.code_secret_key
     conf.run(
         uuid=UUID("d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e"),
         enclave_size=1,
@@ -146,5 +146,5 @@ def test_path():
     assert conf.encrypted_code_path.exists()
     assert conf.tar_code_path == workspace / "code.tar"
     assert conf.path == Path(
-        "~/.config/mse-ctl/context/d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e/context.mse"
+        "~/.config/mse/context/d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e/context.mse"
     ).expanduser()

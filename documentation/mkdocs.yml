@@ -47,16 +47,19 @@ extra_javascript:
   - javascripts/extra.js
 nav:
   - Getting started: getting_started.md
-  - Configuration: configuration.md
-  - Advanced options:
+  - App Configuration: configuration.md
+  - Command Line:
       - Context: subcommand/context.md
       - Init: subcommand/init.md
       - List: subcommand/list.md
+      - Logout: subcommand/logout.md
+      - Logs: subcommand/logs.md
       - Remove: subcommand/remove.md
       - Status: subcommand/status.md
       - Stop: subcommand/stop.md
       - Test: subcommand/test.md
-  - Scenarii: scenarii.md
-  - Security: security.md
-  - Deployment: how_it_works_deploy.md
-  - Usage: how_it_works_use.md
+      - Verify: subcommand/verify.md
+  - Usage Scenarios: scenarios.md
+  - Security Model: security.md
+  - App Deployment Flow: how_it_works_deploy.md
+  - App Usage Flow: how_it_works_use.md

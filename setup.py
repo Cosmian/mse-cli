@@ -5,7 +5,7 @@ import re
 
 from setuptools import setup, find_packages
 
-name = "mse_ctl"
+name = "mse_cli"
 
 version = re.search(
     r"""(?x)
@@ -30,15 +30,21 @@ setup(name=name,
       packages=find_packages(),
       zip_safe=True,
       install_requires=[
-          "requests>=2.28.1,<3.0.0", "cryptography>=38.0.4,<39.0.0",
-          "pyjwt>=2.6.0,<2.7.0", "urllib3>=1.26.13,<1.27.0",
-          "pydantic>=1.10.2,<2.0.0", "toml>=0.10.2,<0.11.0",
-          "docker>=6.0.1,<7.0.0", "intel-sgx-ra>=0.5,<0.6",
-          "mse-lib-crypto>=0.3,<0.4"
+          "cryptography>=38.0.4,<39.0.0",
+          "docker>=6.0.1,<7.0.0",
+          "intel-sgx-ra>=0.5,<0.6",
+          "jinja2>=3.0,<3.1",
+          "mse-lib-crypto>=0.3,<0.4",
+          "pydantic>=1.10.2,<2.0.0",
+          "pyjwt>=2.6.0,<2.7.0",
+          "requests>=2.28.1,<3.0.0",
+          "toml>=0.10.2,<0.11.0",
+          "urllib3>=1.26.13,<1.27.0",
       ],
       entry_points={
-          "console_scripts": ["mse-ctl = mse_ctl.main:main"],
+          "console_scripts": ["mse = mse_cli.main:main"],
       },
+      package_data={"mse_cli": ['template/*', 'template/**/*']},
       tests_require=["pytest>=7.2.0,<7.3.0"],
       classifiers=[
           "Development Status :: 5 - Production/Stable",

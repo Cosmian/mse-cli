@@ -6,15 +6,15 @@ from pathlib import Path
 
 import pytest
 
-from mse_ctl.cli.deploy import run as run_deploy
-from mse_ctl.cli.verify import run as run_verify
-from mse_ctl.cli.status import run as run_status
-from mse_ctl.cli.list_all import run as run_list
-from mse_ctl.cli.stop import run as run_stop
-from mse_ctl.cli.remove import run as run_remove
-from mse_ctl.cli.scaffold import run as run_scaffold
-from mse_ctl.cli.context import run as run_context
-from conftest import capture_logs
+from mse_cli.command.deploy import run as run_deploy
+from mse_cli.command.verify import run as run_verify
+from mse_cli.command.status import run as run_status
+from mse_cli.command.logs import run as run_logs
+from mse_cli.command.list_all import run as run_list
+from mse_cli.command.stop import run as run_stop
+from mse_cli.command.remove import run as run_remove
+from mse_cli.command.scaffold import run as run_scaffold
+from mse_cli.command.context import run as run_context
 
 
 @pytest.mark.slow
@@ -24,7 +24,18 @@ def test_status_bad_uuid(cmd_log):
         run_status(
             Namespace(**{
                 "app_uuid": "00000000-0000-0000-0000-000000000000",
-                "log": False
+            }))
+
+    assert "Cannot find the app with UUID " in str(exception.value)
+
+
+@pytest.mark.slow
+def test_logs_bad_uuid(cmd_log):
+    """Test status with the error: valid id but no exists."""
+    with pytest.raises(Exception) as exception:
+        run_logs(
+            Namespace(**{
+                "app_uuid": "00000000-0000-0000-0000-000000000000",
             }))
 
     assert "Cannot find the app with UUID " in str(exception.value)
@@ -133,7 +144,11 @@ def test_deploy_non_free(cmd_log):
                 **{
                     "path":
                         Path(__file__).parent / "data" / "non_free_plan.toml",
-                    "force":
+                    "y":
+                        False,
+                    "no_verify":
+                        False,
+                    "untrusted_ssl":
                         False
                 }))
 
@@ -150,7 +165,11 @@ def test_deploy_bad_projet_name(cmd_log):
                     "path":
                         Path(__file__).parent / "data" /
                         "bad_project_name.toml",
-                    "force":
+                    "y":
+                        False,
+                    "no_verify":
+                        False,
+                    "untrusted_ssl":
                         False
                 }))
 
@@ -167,7 +186,11 @@ def test_deploy_bad_app(cmd_log):
                     "path":
                         Path(__file__).parent / "data" /
                         "bad_python_application.toml",
-                    "force":
+                    "y":
+                        False,
+                    "no_verify":
+                        False,
+                    "untrusted_ssl":
                         False
                 }))
 
@@ -182,7 +205,9 @@ def test_deploy_bad_docker(cmd_log):
             Namespace(
                 **{
                     "path": Path(__file__).parent / "data" / "bad_docker.toml",
-                    "force": False
+                    "y": False,
+                    "no_verify": False,
+                    "untrusted_ssl": False
                 }))
 
     assert "Docker ghcr.io/cosmian/mse-pytorch:notexist is not approved or supported yet." in str(
@@ -199,7 +224,11 @@ def test_deploy_latest_docker(cmd_log):
                     "path":
                         Path(__file__).parent / "data" /
                         "bad_docker_latest.toml",
-                    "force":
+                    "y":
+                        False,
+                    "no_verify":
+                        False,
+                    "untrusted_ssl":
                         False
                 }))
 

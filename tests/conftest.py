@@ -2,7 +2,7 @@ import logging
 import pytest
 
 import io
-from mse_ctl.log import setup_logging, LOGGER as LOG
+from mse_cli.log import setup_logging, LOGGER as LOG
 
 # cmd_log_str should be shared between all tests (to not close by any tests)
 cmd_log_str = None

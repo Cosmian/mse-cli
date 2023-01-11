@@ -14,12 +14,12 @@ The deployment is breaking down into two stages:
 - The second one consists in interacting right with the spawned MSE node
   ![](./images/deploy-stage-2.png)
 
-When you use `mse-ctl deploy` these two stages are merged into this single subcommand.
+When you use `mse deploy` these two stages are merged into this single subcommand.
 
 
 ## Deployment process
 
-Let's describe in a deeper way what happens when the *app owner* uses: `mse-ctl deploy`.
+Let's describe in a deeper way what happens when the *app owner* uses: `mse deploy`.
 
 ![](./images/deploy-process.png)
 
@@ -29,7 +29,7 @@ In stage 1, because the TLS connection between the app owner and Cosmian are man
 
 The cryptography specifications are explained [here](security.md).
 
-All the [scenarii](./scenarii.md) proceed that way. 
+All the [scenarii](./scenarios.md) proceed that way. 
 
 ### MSE instance verification
 
@@ -39,7 +39,9 @@ Between stage 1 and stage 2, the app owner should verify the MSE app, that is to
 - check that this **enclave belongs to Cosmian**
 - check that the **code is exactly theirs**
 
-If not, the app owner shouldn't proceed with stage 2 (`mse-ctl deploy` won't proceed). The stage 2 consists in sending the secret data which can be done only if we are sure the TLS connection is trusted.
+If not, the app owner shouldn't proceed with stage 2 (`mse deploy` won't proceed). The stage 2 consists in sending the secret data which can be done only if we are sure the TLS connection is trusted.
+
+This stage is skipped when deploying using `--no-verify`.
 
 For more details about this step, read [security](security.md).
 
@@ -49,7 +51,7 @@ At this point, the app owner has sent their encrypted code inside the MSE node a
 Before the application being able to start, the MSE node needs several extra secret parameters:
 
 - The key to decrypt the code
-- The private key of the SSL certificate if the TLS connection of the app is managed by the app owner ([scenario #2](./scenarii.md#app-owner-trust-approach-fully-encrypted-saas))
+- The private key of the SSL certificate if the TLS connection of the app is managed by the app owner ([scenario #2](./scenarios.md#app-owner-trust-approach-fully-encrypted-saas))
 
 Both these parameters are sent straight to the MSE node using the dedicated TLS connection managed by the enclave. Therefore, only the MSE app can decrypt the app code previously sent.
 
