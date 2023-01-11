@@ -8,7 +8,6 @@ App name: test
 App version: 1.0.0
 Project name [default]: 
 Plan id [free]: 
-Enable dev mode (yes/[no]): 
 Docker url [ghcr.io/cosmian/mse-flask:20230110142022]: 
 Code location: .
 Python application [app:app]: 

@@ -28,4 +28,4 @@ def run(_args) -> None:
     if login_file.exists():
         os.remove(login_file)
 
-    LOG.info("You are now logged out.")
+    LOG.success("You are now logged out.")  # type: ignore

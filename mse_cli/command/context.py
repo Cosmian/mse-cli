@@ -49,8 +49,7 @@ def run(args) -> None:
     if args.remove:
         LOG.info("Removing context %s...", args.remove)
         Context.clean(args.remove)
-        LOG.info("✅%sContext successfully removed%s", bcolors.OKGREEN,
-                 bcolors.ENDC)
+        LOG.success("Context successfully removed")  # type: ignore
 
     if args.list:
         for path in ls(Context.get_root_dirpath()):
@@ -68,8 +67,7 @@ def run(args) -> None:
     if args.purge:
         LOG.info("Removing all contexts...")
         shutil.rmtree(Context.get_root_dirpath())
-        LOG.info("✅%sAll context successfully removed%s", bcolors.OKGREEN,
-                 bcolors.ENDC)
+        LOG.success("All context successfully removed")  # type: ignore
 
     if args.export:
         uuid: UUID = args.export
@@ -82,5 +80,4 @@ def run(args) -> None:
 
         LOG.info("Exporting context to %s...", target_filename)
         shutil.copyfile(context_path, target_filename)
-        LOG.info("✅%sContext successfully exported%s", bcolors.OKGREEN,
-                 bcolors.ENDC)
+        LOG.success("Context successfully exported")  # type: ignore

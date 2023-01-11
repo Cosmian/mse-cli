@@ -18,7 +18,6 @@ from mse_cli.conf.app import AppConf
 from mse_cli.conf.context import Context
 from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
-from mse_cli.utils.color import bcolors
 from mse_cli.utils.spinner import Spinner
 
 
@@ -56,7 +55,7 @@ def add_subparser(subparsers):
 def run(args) -> None:
     """Run the subcommand."""
     user_conf = UserConf.from_toml()
-    app_conf = AppConf.from_toml(path=args.path)
+    app_conf = AppConf.from_toml(path=args.path, ignore_ssl=args.untrusted_ssl)
     conn = user_conf.get_connection()
 
     if not args.no_verify:
@@ -67,14 +66,12 @@ def run(args) -> None:
         return
 
     if args.untrusted_ssl:
-        LOG.info(
-            "⚠️%s This app runs in untrusted-ssl mode with an operator certificate. "
+        LOG.warning(
+            "This app runs in untrusted-ssl mode with an operator certificate. "
             "The operator may access all communications with the app. "
-            "See Documentation > Security Model for more details.%s",
-            bcolors.WARNING, bcolors.ENDC)
+            "See Documentation > Security Model for more details.")
         if app_conf.ssl:
-            LOG.info("%sSSL conf paragraph is ignored.%s", bcolors.WARNING,
-                     bcolors.ENDC)
+            LOG.warning("SSL conf paragraph is ignored.%s")
 
     (enclave_size, cores) = get_enclave_resources(conn, app_conf.plan)
     context = Context.from_app_conf(app_conf)
@@ -84,28 +81,27 @@ def run(args) -> None:
     (tar_path, nonces) = prepare_code(app_conf.code.location, context)
 
     LOG.info("Deploying your app...")
-    app = deploy_app(conn, app_conf, tar_path, args.untrusted_ssl)
+    app = deploy_app(conn, app_conf, tar_path)
 
     LOG.info(
         "App %s creating for %s:%s with %dM EPC memory and %.2f CPU cores...",
         app.uuid, app.name, app.version, enclave_size, cores)
 
-    LOG.info("%sYou can now run `mse logs %s` if necessary%s", bcolors.OKBLUE,
-             app.uuid, bcolors.ENDC)
+    LOG.advice(  # type: ignore
+        "You can now run `mse logs %s` if necessary", app.uuid)
 
     app = wait_app_creation(conn, app.uuid)
 
     context.run(app.uuid, enclave_size, app.config_domain_name, app.expires_at,
                 app.ssl_certificate_origin, nonces)
 
-    LOG.info("✅%s App created!%s", bcolors.OKGREEN, bcolors.ENDC)
+    LOG.success("App created!")  # type: ignore
 
     if app.ssl_certificate_origin == SSLCertificateOrigin.Owner:
-        LOG.info(
-            "⚠️% sThis app runs with an app owner certificate. "
+        LOG.warning(
+            "This app runs with an app owner certificate. "
             "The app provider may decrypt all communications with the app. "
-            "See Documentation > Security Model for more details.%s",
-            bcolors.WARNING, bcolors.ENDC)
+            "See Documentation > Security Model for more details.")
 
     selfsigned_cert = get_certificate(app.config_domain_name)
     context.config_cert_path.write_text(selfsigned_cert)
@@ -115,16 +111,15 @@ def run(args) -> None:
         mr_enclave = compute_mr_enclave(context, tar_path)
         LOG.info("The code fingerprint is %s", mr_enclave)
         verify_app(mr_enclave, selfsigned_cert)
-        LOG.info("Verification: %ssuccess%s", bcolors.OKGREEN, bcolors.ENDC)
+        LOG.success("Verification success")  # type: ignore
 
         if app.ssl_certificate_origin == SSLCertificateOrigin.Self:
-            LOG.info("✅%s The verified certificate has been saved at: %s%s",
-                     bcolors.OKGREEN, context.config_cert_path, bcolors.ENDC)
+            LOG.info("The verified certificate has been saved at: %s",
+                     context.config_cert_path)
     else:
-        LOG.info(
-            "⚠️%s App trustworthiness checking skipped. The app integrity has "
-            "not been checked and shouldn't be used in production mode!%s",
-            bcolors.WARNING, bcolors.ENDC)
+        LOG.warning(
+            "App trustworthiness checking skipped. The app integrity has "
+            "not been checked and shouldn't be used in production mode!")
 
     LOG.info("Sending secret key and decrypting the application code...")
     decrypt_private_data(
@@ -135,28 +130,26 @@ def run(args) -> None:
     app = wait_app_start(conn, app.uuid)
 
     LOG.info("Your application is now fully deployed and started...")
-    LOG.info(
-        "✅%s It's now ready to be used on https://%s until %s%s. "
-        "The application will be automatically stopped after this date.",
-        bcolors.OKGREEN, app.domain_name, app.expires_at.astimezone(),
-        bcolors.ENDC)
+    LOG.success(  # type: ignore
+        "It's now ready to be used on https://%s until %s", app.domain_name,
+        app.expires_at.astimezone())
+    LOG.info("The application will be automatically stopped after this date.")
 
     context.save()
 
-    LOG.info(
+    LOG.advice(  # type: ignore
         "The context of this creation can be retrieved using "
         "`mse context --export %s`", app.uuid)
 
     if app.ssl_certificate_origin == SSLCertificateOrigin.Self:
-        LOG.info(
-            "%sYou can now quickly test your application doing: `curl https://%s%s "
-            "--cacert %s`%s", bcolors.OKBLUE, app.domain_name,
-            app.healthcheck_endpoint, context.config_cert_path, bcolors.ENDC)
+        LOG.advice(  # type: ignore
+            "You can now quickly test your application doing: `curl https://%s%s "
+            "--cacert %s`", app.domain_name, app.healthcheck_endpoint,
+            context.config_cert_path)
     else:
-        LOG.info(
-            "%sYou can now quickly test your application doing: `curl https://%s%s`%s",
-            bcolors.OKBLUE, app.domain_name, app.healthcheck_endpoint,
-            bcolors.ENDC)
+        LOG.advice(  # type: ignore
+            "You can now quickly test your application doing: `curl https://%s%s`",
+            app.domain_name, app.healthcheck_endpoint)
 
 
 def wait_app_start(conn: Connection, uuid: UUID) -> App:
@@ -227,15 +220,9 @@ def check_app_conf(conn: Connection,
     return True
 
 
-def deploy_app(conn: Connection,
-               app_conf: AppConf,
-               tar_path: Path,
-               untrusted_ssl: bool = False) -> App:
+def deploy_app(conn: Connection, app_conf: AppConf, tar_path: Path) -> App:
     """Deploy the app to a MSE node."""
-    r: requests.Response = new(conn=conn,
-                               conf=app_conf,
-                               code_tar_path=tar_path,
-                               untrusted_ssl=untrusted_ssl)
+    r: requests.Response = new(conn=conn, conf=app_conf, code_tar_path=tar_path)
 
     if not r.ok:
         raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")

@@ -10,7 +10,6 @@ from mse_cli.command.helpers import non_empty_string
 from mse_cli.conf.app import AppConf
 from mse_cli.log import LOGGER as LOG
 from mse_cli import MSE_DEFAULT_DOCKER
-from mse_cli.utils.color import bcolors
 
 
 def add_subparser(subparsers):
@@ -74,11 +73,13 @@ def run(args) -> None:
     pytest_file.write_text(content)
     template_pytest_file.unlink()
 
-    LOG.info("An example app has been generated in the current directory")
-    LOG.info("You can configure your mse application in: %s", conf_file)
+    LOG.success(  # type: ignore
+        "An example app has been generated in the current directory")
+    LOG.warning("You can configure your mse application in: %s", conf_file)
     LOG.info(
-        "%sYou can now test it locally from the '%s/' directory using: `mse test` "
-        "then `pytest`%s", bcolors.OKBLUE, args.app_name, bcolors.ENDC)
-    LOG.info("%sOr deploy it from the '%s/' directory using: `mse deploy`%s",
-             bcolors.OKBLUE, args.app_name, bcolors.ENDC)
+        "You can now test it locally from the '%s/' directory using: `mse test` "
+        "then `pytest`", args.app_name)
+    LOG.advice(  # type: ignore
+        "Or deploy it from the '%s/' directory using: `mse deploy`",
+        args.app_name)
     LOG.info("Refer to the '%s/README.md' for more details", args.app_name)

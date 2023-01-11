@@ -43,4 +43,4 @@ def run(args) -> None:
         LOG.info("")
         LOG.info(logs["stdout"])
     else:
-        LOG.info("Application has been removed!")
+        LOG.error("Application has been removed!")

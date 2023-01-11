@@ -5,7 +5,6 @@ import uuid
 from mse_cli.command.helpers import stop_app
 from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
-from mse_cli.utils.color import bcolors
 
 
 def add_subparser(subparsers):
@@ -28,4 +27,4 @@ def run(args) -> None:
 
     stop_app(user_conf.get_connection(), args.app_uuid)
 
-    LOG.info("✅ %sApp gracefully stopped!%s", bcolors.OKGREEN, bcolors.ENDC)
+    LOG.success("App gracefully stopped")  # type: ignore

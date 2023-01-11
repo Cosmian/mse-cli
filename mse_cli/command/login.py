@@ -19,7 +19,6 @@ from mse_cli.api.types import User
 from mse_cli.api.user import me as get_me
 from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
-from mse_cli.utils.color import bcolors
 
 CODE: Optional[str] = None
 
@@ -94,7 +93,7 @@ def run(args) -> None:
         try:
             user_conf = UserConf.from_toml()
         except FileNotFoundError:
-            LOG.info("You are not logged in yet!")
+            LOG.error("You are not logged in yet!")
             return
 
         LOG.info("Your are currently logged in as: %s", user_conf.email)
@@ -102,10 +101,8 @@ def run(args) -> None:
         try:
             me = get_user_info(user_conf)
         except NameError:
-            LOG.info(
-                "%sDon't forget to verify your email and "
-                "complete your profile before going on%s", bcolors.WARNING,
-                bcolors.ENDC)
+            LOG.warning("Don't forget to verify your email and "
+                        "complete your profile before going on")
         return
 
     # Before processing the login, let's check if the user is already logged in
@@ -114,10 +111,8 @@ def run(args) -> None:
         try:
             _ = get_user_info(user_conf)
         except NameError:
-            LOG.info(
-                "%sDon't forget to verify your email and "
-                "complete your profile before going on%s", bcolors.WARNING,
-                bcolors.ENDC)
+            LOG.warning("Don't forget to verify your email and "
+                        "complete your profile before going on")
         LOG.info("Your are already logged in as: %s", user_conf.email)
         return
 
@@ -174,8 +169,7 @@ def run(args) -> None:
     user = UserConf(email=id_token["email"], refresh_token=js["refresh_token"])
     user.save()
 
-    LOG.info("✅%s Successfully logged in as %s%s", bcolors.OKGREEN, user.email,
-             bcolors.ENDC)
+    LOG.success("Successfully logged in as %s", user.email)  # type: ignore
 
     LOG.info("Your refresh token is now saved into: %s", UserConf.path())
 
@@ -184,12 +178,11 @@ def run(args) -> None:
         LOG.info("Welcome back to Microservice Encryption %s", me.first_name)
     except NameError:
         LOG.info("\nWelcome to Microservice Encryption.")
-        LOG.info(
-            "You can use the scaffold subcommand to initialize a new project.")
-        LOG.info(
-            "%sDon't forget to verify your email and "
-            "complete your profile before going on%s", bcolors.WARNING,
-            bcolors.ENDC)
+        LOG.advice(  # type: ignore
+            "You can use `mse scaffold <app_name>` to initialize a new application."
+        )
+        LOG.warning("Don't forget to verify your email and "
+                    "complete your profile before going on")
 
 
 def get_user_info(user: UserConf) -> User:
