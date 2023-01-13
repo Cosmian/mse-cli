@@ -19,13 +19,16 @@ $ cat my_project/mse.toml
 
 ### Main section
 
-|      Keys       | Mandatory |            Types            |                                      Description                                      |
-| :-------------: | :-------: | :-------------------------: | :-----------------------------------------------------------------------------------: |
-|      name       |     ✔️     |             str             |              Name of the application. It should be unique per `project`               |
-|     version     |     ✔️     |             str             | Version of the application. Useful if multiple versions of the same application exist |
-|     project     |     ✔️     |      `default` or str       |                    Project name to regroup application for payment                    |
-|      plan       |     ✔️     | `free` or other plans names |                            Plan used for your application                             |
-| expiration_date |           |      YY-MM-DD HH/mm/ss      |                 Expiration date (UTC) before the application shutdown                 |
+|      Keys       | Mandatory |            Types            |                                      Description                                       |
+| :-------------: | :-------: | :-------------------------: | :------------------------------------------------------------------------------------: |
+|      name       |     ✔️     |             str             | Name of the application. It should be unique per `project`  for a given version number |
+|     version     |     ✔️     |             str             | Version of the application. Useful if multiple versions of the same application exist  |
+|     project     |     ✔️     |      `default` or str       |                    Project name to regroup application for payment                     |
+|      plan       |     ✔️     | `free` or other plans names |                             Plan used for your application                             |
+| expiration_date |           |      YY-MM-DD HH/mm/ss      |                 Expiration date (UTC) before the application shutdown                  |
+
+
+You can have two applications with the same name belonging to a same project running in a same time if they have a different version number.
 
 #### Expiration date of the application
 
@@ -40,11 +43,11 @@ Otherwise, it takes the value inherited from the chosen plan.
 
 ### Code section
 
-|         Keys         | Mandatory |         Types         |                                                      Description                                                      |
-| :------------------: | :-------: | :-------------------: | :-------------------------------------------------------------------------------------------------------------------: |
-|       location       |     ✔️     |          str          |                                     Relative path to the application code folder                                      |
-|        docker        |     ✔️     |          str          | URL to the mse docker to run. It could be a local docker to run local test but it must be a remote url when deploying |
-|  python_application  |     ✔️     |          str          |                                            module_name:flask_variable_name                                            |
+|         Keys         | Mandatory |          Types          |                                                      Description                                                      |
+| :------------------: | :-------: | :---------------------: | :-------------------------------------------------------------------------------------------------------------------: |
+|       location       |     ✔️     |           str           |                                     Relative path to the application code folder                                      |
+|        docker        |     ✔️     |           str           | URL to the mse docker to run. It could be a local docker to run local test but it must be a remote url when deploying |
+|  python_application  |     ✔️     |           str           |                                            module_name:flask_variable_name                                            |
 | healthcheck_endpoint |     ✔️     | str starting with a '/' |             `GET` endpoint to check if the application is ready. This endpoint should be unauthenticated.             |
 
 #### MSE docker
