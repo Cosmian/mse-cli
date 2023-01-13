@@ -34,7 +34,7 @@ You can have two applications with the same name belonging to a same project run
 
 The expiration date is tied to the self-signed certificate. When the expiration date is reached, the application is not available anymore.
 
-If the plan is `free` then the expiration date will be overwritten to **1  day**.
+If the plan is `free` then the expiration date of the app will be overwritten to **4 hours**.
 
 In case the SSL certificate is provided by the application owner, this value should be lower than the expiration date of the certificate.
 

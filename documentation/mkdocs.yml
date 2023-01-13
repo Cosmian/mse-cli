@@ -54,7 +54,6 @@ nav:
       - List: subcommand/list.md
       - Logout: subcommand/logout.md
       - Logs: subcommand/logs.md
-      - Remove: subcommand/remove.md
       - Status: subcommand/status.md
       - Stop: subcommand/stop.md
       - Test: subcommand/test.md

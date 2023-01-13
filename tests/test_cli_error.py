@@ -12,7 +12,6 @@ from mse_cli.command.status import run as run_status
 from mse_cli.command.logs import run as run_logs
 from mse_cli.command.list_all import run as run_list
 from mse_cli.command.stop import run as run_stop
-from mse_cli.command.remove import run as run_remove
 from mse_cli.command.scaffold import run as run_scaffold
 from mse_cli.command.context import run as run_context
 
@@ -54,7 +53,7 @@ def test_scaffold_bad_name(cmd_log):
 def test_list_bad_project_name(cmd_log):
     """Test list with the error: project name does not exist."""
     with pytest.raises(Exception) as exception:
-        run_list(Namespace(**{"project_name": "notexist"}))
+        run_list(Namespace(**{"project_name": "notexist", "all": False}))
 
     assert "Project notexist does not exist" in str(exception.value)
 
@@ -85,18 +84,6 @@ def test_context_bad_id(cmd_log):
                 }))
 
     assert "Can't find context for UUID" in str(exception.value)
-
-
-@pytest.mark.slow
-def test_remove_bad_uuid(cmd_log):
-    """Test remove with the error: valid id but no exists."""
-    with pytest.raises(Exception) as exception:
-        run_remove(
-            Namespace(**{
-                "app_uuid": "00000000-0000-0000-0000-000000000000",
-            }))
-
-    assert "Cannot find the app with UUID " in str(exception.value)
 
 
 @pytest.mark.slow

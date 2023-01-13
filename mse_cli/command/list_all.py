@@ -22,6 +22,10 @@ def add_subparser(subparsers):
         type=non_empty_string,
         help="name of the project with MSE applications to list")
 
+    parser.add_argument("--all",
+                        action="store_true",
+                        help="also list the stopped apps")
+
 
 def run(args) -> None:
     """Run the subcommand."""
@@ -34,13 +38,16 @@ def run(args) -> None:
 
     LOG.info("Fetching the project %s...", project.uuid)
 
+    status = None
+    if not args.all:
+        status = [
+            AppStatus.Spawning, AppStatus.Initializing, AppStatus.Running,
+            AppStatus.OnError
+        ]
+
     r: requests.Response = list_apps(conn=conn,
                                      project_uuid=project.uuid,
-                                     status=[
-                                         AppStatus.Spawning,
-                                         AppStatus.Initializing,
-                                         AppStatus.Running, AppStatus.OnError
-                                     ])
+                                     status=status)
 
     if not r.ok:
         raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")

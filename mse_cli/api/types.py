@@ -15,7 +15,6 @@ class AppStatus(Enum):
     Initializing = "initializing"
     Running = "running"
     OnError = "on_error"
-    Deleted = "deleted"
     Stopped = "stopped"
 
 
@@ -40,7 +39,6 @@ class App(BaseModel):
     docker: str
     created_at: datetime.datetime
     ready_at: Optional[datetime.datetime]
-    deleted_at: Optional[datetime.datetime]
     stopped_at: Optional[datetime.datetime]
     onerror_at: Optional[datetime.datetime]
     status: AppStatus
@@ -67,6 +65,7 @@ class Project(BaseModel):
     stripe_customer_id: Optional[str]
     stripe_payment_method_id: Optional[str]
     enclave_version: Optional[str]
+    app_count: int
     created_at: datetime.datetime
     deleted_at: Optional[datetime.datetime]
 
@@ -96,6 +95,7 @@ class User(BaseModel):
     first_name: str
     last_name: str
     email: str
+    app_count: int
     created_at: datetime.datetime
 
     @staticmethod

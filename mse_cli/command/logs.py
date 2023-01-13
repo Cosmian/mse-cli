@@ -5,7 +5,6 @@ import uuid
 import requests
 
 from mse_cli.api.app import log as get_app_logs
-from mse_cli.api.types import AppStatus
 from mse_cli.command.helpers import get_app
 from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
@@ -33,14 +32,10 @@ def run(args) -> None:
     conn = user_conf.get_connection()
     app = get_app(conn=conn, uuid=args.app_uuid)
 
-    if app.status != AppStatus.Deleted:
-        r: requests.Response = get_app_logs(conn=conn, uuid=app.uuid)
-        if not r.ok:
-            raise Exception(
-                f"Unexpected response ({r.status_code}): {r.content!r}")
+    r: requests.Response = get_app_logs(conn=conn, uuid=app.uuid)
+    if not r.ok:
+        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
 
-        logs = r.json()
-        LOG.info("")
-        LOG.info(logs["stdout"])
-    else:
-        LOG.error("Application has been removed!")
+    logs = r.json()
+    LOG.info("")
+    LOG.info(logs["stdout"])
