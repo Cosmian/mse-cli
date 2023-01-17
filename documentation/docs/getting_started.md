@@ -116,7 +116,8 @@ python_application = "app:app"
 healthcheck_endpoint = "/health"
 ```
 
-This project also contains a test directory enabling you to test this project locally without any mse consideration:
+This project also contains a test directory enabling you to test this project locally without any MSE consideration.
+Please ensure `flask` is installed locally, before running the following tests:
 
 ```{.console}
 $ cd helloworld
