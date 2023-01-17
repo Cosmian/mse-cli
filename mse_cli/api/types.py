@@ -65,7 +65,6 @@ class Project(BaseModel):
     stripe_customer_id: Optional[str]
     stripe_payment_method_id: Optional[str]
     enclave_version: Optional[str]
-    app_count: int
     created_at: datetime.datetime
     deleted_at: Optional[datetime.datetime]
 
@@ -95,7 +94,6 @@ class User(BaseModel):
     first_name: str
     last_name: str
     email: str
-    app_count: int
     created_at: datetime.datetime
 
     @staticmethod
