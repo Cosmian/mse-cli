@@ -19,13 +19,13 @@ $ cat my_project/mse.toml
 
 ### Main section
 
-|      Keys       | Mandatory |            Types            |                                      Description                                       |
-| :-------------: | :-------: | :-------------------------: | :------------------------------------------------------------------------------------: |
-|      name       |     ✔️     |             str             | Name of the application. It should be unique per `project`  for a given version number |
-|     version     |     ✔️     |             str             | Version of the application. Useful if multiple versions of the same application exist  |
-|     project     |     ✔️     |      `default` or str       |                    Project name to regroup application for payment                     |
-|      plan       |     ✔️     | `free` or other plans names |                             Plan used for your application                             |
-| expiration_date |           |      YY-MM-DD HH/mm/ss      |                 Expiration date (UTC) before the application shutdown                  |
+|      Keys       | Mandatory |            Types            |                                      Description                                      |
+| :-------------: | :-------: | :-------------------------: | :-----------------------------------------------------------------------------------: |
+|      name       |     ✔️     |             str             | Name of the application. It must be unique per `project` for a given version number   |
+|     version     |     ✔️     |             str             | Version of the application. Useful if multiple versions of the same application exist |
+|     project     |     ✔️     |      `default` or str       |                    Project name to regroup applications for payment                   |
+|      plan       |     ✔️     | `free` or other plans names |                             Plan used for your application                            |
+| expiration_date |           |      YY-MM-DD HH/mm/ss      |                 Expiration date (UTC) before the application shutdowns                |
 
 
 You can have two applications with the same name belonging to a same project running in a same time if they have a different version number.
