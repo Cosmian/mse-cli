@@ -25,25 +25,23 @@ def add_subparser(subparsers):
         type=str,
         help="domain name of the MSE web application (e.g. {uuid}.cosmian.app)")
 
-    parser.add_argument("--skip-fingerprint",
-                        action="store_true",
-                        help="do not verify the code fingerprint")
-
     parser.add_argument(
         "--fingerprint",
         type=str,
         metavar="HEXDIGEST",
         help="check the code fingerprint against specific SHA-256 hexdigest")
 
-    parser.add_argument("--context",
-                        type=Path,
-                        metavar="FILE",
-                        help="path to the context file")
+    parser.add_argument(
+        "--context",
+        type=Path,
+        metavar="FILE",
+        help="path to the context file (should be used with --code)")
 
     parser.add_argument("--code",
                         type=Path,
                         metavar="DIR",
-                        help="path to the folder with unencrypted Python code")
+                        help="path to the folder with unencrypted Python code "
+                        "(should be used with --context)")
 
 
 def run(args) -> None:
@@ -51,23 +49,14 @@ def run(args) -> None:
     LOG.info("Checking your app...")
 
     # Check args
-    if args.skip_fingerprint and (args.fingerprint or args.context
-                                  or args.code):
-        print(
-            "[--skip-fingerprint] and [--fingerprint] and [--context & --code] "
-            "are mutually exclusive")
-        return
-
     if args.fingerprint and (args.context or args.code):
-        print(
-            "[--skip-fingerprint] and [--fingerprint] and [--context & --code] "
-            "are mutually exclusive")
+        print("[--fingerprint] and [--context & --code] "
+              "are mutually exclusive")
         return
 
-    if not args.fingerprint and not args.skip_fingerprint:
-        if (args.context and not args.code) or (not args.context and args.code):
-            print("[--context] and [--code] must be used together")
-            return
+    if (args.context and not args.code) or (not args.context and args.code):
+        print("[--context] and [--code] must be used together")
+        return
 
     # Compute MRENCLAVE and decrypt the code if needed
     mrenclave = None

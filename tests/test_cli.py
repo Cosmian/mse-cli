@@ -29,14 +29,12 @@ from mse_cli.conf.context import Context
 from conftest import capture_logs
 
 
-def _test_verify(f, domain_name: str, skip_fingerprint: bool, fingerprint: str,
-                 context: Optional[Path], code: Optional[Path],
-                 is_self_signed: bool) -> Optional[Path]:
+def _test_verify(f, domain_name: str, fingerprint: str, context: Optional[Path],
+                 code: Optional[Path], is_self_signed: bool) -> Optional[Path]:
     """Test the verify subcommand."""
     run_verify(
         Namespace(
             **{
-                "skip_fingerprint": skip_fingerprint,
                 "fingerprint": fingerprint,
                 "context": context,
                 "code": code,
@@ -216,11 +214,11 @@ def _test_mse_cli(f: io.StringIO,
     # Test the verify subcommand
     # Skip MR Enclave computation
     _test_verify(
-        f, domain_name, True, False, None, None,
+        f, domain_name, False, None, None,
         context.instance.ssl_certificate_origin == SSLCertificateOrigin.Self)
     # Give the MR Enclave
     _test_verify(
-        f, domain_name, False, mr_enclave, None, None,
+        f, domain_name, mr_enclave, None, None,
         context.instance.ssl_certificate_origin == SSLCertificateOrigin.Self)
     if context.instance.ssl_certificate_origin == SSLCertificateOrigin.Self:
         # Give a bad MR Enclave
@@ -228,7 +226,6 @@ def _test_mse_cli(f: io.StringIO,
             run_verify(
                 Namespace(
                     **{
-                        "skip_fingerprint": False,
                         "fingerprint": "00000000",
                         "context": None,
                         "code": None,
@@ -239,8 +236,6 @@ def _test_mse_cli(f: io.StringIO,
             run_verify(
                 Namespace(
                     **{
-                        "skip_fingerprint":
-                            False,
                         "fingerprint":
                             None,
                         "context":
@@ -252,8 +247,8 @@ def _test_mse_cli(f: io.StringIO,
                     }))
     # Compute the MR Enclave
     cert_path = _test_verify(
-        f, domain_name, False, False,
-        Context.get_context_filepath(app_uuid, False), app_conf.code.location,
+        f, domain_name, False, Context.get_context_filepath(app_uuid, False),
+        app_conf.code.location,
         context.instance.ssl_certificate_origin == SSLCertificateOrigin.Self)
 
     if context.instance.ssl_certificate_origin == SSLCertificateOrigin.Self:
