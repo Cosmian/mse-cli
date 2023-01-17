@@ -15,7 +15,6 @@ class AppStatus(Enum):
     Initializing = "initializing"
     Running = "running"
     OnError = "on_error"
-    Deleted = "deleted"
     Stopped = "stopped"
 
 
@@ -40,7 +39,6 @@ class App(BaseModel):
     docker: str
     created_at: datetime.datetime
     ready_at: Optional[datetime.datetime]
-    deleted_at: Optional[datetime.datetime]
     stopped_at: Optional[datetime.datetime]
     onerror_at: Optional[datetime.datetime]
     status: AppStatus

@@ -17,7 +17,6 @@ from mse_cli.command.login import run as run_login
 from mse_cli.command.logs import run as run_logs
 from mse_cli.command.list_all import run as run_list
 from mse_cli.command.stop import run as run_stop
-from mse_cli.command.remove import run as run_remove
 from mse_cli.command.scaffold import run as run_scaffold
 from mse_cli.command.context import run as run_context
 
@@ -167,7 +166,7 @@ def _test_logs(f: io.StringIO, app_uuid: UUID, expecting_output: str):
 def _test_list(f: io.StringIO, project_name: str, app_uuid: UUID,
                expecting_result: bool):
     """Test list subcommand."""
-    run_list(Namespace(**{"project_name": project_name}))
+    run_list(Namespace(**{"project_name": project_name, "all": False}))
 
     output = capture_logs(f)
     assert (str(app_uuid) in output) == expecting_result
@@ -285,14 +284,6 @@ def _test_mse_cli(f: io.StringIO,
 
     # Test list subcommand
     _test_list(f, app_conf.project, app_uuid, False)
-
-    # Test remove app
-    run_remove(Namespace(**{"app_uuid": app_uuid}))
-
-    # Test status subcommand
-    with pytest.raises(Exception):
-        _test_status(f, app_uuid, "removed")
-        _test_logs(f, app_uuid, "removed")
 
     f.truncate(0)
 

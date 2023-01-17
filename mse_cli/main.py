@@ -9,7 +9,7 @@ filterwarnings("ignore")  # noqa: E402
 # pylint: disable=wrong-import-position
 import mse_cli
 from mse_cli.command import (context, deploy, init, list_all, login, logout,
-                             logs, remove, scaffold, status, stop, test, verify)
+                             logs, scaffold, status, stop, test, verify)
 from mse_cli.log import setup_logging
 
 
@@ -34,7 +34,6 @@ def main() -> int:
     login.add_subparser(subparsers)
     logout.add_subparser(subparsers)
     logs.add_subparser(subparsers)
-    remove.add_subparser(subparsers)
     scaffold.add_subparser(subparsers)
     status.add_subparser(subparsers)
     stop.add_subparser(subparsers)

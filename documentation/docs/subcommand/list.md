@@ -11,3 +11,4 @@ $ mse list ---name default
 0b41c2a4-470e-4602-99e2-58a6bf7b123d | 2022-11-18 09:47:26.931196+00:00 |   running    | helloworld-1.0.0 on demo.cosmian.app
 ```
 
+You can use `--all` option to also display stopped applications.

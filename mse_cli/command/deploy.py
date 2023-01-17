@@ -167,9 +167,6 @@ def wait_app_start(conn: Connection, uuid: UUID) -> App:
         if app.status == AppStatus.OnError:
             raise Exception(
                 "The app creation stopped because an error occured...")
-        if app.status == AppStatus.Deleted:
-            raise Exception("The app creation stopped because it "
-                            "has been deleted in the meantime...")
         if app.status == AppStatus.Stopped:
             raise Exception("The app creation stopped because it "
                             "has been stopped in the meantime...")
@@ -188,17 +185,17 @@ def check_app_conf(conn: Connection,
         raise Exception(f"Project {app_conf.project} does not exist")
 
     # Check that a same name application is not running yet
-    app = exists_in_project(conn, project.uuid, app_conf.name, [
-        AppStatus.Spawning,
-        AppStatus.Initializing,
-        AppStatus.Running,
-        AppStatus.OnError,
-    ])
+    app = exists_in_project(conn, project.uuid, app_conf.name, app_conf.version,
+                            [
+                                AppStatus.Spawning,
+                                AppStatus.Initializing,
+                                AppStatus.Running,
+                                AppStatus.OnError,
+                            ])
 
     if app:
-        LOG.info(
-            "An application with the same name in that project is already running..."
-        )
+        LOG.info("An application with the same name-version in "
+                 "that project is already running...")
         if force:
             LOG.info("Stopping the previous app (force mode enabled)...")
             stop_app(conn, app.uuid)
@@ -209,6 +206,9 @@ def check_app_conf(conn: Connection,
                 stop_app(conn, app.uuid)
             else:
                 LOG.info("Your deployment has been stopped!")
+                LOG.info(
+                    "Please rename your application or increase the version number"
+                )
                 return False
 
     if not (app_conf.code.location /
@@ -246,9 +246,6 @@ def wait_app_creation(conn: Connection, uuid: UUID) -> App:
         if app.status == AppStatus.OnError:
             raise Exception(
                 "The app creation stopped because an error occured...")
-        if app.status == AppStatus.Deleted:
-            raise Exception("The app creation stopped because it "
-                            "has been deleted in the meantime...")
         if app.status == AppStatus.Stopped:
             raise Exception("The app creation stopped because it "
                             "has been stopped in the meantime...")

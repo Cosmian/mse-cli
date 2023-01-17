@@ -21,13 +21,16 @@ def list_apps(conn: Connection, project_uuid: UUID,
 
 
 def get_app_from_name(conn: Connection, project_uuid: UUID, app_name: str,
+                      version: str,
                       status: Optional[List[AppStatus]]) -> requests.Response:
-    """GET `/projects/{uuid}/apps?name=str?status=s1,s2,s3`."""
+    """GET `/projects/{uuid}/apps?name=str&version=str&status=s1,s2,s3`."""
     return conn.get(
         url=f"/projects/{str(project_uuid)}/apps",
         params={
             'name':
                 app_name,
+            'version':
+                version,
             'status':
                 ','.join(map(lambda s: s.value, status)) if status else None
         })

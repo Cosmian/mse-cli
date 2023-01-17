@@ -15,6 +15,7 @@ from intel_sgx_ra.attest import remote_attestation
 from intel_sgx_ra.ratls import ratls_verification
 from intel_sgx_ra.signer import mr_signer_from_pk
 from mse_lib_crypto.xsalsa20_poly1305 import encrypt_directory
+from mse_cli.utils.spinner import Spinner
 
 from mse_cli import MSE_CERTIFICATES_URL, MSE_PCCS_URL
 from mse_cli.api.app import get, stop
@@ -106,11 +107,13 @@ def prepare_code(
 
 
 def exists_in_project(conn: Connection, project_uuid: UUID, name: str,
+                      version: str,
                       status: Optional[List[AppStatus]]) -> Optional[App]:
     """Say whether the app exists in the project."""
     r: requests.Response = get_app_from_name(conn=conn,
                                              project_uuid=project_uuid,
                                              app_name=name,
+                                             version=version,
                                              status=status)
 
     if not r.ok:
@@ -129,6 +132,16 @@ def stop_app(conn: Connection, app_uuid: UUID) -> None:
 
     if not r.ok:
         raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+
+    spinner = Spinner(3)
+    while True:
+        spinner.wait()
+
+        app = get_app(conn=conn, uuid=app_uuid)
+        if app.status == AppStatus.Stopped:
+            break
+
+    spinner.reset()
 
     # Remove context file
     Context.clean(app_uuid, ignore_errors=True)

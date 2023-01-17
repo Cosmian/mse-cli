@@ -29,7 +29,7 @@ class AccessTokenAuth(AuthBase):
     def __call__(self, r):
         """Call used by `Session.request()` method."""
         r.headers["Authorization"] = f"Bearer {self.access_token}"
-        r.headers["User-Agent"] = f"mse/{self.version}"
+        r.headers["User-Agent"] = f"mse-cli/{self.version}"
 
         return r
 
