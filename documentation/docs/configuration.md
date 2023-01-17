@@ -5,30 +5,28 @@ The `mse.toml` file located in the current directory is used with `mse deploy` s
 $ cat my_project/mse.toml
 ───────┬──────────────────────────────
    1   │ name = "my_project"
-   2   │ version = "0.1.0"
-   3   │ project = "default"
-   4   │ plan = "free"
-   5   │
-   6   │ [code]
-   7   │ location = "my_project/code"
-   8   │ python_application = "app:app"
-   9   │ healthcheck_endpoint = "/"
-   10  | docker = "ghcr.io/cosmian/mse-flask:20230110142022"
+   2   │ project = "default"
+   3   │ plan = "free"
+   4   │
+   5   │ [code]
+   6   │ location = "my_project/code"
+   7   │ python_application = "app:app"
+   8   │ healthcheck_endpoint = "/"
+   9   | docker = "ghcr.io/cosmian/mse-flask:20230110142022"
 ───────┴──────────────────────────────
 ```
 
 ### Main section
 
-|      Keys       | Mandatory |            Types            |                                      Description                                      |
-| :-------------: | :-------: | :-------------------------: | :-----------------------------------------------------------------------------------: |
-|      name       |     ✔️     |             str             |  Name of the application. It must be unique per `project` for a given version number  |
-|     version     |     ✔️     |             str             | Version of the application. Useful if multiple versions of the same application exist |
-|     project     |     ✔️     |      `default` or str       |                   Project name to regroup applications for payment                    |
-|      plan       |     ✔️     | `free` or other plans names |                            Plan used for your application                             |
-| expiration_date |           |      YY-MM-DD HH/mm/ss      |                Expiration date (UTC) before the application shutdowns                 |
+|      Keys       | Mandatory |            Types            |                       Description                        |
+| :-------------: | :-------: | :-------------------------: | :------------------------------------------------------: |
+|      name       |     ✔️     |             str             | Name of the application. It must be unique per `project` |
+|     project     |     ✔️     |      `default` or str       |     Project name to regroup applications for payment     |
+|      plan       |     ✔️     | `free` or other plans names |              Plan used for your application              |
+| expiration_date |           |      YY-MM-DD HH/mm/ss      |  Expiration date (UTC) before the application shutdowns  |
 
 
-You can have two applications with the same name belonging to a same project running in a same time if they have a different version number.
+Two applications from the same project with the same name cannot be running at the same time.
 
 #### Expiration date of the application
 
@@ -43,12 +41,12 @@ Otherwise, it takes the value inherited from the chosen plan.
 
 ### Code section
 
-|         Keys         | Mandatory |          Types          |                                                                           Description                                                                           |
-| :------------------: | :-------: | :---------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-|       location       |     ✔️     |           str           |                                                          Relative path to the application code folder                                                           |
-|        docker        |     ✔️     |           str           |                      URL to the mse docker to run. It could be a local docker to run local test but it must be a remote url when deploying                      |
-|  python_application  |     ✔️     |           str           |                                                                 module_name:flask_variable_name                                                                 |
-| healthcheck_endpoint |     ✔️     | str starting with a '/' |             `GET` endpoint to check if the application is ready. This endpoint should be unauthenticated and shouldn't require any parameters/data.             |
+|         Keys         | Mandatory |          Types          |                                                                            Description                                                                            |
+| :------------------: | :-------: | :---------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|       location       |     ✔️     |           str           |                                                           Relative path to the application code folder                                                            |
+|        docker        |     ✔️     |           str           |                       URL to the mse docker to run. It could be a local docker to run local test but it must be a remote url when deploying                       |
+|  python_application  |     ✔️     |           str           |                                                                  module_name:flask_variable_name                                                                  |
+| healthcheck_endpoint |     ✔️     | str starting with a '/' |              `GET` endpoint to check if the application is ready. This endpoint should be unauthenticated and shouldn't require any parameters/data.              |
 |       secrets        |           |           str           | A file path (absolute or relative to the configuration file) containing secrets needed by your application to run. See [this page](develop.md) for more  details. |
 
 #### MSE docker
@@ -71,10 +69,10 @@ Note that, the `requirements.txt` from your source code directory will still be 
 Needed if you want to use your own custom domain name. 
 For more information, see [scenarii](scenarios.md).
 
-|    Keys     | Mandatory | Types |                                                              Description                                                               |
-| :---------: | :-------: | :---: | :------------------------------------------------------------------------------------------------------------------------------------: |
-| domain_name |     ✔️     |  str  |              Custom domain name of your application. Should also be in CN and Subject Alternative Name of the certificate              |
-| private_key |     ✔️     |  str  |       A file path (absolute or relative to the configuration file) containing the private key of the SSL connection (PEM format)       |
+|    Keys     | Mandatory | Types |                                                               Description                                                               |
+| :---------: | :-------: | :---: | :-------------------------------------------------------------------------------------------------------------------------------------: |
+| domain_name |     ✔️     |  str  |              Custom domain name of your application. Should also be in CN and Subject Alternative Name of the certificate               |
+| private_key |     ✔️     |  str  |       A file path (absolute or relative to the configuration file) containing the private key of the SSL connection (PEM format)        |
 | certificate |     ✔️     |  str  | A file path (absolute or relative to the configuration file) containing the full certification chain of the SSL connection (PEM format) |
 
 [LetsEncrypt](https://letsencrypt.org/getting-started/) is supported and recommended to get a certificate for your custom domain.

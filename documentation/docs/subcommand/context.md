@@ -29,7 +29,6 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
 
     [config]
     name = "helloworld"
-    version = "1.0.0"
     project = "default"
     python_application = "app:app"
     docker = "ghcr.io/cosmian/mse-flask:20230110142022"
@@ -53,7 +52,6 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
 
     [config]
     name = "helloworld"
-    version = "1.0.0"
     project = "default"
     python_application = "app:app"
     docker = "ghcr.io/cosmian/mse-flask:20230110142022"
@@ -78,7 +76,6 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
 
     [config]
     name = "helloworld"
-    version = "1.0.0"
     project = "default"
     python_application = "app:app"
     docker = "ghcr.io/cosmian/mse-flask:20230110142022"
