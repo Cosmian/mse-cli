@@ -56,7 +56,7 @@ Let's start with a simple Flask Hello World application:
 ```{.console}
 $ mse scaffold helloworld
 An example app has been generated in the current directory
-You can configure your mse application in: helloworld/mse.toml
+You can configure your MSE application in: helloworld/mse.toml
 You can now test it locally from 'helloworld/' directory using: `mse test` then `pytest`
 Or deploy it from 'helloworld/' directory using: `mse deploy`
 Refer to the 'helloworld/README.md' for more details.

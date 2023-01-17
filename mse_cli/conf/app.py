@@ -85,8 +85,6 @@ class AppConf(BaseModel):
 
     # Name of the mse instance
     name: Str255
-    # Version of the mse instance
-    version: Str16
     # Name of the parent project
     project: Str255
     # MSE plan (defining the enclave memory, cpu, etc.)
@@ -143,7 +141,7 @@ class AppConf(BaseModel):
     @property
     def service_identifier(self):
         """Get the service identifier."""
-        return f"{self.name}-{self.version}"
+        return f"{self.name}"
 
     @staticmethod
     def from_toml(path: Optional[Path] = None,
@@ -230,7 +228,6 @@ class AppConf(BaseModel):
 
             dataMap: Dict[str, Any] = {
                 "name": self.name,
-                "version": self.version,
                 "project": self.project,
                 "plan": self.plan,
                 "code": code
@@ -254,7 +251,6 @@ class AppConf(BaseModel):
 
         return {
             "name": self.name,
-            "version": self.version,
             "project": self.project,
             "dev_mode": self.untrusted_ssl,
             "healthcheck_endpoint": self.code.healthcheck_endpoint,

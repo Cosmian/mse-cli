@@ -10,14 +10,14 @@ from mse_cli.log import LOGGER as LOG
 def add_subparser(subparsers):
     """Define the subcommand."""
     parser = subparsers.add_parser(
-        "test", help="Test locally the application in the mse docker")
+        "test", help="Test locally the application in the MSE docker")
 
     parser.add_argument(
         '--path',
         type=Path,
         required=False,
         metavar='FILE',
-        help='Path to the mse app to test (current directory if not set)')
+        help='Path to the MSE app to test (current directory if not set)')
 
     parser.set_defaults(func=run)
 

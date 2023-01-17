@@ -20,7 +20,6 @@ def test_from_toml():
         version="1.0",
         config=ContextConf(
             name="helloworld",
-            version="1.0.0",
             project="default",
             code_secret_key=
             "a389f8baf2e03cebd445d99f03600b29ca259faa9a3964e529c03effef206135",
@@ -56,7 +55,6 @@ def test_from_app_conf():
                   certificate=Path(__file__).parent / "data/cert.pem")
 
     ref_app_conf = AppConf(name="helloworld",
-                           version="1.0.0",
                            project="default",
                            plan="free",
                            code=code,
@@ -66,14 +64,12 @@ def test_from_app_conf():
 
     ref_context_conf = Context(
         version="1.0",
-        config=ContextConf(
-            name="helloworld",
-            version="1.0.0",
-            project="default",
-            code_secret_key=conf.config.code_secret_key,
-            python_application="app:app",
-            ssl_app_certificate=Path("tests/data/cert.pem").read_text(),
-            docker="ghcr.io/cosmian/mse-pytorch:20230104085621"),
+        config=ContextConf(name="helloworld",
+                           project="default",
+                           code_secret_key=conf.config.code_secret_key,
+                           python_application="app:app",
+                           ssl_app_certificate="-----BEGIN CERTIFICATE",
+                           docker="ghcr.io/cosmian/mse-pytorch:20230104085621"),
         instance=None)
 
     assert conf == ref_context_conf
@@ -94,7 +90,6 @@ def test_run():
                   certificate=Path(__file__).parent / "data/cert.pem")
 
     ref_app_conf = AppConf(name="helloworld",
-                           version="1.0.0",
                            project="default",
                            plan="free",
                            code=code,

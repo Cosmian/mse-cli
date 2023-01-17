@@ -83,9 +83,8 @@ def run(args) -> None:
     LOG.info("Deploying your app...")
     app = deploy_app(conn, app_conf, tar_path)
 
-    LOG.info(
-        "App %s creating for %s:%s with %dM EPC memory and %.2f CPU cores...",
-        app.uuid, app.name, app.version, enclave_size, cores)
+    LOG.info("App %s creating for %s with %dM EPC memory and %.2f CPU cores...",
+             app.uuid, app.name, enclave_size, cores)
 
     LOG.advice(  # type: ignore
         "You can now run `mse logs %s` if necessary", app.uuid)
@@ -167,10 +166,11 @@ def wait_app_start(conn: Connection, uuid: UUID) -> App:
             break
         if app.status == AppStatus.OnError:
             raise Exception(
-                "The app creation stopped because an error occured...")
+                "The app creation stopped because an error occurred...")
         if app.status == AppStatus.Stopped:
-            raise Exception("The app creation stopped because it "
-                            "has been stopped in the meantime...")
+            raise Exception(
+                "The app creation stopped because it has been stopped in the meantime..."
+            )
 
     spinner.reset()
     return app
@@ -186,17 +186,17 @@ def check_app_conf(conn: Connection,
         raise Exception(f"Project {app_conf.project} does not exist")
 
     # Check that a same name application is not running yet
-    app = exists_in_project(conn, project.uuid, app_conf.name, app_conf.version,
-                            [
-                                AppStatus.Spawning,
-                                AppStatus.Initializing,
-                                AppStatus.Running,
-                                AppStatus.OnError,
-                            ])
+    app = exists_in_project(conn, project.uuid, app_conf.name, [
+        AppStatus.Spawning,
+        AppStatus.Initializing,
+        AppStatus.Running,
+        AppStatus.OnError,
+    ])
 
     if app:
-        LOG.info("An application with the same name-version in "
-                 "that project is already running...")
+        LOG.info(
+            "An application with the same name in this project is already running..."
+        )
         if force:
             LOG.info("Stopping the previous app (force mode enabled)...")
             stop_app(conn, app.uuid)
@@ -206,10 +206,8 @@ def check_app_conf(conn: Connection,
                 LOG.info("Stopping the previous app...")
                 stop_app(conn, app.uuid)
             else:
-                LOG.info("Your deployment has been stopped!")
-                LOG.info(
-                    "Please rename your application or increase the version number"
-                )
+                LOG.info("Deployment has been canceled!")
+                LOG.info("Please rename your application")
                 return False
 
     if not (app_conf.code.location /
@@ -222,7 +220,7 @@ def check_app_conf(conn: Connection,
 
 
 def deploy_app(conn: Connection, app_conf: AppConf, tar_path: Path) -> App:
-    """Deploy the app to a MSE node."""
+    """Deploy the app to an MSE node."""
     r: requests.Response = new(conn=conn, conf=app_conf, code_tar_path=tar_path)
 
     if not r.ok:
@@ -243,10 +241,10 @@ def wait_app_creation(conn: Connection, uuid: UUID) -> App:
             break
         if app.status == AppStatus.Running:
             raise Exception(
-                "The app shoudn't be in the state running at this stage...")
+                "The app shouldn't be in the state running at this stage...")
         if app.status == AppStatus.OnError:
             raise Exception(
-                "The app creation stopped because an error occured...")
+                "The app creation stopped because an error occurred...")
         if app.status == AppStatus.Stopped:
             raise Exception("The app creation stopped because it "
                             "has been stopped in the meantime...")
