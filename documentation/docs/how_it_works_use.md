@@ -1,6 +1,6 @@
 ## Overview
 
-The application has been developped by the app owner. Therefore, how to use it depends on its own API.
+The application has been developed by the app owner. Therefore, how to use it depends on its own API.
 
 However, there are some specificities about the connection depending on the MSE configuration namely the scenarii chosen by the app owner.
 

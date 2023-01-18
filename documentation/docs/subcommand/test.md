@@ -1,9 +1,9 @@
 !!! info "Pre-requisites"
 
-    Before testing the app, verify that docker service is up and your current user can use the docker client without privilege
+    Before testing the app, verify that Docker service is up and your current user can use the Docker client without privilege
 
 
-You can run your application inside the same docker as MSE environment:
+You can run your application inside the same Docker as MSE environment:
 
 ```{.console}
 $ mse test --path mse-app-examples/helloworld/config/zero_trust.toml
@@ -31,5 +31,6 @@ $ curl http://localhost:5000/
 $ pytest
 ```
 
-We recommand to run this test before any deployment. It ensures that the docker contains all the dependencies needed for your own application.
+We recommend to run this test before any deployment.
+It ensures that the Docker contains all the dependencies needed for your own application.
 

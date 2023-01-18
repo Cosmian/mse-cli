@@ -51,22 +51,22 @@ Otherwise, it takes the value inherited from the chosen plan.
 
 #### MSE docker
 
-The MSE docker parameter defines which docker image will run in the MSE node. *Cosmian* offers several dockers (use the tag with the most recent date): 
+The MSE docker parameter defines which Docker image will run in the MSE node. *Cosmian* offers several Docker images (use the tag with the most recent date):
 
-- [mse-flask](https://github.com/Cosmian/mse-docker-flask/pkgs/container/mse-flask): this docker contains plenty of flask dependencies.
-- [mse-pytorch](https://github.com/Cosmian/mse-docker-pytorch/pkgs/container/mse-pytorch): this docker contains plenty of flask and machine learning dependencies.
+- [mse-flask](https://github.com/Cosmian/mse-docker-flask/pkgs/container/mse-flask): this Docker contains plenty of flask dependencies.
+- [mse-pytorch](https://github.com/Cosmian/mse-docker-pytorch/pkgs/container/mse-pytorch): this Docker contains plenty of flask and machine learning dependencies.
 
-You can test your code properly runs inside this docker using [`mse test`](subcommand/test.md).
+You can test your code properly runs inside this Docker using [`mse test`](subcommand/test.md).
 
-If you need to install other dependencies, you can create a new docker by forking [mse-docker-flask](https://github.com/Cosmian/mse-docker-flask). 
-This docker will be allowed to be started in an MSE architecture after a review by a *Cosmian* member. To do so, please contact tech@cosmian.com and provide your `Dockerfile` and the link to your docker image.
+If you need to install other dependencies, you can create a new Docker by forking [mse-docker-flask](https://github.com/Cosmian/mse-docker-flask).
+This Docker will be allowed to be started in an MSE architecture after a review by a *Cosmian* member. To do so, please contact tech@cosmian.com and provide your `Dockerfile` and the link to your docker image.
 
-Note that, the `requirements.txt` from your source code directory will still be read when the docker will run. We strongly recommand to put all your requirements into the docker and remove the `requirements.txt` from your source code.
+Note that, the `requirements.txt` from your source code directory will still be read when the docker will run. We strongly recommend to put all your requirements into the docker and remove the `requirements.txt` from your source code.
 
 
 ### SSL section
 
-Needed if you want to use your own custom domain name. 
+Useful if you want to use your own custom domain name.
 For more information, see [scenarii](scenarios.md).
 
 |    Keys     | Mandatory | Types |                                                               Description                                                               |

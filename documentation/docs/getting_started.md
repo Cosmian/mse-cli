@@ -43,7 +43,7 @@ $ mse login
 
 It will open your browser to sign up and/or log in on [console.cosmian.com](https://console.cosmian.com).
 
-If it's the first time you are using Microservice Encryption (MSE), you need to use the sign up tab.
+If it's the first time you are using Microservice Encryption (MSE), you need to use the sign-up tab.
 Don't forget to confirm your email and complete the information of your account.
 You can skip the payment information by selecting a free plan.
 
@@ -74,7 +74,7 @@ helloworld/
 2 directories, 6 files
 ```
 
-The file `app.py` is a basic flask application with no extra code. Adapt your own application to MSE does not require any modification to your python code:
+The file `app.py` is a basic Flask application with no extra code. Adapt your own application to MSE does not require any modification to your Python code:
 
 ```python
 from http import HTTPStatus
@@ -184,7 +184,9 @@ At this point, you can write your own Flask application and deploy it into MSE.
     Before deploying the app, verify that docker service is up and your current user can use the docker client without privilege
 
 
-In this step, we will redeploy your previous app but without the insecure argument `--no-verify`. When you deploy an app, you need to verify that the running app is well your code and is running inside an intel sgx enclave signed by Cosmian. For more details, please refer to [the security model](security.md).
+In this step, we will redeploy your previous app but without the insecure argument `--no-verify`.
+When you deploy an app, you need to verify that the running app is indeed your code and is running inside an Intel SGX enclave signed by Cosmian.
+For more details, please refer to [the security model](security.md).
 
 
 ```{.console}
@@ -257,11 +259,13 @@ This deployment method must be your preferred way to deploy in production.
 
 This method is well-suited to test the remote environment when deploying your app.
 
-We recall that your application is deployed into a constraint environment under a specific architecture. This method emulates as close as possible this production environment. 
+We recall that your application is deployed into a constraint environment under a specific architecture.
+This method emulates as close as possible this production environment.
 
-Before any deployment, it's strongly recommanded to test your application locally against the mse docker image specified into your `mse.toml`. It enables you to verify that your application is compatible with the MSE environment and all required dependencies are installed. 
+Before any deployment, it's strongly recommended to test your application locally against the MSE Docker image specified into your `mse.toml`.
+It enables you to verify that your application is compatible with the MSE environment and all required dependencies are installed.
 
-Since you have installed `docker` in the previous step on your own machine, you can run: 
+Since you have installed `docker` in the previous step on your own machine, you can run:
 
 ```{.console}
 $ cd helloworld
@@ -278,13 +282,17 @@ $ pytest
 
 ## Build your own mse docker
 
-When you scaffold a new project, the configuration file contains a default docker including minimal flask packages. For many reasons, this docker could be not enough to run your own application. If your `mse_src` directory contains a `requirements.txt`, these packages will be installed when running the docker. It enables you to quickly test your application in an MSE environment without generating a new docker. However:
+When you scaffold a new project, the configuration file contains a default Docker including minimal flask packages.
+For many reasons, this Docker could be not enough to run your own application.
+If your `mse_src` directory contains a `requirements.txt`, these packages will be installed when running the Docker.
+It enables you to quickly test your application in an MSE environment without generating a new Docker.
+However:
 
 - It could be hard to clearly define your dependencies and run them against the installed packages on the remote environment
-- It makes your installation not reproductible. Therefore after a deployment, it's strongly likely that your users won't be able to verify the trustworthiness of your application
+- It makes your installation not reproducible. Therefore, after a deployment, it's strongly likely that your users won't be able to verify the trustworthiness of your application
   
-Then, we recommand to fork [mse-docker-flask](https://github.com/Cosmian/mse-docker-flask) to build your own docker by integrating all your dependencies. 
-You can test your application against your own docker by editing the field `docker` in your `mse.toml` and running: 
+Then, we recommend to fork [mse-docker-flask](https://github.com/Cosmian/mse-docker-flask) to build your own Docker by integrating all your dependencies.
+You can test your application against your own Docker by editing the field `docker` in your `mse.toml` and running:
 
 ```{.console}
 $ cd helloworld
