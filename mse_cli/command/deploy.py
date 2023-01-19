@@ -1,7 +1,7 @@
 """mse_cli.command.deploy module."""
 
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 from uuid import UUID
 
 import requests
@@ -124,7 +124,8 @@ def run(args) -> None:
     LOG.info("Sending secret key and decrypting the application code...")
     decrypt_private_data(
         context,
-        ssl_private_key=app_conf.ssl.private_key if app_conf.ssl else None)
+        ssl_private_key=app_conf.ssl.private_key_data if app_conf.ssl else None,
+        app_secrets=app_conf.code.secrets_data)
 
     LOG.info("Waiting for application to be ready...")
     app = wait_app_start(conn, app.uuid)
@@ -255,7 +256,8 @@ def wait_app_creation(conn: Connection, uuid: UUID) -> App:
 
 
 def decrypt_private_data(context: Context,
-                         ssl_private_key: Optional[str] = None):
+                         ssl_private_key: Optional[str] = None,
+                         app_secrets: Optional[dict[str, Any]] = None):
     """Send the ssl private key and the key which was used to encrypt the code."""
     assert context.instance
 
@@ -266,6 +268,9 @@ def decrypt_private_data(context: Context,
 
     if ssl_private_key:
         data["ssl_private_key"] = ssl_private_key
+
+    if app_secrets:
+        data["app_secrets"] = app_secrets
 
     r = requests.post(url=f"https://{context.instance.config_domain_name}",
                       json=data,

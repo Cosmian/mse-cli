@@ -20,7 +20,7 @@ os.makedirs(MSE_CONF_DIR, exist_ok=True)
 MSE_CERTIFICATES_URL = "https://certificates.cosmian.com/"
 
 # The PCCS to proceed the enclave remote attestation
-MSE_PCCS_URL = "https://pccs.cosmian.com"
+MSE_PCCS_URL = "https://pccs.mse.cosmian.com"
 
 # The URL of the mse backend
 MSE_BACKEND_URL = os.getenv("MSE_BASE_URL",

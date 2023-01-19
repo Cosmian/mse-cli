@@ -2,14 +2,17 @@ One of the advantage using `mse` to protect your application and your data in th
 
 In this section, we will list good practices or various considerations you need to know before developping or deploying your application inside an `mse` node. 
 
-## Secrets and deployments
+## Using a third-party service with secrets
 
 Before sending the Python code of your microservice, each file is encrypted but:
+
 - `requirements.txt`
 
-This code is supposed to be sharable, as your convenience, to any users in order to check the trustworthiness of your app. As a matter of fact, do not write any secret into your code. For example: passwords or keys to connect to a third-party service like a remote storage or a database. Also do not store your ssl secret key or the configuration toml file inside this directory.
+This code is supposed to be sharable, as your convenience, to any users in order to check the trustworthiness of your app. As a matter of fact, do not write any secret into your code. For example: passwords or keys to connect to a third-party service like a remote storage or a database. 
 
-If you need such secrets to run your code, you can write a `secret.json` file and specify this file into the `code.secrets` field in the toml configuration file. Please see the the example below. This file will be sent to the enclave after it has been verified during the app deployment and your application will be able to read it to retrieve the secrets it needs.
+For the same reason, do not store your ssl secret key or the configuration toml file inside the code directory.
+
+If you need such secrets to run your code, you can write a `secrets.json` file and specify this file into the `code.secrets` field in the toml configuration file. Please see the the example below. This file will be sent to the enclave after the latter has been verified during the app deployment. Your application will then be able to read it to retrieve the secrets it needs.
 
 Example of configuation file: 
 
@@ -32,14 +35,14 @@ certificate="./cert.secret.pem"
 private_key="./key.secret.pem"
 ```
 
-As you can see, the code directory (defined in `code.location` field) does not contains the ssl private key (defined in `ssl.private_key` field) nor the secrets file (defined in `code.secrets`).
+As you can see, the code directory (defined in `code.location` field) does not contain the ssl private key (defined in `ssl.private_key` field) nor the secrets file (defined in `code.secrets`).
 
 !!! info "Good practice"
 
-Note that the configuration file does not contains any secrets values and can easily be commited into a repository such as a `git`. 
+    Note that the configuration file does not contain any secrets values and can easily be commited into a repository such as a `git`. 
 
 
-The secret file is the following:
+A secret file example is the following:
 
 ```json
 {
@@ -48,7 +51,7 @@ The secret file is the following:
 }
 ```
 
-Example of an application code using a secret:
+Which is used by this application code example:
 
 ```toml
 from http import HTTPStatus
@@ -74,12 +77,12 @@ def hello():
 
 You application owns a dedicated storage up to 10GB. The useful directories are the followings:
 
-|      Env      |             Path              | Encrypted (1) | Persistent (2) |                                                   Comments                                                    |
-| :-----------: | :---------------------------: | :-----------: | :------------: | :-----------------------------------------------------------------------------------------------------------: |
-|     $HOME     |             /root             |       ✅       |       ❌        | Could be use by third-party libraries (your applications dependencies) to store caches or configuration files |
-| $SECRETS_PATH | $HOME/.cache/mse/secrets.json |       ✅       |       ❌        |               The application  secrets file you have sent as described in the previous section                |
-|   $TMP_PATH   |             /tmp              |       ✅       |     ❌ (3)      |                                                    A tmpfs                                                    |
-| $MODULE_PATH  |           /mse-app            |       ✅       |       ❌        |                                   Containing the decrypted application code                                   |
+|       Env       |              Path               | Encrypted (1) | Persistent (2) |                                                   Comments                                                    |
+| :-------------: | :-----------------------------: | :-----------: | :------------: | :-----------------------------------------------------------------------------------------------------------: |
+|     `$HOME`     |             `/root`             |       ✅       |       ❌        | Could be use by third-party libraries (your applications dependencies) to store caches or configuration files |
+| `$SECRETS_PATH` | `$HOME/.cache/mse/secrets.json` |       ✅       |       ❌        |               The application  secrets file you have sent as described in the previous section                |
+|   `$TMP_PATH`   |             `/tmp`              |       ✅       |     ❌ (3)      |                                                    A tmpfs                                                    |
+| `$MODULE_PATH`  |           `/mse-app`            |       ✅       |       ❌        |                                   Containing the decrypted application code                                   |
 
 (1) Only the enclave containing this version of your code can decrypt this directory. Another enclave or even another version of your application won't be able to read it
 
