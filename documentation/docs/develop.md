@@ -1,0 +1,96 @@
+One of the advantage using `mse` to protect your application and your data in the cloud, is that you don't need to adapt your own Python application. Indeed, you just need to pick your original code, design a standard flask application with no dedicated intructions, write a configuration toml file and run the `deloy` subcommand. 
+
+In this section, we will list good practices or various considerations you need to know before developping or deploying your application inside an `mse` node. 
+
+## Secrets and deployments
+
+Before sending the Python code of your microservice, each file is encrypted but:
+- `requirements.txt`
+
+This code is supposed to be sharable, as your convenience, to any users in order to check the trustworthiness of your app. As a matter of fact, do not write any secret into your code. For example: passwords or keys to connect to a third-party service like a remote storage or a database. Also do not store your ssl secret key or the configuration toml file inside this directory.
+
+If you need such secrets to run your code, you can write a `secret.json` file and specify this file into the `code.secrets` field in the toml configuration file. Please see the the example below. This file will be sent to the enclave after it has been verified during the app deployment and your application will be able to read it to retrieve the secrets it needs.
+
+Example of configuation file: 
+
+```toml
+name="helloworld"
+version="1.0.0"
+project="default"
+plan="free"
+
+[code]
+location="./code"
+python_application="app:app"
+healthcheck_endpoint="/"
+docker="ghcr.io/cosmian/mse-flask:20230110142022"
+secrets="./secrets.json"
+
+[ssl]
+domain_name="example.com"
+certificate="./cert.secret.pem"
+private_key="./key.secret.pem"
+```
+
+As you can see, the code directory (defined in `code.location` field) does not contains the ssl private key (defined in `ssl.private_key` field) nor the secrets file (defined in `code.secrets`).
+
+!!! info "Good practice"
+
+Note that the configuration file does not contains any secrets values and can easily be commited into a repository such as a `git`. 
+
+
+The secret file is the following:
+
+```json
+{
+    "login": "username",
+    "password": "azerty"
+}
+```
+
+Example of an application code using a secret:
+
+```toml
+from http import HTTPStatus
+
+from flask import Flask, Response
+
+app = Flask(__name__)
+
+
+@app.get("/health")
+def health_check():
+    """Health check of the application."""
+    return Response(status=HTTPStatus.OK)
+
+
+@app.route('/')
+def hello():
+    """Get a simple example."""
+    return "Hello world"
+```
+
+## The paths
+
+You application owns a dedicated storage up to 10GB. The useful directories are the followings:
+
+|      Env      |             Path              | Encrypted (1) | Persistent (2) |                                                   Comments                                                    |
+| :-----------: | :---------------------------: | :-----------: | :------------: | :-----------------------------------------------------------------------------------------------------------: |
+|     $HOME     |             /root             |       ✅       |       ❌        | Could be use by third-party libraries (your applications dependencies) to store caches or configuration files |
+| $SECRETS_PATH | $HOME/.cache/mse/secrets.json |       ✅       |       ❌        |               The application  secrets file you have sent as described in the previous section                |
+|   $TMP_PATH   |             /tmp              |       ✅       |     ❌ (3)      |                                                    A tmpfs                                                    |
+| $MODULE_PATH  |           /mse-app            |       ✅       |       ❌        |                                   Containing the decrypted application code                                   |
+
+(1) Only the enclave containing this version of your code can decrypt this directory. Another enclave or even another version of your application won't be able to read it
+
+(2) The data will be removed when the application is stopped 
+
+(3) The data will be removed when the docker containing your application is stopped
+
+
+## Limitations
+
+Please find below limitations that you need to consider to be able to run your application in MSE:
+
+- Do not fork processes
+- Do not run subprocess (command execution)
