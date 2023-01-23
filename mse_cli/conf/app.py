@@ -23,7 +23,7 @@ else:
     StrUnlimited = constr(min_length=1)
 
 
-def relative_to_conf_file(conf_file: Path, path: Path) -> Path:
+def absolute_from_conf_file(conf_file: Path, path: Path) -> Path:
     """Make the `path` absolute from `conf_file.parent`."""
     if not path.is_absolute():
         return (conf_file.parent / path).resolve()
@@ -164,17 +164,18 @@ class AppConf(BaseModel):
             app._untrusted_ssl = ignore_ssl  # pylint: disable=protected-access
 
             # Make the app code location path absolute from path.parent and not cwd
-            app.code.location = relative_to_conf_file(path, app.code.location)
+            app.code.location = absolute_from_conf_file(path, app.code.location)
 
             if app.code.secrets:
-                app.code.secrets = relative_to_conf_file(path, app.code.secrets)
+                app.code.secrets = absolute_from_conf_file(
+                    path, app.code.secrets)
 
             if app.ssl:
                 # Make the cert and key location path absolute
                 # from path.parent and not cwd
-                app.ssl.certificate = relative_to_conf_file(
+                app.ssl.certificate = absolute_from_conf_file(
                     path, app.ssl.certificate)
-                app.ssl.private_key = relative_to_conf_file(
+                app.ssl.private_key = absolute_from_conf_file(
                     path, app.ssl.private_key)
 
                 cert = x509.load_pem_x509_certificate(

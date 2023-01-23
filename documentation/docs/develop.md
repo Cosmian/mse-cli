@@ -25,7 +25,7 @@ plan="free"
 [code]
 location="./code"
 python_application="app:app"
-healthcheck_endpoint="/"
+healthcheck_endpoint="/whoami"
 docker="ghcr.io/cosmian/mse-flask:20230110142022"
 secrets="./secrets.json"
 
@@ -54,23 +54,44 @@ Example of a secret file:
 Which is used by this application code example:
 
 ```toml
-from http import HTTPStatus
+import os
+import json
 
+from http import HTTPStatus
+from pathlib import Path
+from datetime import datetime
 from flask import Flask, Response
 
 app = Flask(__name__)
 
+WORKFILE: Path = Path(os.getenv("HOME")) / "date.txt"
 
-@app.get("/health")
-def health_check():
-    """Health check of the application."""
+
+@app.route('/whoami')
+def whoami():
+    """A simple example manipulating secrets."""
+    secrets = json.loads(Path(os.getenv("SECRETS_PATH")).read_text())
+    return secrets["login"]
+
+
+@app.post('/')
+def write_date():
+    """A simple example of file writting."""
+    WORKFILE.write_text(str(datetime.now()))
     return Response(status=HTTPStatus.OK)
 
 
 @app.route('/')
-def hello():
-    """Get a simple example."""
-    return "Hello world"
+def read_date():
+    """A simple example of file reading."""
+    if not WORKFILE.exists():
+        return Response(response="You should write before read",
+                        status=HTTPStatus.NOT_FOUND)
+
+    txt = WORKFILE.read_text()
+    WORKFILE.unlink()
+
+    return txt
 ```
 
 ## The paths
@@ -80,8 +101,8 @@ You application owns a dedicated storage up to 10GB. The useful directories are 
 |       Env       |              Path               | Encrypted (1) | Persistent (2) |                                                   Comments                                                    |
 | :-------------: | :-----------------------------: | :-----------: | :------------: | :-----------------------------------------------------------------------------------------------------------: |
 |     `$HOME`     |             `/root`             |       ✅       |       ❌        | Could be used by third-party libraries (your application dependencies) to store caches or configuration files |
-| `$SECRETS_PATH` | `$HOME/.cache/mse/secrets.json` |       ✅       |       ❌        |               The application secrets file you have sent as described in the previous section                |
-|   `$TMP_PATH`   |             `/tmp`              |       ✅       |     ❌ (3)      |                                                A temporary folder                                                    |
+| `$SECRETS_PATH` | `$HOME/.cache/mse/secrets.json` |       ✅       |       ❌        |                The application secrets file you have sent as described in the previous section                |
+|   `$TMP_PATH`   |             `/tmp`              |       ✅       |     ❌ (3)      |                                              A temporary folder                                               |
 | `$MODULE_PATH`  |           `/mse-app`            |       ✅       |       ❌        |                                   Containing the decrypted application code                                   |
 
 (1) Only the enclave containing this version of your code can decrypt this directory. Another enclave or even another version of your application won't be able to read it
