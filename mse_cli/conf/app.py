@@ -24,6 +24,7 @@ else:
 
 
 def relative_to_conf_file(conf_file: Path, path: Path) -> Path:
+    """Make the `path` absolute from `conf_file.parent`."""
     if not path.is_absolute():
         return (conf_file.parent / path).resolve()
 
@@ -44,12 +45,12 @@ class SSLConf(BaseModel):
     _private_key_data: StrUnlimited = PrivateAttr(default="empty")
 
     @property
-    def certificate_data(self) -> bool:
+    def certificate_data(self) -> str:
         """Get the _certificate_data."""
         return self._certificate_data
 
     @property
-    def private_key_data(self) -> bool:
+    def private_key_data(self) -> str:
         """Get the _private_key_data."""
         return self._private_key_data
 
@@ -172,17 +173,20 @@ class AppConf(BaseModel):
 
             if app.code.secrets:
                 app.code.secrets = relative_to_conf_file(path, app.code.secrets)
-                app.code._secrets_data = json.loads(
+                app.code._secrets_data = json.loads(  # pylint: disable=protected-access
                     app.code.secrets.read_text())
 
             if app.ssl:
-                # Make the cert and key location path absolute from path.parent and not cwd
+                # Make the cert and key location path absolute
+                # from path.parent and not cwd
                 app.ssl.certificate = relative_to_conf_file(
                     path, app.ssl.certificate)
                 app.ssl.private_key = relative_to_conf_file(
                     path, app.ssl.private_key)
 
+                # pylint: disable=protected-access
                 app.ssl._private_key_data = app.ssl.private_key.read_text()
+                # pylint: disable=protected-access
                 app.ssl._certificate_data = app.ssl.certificate.read_text()
 
                 cert = x509.load_pem_x509_certificate(

@@ -261,7 +261,7 @@ def decrypt_private_data(context: Context,
     """Send the ssl private key and the key which was used to encrypt the code."""
     assert context.instance
 
-    data = {
+    data: dict[str, Any] = {
         "code_secret_key": context.config.code_secret_key.hex(),
         "uuid": str(context.instance.id)
     }
