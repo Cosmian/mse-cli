@@ -1,0 +1,122 @@
+One of the advantages of using `mse` to protect your application and your data in the cloud, is that you don't need to adapt your own Python application. Indeed, you just need to pick your original code, design a standard Flask application without specific intructions, write a configuration TOML file and run the `deploy` subcommand. 
+
+In this section, we will list good practices or various considerations you need to know before developing or deploying your application inside an `mse` node. 
+
+## Using a third-party service with secrets
+
+Before sending the Python code of your microservice, each file is encrypted but:
+
+- `requirements.txt`
+
+This code is supposed to be sharable, as your convenience, to any users in order to check the trustworthiness of your app. As a matter of fact, *do not write any secret into your code*. For example: passwords or keys to connect to a third-party service like a remote storage or a database. 
+
+For the same reason, do not store your SSL secret key or the configuration TOML file in the code directory.
+
+If you need such secrets to run your code, you can write a `secrets.json` file and specify this file into the `code.secrets` field in the TOML configuration file. Please see the example below. This file will be sent to the enclave after the latter has been verified during the app deployment. Your application will then be able to read it to retrieve the secrets it needs.
+
+Example of configuation file: 
+
+```toml
+name="helloworld"
+version="1.0.0"
+project="default"
+plan="free"
+
+[code]
+location="./code"
+python_application="app:app"
+healthcheck_endpoint="/whoami"
+docker="ghcr.io/cosmian/mse-flask:20230110142022"
+secrets="./secrets.json"
+
+[ssl]
+domain_name="example.com"
+certificate="./cert.secret.pem"
+private_key="./key.secret.pem"
+```
+
+As you can see, the code directory (defined in `code.location` field) does not contain the SSL private key (defined in `ssl.private_key` field) nor the secrets file (defined in `code.secrets`).
+
+!!! info "Good practice"
+
+    Note that the configuration file does not contain any secrets values and can easily be commited into a code repository. 
+
+
+Example of a secret file:
+
+```json
+{
+    "login": "username",
+    "password": "azerty"
+}
+```
+
+Which is used by this application code example:
+
+```toml
+import os
+import json
+
+from http import HTTPStatus
+from pathlib import Path
+from datetime import datetime
+from flask import Flask, Response
+
+app = Flask(__name__)
+
+WORKFILE: Path = Path(os.getenv("HOME")) / "date.txt"
+
+
+@app.route('/whoami')
+def whoami():
+    """A simple example manipulating secrets."""
+    secrets = json.loads(Path(os.getenv("SECRETS_PATH")).read_text())
+    return secrets["login"]
+
+
+@app.post('/')
+def write_date():
+    """A simple example of file writting."""
+    WORKFILE.write_text(str(datetime.now()))
+    return Response(status=HTTPStatus.OK)
+
+
+@app.route('/')
+def read_date():
+    """A simple example of file reading."""
+    if not WORKFILE.exists():
+        return Response(response="You should write before read",
+                        status=HTTPStatus.NOT_FOUND)
+
+    txt = WORKFILE.read_text()
+    WORKFILE.unlink()
+
+    return txt
+```
+
+## The paths
+
+You application owns a dedicated storage up to 10GB. The useful directories are the followings:
+
+|       Env       |              Path               | Encrypted (1) | Persistent (2) |                                                   Comments                                                    |
+| :-------------: | :-----------------------------: | :-----------: | :------------: | :-----------------------------------------------------------------------------------------------------------: |
+|     `$HOME`     |             `/root`             |       ✅       |       ❌        | Could be used by third-party libraries (your application dependencies) to store caches or configuration files |
+| `$SECRETS_PATH` | `$HOME/.cache/mse/secrets.json` |       ✅       |       ❌        |                The application secrets file you have sent as described in the previous section                |
+|   `$TMP_PATH`   |             `/tmp`              |       ✅       |     ❌ (3)      |                                              A temporary folder                                               |
+| `$MODULE_PATH`  |           `/mse-app`            |       ✅       |       ❌        |                                   Containing the decrypted application code                                   |
+
+(1) Only the enclave containing this version of your code can decrypt this directory. Another enclave or even another version of your application won't be able to read it
+
+(2) The data will be removed when the application is stopped 
+
+(3) The data will be removed when the docker containing your application is stopped
+
+
+## Limitations
+
+Please find below limitations that you need to consider to be able to run your application in MSE:
+
+- Do not fork processes
+- Do not run subprocess (command execution)
+
+Trying to use these system functionalities will make the app crash.

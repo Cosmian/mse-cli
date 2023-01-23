@@ -1,6 +1,7 @@
 """mse_cli.conf.app module."""
 
 from __future__ import annotations
+import json
 
 import os
 from datetime import datetime, timezone
@@ -22,15 +23,33 @@ else:
     StrUnlimited = constr(min_length=1)
 
 
+def absolute_from_conf_file(conf_file: Path, path: Path) -> Path:
+    """Make the `path` absolute from `conf_file.parent`."""
+    if not path.is_absolute():
+        return (conf_file.parent / path).resolve()
+
+    return path
+
+
 class SSLConf(BaseModel):
     """Definition of the app owner certificate."""
 
     # The domain name of the app
     domain_name: Str255
-    # The ssl private key
-    private_key: StrUnlimited
-    # The ssl certificate chain
-    certificate: StrUnlimited
+    # The path to the ssl private key
+    private_key: Path
+    # The path to the ssl certificate chain
+    certificate: Path
+
+    @property
+    def certificate_data(self) -> str:
+        """Get the data from certificate file."""
+        return self.certificate.read_text()
+
+    @property
+    def private_key_data(self) -> str:
+        """Get the data from private_key file."""
+        return self.private_key.read_text()
 
 
 class CodeConf(BaseModel):
@@ -44,6 +63,13 @@ class CodeConf(BaseModel):
     healthcheck_endpoint: Str255
     # Mse docker to use (containing all requirements)
     docker: StrUnlimited
+    # File containing app secrets
+    secrets: Optional[Path] = None
+
+    @property
+    def secrets_data(self) -> Optional[dict[str, Any]]:
+        """Get the data from secrets file."""
+        return json.loads(self.secrets.read_text()) if self.secrets else None
 
     @validator('healthcheck_endpoint', pre=False)
     # pylint: disable=no-self-argument,unused-argument
@@ -87,10 +113,10 @@ class AppConf(BaseModel):
         if not v:
             return None
 
-        d: datetime = v
-        if d.tzinfo is None or d.tzinfo.utcoffset(d) is None:
-            # If no timezone, use the local one
-            return d.astimezone()
+        if isinstance(v, datetime):
+            if v.tzinfo is None or v.tzinfo.utcoffset(v) is None:
+                # If no timezone, use the local one
+                return v.astimezone()
 
         return v
 
@@ -138,12 +164,22 @@ class AppConf(BaseModel):
             app._untrusted_ssl = ignore_ssl  # pylint: disable=protected-access
 
             # Make the app code location path absolute from path.parent and not cwd
-            if not app.code.location.is_absolute():
-                app.code.location = (path.parent / app.code.location).resolve()
+            app.code.location = absolute_from_conf_file(path, app.code.location)
+
+            if app.code.secrets:
+                app.code.secrets = absolute_from_conf_file(
+                    path, app.code.secrets)
 
             if app.ssl:
+                # Make the cert and key location path absolute
+                # from path.parent and not cwd
+                app.ssl.certificate = absolute_from_conf_file(
+                    path, app.ssl.certificate)
+                app.ssl.private_key = absolute_from_conf_file(
+                    path, app.ssl.private_key)
+
                 cert = x509.load_pem_x509_certificate(
-                    app.ssl.certificate.encode('utf8'))
+                    app.ssl.certificate_data.encode('utf8'))
 
                 # Check `expiration_date` using cert expiration date
                 if not app.expiration_date:
@@ -182,17 +218,22 @@ class AppConf(BaseModel):
     def save(self, folder: Path) -> None:
         """Dump the current object to a file."""
         with open(folder / "mse.toml", "w", encoding="utf8") as f:
+            code = {
+                "location": str(self.code.location),
+                "docker": self.code.docker,
+                "python_application": self.code.python_application,
+                "healthcheck_endpoint": self.code.healthcheck_endpoint,
+            }
+
+            if self.code.secrets:
+                code["secrets"] = str(self.code.secrets)
+
             dataMap: Dict[str, Any] = {
                 "name": self.name,
                 "version": self.version,
                 "project": self.project,
                 "plan": self.plan,
-                "code": {
-                    "location": str(self.code.location),
-                    "docker": self.code.docker,
-                    "python_application": self.code.python_application,
-                    "healthcheck_endpoint": self.code.healthcheck_endpoint,
-                },
+                "code": code
             }
 
             if self.expiration_date:
@@ -200,8 +241,8 @@ class AppConf(BaseModel):
             if self.ssl:
                 dataMap['ssl'] = {
                     "domain_name": self.ssl.domain_name,
-                    "private_key": self.ssl.private_key,
-                    "certificate": self.ssl.certificate
+                    "private_key": str(self.ssl.private_key),
+                    "certificate": str(self.ssl.certificate)
                 }
 
             toml.dump(dataMap, f)
@@ -219,7 +260,7 @@ class AppConf(BaseModel):
             "healthcheck_endpoint": self.code.healthcheck_endpoint,
             "python_application": self.code.python_application,
             "expires_at": d,
-            "ssl_certificate": self.ssl.certificate if self.ssl else None,
+            "ssl_certificate": self.ssl.certificate_data if self.ssl else None,
             "domain_name": self.ssl.domain_name if self.ssl else None,
             "plan": self.plan,
             "docker": self.code.docker,

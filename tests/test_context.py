@@ -26,7 +26,8 @@ def test_from_toml():
             "a389f8baf2e03cebd445d99f03600b29ca259faa9a3964e529c03effef206135",
             docker="ghcr.io/cosmian/mse-pytorch:20230104085621",
             python_application="app:app",
-            ssl_app_certificate="-----BEGIN CERTIFICATE"),
+            ssl_app_certificate=(Path(__file__).parent /
+                                 "data/cert.pem").read_text()),
         instance=ContextInstance(
             id="d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e",
             config_domain_name="demo.cosmian.app",
@@ -51,8 +52,8 @@ def test_from_app_conf():
                     docker="ghcr.io/cosmian/mse-pytorch:20230104085621")
 
     ssl = SSLConf(domain_name="demo.cosmian.app",
-                  private_key="-----BEGIN PRIVATE",
-                  certificate="-----BEGIN CERTIFICATE")
+                  private_key=Path(__file__).parent / "data/key.pem",
+                  certificate=Path(__file__).parent / "data/cert.pem")
 
     ref_app_conf = AppConf(name="helloworld",
                            version="1.0.0",
@@ -65,17 +66,17 @@ def test_from_app_conf():
 
     ref_context_conf = Context(
         version="1.0",
-        config=ContextConf(name="helloworld",
-                           version="1.0.0",
-                           project="default",
-                           code_secret_key=conf.config.code_secret_key,
-                           python_application="app:app",
-                           ssl_app_certificate="-----BEGIN CERTIFICATE",
-                           docker="ghcr.io/cosmian/mse-pytorch:20230104085621"),
+        config=ContextConf(
+            name="helloworld",
+            version="1.0.0",
+            project="default",
+            code_secret_key=conf.config.code_secret_key,
+            python_application="app:app",
+            ssl_app_certificate=Path("tests/data/cert.pem").read_text(),
+            docker="ghcr.io/cosmian/mse-pytorch:20230104085621"),
         instance=None)
 
     assert conf == ref_context_conf
-    assert conf.app_cert_path.read_text() == "-----BEGIN CERTIFICATE"
 
 
 def test_run():
@@ -89,8 +90,8 @@ def test_run():
                     docker="ghcr.io/cosmian/mse-pytorch:20230104085621")
 
     ssl = SSLConf(domain_name="demo.cosmian.app",
-                  private_key="-----BEGIN PRIVATE",
-                  certificate="-----BEGIN CERTIFICATE")
+                  private_key=Path(__file__).parent / "data/key.pem",
+                  certificate=Path(__file__).parent / "data/cert.pem")
 
     ref_app_conf = AppConf(name="helloworld",
                            version="1.0.0",

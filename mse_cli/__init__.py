@@ -4,7 +4,7 @@ import os
 import sys
 from pathlib import Path
 
-__version__ = "0.7.0"
+__version__ = "0.8.0"
 
 # This directory contains the login information of the user
 # and the context of all its deployments
@@ -20,7 +20,8 @@ os.makedirs(MSE_CONF_DIR, exist_ok=True)
 MSE_CERTIFICATES_URL = "https://certificates.cosmian.com/"
 
 # The PCCS to proceed the enclave remote attestation
-MSE_PCCS_URL = "https://pccs.cosmian.com"
+MSE_PCCS_URL = os.getenv("MSE_PCCS_URL",
+                         default="https://pccs.staging.mse.cosmian.com")
 
 # The URL of the mse backend
 MSE_BACKEND_URL = os.getenv("MSE_BASE_URL",
@@ -44,4 +45,4 @@ MSE_CONSOLE_URL = os.getenv("MSE_CONSOLE_URL",
                             default="https://console.staging.mse.cosmian.com")
 
 # The URL of the default MSE Docker
-MSE_DEFAULT_DOCKER = "ghcr.io/cosmian/mse-flask:20230110142022"
+MSE_DEFAULT_DOCKER = "ghcr.io/cosmian/mse-flask:20230119150226"

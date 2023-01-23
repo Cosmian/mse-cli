@@ -58,6 +58,7 @@ nav:
       - Stop: subcommand/stop.md
       - Test: subcommand/test.md
       - Verify: subcommand/verify.md
+  - Develop your app: develop.md
   - Usage Scenarios: scenarios.md
   - Security Model: security.md
   - App Deployment Flow: how_it_works_deploy.md

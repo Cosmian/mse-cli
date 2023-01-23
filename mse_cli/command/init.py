@@ -29,6 +29,9 @@ def run(_args):
     code_location = input("Code location [.]:") or "."
     python_application = input("Python application [app:app]: ") or "app:app"
     healthcheck_endpoint = input("Health check endpoint [/]: ") or "/"
+    secrets_enable = input(
+        "Do you have application secrets to provide [no]: ") or "no"
+    secrets = "secrets.json" if secrets_enable.lower() in ["y", "yes"] else None
 
     app = AppConf(name=app_name,
                   version=app_version,
@@ -37,7 +40,8 @@ def run(_args):
                   code=CodeConf(location=code_location,
                                 python_application=python_application,
                                 healthcheck_endpoint=healthcheck_endpoint,
-                                docker=docker))
+                                docker=docker,
+                                secrets=secrets))
 
     path = Path(os.getcwd())
     app.save(path)

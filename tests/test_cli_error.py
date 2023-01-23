@@ -105,8 +105,6 @@ def test_verify_bad_domain(cmd_log):
         run_verify(
             Namespace(
                 **{
-                    "skip_fingerprint":
-                        True,
                     "fingerprint":
                         None,
                     "context":

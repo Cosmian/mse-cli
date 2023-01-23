@@ -171,7 +171,7 @@ class Context(BaseModel):
     @staticmethod
     def from_app_conf(conf: AppConf):
         """Build a Context object from an app conf."""
-        cert = conf.ssl.certificate if conf.ssl else None
+        cert = conf.ssl.certificate_data if conf.ssl else None
 
         context = Context(
             config=ContextConf(name=conf.name,
