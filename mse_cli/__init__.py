@@ -45,4 +45,4 @@ MSE_CONSOLE_URL = os.getenv("MSE_CONSOLE_URL",
                             default="https://console.staging.mse.cosmian.com")
 
 # The URL of the default MSE Docker
-MSE_DEFAULT_DOCKER = "ghcr.io/cosmian/mse-flask:20230110142022"
+MSE_DEFAULT_DOCKER = "ghcr.io/cosmian/mse-flask:20230119150226"

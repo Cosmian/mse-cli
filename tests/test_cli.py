@@ -183,10 +183,17 @@ def _test_mse_cli(f: io.StringIO,
 
     if ssl_certificate_origin == SSLCertificateOrigin.Owner:
         assert not app_conf.ssl
+
+        path = Path(tempfile.mkdtemp())
+        cert_path = path / "cert.pem"
+        cert_path.write_text(os.getenv("MSE_TEST_PUBLIC_KEY"))
+        key_path = path / "key.path"
+        key_path.write_text(os.getenv("MSE_TEST_PRIVATE_KEY"))
+
         app_conf.ssl = SSLConf(
             domain_name=f"{app_conf.name}.{os.getenv('MSE_TEST_DOMAIN_NAME')}",
-            private_key=os.getenv("MSE_TEST_PRIVATE_KEY"),
-            certificate=os.getenv("MSE_TEST_PUBLIC_KEY"))
+            private_key=key_path,
+            certificate=cert_path)
         app_conf.save(conf.parent)
     else:
         assert not app_conf.ssl

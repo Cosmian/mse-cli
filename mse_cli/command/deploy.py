@@ -1,7 +1,7 @@
 """mse_cli.command.deploy module."""
 
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 from uuid import UUID
 
 import requests
@@ -257,11 +257,11 @@ def wait_app_creation(conn: Connection, uuid: UUID) -> App:
 
 def decrypt_private_data(context: Context,
                          ssl_private_key: Optional[str] = None,
-                         app_secrets: Optional[dict[str, Any]] = None):
+                         app_secrets: Optional[Dict[str, Any]] = None):
     """Send the ssl private key and the key which was used to encrypt the code."""
     assert context.instance
 
-    data: dict[str, Any] = {
+    data: Dict[str, Any] = {
         "code_secret_key": context.config.code_secret_key.hex(),
         "uuid": str(context.instance.id)
     }

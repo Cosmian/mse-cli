@@ -41,18 +41,15 @@ class SSLConf(BaseModel):
     # The path to the ssl certificate chain
     certificate: Path
 
-    _certificate_data: StrUnlimited = PrivateAttr(default="empty")
-    _private_key_data: StrUnlimited = PrivateAttr(default="empty")
-
     @property
     def certificate_data(self) -> str:
-        """Get the _certificate_data."""
-        return self._certificate_data
+        """Get the data from certificate file."""
+        return self.certificate.read_text()
 
     @property
     def private_key_data(self) -> str:
-        """Get the _private_key_data."""
-        return self._private_key_data
+        """Get the data from private_key file."""
+        return self.private_key.read_text()
 
 
 class CodeConf(BaseModel):
@@ -69,12 +66,10 @@ class CodeConf(BaseModel):
     # File containing app secrets
     secrets: Optional[Path] = None
 
-    _secrets_data: Optional[dict[str, Any]] = PrivateAttr(default=None)
-
     @property
     def secrets_data(self) -> Optional[dict[str, Any]]:
-        """Get the _secrets_data."""
-        return self._secrets_data
+        """Get the date from secrets file."""
+        return json.loads(self.secrets.read_text()) if self.secrets else None
 
     @validator('healthcheck_endpoint', pre=False)
     # pylint: disable=no-self-argument,unused-argument
@@ -173,8 +168,6 @@ class AppConf(BaseModel):
 
             if app.code.secrets:
                 app.code.secrets = relative_to_conf_file(path, app.code.secrets)
-                app.code._secrets_data = json.loads(  # pylint: disable=protected-access
-                    app.code.secrets.read_text())
 
             if app.ssl:
                 # Make the cert and key location path absolute
@@ -183,11 +176,6 @@ class AppConf(BaseModel):
                     path, app.ssl.certificate)
                 app.ssl.private_key = relative_to_conf_file(
                     path, app.ssl.private_key)
-
-                # pylint: disable=protected-access
-                app.ssl._private_key_data = app.ssl.private_key.read_text()
-                # pylint: disable=protected-access
-                app.ssl._certificate_data = app.ssl.certificate.read_text()
 
                 cert = x509.load_pem_x509_certificate(
                     app.ssl.certificate_data.encode('utf8'))
