@@ -49,7 +49,7 @@ Otherwise, it takes the value inherited from the chosen plan.
 |        docker        |     ✔️     |           str           |                      URL to the mse docker to run. It could be a local docker to run local test but it must be a remote url when deploying                      |
 |  python_application  |     ✔️     |           str           |                                                                 module_name:flask_variable_name                                                                 |
 | healthcheck_endpoint |     ✔️     | str starting with a '/' |             `GET` endpoint to check if the application is ready. This endpoint should be unauthenticated and shouldn't require any parameters/data.             |
-|       secrets        |           |           str           | A file path (absolute or relative to the configuration file) containing secrets need to your application to run. See [this page](develop.md) for more  details. |
+|       secrets        |           |           str           | A file path (absolute or relative to the configuration file) containing secrets needed by your application to run. See [this page](develop.md) for more  details. |
 
 #### MSE docker
 
@@ -75,7 +75,7 @@ For more information, see [scenarii](scenarios.md).
 | :---------: | :-------: | :---: | :------------------------------------------------------------------------------------------------------------------------------------: |
 | domain_name |     ✔️     |  str  |              Custom domain name of your application. Should also be in CN and Subject Alternative Name of the certificate              |
 | private_key |     ✔️     |  str  |       A file path (absolute or relative to the configuration file) containing the private key of the SSL connection (PEM format)       |
-| certificate |     ✔️     |  str  | A file path (absolute or relative to the configuration file)containing the full certification chain of the SSL connection (PEM format) |
+| certificate |     ✔️     |  str  | A file path (absolute or relative to the configuration file) containing the full certification chain of the SSL connection (PEM format) |
 
 [LetsEncrypt](https://letsencrypt.org/getting-started/) is supported and recommended to get a certificate for your custom domain.
 

@@ -68,7 +68,7 @@ class CodeConf(BaseModel):
 
     @property
     def secrets_data(self) -> Optional[dict[str, Any]]:
-        """Get the date from secrets file."""
+        """Get the data from secrets file."""
         return json.loads(self.secrets.read_text()) if self.secrets else None
 
     @validator('healthcheck_endpoint', pre=False)
