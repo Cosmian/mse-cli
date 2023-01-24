@@ -23,3 +23,10 @@ Deployement status
         Status             = running
         Online since       = 2022-11-17 09:04:34.043340+00:00
 ```
+
+The status could have the following values:
+- `spawning`: the first status of a deploying app
+- `initializing`: the status of an app waiting for the key to decrypt the code or other secrets needed to be successfully run
+- `running`: the status of app running successfully 
+- `on_error`: the status of an app stopped with a failure. It's a terminal state.
+- `stopped`: the status of an app stopped without any errors. For example: when the expiration date is reached. It's a terminal state.

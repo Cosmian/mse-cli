@@ -22,7 +22,7 @@ def run(_args) -> None:
                       timeout=60)
 
     if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+        raise Exception(r.text)
 
     login_file = UserConf.path()
     if login_file.exists():

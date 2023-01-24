@@ -15,6 +15,8 @@ from mse_cli.command.stop import run as run_stop
 from mse_cli.command.scaffold import run as run_scaffold
 from mse_cli.command.context import run as run_context
 
+from conftest import capture_logs
+
 
 @pytest.mark.slow
 def test_status_bad_uuid(cmd_log):
@@ -101,23 +103,27 @@ def test_stop_bad_uuid(cmd_log):
 @pytest.mark.slow
 def test_verify_bad_domain(cmd_log):
     """Test verify with the error: valid domain but no exists."""
-    with pytest.raises(Exception) as exception:
-        run_verify(
-            Namespace(
-                **{
-                    "fingerprint":
-                        None,
-                    "context":
-                        None,
-                    "code":
-                        None,
-                    "domain_name":
-                        f"notexist.{os.getenv('MSE_TEST_DOMAIN_NAME')}"
-                }))
+    run_verify(
+        Namespace(
+            **{
+                "fingerprint": None,
+                "context": None,
+                "code": None,
+                "domain_name": f"notexist.{os.getenv('MSE_TEST_DOMAIN_NAME')}"
+            }))
+    output = capture_logs(cmd_log)
+    assert "Are you sure the application is still running?" in output
 
-    assert "TLS/SSL connection has been closed (EOF)" in str(
-        exception.value) or "EOF occurred in violation of protocol" in str(
-            exception.value)
+    run_verify(
+        Namespace(
+            **{
+                "fingerprint": None,
+                "context": None,
+                "code": None,
+                "domain_name": f"notexist.app"
+            }))
+    output = capture_logs(cmd_log)
+    assert "Are you sure the application is still running?" in output
 
 
 @pytest.mark.slow
@@ -217,5 +223,5 @@ def test_deploy_latest_docker(cmd_log):
                         False
                 }))
 
-    assert "You shouldn\\\'t use latest tag for the docker image" in str(
+    assert "You shouldn\'t use latest tag for the docker image" in str(
         exception.value)
