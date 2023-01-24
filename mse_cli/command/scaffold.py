@@ -75,7 +75,7 @@ def run(args) -> None:
 
     LOG.success(  # type: ignore
         "An example app has been generated in the current directory")
-    LOG.warning("You can configure your mse application in: %s", conf_file)
+    LOG.warning("You can configure your MSE application in: %s", conf_file)
     LOG.info(
         "You can now test it locally from the '%s/' directory using: `mse test` "
         "then `pytest`", args.app_name)

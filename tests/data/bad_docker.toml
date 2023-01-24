@@ -1,5 +1,4 @@
 name = "bad_docker"
-version = "1.0.0"
 project = "default"
 plan = "free"
 

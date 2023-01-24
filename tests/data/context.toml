@@ -2,7 +2,6 @@ version = "1.0"
 
 [config]
 name = "helloworld"
-version = "1.0.0"
 project = "default"
 docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
 python_application = "app:app"

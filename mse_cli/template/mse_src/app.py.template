@@ -1,5 +1,4 @@
 from http import HTTPStatus
-
 from flask import Flask, Response
 
 {{ app }} = Flask(__name__)

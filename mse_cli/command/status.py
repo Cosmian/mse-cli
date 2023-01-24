@@ -36,24 +36,23 @@ def run(args) -> None:
 
     LOG.info("\n> Microservice")
     LOG.info("\tName         = %s", app.name)
-    LOG.info("\tVersion      = %s", app.version)
     LOG.info("\tDomain name  = %s", app.domain_name)
     LOG.info("\tBilling plan = %s", app.plan)
     LOG.info("\tApplication  = %s", app.python_application)
     LOG.info("\tMSE docker   = %s", app.docker)
     LOG.info("\tHealthcheck  = %s", app.healthcheck_endpoint)
 
-    LOG.info("\n> Deployement status")
+    LOG.info("\n> Deployment status")
     LOG.info("\tUUID               = %s", app.uuid)
     LOG.info("\tCertificate origin = %s", app.ssl_certificate_origin.value)
     LOG.info("\tEnclave size       = %sM", enclave_size)
     LOG.info("\tCores amount       = %s", cores)
     LOG.info("\tCreated at         = %s", app.created_at.astimezone())
 
-    # Note: we print the date in the current local timezone (instead of utc)
+    # Note: date is printed in the current local timezone (instead of utc)
     remaining_days = app.expires_at - datetime.now(timezone.utc)
     if 0 <= remaining_days.days <= 1:
-        LOG.info("\tExpires at         = %s (%s%d secondes remaining%s)",
+        LOG.info("\tExpires at         = %s (%s%d seconds remaining%s)",
                  app.expires_at.astimezone(), bcolors.WARNING,
                  remaining_days.seconds, bcolors.ENDC)
     elif remaining_days.days > 1:

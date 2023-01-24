@@ -150,7 +150,7 @@ def _test_login(f: io.StringIO):
     run_login(Namespace(**{"whoami": True}))
 
     output = capture_logs(f)
-    assert "Your are currently logged in" in output
+    assert "You are currently logged in" in output
 
 
 def _test_logs(f: io.StringIO, app_uuid: UUID, expecting_output: str):

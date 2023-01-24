@@ -107,13 +107,11 @@ def prepare_code(
 
 
 def exists_in_project(conn: Connection, project_uuid: UUID, name: str,
-                      version: str,
                       status: Optional[List[AppStatus]]) -> Optional[App]:
     """Say whether the app exists in the project."""
     r: requests.Response = get_app_from_name(conn=conn,
                                              project_uuid=project_uuid,
                                              app_name=name,
-                                             version=version,
                                              status=status)
 
     if not r.ok:
@@ -127,7 +125,7 @@ def exists_in_project(conn: Connection, project_uuid: UUID, name: str,
 
 
 def stop_app(conn: Connection, app_uuid: UUID) -> None:
-    """Stop the app remotly."""
+    """Stop the app remotely."""
     r: requests.Response = stop(conn=conn, uuid=app_uuid)
 
     if not r.ok:
@@ -198,7 +196,7 @@ def compute_mr_enclave(context: Context, tar_path: Path) -> str:
 
     if not m:
         raise Exception(
-            "Fail to compute mr_enclave!!! See {docker_log_path} for more details."
+            "Fail to compute mr_enclave! See {docker_log_path} for more details."
         )
 
     return str(m.group(1).decode("utf-8"))

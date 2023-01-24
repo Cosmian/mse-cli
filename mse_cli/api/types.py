@@ -31,7 +31,6 @@ class App(BaseModel):
 
     uuid: UUID
     name: str
-    version: str
     project_uuid: UUID
     owner_uuid: UUID
     domain_name: str

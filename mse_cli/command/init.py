@@ -22,7 +22,6 @@ def run(_args):
     LOG.info("We need you to fill in the following fields\n")
 
     app_name = input("App name: ")
-    app_version = input("App version: ")
     project_name = input("Project name [default]: ") or "default"
     plan = input("Plan id [free]: ") or "free"
     docker = input(f"Docker url [{MSE_DEFAULT_DOCKER}]: ") or MSE_DEFAULT_DOCKER
@@ -34,7 +33,6 @@ def run(_args):
     secrets = "secrets.json" if secrets_enable.lower() in ["y", "yes"] else None
 
     app = AppConf(name=app_name,
-                  version=app_version,
                   project=project_name,
                   plan=plan,
                   code=CodeConf(location=code_location,

@@ -118,7 +118,6 @@ def test_ssl():
                   certificate=Path(__file__).parent / "data" / Path("cert.pem"))
 
     ref_app_conf = AppConf(name="helloworld",
-                           version="1.0.0",
                            project="default",
                            plan="free",
                            expiration_date=datetime(2023,
@@ -147,7 +146,6 @@ def test_ssl_optionals():
                     docker="ghcr.io/cosmian/mse-pytorch:20230104085621")
 
     ref_app_conf = AppConf(name="helloworld",
-                           version="1.0.0",
                            project="default",
                            plan="free",
                            code=code,
@@ -204,7 +202,6 @@ def test_expiration_date():
 
     ref_app_conf = AppConf(
         name="helloworld",
-        version="1.0.0",
         project="default",
         plan="free",
         code=code,
@@ -252,7 +249,6 @@ def test_python_variable():
                     docker="ghcr.io/cosmian/mse-pytorch:20230104085621")
 
     conf = AppConf(name="helloworld",
-                   version="1.0.0",
                    project="default",
                    plan="free",
                    code=code)
@@ -262,12 +258,12 @@ def test_python_variable():
         conf.python_module
 
 
-def test_service_identifier():
-    """Test property `service_identifier`."""
+def test_app_identifier():
+    """Test property `app_identifier`."""
     toml = Path("tests/data/optional_fields.toml")
     conf = AppConf.from_toml(path=toml)
 
-    assert conf.service_identifier == "helloworld-1.0.0"
+    assert conf.app_identifier == "helloworld"
 
 
 def test_save():
@@ -306,7 +302,6 @@ def test_into_payload():
     conf = AppConf.from_toml(path=toml)
     assert conf.into_payload() == {
         "name": "helloworld",
-        "version": "1.0.0",
         "project": "default",
         "healthcheck_endpoint": "/",
         "python_application": "app:app",
