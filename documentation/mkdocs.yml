@@ -51,6 +51,7 @@ nav:
   - Command Line:
       - Context: subcommand/context.md
       - Init: subcommand/init.md
+      - Deploy: subcommand/deploy.md
       - List: subcommand/list.md
       - Logout: subcommand/logout.md
       - Logs: subcommand/logs.md

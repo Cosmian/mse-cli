@@ -18,7 +18,6 @@ Example of configuation file:
 
 ```toml
 name="helloworld"
-version="1.0.0"
 project="default"
 plan="free"
 
@@ -90,7 +89,6 @@ def read_date():
 
     txt = WORKFILE.read_text()
     WORKFILE.unlink()
-
     return txt
 ```
 
