@@ -100,15 +100,12 @@ You application owns a dedicated storage up to 10GB. The useful directories are 
 | :-------------: | :-----------------------------: | :-----------: | :------------: | :-----------------------------------------------------------------------------------------------------------: |
 |     `$HOME`     |             `/root`             |       ✅       |       ❌        | Could be used by third-party libraries (your application dependencies) to store caches or configuration files |
 | `$SECRETS_PATH` | `$HOME/.cache/mse/secrets.json` |       ✅       |       ❌        |                The application secrets file you have sent as described in the previous section                |
-|   `$TMP_PATH`   |             `/tmp`              |       ✅       |     ❌ (3)      |                                              A temporary folder                                               |
+|   `$TMP_PATH`   |             `/tmp`              |       ✅       |       ❌        |                                              A temporary folder                                               |
 | `$MODULE_PATH`  |           `/mse-app`            |       ✅       |       ❌        |                                   Containing the decrypted application code                                   |
 
 (1) Only the enclave containing this version of your code can decrypt this directory. Another enclave or even another version of your application won't be able to read it
 
 (2) The data will be removed when the application is stopped 
-
-(3) The data will be removed when the docker containing your application is stopped
-
 
 ## Limitations
 

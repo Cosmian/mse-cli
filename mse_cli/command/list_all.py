@@ -41,8 +41,9 @@ def run(args) -> None:
     status = None
     if not args.all:
         status = [
-            AppStatus.Spawning, AppStatus.Initializing, AppStatus.Running,
-            AppStatus.OnError
+            AppStatus.Spawning,
+            AppStatus.Initializing,
+            AppStatus.Running,
         ]
 
     r: requests.Response = list_apps(conn=conn,

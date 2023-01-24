@@ -136,7 +136,7 @@ def stop_app(conn: Connection, app_uuid: UUID) -> None:
         spinner.wait()
 
         app = get_app(conn=conn, uuid=app_uuid)
-        if app.status == AppStatus.Stopped:
+        if app.is_terminated():
             break
 
     spinner.reset()

@@ -190,7 +190,6 @@ def check_app_conf(conn: Connection,
         AppStatus.Spawning,
         AppStatus.Initializing,
         AppStatus.Running,
-        AppStatus.OnError,
     ])
 
     if app:

@@ -47,6 +47,9 @@ class App(BaseModel):
     python_application: str
     healthcheck_endpoint: str
 
+    def is_terminated(self):
+        return self.status in (AppStatus.OnError, AppStatus.Stopped)
+
     @staticmethod
     def from_dict(dct: Dict[str, Any]):
         """Build an App object from a dictionnary."""
