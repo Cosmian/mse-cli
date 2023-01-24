@@ -115,9 +115,21 @@ def test_verify_bad_domain(cmd_log):
                         f"notexist.{os.getenv('MSE_TEST_DOMAIN_NAME')}"
                 }))
 
-    assert "TLS/SSL connection has been closed (EOF)" in str(
-        exception.value) or "EOF occurred in violation of protocol" in str(
-            exception.value)
+    assert "Are you sure the application is still running?" in str(
+        exception.value)
+
+    with pytest.raises(Exception) as exception:
+        run_verify(
+            Namespace(
+                **{
+                    "fingerprint": None,
+                    "context": None,
+                    "code": None,
+                    "domain_name": f"notexist.app"
+                }))
+
+    assert "Are you sure the application is still running?" in str(
+        exception.value)
 
 
 @pytest.mark.slow

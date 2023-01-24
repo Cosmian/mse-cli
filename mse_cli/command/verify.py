@@ -2,6 +2,8 @@
 
 import os
 from pathlib import Path
+import socket
+import ssl
 
 from intel_sgx_ra.error import SGXQuoteNotFound
 
@@ -72,9 +74,14 @@ def run(args) -> None:
         mrenclave = compute_mr_enclave(context, tar_path)
 
     # Get the certificate
-    ca_data = get_certificate(args.domain_name)
-    cert_path = Path(os.getcwd()) / "cert.pem"
-    cert_path.write_text(ca_data)
+    try:
+        ca_data = get_certificate(args.domain_name)
+        cert_path = Path(os.getcwd()) / "cert.pem"
+        cert_path.write_text(ca_data)
+    except (ssl.SSLZeroReturnError, socket.gaierror):
+        LOG.error(f"Can't reach {args.domain_name}. "
+                  "Are you sure the application is still running?")
+        return
 
     try:
         verify_app(mrenclave, ca_data)
