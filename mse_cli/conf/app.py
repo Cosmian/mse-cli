@@ -139,8 +139,8 @@ class AppConf(BaseModel):
         return split_str[1]
 
     @property
-    def service_identifier(self):
-        """Get the service identifier."""
+    def app_identifier(self):
+        """Get the app identifier."""
         return f"{self.name}"
 
     @staticmethod

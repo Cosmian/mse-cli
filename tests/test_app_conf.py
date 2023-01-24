@@ -258,12 +258,12 @@ def test_python_variable():
         conf.python_module
 
 
-def test_service_identifier():
-    """Test property `service_identifier`."""
+def test_app_identifier():
+    """Test property `app_identifier`."""
     toml = Path("tests/data/optional_fields.toml")
     conf = AppConf.from_toml(path=toml)
 
-    assert conf.service_identifier == "helloworld"
+    assert conf.app_identifier == "helloworld"
 
 
 def test_save():
