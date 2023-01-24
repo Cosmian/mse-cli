@@ -78,7 +78,6 @@ The file `app.py` is a basic Flask application with no extra code. Adapt your ow
 
 ```python
 from http import HTTPStatus
-
 from flask import Flask, Response
 
 app = Flask(__name__)
