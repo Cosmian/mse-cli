@@ -44,7 +44,7 @@ def get_app(conn: Connection, uuid: UUID) -> App:
     """Get an app from the backend."""
     r: requests.Response = get(conn=conn, uuid=uuid)
     if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+        raise Exception(r.text)
 
     return App.from_dict(r.json())
 
@@ -55,7 +55,7 @@ def get_enclave_resources(conn: Connection,
     r: requests.Response = get_plan(conn=conn, name=plan_name)
 
     if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+        raise Exception(r.text)
 
     plan = Plan.from_dict(r.json())
     return plan.memory, plan.cores
@@ -66,7 +66,7 @@ def get_project_from_name(conn: Connection, name: str) -> Optional[Project]:
     r: requests.Response = get_from_name(conn=conn, project_name=name)
 
     if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+        raise Exception(r.text)
 
     project = r.json()
     if not project:
@@ -115,7 +115,7 @@ def exists_in_project(conn: Connection, project_uuid: UUID, name: str,
                                              status=status)
 
     if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+        raise Exception(r.text)
 
     app = r.json()
     if not app:
@@ -129,7 +129,7 @@ def stop_app(conn: Connection, app_uuid: UUID) -> None:
     r: requests.Response = stop(conn=conn, uuid=app_uuid)
 
     if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+        raise Exception(r.text)
 
     spinner = Spinner(3)
     while True:
@@ -225,7 +225,7 @@ def verify_app(mrenclave: Optional[str], ca_data: str):
     """Verify the app by proceeding the remote attestation."""
     r = requests.get(url=MSE_CERTIFICATES_URL, timeout=60)
     if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+        raise Exception(r.text)
     # Compute MRSIGNER value from public key
     mrsigner = mr_signer_from_pk(r.content)
 

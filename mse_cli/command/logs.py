@@ -34,7 +34,7 @@ def run(args) -> None:
 
     r: requests.Response = get_app_logs(conn=conn, uuid=app.uuid)
     if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+        raise Exception(r.text)
 
     logs = r.json()
     LOG.info("")

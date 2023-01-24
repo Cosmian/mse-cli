@@ -223,7 +223,7 @@ def deploy_app(conn: Connection, app_conf: AppConf, tar_path: Path) -> App:
     r: requests.Response = new(conn=conn, conf=app_conf, code_tar_path=tar_path)
 
     if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+        raise Exception(r.text)
 
     return App.from_dict(r.json())
 
@@ -276,4 +276,4 @@ def decrypt_private_data(context: Context,
                       timeout=60)
 
     if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+        raise Exception(r.text)

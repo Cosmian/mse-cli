@@ -51,7 +51,7 @@ def run(args) -> None:
                                      status=status)
 
     if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+        raise Exception(r.text)
 
     LOG.info("\n%s | %s | %12s | %s ", "App UUID".center(36),
              "Creation date".center(32), "Status".center(12),

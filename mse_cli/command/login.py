@@ -157,7 +157,7 @@ def run(args) -> None:
         timeout=60)
 
     if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+        raise Exception(r.text)
 
     js = r.json()
     required_fields = ["access_token", "refresh_token", "id_token"]
