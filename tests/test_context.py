@@ -68,7 +68,7 @@ def test_from_app_conf():
                            project="default",
                            code_secret_key=conf.config.code_secret_key,
                            python_application="app:app",
-                           ssl_app_certificate="-----BEGIN CERTIFICATE",
+                           ssl_app_certificate=Path("tests/data/cert.pem").read_text(),
                            docker="ghcr.io/cosmian/mse-pytorch:20230104085621"),
         instance=None)
 

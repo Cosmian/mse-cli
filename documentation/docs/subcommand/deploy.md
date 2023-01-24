@@ -61,7 +61,7 @@ You can now run `mse logs f565385d-8c69-4001-a75d-8d84c17e312b` if necessary
 …
 ```
 
-A new deployment ID is used: `f565385d-8c69-4001-a75d-8d84c17e312b`).
+A new deployment ID is used: `f565385d-8c69-4001-a75d-8d84c17e312b`.
 The URL of your microservice remains the same: `https://04e9952c-981d-4601-a610-81152fe21315.cosmian.dev`
 
 #### Domain name and SSL configuration
