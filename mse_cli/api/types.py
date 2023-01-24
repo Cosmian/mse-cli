@@ -48,6 +48,7 @@ class App(BaseModel):
     healthcheck_endpoint: str
 
     def is_terminated(self):
+        """Check if the app is terminated (success or failure)."""
         return self.status in (AppStatus.OnError, AppStatus.Stopped)
 
     @staticmethod
