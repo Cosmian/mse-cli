@@ -42,7 +42,18 @@ def run(args) -> None:
 
     command = ["--application", app.code.python_application, "--debug"]
 
-    volumes = {f"{app.code.location}": {'bind': '/mse-app', 'mode': 'rw'}}
+    volumes = {
+        f"{app.code.location}": {
+            'bind': '/mse-app',
+            'mode': 'rw'
+        },
+    }
+
+    if app.code.secrets:
+        volumes[f"{app.code.secrets}"] = {
+            'bind': '/root/.cache/mse/secrets.json',
+            'mode': 'rw'
+        }
 
     container = client.containers.run(
         app.code.docker,
