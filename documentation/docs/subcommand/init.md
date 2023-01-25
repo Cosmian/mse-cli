@@ -7,7 +7,7 @@ We need you to fill in the following fields
 App name: test
 Project name [default]: 
 Plan id [free]: 
-Docker url [ghcr.io/cosmian/mse-flask:20230110142022]: 
+Docker url [ghcr.io/cosmian/mse-flask:20230124182826]: 
 Code location: .
 Python application [app:app]: 
 Health check endpoint [/]: 
@@ -25,5 +25,5 @@ plan = "free"
 location = "."
 python_application = "app:app"
 healthcheck_endpoint = "/"
-docker = "ghcr.io/cosmian/mse-flask:20230110142022"
+docker = "ghcr.io/cosmian/mse-flask:20230124182826"
 ```

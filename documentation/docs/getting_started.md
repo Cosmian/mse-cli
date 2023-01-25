@@ -109,7 +109,7 @@ plan = "free"
 
 [code]
 location = "mse_src"
-docker = "ghcr.io/cosmian/mse-flask:20230110142022"
+docker = "ghcr.io/cosmian/mse-flask:20230124182826"
 python_application = "app:app"
 healthcheck_endpoint = "/health"
 ```

@@ -12,7 +12,7 @@ $ cat my_project/mse.toml
    6   │ location = "my_project/code"
    7   │ python_application = "app:app"
    8   │ healthcheck_endpoint = "/"
-   9   | docker = "ghcr.io/cosmian/mse-flask:20230110142022"
+   9   | docker = "ghcr.io/cosmian/mse-flask:20230124182826"
 ───────┴──────────────────────────────
 ```
 
