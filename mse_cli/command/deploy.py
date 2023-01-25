@@ -73,7 +73,7 @@ def run(args) -> None:
         if app_conf.ssl:
             LOG.warning("SSL conf paragraph is ignored.%s")
 
-    (enclave_size, cores) = get_enclave_resources(conn, app_conf.plan)
+    (enclave_size, cores) = get_enclave_resources(conn, app_conf.resource)
     context = Context.from_app_conf(app_conf)
     LOG.info("Temporary workspace is: %s", context.workspace)
 

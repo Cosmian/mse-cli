@@ -6,24 +6,24 @@ $ cat my_project/mse.toml
 ───────┬──────────────────────────────
    1   │ name = "my_project"
    2   │ project = "default"
-   3   │ plan = "free"
+   3   │ resource = "free"
    4   │
    5   │ [code]
    6   │ location = "my_project/code"
    7   │ python_application = "app:app"
    8   │ healthcheck_endpoint = "/"
-   9   | docker = "ghcr.io/cosmian/mse-flask:20230110142022"
+   9   | docker = "ghcr.io/cosmian/mse-flask:20230124182826"
 ───────┴──────────────────────────────
 ```
 
 ### Main section
 
-|      Keys       | Mandatory |            Types            |                       Description                        |
-| :-------------: | :-------: | :-------------------------: | :------------------------------------------------------: |
-|      name       |     ✔️     |             str             | Name of the application. It must be unique per `project` |
-|     project     |     ✔️     |      `default` or str       |     Project name to regroup applications for payment     |
-|      plan       |     ✔️     | `free` or other plans names |              Plan used for your application              |
-| expiration_date |           |      YY-MM-DD HH/mm/ss      |  Expiration date (UTC) before the application shutdowns  |
+|      Keys       | Mandatory |             Types              |                       Description                        |
+| :-------------: | :-------: | :----------------------------: | :------------------------------------------------------: |
+|      name       |     ✔️     |              str               | Name of the application. It must be unique per `project` |
+|     project     |     ✔️     |        `default` or str        |     Project name to regroup applications for payment     |
+|    resource     |     ✔️     | `free` or other resource names |       Resource you own to use for your application       |
+| expiration_date |           |       YY-MM-DD HH/mm/ss        |  Expiration date (UTC) before the application shutdowns  |
 
 
 Two applications from the same project with the same name cannot be running at the same time.

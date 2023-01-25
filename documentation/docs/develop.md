@@ -19,13 +19,13 @@ Example of configuation file:
 ```toml
 name="helloworld"
 project="default"
-plan="free"
+resource="free"
 
 [code]
 location="./code"
 python_application="app:app"
 healthcheck_endpoint="/whoami"
-docker="ghcr.io/cosmian/mse-flask:20230110142022"
+docker="ghcr.io/cosmian/mse-flask:20230124182826"
 secrets="./secrets.json"
 
 [ssl]
