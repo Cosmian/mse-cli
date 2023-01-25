@@ -22,6 +22,10 @@ def add_subparser(subparsers):
         type=non_empty_string,
         help="name of the project with MSE applications to list")
 
+    parser.add_argument("--all",
+                        action="store_true",
+                        help="also list the stopped apps")
+
 
 def run(args) -> None:
     """Run the subcommand."""
@@ -34,16 +38,20 @@ def run(args) -> None:
 
     LOG.info("Fetching the project %s...", project.uuid)
 
+    status = None
+    if not args.all:
+        status = [
+            AppStatus.Spawning,
+            AppStatus.Initializing,
+            AppStatus.Running,
+        ]
+
     r: requests.Response = list_apps(conn=conn,
                                      project_uuid=project.uuid,
-                                     status=[
-                                         AppStatus.Spawning,
-                                         AppStatus.Initializing,
-                                         AppStatus.Running, AppStatus.OnError
-                                     ])
+                                     status=status)
 
     if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+        raise Exception(r.text)
 
     LOG.info("\n%s | %s | %12s | %s ", "App UUID".center(36),
              "Creation date".center(32), "Status".center(12),
@@ -64,7 +72,7 @@ def run(args) -> None:
         elif app.status == AppStatus.Spawning:
             color = bcolors.OKBLUE
 
-        LOG.info("%s | %s |%s %s %s| %s-%s on %s%s%s", app.uuid,
+        LOG.info("%s | %s |%s %s %s| %s on %s%s%s", app.uuid,
                  app.created_at.astimezone(), color,
                  app.status.value.center(12), bcolors.ENDC, app.name,
-                 app.version, bcolors.OKBLUE, app.domain_name, bcolors.ENDC)
+                 bcolors.OKBLUE, app.domain_name, bcolors.ENDC)

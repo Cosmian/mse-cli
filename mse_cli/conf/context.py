@@ -53,8 +53,6 @@ class ContextConf(BaseModel):
 
     # Name of the mse app
     name: str
-    # Version of the mse app
-    version: str
     # Project parent of the app
     project: str
     # Symetric key used to encrypt the code
@@ -171,11 +169,10 @@ class Context(BaseModel):
     @staticmethod
     def from_app_conf(conf: AppConf):
         """Build a Context object from an app conf."""
-        cert = conf.ssl.certificate if conf.ssl else None
+        cert = conf.ssl.certificate_data if conf.ssl else None
 
         context = Context(
             config=ContextConf(name=conf.name,
-                               version=conf.version,
                                project=conf.project,
                                python_application=conf.code.python_application,
                                docker=conf.code.docker,
@@ -214,7 +211,6 @@ class Context(BaseModel):
                 "version": self.version,
                 "config": {
                     "name": self.config.name,
-                    "version": self.config.version,
                     "project": self.config.project,
                     "docker": self.config.docker,
                     "python_application": self.config.python_application,

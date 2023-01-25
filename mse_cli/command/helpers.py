@@ -15,6 +15,7 @@ from intel_sgx_ra.attest import remote_attestation
 from intel_sgx_ra.ratls import ratls_verification
 from intel_sgx_ra.signer import mr_signer_from_pk
 from mse_lib_crypto.xsalsa20_poly1305 import encrypt_directory
+from mse_cli.utils.spinner import Spinner
 
 from mse_cli import MSE_CERTIFICATES_URL, MSE_PCCS_URL
 from mse_cli.api.app import get, stop
@@ -43,18 +44,18 @@ def get_app(conn: Connection, uuid: UUID) -> App:
     """Get an app from the backend."""
     r: requests.Response = get(conn=conn, uuid=uuid)
     if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+        raise Exception(r.text)
 
     return App.from_dict(r.json())
 
 
 def get_enclave_resources(conn: Connection,
-                          plan_name: str) -> Tuple[int, float]:
+                          resource_name: str) -> Tuple[int, float]:
     """Get the enclave size and cores from an app."""
-    r: requests.Response = get_plan(conn=conn, name=plan_name)
+    r: requests.Response = get_plan(conn=conn, name=resource_name)
 
     if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+        raise Exception(r.text)
 
     plan = Plan.from_dict(r.json())
     return plan.memory, plan.cores
@@ -65,7 +66,7 @@ def get_project_from_name(conn: Connection, name: str) -> Optional[Project]:
     r: requests.Response = get_from_name(conn=conn, project_name=name)
 
     if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+        raise Exception(r.text)
 
     project = r.json()
     if not project:
@@ -114,7 +115,7 @@ def exists_in_project(conn: Connection, project_uuid: UUID, name: str,
                                              status=status)
 
     if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+        raise Exception(r.text)
 
     app = r.json()
     if not app:
@@ -124,11 +125,21 @@ def exists_in_project(conn: Connection, project_uuid: UUID, name: str,
 
 
 def stop_app(conn: Connection, app_uuid: UUID) -> None:
-    """Stop the app remotly."""
+    """Stop the app remotely."""
     r: requests.Response = stop(conn=conn, uuid=app_uuid)
 
     if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+        raise Exception(r.text)
+
+    spinner = Spinner(3)
+    while True:
+        spinner.wait()
+
+        app = get_app(conn=conn, uuid=app_uuid)
+        if app.is_terminated():
+            break
+
+    spinner.reset()
 
     # Remove context file
     Context.clean(app_uuid, ignore_errors=True)
@@ -185,7 +196,7 @@ def compute_mr_enclave(context: Context, tar_path: Path) -> str:
 
     if not m:
         raise Exception(
-            "Fail to compute mr_enclave!!! See {docker_log_path} for more details."
+            "Fail to compute mr_enclave! See {docker_log_path} for more details."
         )
 
     return str(m.group(1).decode("utf-8"))
@@ -214,7 +225,7 @@ def verify_app(mrenclave: Optional[str], ca_data: str):
     """Verify the app by proceeding the remote attestation."""
     r = requests.get(url=MSE_CERTIFICATES_URL, timeout=60)
     if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+        raise Exception(r.text)
     # Compute MRSIGNER value from public key
     mrsigner = mr_signer_from_pk(r.content)
 

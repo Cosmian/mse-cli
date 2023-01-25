@@ -12,9 +12,10 @@ from mse_cli.command.status import run as run_status
 from mse_cli.command.logs import run as run_logs
 from mse_cli.command.list_all import run as run_list
 from mse_cli.command.stop import run as run_stop
-from mse_cli.command.remove import run as run_remove
 from mse_cli.command.scaffold import run as run_scaffold
 from mse_cli.command.context import run as run_context
+
+from conftest import capture_logs
 
 
 @pytest.mark.slow
@@ -54,7 +55,7 @@ def test_scaffold_bad_name(cmd_log):
 def test_list_bad_project_name(cmd_log):
     """Test list with the error: project name does not exist."""
     with pytest.raises(Exception) as exception:
-        run_list(Namespace(**{"project_name": "notexist"}))
+        run_list(Namespace(**{"project_name": "notexist", "all": False}))
 
     assert "Project notexist does not exist" in str(exception.value)
 
@@ -88,18 +89,6 @@ def test_context_bad_id(cmd_log):
 
 
 @pytest.mark.slow
-def test_remove_bad_uuid(cmd_log):
-    """Test remove with the error: valid id but no exists."""
-    with pytest.raises(Exception) as exception:
-        run_remove(
-            Namespace(**{
-                "app_uuid": "00000000-0000-0000-0000-000000000000",
-            }))
-
-    assert "Cannot find the app with UUID " in str(exception.value)
-
-
-@pytest.mark.slow
 def test_stop_bad_uuid(cmd_log):
     """Test stop with the error: valid id but no exists."""
     with pytest.raises(Exception) as exception:
@@ -114,25 +103,27 @@ def test_stop_bad_uuid(cmd_log):
 @pytest.mark.slow
 def test_verify_bad_domain(cmd_log):
     """Test verify with the error: valid domain but no exists."""
-    with pytest.raises(Exception) as exception:
-        run_verify(
-            Namespace(
-                **{
-                    "skip_fingerprint":
-                        True,
-                    "fingerprint":
-                        None,
-                    "context":
-                        None,
-                    "code":
-                        None,
-                    "domain_name":
-                        f"notexist.{os.getenv('MSE_TEST_DOMAIN_NAME')}"
-                }))
+    run_verify(
+        Namespace(
+            **{
+                "fingerprint": None,
+                "context": None,
+                "code": None,
+                "domain_name": f"notexist.{os.getenv('MSE_TEST_DOMAIN_NAME')}"
+            }))
+    output = capture_logs(cmd_log)
+    assert "Are you sure the application is still running?" in output
 
-    assert "TLS/SSL connection has been closed (EOF)" in str(
-        exception.value) or "EOF occurred in violation of protocol" in str(
-            exception.value)
+    run_verify(
+        Namespace(
+            **{
+                "fingerprint": None,
+                "context": None,
+                "code": None,
+                "domain_name": f"notexist.app"
+            }))
+    output = capture_logs(cmd_log)
+    assert "Are you sure the application is still running?" in output
 
 
 @pytest.mark.slow
@@ -232,5 +223,5 @@ def test_deploy_latest_docker(cmd_log):
                         False
                 }))
 
-    assert "You shouldn\\\'t use latest tag for the docker image" in str(
+    assert "You shouldn\'t use latest tag for the docker image" in str(
         exception.value)

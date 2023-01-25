@@ -16,7 +16,9 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
 
 ## Context
 
-`mse` also creates a directory `$HOME/.config/mse/context/uuid/` when a deployment is sucessfully completed. This directory contains:
+`mse` also creates a directory `$HOME/.config/mse/context/uuid/` when a deployment is successfully completed.
+
+This directory contains:
 
 - The tarball of the encrypted code
 - A TOML file with contains the details required for a user to verify the trustworthiness of the app
@@ -29,10 +31,9 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
 
     [config]
     name = "helloworld"
-    version = "1.0.0"
     project = "default"
     python_application = "app:app"
-    docker = "ghcr.io/cosmian/mse-flask:20230110142022"
+    docker = "ghcr.io/cosmian/mse-flask:20230124182826"
     code_secret_key = "a389f8baf2e03cebd445d99f03600b29ca259faa9a3964e529c03effef206135"
 
     [instance]
@@ -53,10 +54,9 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
 
     [config]
     name = "helloworld"
-    version = "1.0.0"
     project = "default"
     python_application = "app:app"
-    docker = "ghcr.io/cosmian/mse-flask:20230110142022"
+    docker = "ghcr.io/cosmian/mse-flask:20230124182826"
     code_secret_key = "a389f8baf2e03cebd445d99f03600b29ca259faa9a3964e529c03effef206135"
     ssl_app_certificate = "-----BEGIN CERTIFICATE[...]"
 
@@ -78,10 +78,9 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
 
     [config]
     name = "helloworld"
-    version = "1.0.0"
     project = "default"
     python_application = "app:app"
-    docker = "ghcr.io/cosmian/mse-flask:20230110142022"
+    docker = "ghcr.io/cosmian/mse-flask:20230124182826"
     code_secret_key = "23a143da6cdabadfba914e2bfc29272dbb90e8346f2bde9fab4c7b3f135ed4ad"
 
     [instance]
@@ -116,7 +115,7 @@ $ mse context --remove 852a4256-fffa-457a-80ed-329166a652af
 [...]
 ```
 
-!!! warning "If you do that, you will loose the configuration and the tar code. That will make you unable to share these information, thus an app user will be unable to verify the trustworthiness of your app"
+!!! warning "If you do that, you will lose the configuration and the tar code. That will make you unable to share these information, thus an app user will be unable to verify the trustworthiness of your app"
 
 
 ### Purge
@@ -128,7 +127,7 @@ $ mse context --purge
 [...]
 ```
 
-!!! warning "If you do that, you will loose the configuration and the tar code for all apps. That will make you unable to share these information, thus an app user will be unable to verify the trustworthiness of all of your apps"
+!!! warning "If you do that, you will lose the configuration and the tar code for all apps. That will make you unable to share these information, thus an app user will be unable to verify the trustworthiness of all of your apps"
 
 
 ### Export

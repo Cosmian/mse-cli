@@ -1,6 +1,6 @@
 ## Overview
 
-The application has been developped by the app owner. Therefore, how to use it depends on its own API.
+The application has been developed by the app owner. Therefore, how to use it depends on its own API.
 
 However, there are some specificities about the connection depending on the MSE configuration namely the scenarii chosen by the app owner.
 
@@ -50,8 +50,8 @@ For more details about this step, read [security](security.md).
 This verification can be done using: `mse verify`: 
 
 - code fingerprint can be checked against a fingerprint provided by the app owner, with `--fingerprint FINGERPRINT`
-- code fingerprint can be computed by the user on their own, with the options `--context` and `--code`. The context file and the plain text code must be provided by the app owner to the user by their own means. See [the context subcommand](subcommand/context.md#export).
-- the verification of the code fingerprint can be omitted with `--skip-fingerprint`
+- code fingerprint can be computed by the user on their own, with the options `--context` and `--code`. The context file and the plain text code must be provided by the app owner to the user by their own means. See [the context subcommand](subcommand/context.md#export)
+- the verification of the code fingerprint is omitted if you don't provide the previous arguments
 
 ```console
 $ mse verify my_app.cosmian.app

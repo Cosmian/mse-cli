@@ -21,7 +21,7 @@ First of all sign up or sign in using:
 $ mse login
 ```
 
-Download the [mse-app-demo](http://gitlab.cosmian.com/core/mse-app-demo) repository. And go to the `helloworld` directory.
+Download the [mse-app-examples](http://gitlab.cosmian.com/core/mse-app-examples) repository. And go to the `helloworld` directory.
 
 You can find an example of `flask` application and a `mse.toml` configuration file.
 
@@ -31,7 +31,7 @@ You can deploy this application as follow:
 
 ```console
 $ cd helloworld
-$ mse deploy --path config/dev.toml
+$ mse deploy --path mse.toml
 ```
 
 `mse` creates `<uuid>.toml` in `$MSE_CONF_PATH/context` for each new deployment which contains some context data.
@@ -54,6 +54,8 @@ You can use these following env variables:
 - `MSE_AUTH0_CLIENT_ID` to specify another auth0 tenant client id
 - `MSE_AUTH0_AUDIENCE` to specify another tenant audience
 - `MSE_CONSOLE_URL` to specify another console URL
+- `MSE_PCCS_URL` to specify another PCCS URL 
+
 
 ## Development & Test
 
@@ -65,6 +67,7 @@ To work with the development/test environment, you shall edit the following vari
 - `MSE_BASE_URL`
 - `MSE_AUTH0_AUDIENCE`
 - `MSE_CONSOLE_URL`
+- `MSE_PCCS_URL`
 
 Do the same, if you need to use de staging environment.
 

@@ -56,9 +56,8 @@ def run(args) -> None:
             if path.is_file() and path.suffix == ".mse":
                 try:
                     context = Context.from_toml(path)
-                    LOG.info("%s -> %s%s-%s%s (%s)", context.instance.id,
-                             bcolors.OKBLUE, context.config.name,
-                             context.config.version, bcolors.ENDC,
+                    LOG.info("%s -> %s%s%s (%s)", context.instance.id,
+                             bcolors.OKBLUE, context.config.name, bcolors.ENDC,
                              datetime.fromtimestamp(path.stat().st_ctime))
                 except (TypeError, TomlDecodeError, OSError, ValidationError):
                     LOG.info("%s -> %s[file format not supported]%s",

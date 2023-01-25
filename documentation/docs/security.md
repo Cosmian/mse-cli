@@ -14,7 +14,7 @@ The symmetric key is provisioned when you are confident that your code is runnin
 
 ## Remote attestation
 
-A very important aspect Intel SGX (and more generally Trusted Execution Environnments) is attestation.
+A very important aspect Intel SGX (and more generally Trusted Execution Environments) is attestation.
 This is a mechanism for a remote user to verify that the application runs on a real hardware in an up-to-date hardware and software with the expected initial state.
 In other words, remote attestation provides the assurance to the user that the remotely executing SGX enclave is trusted and that the correct code is executed.
 

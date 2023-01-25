@@ -1,7 +1,6 @@
 name = "{{ name }}"
-version = "0.1.0"
 project = "default"
-plan = "free"
+resource = "free"
 
 [code]
 location = "mse_src"

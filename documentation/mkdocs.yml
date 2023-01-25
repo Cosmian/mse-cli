@@ -51,14 +51,15 @@ nav:
   - Command Line:
       - Context: subcommand/context.md
       - Init: subcommand/init.md
+      - Deploy: subcommand/deploy.md
       - List: subcommand/list.md
       - Logout: subcommand/logout.md
       - Logs: subcommand/logs.md
-      - Remove: subcommand/remove.md
       - Status: subcommand/status.md
       - Stop: subcommand/stop.md
       - Test: subcommand/test.md
       - Verify: subcommand/verify.md
+  - Develop your app: develop.md
   - Usage Scenarios: scenarios.md
   - Security Model: security.md
   - App Deployment Flow: how_it_works_deploy.md

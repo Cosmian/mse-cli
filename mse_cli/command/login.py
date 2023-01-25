@@ -96,7 +96,7 @@ def run(args) -> None:
             LOG.error("You are not logged in yet!")
             return
 
-        LOG.info("Your are currently logged in as: %s", user_conf.email)
+        LOG.info("You are currently logged in as: %s", user_conf.email)
 
         try:
             me = get_user_info(user_conf)
@@ -113,7 +113,7 @@ def run(args) -> None:
         except NameError:
             LOG.warning("Don't forget to verify your email and "
                         "complete your profile before going on")
-        LOG.info("Your are already logged in as: %s", user_conf.email)
+        LOG.info("You are already logged in as: %s", user_conf.email)
         return
 
     # Otherwise, start the login process
@@ -138,7 +138,7 @@ def run(args) -> None:
         "state": state
     }
 
-    # Run the server, open the brower and query auth0 "authorize"
+    # Run the server, open the browser and query auth0 "authorize"
     code = run_server(port,
                       f"{MSE_AUTH0_DOMAIN_NAME}/authorize?" + urlencode(params),
                       state)
@@ -157,7 +157,7 @@ def run(args) -> None:
         timeout=60)
 
     if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+        raise Exception(r.text)
 
     js = r.json()
     required_fields = ["access_token", "refresh_token", "id_token"]

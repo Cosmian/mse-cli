@@ -5,10 +5,9 @@ $ mse init
 We need you to fill in the following fields
 
 App name: test
-App version: 1.0.0
 Project name [default]: 
-Plan id [free]: 
-Docker url [ghcr.io/cosmian/mse-flask:20230110142022]: 
+Resource name [free]: 
+Docker url [ghcr.io/cosmian/mse-flask:20230124182826]: 
 Code location: .
 Python application [app:app]: 
 Health check endpoint [/]: 
@@ -19,13 +18,12 @@ The configuration file for the previous example would be:
 
 ```toml
 name = "test"
-version = "1.0.0"
 project = "default"
-plan = "free"
+resource = "free"
 
 [code]
 location = "."
 python_application = "app:app"
 healthcheck_endpoint = "/"
-docker = "ghcr.io/cosmian/mse-flask:20230110142022"
+docker = "ghcr.io/cosmian/mse-flask:20230124182826"
 ```

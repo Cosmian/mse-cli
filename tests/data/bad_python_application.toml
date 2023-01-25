@@ -1,7 +1,6 @@
 name = "bad_app"
-version = "1.0.0"
 project = "default"
-plan = "free"
+resource = "free"
 
 [code]
 location = "/tmp/code"

@@ -1,10 +1,10 @@
 name = "helloworld"
-version = "1.0.0"
 project = "default"
-plan = "free"
+resource = "free"
 
 [code]
 location = "/tmp/code"
 docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
 python_application = "app:ppa"
 healthcheck_endpoint = "/"
+secrets = "secrets.json"

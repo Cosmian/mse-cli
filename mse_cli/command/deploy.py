@@ -1,7 +1,7 @@
 """mse_cli.command.deploy module."""
 
 from pathlib import Path
-from typing import Optional
+from typing import Any, Dict, Optional
 from uuid import UUID
 
 import requests
@@ -73,7 +73,7 @@ def run(args) -> None:
         if app_conf.ssl:
             LOG.warning("SSL conf paragraph is ignored.%s")
 
-    (enclave_size, cores) = get_enclave_resources(conn, app_conf.plan)
+    (enclave_size, cores) = get_enclave_resources(conn, app_conf.resource)
     context = Context.from_app_conf(app_conf)
     LOG.info("Temporary workspace is: %s", context.workspace)
 
@@ -83,9 +83,8 @@ def run(args) -> None:
     LOG.info("Deploying your app...")
     app = deploy_app(conn, app_conf, tar_path)
 
-    LOG.info(
-        "App %s creating for %s:%s with %dM EPC memory and %.2f CPU cores...",
-        app.uuid, app.name, app.version, enclave_size, cores)
+    LOG.info("App %s creating for %s with %dM EPC memory and %.2f CPU cores...",
+             app.uuid, app.name, enclave_size, cores)
 
     LOG.advice(  # type: ignore
         "You can now run `mse logs %s` if necessary", app.uuid)
@@ -124,7 +123,8 @@ def run(args) -> None:
     LOG.info("Sending secret key and decrypting the application code...")
     decrypt_private_data(
         context,
-        ssl_private_key=app_conf.ssl.private_key if app_conf.ssl else None)
+        ssl_private_key=app_conf.ssl.private_key_data if app_conf.ssl else None,
+        app_secrets=app_conf.code.secrets_data)
 
     LOG.info("Waiting for application to be ready...")
     app = wait_app_start(conn, app.uuid)
@@ -166,13 +166,11 @@ def wait_app_start(conn: Connection, uuid: UUID) -> App:
             break
         if app.status == AppStatus.OnError:
             raise Exception(
-                "The app creation stopped because an error occured...")
-        if app.status == AppStatus.Deleted:
-            raise Exception("The app creation stopped because it "
-                            "has been deleted in the meantime...")
+                "The app creation stopped because an error occurred...")
         if app.status == AppStatus.Stopped:
-            raise Exception("The app creation stopped because it "
-                            "has been stopped in the meantime...")
+            raise Exception(
+                "The app creation stopped because it has been stopped in the meantime..."
+            )
 
     spinner.reset()
     return app
@@ -192,12 +190,11 @@ def check_app_conf(conn: Connection,
         AppStatus.Spawning,
         AppStatus.Initializing,
         AppStatus.Running,
-        AppStatus.OnError,
     ])
 
     if app:
         LOG.info(
-            "An application with the same name in that project is already running..."
+            "An application with the same name in this project is already running..."
         )
         if force:
             LOG.info("Stopping the previous app (force mode enabled)...")
@@ -208,7 +205,8 @@ def check_app_conf(conn: Connection,
                 LOG.info("Stopping the previous app...")
                 stop_app(conn, app.uuid)
             else:
-                LOG.info("Your deployment has been stopped!")
+                LOG.info("Deployment has been canceled!")
+                LOG.info("Please rename your application")
                 return False
 
     if not (app_conf.code.location /
@@ -221,11 +219,11 @@ def check_app_conf(conn: Connection,
 
 
 def deploy_app(conn: Connection, app_conf: AppConf, tar_path: Path) -> App:
-    """Deploy the app to a MSE node."""
+    """Deploy the app to an MSE node."""
     r: requests.Response = new(conn=conn, conf=app_conf, code_tar_path=tar_path)
 
     if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+        raise Exception(r.text)
 
     return App.from_dict(r.json())
 
@@ -242,13 +240,10 @@ def wait_app_creation(conn: Connection, uuid: UUID) -> App:
             break
         if app.status == AppStatus.Running:
             raise Exception(
-                "The app shoudn't be in the state running at this stage...")
+                "The app shouldn't be in the state running at this stage...")
         if app.status == AppStatus.OnError:
             raise Exception(
-                "The app creation stopped because an error occured...")
-        if app.status == AppStatus.Deleted:
-            raise Exception("The app creation stopped because it "
-                            "has been deleted in the meantime...")
+                "The app creation stopped because an error occurred...")
         if app.status == AppStatus.Stopped:
             raise Exception("The app creation stopped because it "
                             "has been stopped in the meantime...")
@@ -258,17 +253,21 @@ def wait_app_creation(conn: Connection, uuid: UUID) -> App:
 
 
 def decrypt_private_data(context: Context,
-                         ssl_private_key: Optional[str] = None):
+                         ssl_private_key: Optional[str] = None,
+                         app_secrets: Optional[Dict[str, Any]] = None):
     """Send the ssl private key and the key which was used to encrypt the code."""
     assert context.instance
 
-    data = {
+    data: Dict[str, Any] = {
         "code_secret_key": context.config.code_secret_key.hex(),
         "uuid": str(context.instance.id)
     }
 
     if ssl_private_key:
         data["ssl_private_key"] = ssl_private_key
+
+    if app_secrets:
+        data["app_secrets"] = app_secrets
 
     r = requests.post(url=f"https://{context.instance.config_domain_name}",
                       json=data,
@@ -277,4 +276,4 @@ def decrypt_private_data(context: Context,
                       timeout=60)
 
     if not r.ok:
-        raise Exception(f"Unexpected response ({r.status_code}): {r.content!r}")
+        raise Exception(r.text)

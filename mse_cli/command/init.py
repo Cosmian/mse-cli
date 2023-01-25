@@ -22,22 +22,24 @@ def run(_args):
     LOG.info("We need you to fill in the following fields\n")
 
     app_name = input("App name: ")
-    app_version = input("App version: ")
     project_name = input("Project name [default]: ") or "default"
-    plan = input("Plan id [free]: ") or "free"
+    resource = input("Resource name [free]: ") or "free"
     docker = input(f"Docker url [{MSE_DEFAULT_DOCKER}]: ") or MSE_DEFAULT_DOCKER
     code_location = input("Code location [.]:") or "."
     python_application = input("Python application [app:app]: ") or "app:app"
     healthcheck_endpoint = input("Health check endpoint [/]: ") or "/"
+    secrets_enable = input(
+        "Do you have application secrets to provide [no]: ") or "no"
+    secrets = "secrets.json" if secrets_enable.lower() in ["y", "yes"] else None
 
     app = AppConf(name=app_name,
-                  version=app_version,
                   project=project_name,
-                  plan=plan,
+                  resource=resource,
                   code=CodeConf(location=code_location,
                                 python_application=python_application,
                                 healthcheck_endpoint=healthcheck_endpoint,
-                                docker=docker))
+                                docker=docker,
+                                secrets=secrets))
 
     path = Path(os.getcwd())
     app.save(path)
