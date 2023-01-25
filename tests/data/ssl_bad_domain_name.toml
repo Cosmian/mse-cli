@@ -1,6 +1,6 @@
 name = "helloworld"
 project = "default"
-plan = "free"
+resource = "free"
 
 [code]
 location = "/tmp/code"

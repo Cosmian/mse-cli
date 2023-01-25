@@ -35,12 +35,12 @@ def run(args) -> None:
     (enclave_size, cores) = get_enclave_resources(conn, app.plan)
 
     LOG.info("\n> Microservice")
-    LOG.info("\tName         = %s", app.name)
-    LOG.info("\tDomain name  = %s", app.domain_name)
-    LOG.info("\tBilling plan = %s", app.plan)
-    LOG.info("\tApplication  = %s", app.python_application)
-    LOG.info("\tMSE docker   = %s", app.docker)
-    LOG.info("\tHealthcheck  = %s", app.healthcheck_endpoint)
+    LOG.info("\tName        = %s", app.name)
+    LOG.info("\tDomain name = %s", app.domain_name)
+    LOG.info("\tResource    = %s", app.plan)
+    LOG.info("\tApplication = %s", app.python_application)
+    LOG.info("\tMSE docker  = %s", app.docker)
+    LOG.info("\tHealthcheck = %s", app.healthcheck_endpoint)
 
     LOG.info("\n> Deployment status")
     LOG.info("\tUUID               = %s", app.uuid)

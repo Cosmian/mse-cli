@@ -50,9 +50,9 @@ def get_app(conn: Connection, uuid: UUID) -> App:
 
 
 def get_enclave_resources(conn: Connection,
-                          plan_name: str) -> Tuple[int, float]:
+                          resource_name: str) -> Tuple[int, float]:
     """Get the enclave size and cores from an app."""
-    r: requests.Response = get_plan(conn=conn, name=plan_name)
+    r: requests.Response = get_plan(conn=conn, name=resource_name)
 
     if not r.ok:
         raise Exception(r.text)

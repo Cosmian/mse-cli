@@ -19,7 +19,7 @@ Example of configuation file:
 ```toml
 name="helloworld"
 project="default"
-plan="free"
+resource="free"
 
 [code]
 location="./code"

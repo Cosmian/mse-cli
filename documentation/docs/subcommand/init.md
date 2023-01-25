@@ -6,7 +6,7 @@ We need you to fill in the following fields
 
 App name: test
 Project name [default]: 
-Plan id [free]: 
+Resource name [free]: 
 Docker url [ghcr.io/cosmian/mse-flask:20230124182826]: 
 Code location: .
 Python application [app:app]: 
@@ -19,7 +19,7 @@ The configuration file for the previous example would be:
 ```toml
 name = "test"
 project = "default"
-plan = "free"
+resource = "free"
 
 [code]
 location = "."

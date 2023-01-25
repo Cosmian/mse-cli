@@ -119,7 +119,7 @@ def test_ssl():
 
     ref_app_conf = AppConf(name="helloworld",
                            project="default",
-                           plan="free",
+                           resource="free",
                            expiration_date=datetime(2023,
                                                     2,
                                                     1,
@@ -147,7 +147,7 @@ def test_ssl_optionals():
 
     ref_app_conf = AppConf(name="helloworld",
                            project="default",
-                           plan="free",
+                           resource="free",
                            code=code,
                            ssl=None)
 
@@ -182,7 +182,7 @@ def test_ssl_optionals():
     ref_app_conf = AppConf(name="helloworld",
                            version="1.0.0",
                            project="default",
-                           plan="free",
+                           resource="free",
                            code=code,
                            ssl=None)
 
@@ -203,7 +203,7 @@ def test_expiration_date():
     ref_app_conf = AppConf(
         name="helloworld",
         project="default",
-        plan="free",
+        resource="free",
         code=code,
         expiration_date=datetime(2023, 2, 1, 0, 0, 0, tzinfo=timezone.utc),
     )
@@ -250,7 +250,7 @@ def test_python_variable():
 
     conf = AppConf(name="helloworld",
                    project="default",
-                   plan="free",
+                   resource="free",
                    code=code)
 
     with pytest.raises(Exception) as context:
