@@ -78,7 +78,7 @@ def run(args) -> None:
         ca_data = get_certificate(args.domain_name)
         cert_path = Path(os.getcwd()) / "cert.pem"
         cert_path.write_text(ca_data)
-    except (ssl.SSLZeroReturnError, socket.gaierror):
+    except (ssl.SSLZeroReturnError, socket.gaierror, ssl.SSLEOFError):
         LOG.error(
             "Can't reach %s. "
             "Are you sure the application is still running?", args.domain_name)

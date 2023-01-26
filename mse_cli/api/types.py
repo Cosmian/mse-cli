@@ -39,7 +39,6 @@ class App(BaseModel):
     created_at: datetime.datetime
     ready_at: Optional[datetime.datetime]
     stopped_at: Optional[datetime.datetime]
-    onerror_at: Optional[datetime.datetime]
     status: AppStatus
     plan: str
     ssl_certificate_origin: SSLCertificateOrigin
