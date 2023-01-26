@@ -209,8 +209,15 @@ documentation:
   stage: deploy
   rules:
     - if: $CI_COMMIT_BRANCH == 'develop' && $CI_PIPELINE_SOURCE != 'schedule'
+      variables:
+        REF_BRANCH: develop
+    - if: '$CI_COMMIT_TAG =~ /^\d+.\d+.\d+$/'
+      variables:
+        REF_BRANCH: main
   before_script:
     - echo $CI_COMMIT_BRANCH
+    - echo $CI_COMMIT_TAG
+    - echo $REF_BRANCH
     - apk add --update curl
   script:
-    - curl --request POST --form token=$CI_JOB_TOKEN --form ref=$CI_COMMIT_BRANCH http://gitlab.cosmian.com/api/v4/projects/95/trigger/pipeline
+    - curl --request POST --form token=$CI_JOB_TOKEN --form ref=$REF_BRANCH http://gitlab.cosmian.com/api/v4/projects/95/trigger/pipeline
