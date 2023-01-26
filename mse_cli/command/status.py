@@ -77,8 +77,8 @@ def run(args) -> None:
     elif app.status == AppStatus.OnError:
         LOG.info("\tStatus             = %s%s%s", bcolors.FAIL,
                  app.status.value, bcolors.ENDC)
-        if app.onerror_at:
-            LOG.info("\tOn error since     = %s", app.onerror_at.astimezone())
+        if app.stopped_at:
+            LOG.info("\tOn error since     = %s", app.stopped_at.astimezone())
     elif app.status in (AppStatus.Initializing, AppStatus.Spawning):
         LOG.info("\tStatus             = %s%s%s", bcolors.OKBLUE,
                  app.status.value, bcolors.ENDC)
