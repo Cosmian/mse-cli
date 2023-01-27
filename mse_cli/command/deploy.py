@@ -66,11 +66,14 @@ def run(args) -> None:
     if not check_app_conf(conn, app_conf, args.y):
         return
 
+    sec_doc_url = "https://docs.cosmian.com/microservice_encryption/security/"
+    sec_doc_text = "Security Model documentation"
+
     if args.untrusted_ssl:
         LOG.warning(
             "This app runs in untrusted-ssl mode with an operator certificate. "
             "The operator may access all communications with the app. "
-            "See Documentation > Security Model for more details.")
+            "Read \u001b]8;;%s\u001b\\%s\u001b]8;;\u001b\\ for more details.", sec_doc_url, sec_doc_text)
         if app_conf.ssl:
             LOG.warning("SSL conf paragraph is ignored.%s")
 
@@ -100,7 +103,7 @@ def run(args) -> None:
         LOG.warning(
             "This app runs with an app owner certificate. "
             "The app provider may decrypt all communications with the app. "
-            "See Documentation > Security Model for more details.")
+            "Read \u001b]8;;%s\u001b\\%s\u001b]8;;\u001b\\ for more details.", sec_doc_url, sec_doc_text)
 
     selfsigned_cert = get_certificate(app.config_domain_name)
     context.config_cert_path.write_text(selfsigned_cert)
