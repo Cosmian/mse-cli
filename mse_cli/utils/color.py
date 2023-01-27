@@ -13,3 +13,6 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+    LINK_START = '\u001b]8;;'
+    LINK_MID = '\u001b\\'
+    LINK_END = '\u001b]8;;\u001b\\'

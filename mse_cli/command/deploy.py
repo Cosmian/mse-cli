@@ -7,6 +7,7 @@ from uuid import UUID
 
 import requests
 
+from mse_cli import MSE_DOC_SECURITY_MODEL_URL
 from mse_cli.api.app import new
 from mse_cli.api.auth import Connection
 from mse_cli.api.types import App, AppStatus, SSLCertificateOrigin
@@ -20,6 +21,7 @@ from mse_cli.conf.context import Context
 from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
 from mse_cli.utils.spinner import Spinner
+from mse_cli.utils.color import bcolors
 
 
 def add_subparser(subparsers):
@@ -66,14 +68,15 @@ def run(args) -> None:
     if not check_app_conf(conn, app_conf, args.y):
         return
 
-    sec_doc_url = "https://docs.cosmian.com/microservice_encryption/security/"
     sec_doc_text = "Security Model documentation"
 
     if args.untrusted_ssl:
         LOG.warning(
             "This app runs in untrusted-ssl mode with an operator certificate. "
             "The operator may access all communications with the app. "
-            "Read \u001b]8;;%s\u001b\\%s\u001b]8;;\u001b\\ for more details.", sec_doc_url, sec_doc_text)
+            "Read %s%s%s%s%s for more details.", bcolors.LINK_START,
+            MSE_DOC_SECURITY_MODEL_URL, bcolors.LINK_MID, sec_doc_text,
+            bcolors.LINK_END)
         if app_conf.ssl:
             LOG.warning("SSL conf paragraph is ignored.%s")
 
@@ -103,7 +106,9 @@ def run(args) -> None:
         LOG.warning(
             "This app runs with an app owner certificate. "
             "The app provider may decrypt all communications with the app. "
-            "Read \u001b]8;;%s\u001b\\%s\u001b]8;;\u001b\\ for more details.", sec_doc_url, sec_doc_text)
+            "Read %s%s%s%s%s for more details.", bcolors.LINK_START,
+            MSE_DOC_SECURITY_MODEL_URL, bcolors.LINK_MID, sec_doc_text,
+            bcolors.LINK_END)
 
     selfsigned_cert = get_certificate(app.config_domain_name)
     context.config_cert_path.write_text(selfsigned_cert)
