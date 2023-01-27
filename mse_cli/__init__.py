@@ -46,3 +46,9 @@ MSE_CONSOLE_URL = os.getenv("MSE_CONSOLE_URL",
 
 # The URL of the default MSE Docker
 MSE_DEFAULT_DOCKER = "ghcr.io/cosmian/mse-flask:20230124182826"
+
+# The URL of the MSE documentation
+MSE_DOC_URL = "https://docs.cosmian.com/microservice_encryption"
+
+# The URL of the Security model documentation
+MSE_DOC_SECURITY_MODEL_URL = f"{MSE_DOC_URL}/security/"
