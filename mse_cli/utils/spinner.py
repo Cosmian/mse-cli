@@ -26,5 +26,6 @@ class Spinner:
 
     def reset(self):
         """Remove the spinner."""
+        sys.stdout.write(' ')
+        sys.stdout.write('\n')
         sys.stdout.flush()  # flush stdout buffer (actual character display)
-        sys.stdout.write('\b')  # erase the last written char
