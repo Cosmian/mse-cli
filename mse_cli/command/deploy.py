@@ -81,9 +81,8 @@ def run(args) -> None:
     LOG.info("Encrypting your source code...")
     (tar_path, nonces) = prepare_code(app_conf.code.location, context)
 
-    LOG.info(
-        "Deploying your app '%s' with %dM EPC memory and %.2f CPU cores...",
-        app_conf.name, enclave_size, cores)
+    LOG.info("Deploying your app '%s' with %dM memory and %.2f CPU cores...",
+             app_conf.name, enclave_size, cores)
     app = deploy_app(conn, app_conf, tar_path)
 
     LOG.advice(  # type: ignore
@@ -129,27 +128,26 @@ def run(args) -> None:
 
     app = wait_app_start(conn, app.uuid)
 
-    LOG.info("Your application is now fully deployed and started")
     LOG.success(  # type: ignore
-        "It's now ready to be used on https://%s until %s", app.domain_name,
-        app.expires_at.astimezone())
+        "Your application is now deployed and ready to be used on https://%s until %s",
+        app.domain_name, app.expires_at.astimezone())
     LOG.info("The application will be automatically stopped after this date "
              "(see the documentation for more details).")
 
     context.save()
 
     LOG.advice(  # type: ignore
-        "The context of this creation can be retrieved using: \n\n\t "
+        "The context of this creation can be retrieved using: \n\n\t"
         "mse context --export %s\n", app.uuid)
 
     if app.ssl_certificate_origin == SSLCertificateOrigin.Self:
         LOG.advice(  # type: ignore
-            "You can now quickly test your application doing: \n\n\tcurl https://%s%s "
+            "You can now test your application: \n\n\tcurl https://%s%s "
             "--cacert %s\n", app.domain_name, app.healthcheck_endpoint,
             context.config_cert_path)
     else:
         LOG.advice(  # type: ignore
-            "You can now quickly test your application doing: \n\n\tcurl https://%s%s\n",
+            "You can now test your application: \n\n\tcurl https://%s%s\n",
             app.domain_name, app.healthcheck_endpoint)
 
 
