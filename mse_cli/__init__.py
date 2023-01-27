@@ -4,7 +4,7 @@ import os
 import sys
 from pathlib import Path
 
-__version__ = "0.8.1"
+__version__ = "0.8.2"
 
 # This directory contains the login information of the user
 # and the context of all its deployments

@@ -34,10 +34,10 @@ def run(args) -> None:
     if "/" in app.code.docker:
         client.images.pull(app.code.docker)
 
-    LOG.info("You can stop the test at any time by typing CTRL^C")
+    LOG.info("You can stop the application at any time by typing CTRL^C")
     LOG.advice(  # type: ignore
-        "From another terminal, you can now run: "
-        "`curl http://localhost:5000%s` or `pytest`",
+        "Once started, from another terminal, you can run: "
+        "\n\n\tcurl http://localhost:5000%s\n\nor:\n\n\tpytest\n",
         app.code.healthcheck_endpoint)
 
     command = ["--application", app.code.python_application, "--debug"]

@@ -77,9 +77,9 @@ def run(args) -> None:
         "An example app has been generated in the current directory")
     LOG.warning("You can configure your MSE application in: %s", conf_file)
     LOG.info(
-        "You can now test it locally from the '%s/' directory using: `mse test` "
-        "then `pytest`", args.app_name)
+        "You can now test it locally from the '%s/' directory using: \n\n\tmse test\n\n"
+        "then, in another terminal:\n\n\tpytest\n", args.app_name)
     LOG.advice(  # type: ignore
-        "Or deploy it from the '%s/' directory using: `mse deploy`",
+        "Or deploy it from the '%s/' directory using: \n\n\tmse deploy\n",
         args.app_name)
     LOG.info("Refer to the '%s/README.md' for more details", args.app_name)

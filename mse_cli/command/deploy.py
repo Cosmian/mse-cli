@@ -1,6 +1,7 @@
 """mse_cli.command.deploy module."""
 
 from pathlib import Path
+import sys
 from typing import Any, Dict, Optional
 from uuid import UUID
 
@@ -80,14 +81,14 @@ def run(args) -> None:
     LOG.info("Encrypting your source code...")
     (tar_path, nonces) = prepare_code(app_conf.code.location, context)
 
-    LOG.info("Deploying your app...")
+    LOG.info(
+        "Deploying your app '%s' with %dM EPC memory and %.2f CPU cores...",
+        app_conf.name, enclave_size, cores)
     app = deploy_app(conn, app_conf, tar_path)
 
-    LOG.info("App %s creating for %s with %dM EPC memory and %.2f CPU cores...",
-             app.uuid, app.name, enclave_size, cores)
-
     LOG.advice(  # type: ignore
-        "You can now run `mse logs %s` if necessary", app.uuid)
+        "To follow the app creation, you can run: \n\n\tmse logs %s\n",
+        app.uuid)
 
     app = wait_app_creation(conn, app.uuid)
 
@@ -126,35 +127,38 @@ def run(args) -> None:
         ssl_private_key=app_conf.ssl.private_key_data if app_conf.ssl else None,
         app_secrets=app_conf.code.secrets_data)
 
-    LOG.info("Waiting for application to be ready...")
     app = wait_app_start(conn, app.uuid)
 
-    LOG.info("Your application is now fully deployed and started...")
+    LOG.info("Your application is now fully deployed and started")
     LOG.success(  # type: ignore
         "It's now ready to be used on https://%s until %s", app.domain_name,
         app.expires_at.astimezone())
-    LOG.info("The application will be automatically stopped after this date.")
+    LOG.info("The application will be automatically stopped after this date "
+             "(see the documentation for more details).")
 
     context.save()
 
     LOG.advice(  # type: ignore
-        "The context of this creation can be retrieved using "
-        "`mse context --export %s`", app.uuid)
+        "The context of this creation can be retrieved using: \n\n\t "
+        "mse context --export %s\n", app.uuid)
 
     if app.ssl_certificate_origin == SSLCertificateOrigin.Self:
         LOG.advice(  # type: ignore
-            "You can now quickly test your application doing: `curl https://%s%s "
-            "--cacert %s`", app.domain_name, app.healthcheck_endpoint,
+            "You can now quickly test your application doing: \n\n\tcurl https://%s%s "
+            "--cacert %s\n", app.domain_name, app.healthcheck_endpoint,
             context.config_cert_path)
     else:
         LOG.advice(  # type: ignore
-            "You can now quickly test your application doing: `curl https://%s%s`",
+            "You can now quickly test your application doing: \n\n\tcurl https://%s%s\n",
             app.domain_name, app.healthcheck_endpoint)
 
 
 def wait_app_start(conn: Connection, uuid: UUID) -> App:
     """Wait for the app to be started."""
     spinner = Spinner(3)
+
+    sys.stdout.write("Waiting for your application to be ready... ")
+
     while True:
         spinner.wait()
         app = get_app(conn=conn, uuid=uuid)
@@ -197,12 +201,13 @@ def check_app_conf(conn: Connection,
             "An application with the same name in this project is already running..."
         )
         if force:
-            LOG.info("Stopping the previous app (force mode enabled)...")
+            sys.stdout.write(
+                "Stopping the previous app (force mode enabled)... ")
             stop_app(conn, app.uuid)
         else:
             answer = input("Would you like to replace it [yes/no]? ")
             if answer.lower() in ["y", "yes"]:
-                LOG.info("Stopping the previous app...")
+                sys.stdout.write("Stopping the previous app... ")
                 stop_app(conn, app.uuid)
             else:
                 LOG.info("Deployment has been canceled!")
@@ -231,6 +236,9 @@ def deploy_app(conn: Connection, app_conf: AppConf, tar_path: Path) -> App:
 def wait_app_creation(conn: Connection, uuid: UUID) -> App:
     """Wait for the app to be deployed."""
     spinner = Spinner(3)
+
+    sys.stdout.write(f"Creating app {uuid}... ",)
+
     while True:
         spinner.wait()
 

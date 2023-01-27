@@ -1,5 +1,6 @@
 """mse_cli.command.stop module.."""
 
+import sys
 import uuid
 
 from mse_cli.command.helpers import stop_app
@@ -23,7 +24,7 @@ def run(args) -> None:
     """Run the subcommand."""
     user_conf = UserConf.from_toml()
 
-    LOG.info("Stopping and destroying the app...")
+    sys.stdout.write("Stopping and destroying the app... ")
 
     stop_app(user_conf.get_connection(), args.app_uuid)
 

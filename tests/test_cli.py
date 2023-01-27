@@ -88,7 +88,7 @@ def _test_deploy(f: io.StringIO, conf: Path,
     output = capture_logs(f)
 
     try:
-        app_uuid = re.search('App ([a-z0-9-]+) creating for', output).group(1)
+        app_uuid = re.search('mse logs ([a-z0-9-]+)', output).group(1)
 
         domain_name = re.search(
             'It\'s now ready to be used on https://(.+) until', output).group(1)
