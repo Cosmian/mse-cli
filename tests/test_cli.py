@@ -90,8 +90,8 @@ def _test_deploy(f: io.StringIO, conf: Path,
     try:
         app_uuid = re.search('mse logs ([a-z0-9-]+)', output).group(1)
 
-        domain_name = re.search(
-            'It\'s now ready to be used on https://(.+) until', output).group(1)
+        domain_name = re.search('ready to be used on https://(.+) until',
+                                output).group(1)
 
         mr_enclave = re.search('The code fingerprint is ([a-z0-9]+)',
                                output).group(1)
