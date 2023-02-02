@@ -26,7 +26,7 @@ It's a structure which contains, among others, interesting fields for the end us
 - Debug flag, which must not be set in production
 - Intel's certification chain and signature to attest the quote
 
-Verification of trustworthiness is done using [intel-sgx-ra](http://gitlab.cosmian.com/core/intel-sgx-ra).
+Verification of trustworthiness is done using [intel-sgx-ra](https://github.com/Cosmian/intel-sgx-ra).
 
 The *SGX quote* is embedded in the TLS certificate used by the microservice in a protocol called RA-TLS.
 

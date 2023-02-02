@@ -2,7 +2,9 @@
 
 ## Overview
 
-Python CLI for Microservice Encryption.
+Python CLI for Microservice Encryption. See [github repository](https://github.com/Cosmian/mse-cli).
+
+The full documentation is located [here](https://docs.cosmian.com).
 
 ## Install
 
@@ -21,7 +23,7 @@ First of all sign up or sign in using:
 $ mse login
 ```
 
-Download the [mse-app-examples](http://gitlab.cosmian.com/core/mse-app-examples) repository. And go to the `helloworld` directory.
+Download the [mse-app-examples](https://github.com/Cosmian/mse-app-examples) repository. And go to the `helloworld` directory.
 
 You can find an example of `flask` application and a `mse.toml` configuration file.
 
