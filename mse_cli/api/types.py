@@ -56,6 +56,25 @@ class App(BaseModel):
         return App(**dct)
 
 
+class PartialApp(BaseModel):
+    """App model (partial fields)."""
+
+    uuid: UUID
+    name: str
+    domain_name: str
+    created_at: datetime.datetime
+    ready_at: Optional[datetime.datetime]
+    stopped_at: Optional[datetime.datetime]
+    status: AppStatus
+    plan: str
+
+    @staticmethod
+    def from_dict(dct: Dict[str, Any]):
+        """Build an App object from a dictionnary."""
+        return PartialApp(**dct)
+
+
+
 class Project(BaseModel):
     """Project model."""
 
