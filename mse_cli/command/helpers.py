@@ -15,7 +15,6 @@ from intel_sgx_ra.attest import remote_attestation
 from intel_sgx_ra.ratls import ratls_verification
 from intel_sgx_ra.signer import mr_signer_from_pk
 from mse_lib_crypto.xsalsa20_poly1305 import encrypt_directory
-from mse_cli.utils.spinner import Spinner
 
 from mse_cli import MSE_CERTIFICATES_URL, MSE_PCCS_URL
 from mse_cli.api.app import get, stop
@@ -209,7 +208,10 @@ def get_certificate(domain_name: str) -> str:
 
     """
     with socket.create_connection((domain_name, 443)) as sock:
-        context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        context.check_hostname = False
+        context.verify_mode = ssl.CERT_NONE
+
         with context.wrap_socket(sock, server_hostname=domain_name) as ssock:
             cert = ssock.getpeercert(True)
             if not cert:

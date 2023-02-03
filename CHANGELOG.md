@@ -1,4 +1,4 @@
-## \[0.9.1\] - XXXX-XX-XX
+## \[0.10.0\] - XXXX-XX-XX
 
 ### Added
 

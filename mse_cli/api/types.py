@@ -74,7 +74,6 @@ class PartialApp(BaseModel):
         return PartialApp(**dct)
 
 
-
 class Project(BaseModel):
     """Project model."""
 

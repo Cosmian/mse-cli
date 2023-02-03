@@ -74,8 +74,12 @@ def run(args) -> None:
 
         spinner = Spinner()
         spinner.start("Computing the code fingerprint... ")
-        mrenclave = compute_mr_enclave(context, tar_path)
-        spinner.stop()
+        try:
+            mrenclave = compute_mr_enclave(context, tar_path)
+        except Exception as e:
+            raise e
+        finally:
+            spinner.stop()
 
     # Get the certificate
     try:

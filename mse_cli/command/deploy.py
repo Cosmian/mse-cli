@@ -1,7 +1,6 @@
 """mse_cli.command.deploy module."""
 
 from pathlib import Path
-import sys
 from typing import Any, Dict, Optional
 from uuid import UUID
 
@@ -55,6 +54,7 @@ def add_subparser(subparsers):
     parser.set_defaults(func=run)
 
 
+# pylint: disable=too-many-branches,too-many-statements
 def run(args) -> None:
     """Run the subcommand."""
     user_conf = UserConf.from_toml()
@@ -116,8 +116,12 @@ def run(args) -> None:
     if not args.no_verify:
         spinner = Spinner()
         spinner.start("Checking app trustworthiness... ")
-        mr_enclave = compute_mr_enclave(context, tar_path)
-        spinner.stop()
+        try:
+            mr_enclave = compute_mr_enclave(context, tar_path)
+        except Exception as e:
+            raise e
+        finally:
+            spinner.stop()
 
         LOG.info("The code fingerprint is %s", mr_enclave)
         verify_app(mr_enclave, selfsigned_cert)
@@ -167,23 +171,27 @@ def wait_app_start(conn: Connection, uuid: UUID) -> App:
     spinner = Spinner()
     spinner.start("Waiting for your application to be ready... ")
 
-    while True:
-        app = get_app(conn=conn, uuid=uuid)
+    try:
+        while True:
+            app = get_app(conn=conn, uuid=uuid)
 
-        if app.status == AppStatus.Spawning:
-            raise Exception(
-                "The app shoudn't be in the state spawning at this stage...")
-        if app.status == AppStatus.Running:
-            break
-        if app.status == AppStatus.OnError:
-            raise Exception(
-                "The app creation stopped because an error occurred...")
-        if app.status == AppStatus.Stopped:
-            raise Exception(
-                "The app creation stopped because it has been stopped in the meantime..."
-            )
+            if app.status == AppStatus.Spawning:
+                raise Exception(
+                    "The app shoudn't be in the state spawning at this stage..."
+                )
+            if app.status == AppStatus.Running:
+                break
+            if app.status == AppStatus.OnError:
+                raise Exception(
+                    "The app creation stopped because an error occurred...")
+            if app.status == AppStatus.Stopped:
+                raise Exception("The app creation stopped because it has been "
+                                "stopped in the meantime...")
+    except Exception as e:
+        raise e
+    finally:
+        spinner.stop()
 
-    spinner.stop()
     return app
 
 
@@ -207,22 +215,21 @@ def check_app_conf(conn: Connection,
         LOG.info("An application with the same name in "
                  "this project is already running...")
 
-        spinner = Spinner()
-        if force:
-            spinner.start("Stopping the previous app (force mode enabled)... ")
-            stop_app(conn, app.uuid)
-            spinner.stop()
-        else:
+        if not force:
             answer = input("Would you like to replace it [yes/no]? ")
-            if answer.lower() in ["y", "yes"]:
-                spinner.start("Stopping the previous app... ")
-                stop_app(conn, app.uuid)
-                spinner.stop()
-
-            else:
+            if answer.lower() not in ["y", "yes"]:
                 LOG.info("Deployment has been canceled!")
                 LOG.info("Please rename your application")
                 return False
+
+        spinner = Spinner()
+        spinner.start("Stopping the previous app... ")
+        try:
+            stop_app(conn, app.uuid)
+        except Exception as e:
+            raise e
+        finally:
+            spinner.stop()
 
     if not (app_conf.code.location /
             (app_conf.python_module.replace(".", "/") + ".py")).exists():
@@ -248,22 +255,27 @@ def wait_app_creation(conn: Connection, uuid: UUID) -> App:
     spinner = Spinner()
     spinner.start(f"Creating app {uuid}... ",)
 
-    while True:
-        app = get_app(conn=conn, uuid=uuid)
+    try:
+        while True:
+            app = get_app(conn=conn, uuid=uuid)
 
-        if app.status == AppStatus.Initializing:
-            break
-        if app.status == AppStatus.Running:
-            raise Exception(
-                "The app shouldn't be in the state running at this stage...")
-        if app.status == AppStatus.OnError:
-            raise Exception(
-                "The app creation stopped because an error occurred...")
-        if app.status == AppStatus.Stopped:
-            raise Exception("The app creation stopped because it "
-                            "has been stopped in the meantime...")
+            if app.status == AppStatus.Initializing:
+                break
+            if app.status == AppStatus.Running:
+                raise Exception(
+                    "The app shouldn't be in the state running at this stage..."
+                )
+            if app.status == AppStatus.OnError:
+                raise Exception(
+                    "The app creation stopped because an error occurred...")
+            if app.status == AppStatus.Stopped:
+                raise Exception("The app creation stopped because it "
+                                "has been stopped in the meantime...")
+    except Exception as e:
+        raise e
+    finally:
+        spinner.stop()
 
-    spinner.stop()
     return app
 
 

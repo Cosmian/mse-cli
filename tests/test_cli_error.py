@@ -143,7 +143,7 @@ def test_deploy_non_free(cmd_log):
                         False
                 }))
 
-    assert "Cannot find the plan with name green" in str(exception.value)
+    assert "Cannot find the plan with name 'green'" in str(exception.value)
 
 
 @pytest.mark.slow
@@ -201,7 +201,7 @@ def test_deploy_bad_docker(cmd_log):
                     "untrusted_ssl": False
                 }))
 
-    assert "Docker ghcr.io/cosmian/mse-pytorch:notexist is not approved or supported yet." in str(
+    assert "Docker 'ghcr.io/cosmian/mse-pytorch:notexist' is not approved or supported yet." in str(
         exception.value)
 
 
