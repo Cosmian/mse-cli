@@ -1,15 +1,16 @@
 """mse_cli.command.scaffold module."""
 
 import os
-from pathlib import Path
 import shutil
-from jinja2 import Template
-import pkg_resources
+from pathlib import Path
 
+import pkg_resources
+from jinja2 import Template
+
+from mse_cli import MSE_DEFAULT_DOCKER
 from mse_cli.command.helpers import non_empty_string
 from mse_cli.conf.app import AppConf
 from mse_cli.log import LOGGER as LOG
-from mse_cli import MSE_DEFAULT_DOCKER
 
 
 def add_subparser(subparsers):

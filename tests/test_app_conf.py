@@ -1,12 +1,13 @@
 """Test conf/app.py."""
 
-from pathlib import Path
-from datetime import datetime, timezone
-import tempfile
-
-from mse_cli.conf.app import AppConf, SSLConf, CodeConf
-import pytest
 import filecmp
+import tempfile
+from datetime import datetime, timezone
+from pathlib import Path
+
+import pytest
+
+from mse_cli.conf.app import AppConf, CodeConf, SSLConf
 
 PRIVATE_KEY = "-----BEGIN PRIVATE"
 

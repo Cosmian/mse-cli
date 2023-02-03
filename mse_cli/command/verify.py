@@ -1,9 +1,9 @@
 """mse_cli.command.verify module."""
 
 import os
-from pathlib import Path
 import socket
 import ssl
+from pathlib import Path
 
 from intel_sgx_ra.error import SGXQuoteNotFound
 

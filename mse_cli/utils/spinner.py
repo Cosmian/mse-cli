@@ -2,8 +2,8 @@
 
 import itertools
 import sys
-import time
 import threading
+import time
 
 
 class Spinner:

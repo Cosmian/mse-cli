@@ -2,9 +2,9 @@
 
 import filecmp
 import os
+from datetime import datetime, timezone
 from pathlib import Path
 from uuid import UUID
-from datetime import datetime, timezone
 
 from mse_cli.api.types import SSLCertificateOrigin
 from mse_cli.conf.app import AppConf, CodeConf, SSLConf
