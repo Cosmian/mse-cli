@@ -2,9 +2,9 @@
 
 ## Overview
 
-Python CLI for Microservice Encryption. See [github repository](https://github.com/Cosmian/mse-cli).
+Python CLI for Microservice Encryption. See [Github repository](https://github.com/Cosmian/mse-cli).
 
-The full documentation is located [here](https://docs.cosmian.com).
+Read the [MSE documentation](https://docs.cosmian.com/microservice_encryption/).
 
 ## Install
 
