@@ -147,14 +147,14 @@ You can now run `mse logs 04e9952c-981d-4601-a610-81152fe21315` if necessary
 Sending secret key and decrypting the application code...
 Waiting for application to be ready...
 Your application is now fully deployed and started...
-✅ It's now ready to be used on https://04e9952c-981d-4601-a610-81152fe21315.cosmian.dev until 2023-01-10 20:30:36.860596+01:00. The application will be automatically stopped after this date.
+✅ It's now ready to be used on https://123456789abcdef.cosmian.dev until 2023-01-10 20:30:36.860596+01:00. The application will be automatically stopped after this date.
 The context of this creation can be retrieved using `mse context --export 04e9952c-981d-4601-a610-81152fe21315`
-You can now quickly test your application doing: `curl https://04e9952c-981d-4601-a610-81152fe21315.cosmian.dev/health`
+You can now quickly test your application doing: `curl https://123456789abcdef.cosmian.dev/health`
 ```
 
 That's it!
 
-Your microservice is up at `https://{uuid}.cosmian.app` (replace `{uuid}` with the one from `mse deploy` command output).
+Your microservice is up at `https://123456789abcdef.cosmian.app` (replace `123456789abcdef` with the one from `mse deploy` command output).
 
 You can test your first app using `curl`:
 
@@ -236,19 +236,18 @@ Verification: success
 Sending secret key and decrypting the application code...
 Waiting for application to be ready...
 Your application is now fully deployed and started...
-✅ It's now ready to be used on https://248fce63-bc05-49a6-816a-4436b456fa27.cosmian.app until 2023-01-10 21:24:28.162324+01:00. The application will be automatically stopped after this date.
+✅ It's now ready to be used on https://123456789abcdef.cosmian.app until 2023-01-10 21:24:28.162324+01:00. The application will be automatically stopped after this date.
 The context of this creation can be retrieved using `mse context --export 248fce63-bc05-49a6-816a-4436b456fa27`
-You can now quickly test your application doing: `curl https://248fce63-bc05-49a6-816a-4436b456fa27.cosmian.app/health --cacert /tmp/tmp4u_gcjwk/cert.conf.pem`
+You can now quickly test your application doing: `curl https://123456789abcdef.cosmian.app/health --cacert /tmp/tmp4u_gcjwk/cert.conf.pem`
 ```
 
-Your microservice is up at `https://{uuid}.cosmian.app` (replace `{uuid}` with the one from `mse deploy` command output).
+Your microservice is up at `https://123456789abcdef.cosmian.app` (replace `123456789abcdef` with the one from `mse deploy` command output).
 
 You can test your app using `curl`:
 
 ```{.console}
-$ export MSE_UUID="..." # your UUID here
 $ # force curl CA bundle to be /tmp/tmpntxibdo6/cert.conf.pem
-$ curl "https://$MSE_UUID.cosmian.app" --cacert /tmp/tmpntxibdo6/cert.conf.pem
+$ curl "https://123456789abcdef.cosmian.app" --cacert /tmp/tmpntxibdo6/cert.conf.pem
 ```
 
 This deployment method must be your preferred way to deploy in production.
