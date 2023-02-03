@@ -22,7 +22,7 @@ from mse_cli.api.app import get, stop
 from mse_cli.api.auth import Connection
 from mse_cli.api.plan import get as get_plan
 from mse_cli.api.project import get_app_from_name, get_from_name
-from mse_cli.api.types import (App, AppStatus, Plan, Project,
+from mse_cli.api.types import (App, AppStatus, PartialApp, Plan, Project,
                                SSLCertificateOrigin)
 from mse_cli.conf.context import Context
 from mse_cli.log import LOGGER as LOG
@@ -106,8 +106,9 @@ def prepare_code(
     return tar_path, nonces
 
 
-def exists_in_project(conn: Connection, project_uuid: UUID, name: str,
-                      status: Optional[List[AppStatus]]) -> Optional[App]:
+def exists_in_project(
+        conn: Connection, project_uuid: UUID, name: str,
+        status: Optional[List[AppStatus]]) -> Optional[PartialApp]:
     """Say whether the app exists in the project."""
     r: requests.Response = get_app_from_name(conn=conn,
                                              project_uuid=project_uuid,
@@ -121,7 +122,7 @@ def exists_in_project(conn: Connection, project_uuid: UUID, name: str,
     if not app:
         return None
 
-    return App.from_dict(app[0])
+    return PartialApp.from_dict(app[0])
 
 
 def stop_app(conn: Connection, app_uuid: UUID) -> None:
@@ -131,15 +132,10 @@ def stop_app(conn: Connection, app_uuid: UUID) -> None:
     if not r.ok:
         raise Exception(r.text)
 
-    spinner = Spinner(3)
     while True:
-        spinner.wait()
-
         app = get_app(conn=conn, uuid=app_uuid)
         if app.is_terminated():
             break
-
-    spinner.reset()
 
     # Remove context file
     Context.clean(app_uuid, ignore_errors=True)

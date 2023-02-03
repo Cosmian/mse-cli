@@ -6,6 +6,7 @@ import uuid
 from mse_cli.command.helpers import stop_app
 from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
+from mse_cli.utils.spinner import Spinner
 
 
 def add_subparser(subparsers):
@@ -24,8 +25,9 @@ def run(args) -> None:
     """Run the subcommand."""
     user_conf = UserConf.from_toml()
 
-    sys.stdout.write("Stopping and destroying the app... ")
-
+    spinner = Spinner()
+    spinner.start("Stopping and destroying the app... ")
     stop_app(user_conf.get_connection(), args.app_uuid)
+    spinner.stop()
 
     LOG.success("App gracefully stopped")  # type: ignore

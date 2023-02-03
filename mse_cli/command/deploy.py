@@ -114,8 +114,11 @@ def run(args) -> None:
     context.config_cert_path.write_text(selfsigned_cert)
 
     if not args.no_verify:
-        LOG.info("Checking app trustworthiness...")
+        spinner = Spinner()
+        spinner.start("Checking app trustworthiness... ")
         mr_enclave = compute_mr_enclave(context, tar_path)
+        spinner.stop()
+
         LOG.info("The code fingerprint is %s", mr_enclave)
         verify_app(mr_enclave, selfsigned_cert)
         LOG.success("Verification success")  # type: ignore
@@ -161,12 +164,10 @@ def run(args) -> None:
 
 def wait_app_start(conn: Connection, uuid: UUID) -> App:
     """Wait for the app to be started."""
-    spinner = Spinner(3)
-
-    sys.stdout.write("Waiting for your application to be ready... ")
+    spinner = Spinner()
+    spinner.start("Waiting for your application to be ready... ")
 
     while True:
-        spinner.wait()
         app = get_app(conn=conn, uuid=uuid)
 
         if app.status == AppStatus.Spawning:
@@ -182,7 +183,7 @@ def wait_app_start(conn: Connection, uuid: UUID) -> App:
                 "The app creation stopped because it has been stopped in the meantime..."
             )
 
-    spinner.reset()
+    spinner.stop()
     return app
 
 
@@ -203,18 +204,21 @@ def check_app_conf(conn: Connection,
     ])
 
     if app:
-        LOG.info(
-            "An application with the same name in this project is already running..."
-        )
+        LOG.info("An application with the same name in "
+                 "this project is already running...")
+
+        spinner = Spinner()
         if force:
-            sys.stdout.write(
-                "Stopping the previous app (force mode enabled)... ")
+            spinner.start("Stopping the previous app (force mode enabled)... ")
             stop_app(conn, app.uuid)
+            spinner.stop()
         else:
             answer = input("Would you like to replace it [yes/no]? ")
             if answer.lower() in ["y", "yes"]:
-                sys.stdout.write("Stopping the previous app... ")
+                spinner.start("Stopping the previous app... ")
                 stop_app(conn, app.uuid)
+                spinner.stop()
+
             else:
                 LOG.info("Deployment has been canceled!")
                 LOG.info("Please rename your application")
@@ -241,13 +245,10 @@ def deploy_app(conn: Connection, app_conf: AppConf, tar_path: Path) -> App:
 
 def wait_app_creation(conn: Connection, uuid: UUID) -> App:
     """Wait for the app to be deployed."""
-    spinner = Spinner(3)
-
-    sys.stdout.write(f"Creating app {uuid}... ",)
+    spinner = Spinner()
+    spinner.start(f"Creating app {uuid}... ",)
 
     while True:
-        spinner.wait()
-
         app = get_app(conn=conn, uuid=uuid)
 
         if app.status == AppStatus.Initializing:
@@ -262,7 +263,7 @@ def wait_app_creation(conn: Connection, uuid: UUID) -> App:
             raise Exception("The app creation stopped because it "
                             "has been stopped in the meantime...")
 
-    spinner.reset()
+    spinner.stop()
     return app
 
 
