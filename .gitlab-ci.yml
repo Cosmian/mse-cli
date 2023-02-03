@@ -66,6 +66,24 @@ doc_style:
   script:
     - pydocstyle mse_cli/
 
+isort:
+  stage: lint
+  rules:
+    # Only run on merge requests and schedule jobs
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_PIPELINE_SOURCE == 'schedule'
+
+  before_script:
+    - python --version
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt
+    - pip install -r requirements-dev.txt
+    - pip install .
+  script:
+    - isort --check-only .
+
 static_analysis:
   stage: lint
   rules:
