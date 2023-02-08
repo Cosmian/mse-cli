@@ -21,12 +21,19 @@ from mse_cli.api.app import get, stop
 from mse_cli.api.auth import Connection
 from mse_cli.api.plan import get as get_plan
 from mse_cli.api.project import get_app_from_name, get_from_name
-from mse_cli.api.types import (App, AppStatus, PartialApp, Plan, Project,
-                               SSLCertificateOrigin)
+from mse_cli.api.types import (
+    App,
+    AppStatus,
+    PartialApp,
+    Plan,
+    Project,
+    SSLCertificateOrigin,
+)
 from mse_cli.conf.context import Context
 from mse_cli.log import LOGGER as LOG
 from mse_cli.utils.clock_tick import ClockTick
 from mse_cli.utils.fs import tar
+from mse_cli.utils.ignore_file import IgnoreFile
 
 
 def get_client_docker() -> docker.client.DockerClient:
@@ -49,8 +56,7 @@ def get_app(conn: Connection, uuid: UUID) -> App:
     return App.from_dict(r.json())
 
 
-def get_enclave_resources(conn: Connection,
-                          resource_name: str) -> Tuple[int, float]:
+def get_enclave_resources(conn: Connection, resource_name: str) -> Tuple[int, float]:
     """Get the enclave size and cores from an app."""
     r: requests.Response = get_plan(conn=conn, name=resource_name)
 
@@ -78,42 +84,33 @@ def get_project_from_name(conn: Connection, name: str) -> Optional[Project]:
 def prepare_code(
     src_path: Path,
     context: Context,
-    patterns: Optional[List[str]] = None,
-    file_exceptions: Optional[List[str]] = None,
-    dir_exceptions: Optional[List[str]] = None
 ) -> Tuple[Path, Dict[str, bytes]]:
     """Tar and encrypt (if required) the app python code."""
-    LOG.debug("Encrypt code in %s to %s...", src_path,
-              context.encrypted_code_path)
-
-    whitelist: Set[str] = {"requirements.txt"}
+    LOG.debug("Encrypt code in %s to %s...", src_path, context.encrypted_code_path)
 
     nonces = encrypt_directory(
         dir_path=src_path,
-        patterns=(["*"] if patterns is None else patterns),
+        pattern="*",
         key=context.config.code_secret_key,
         nonces=context.instance.nonces if context.instance else None,
-        exceptions=(list(whitelist) if file_exceptions is None else
-                    list(set(file_exceptions) | whitelist)),
-        dir_exceptions=([] if dir_exceptions is None else dir_exceptions),
-        out_dir_path=context.encrypted_code_path)
+        exceptions=["requirements.txt"],
+        ignore_patterns=IgnoreFile.parse(src_path),
+        out_dir_path=context.encrypted_code_path,
+    )
 
-    tar_path = tar(dir_path=context.encrypted_code_path,
-                   tar_path=context.tar_code_path)
+    tar_path = tar(dir_path=context.encrypted_code_path, tar_path=context.tar_code_path)
 
     LOG.debug("Tar encrypted code in '%s'", tar_path.name)
-
     return tar_path, nonces
 
 
 def exists_in_project(
-        conn: Connection, project_uuid: UUID, name: str,
-        status: Optional[List[AppStatus]]) -> Optional[PartialApp]:
+    conn: Connection, project_uuid: UUID, name: str, status: Optional[List[AppStatus]]
+) -> Optional[PartialApp]:
     """Say whether the app exists in the project."""
-    r: requests.Response = get_app_from_name(conn=conn,
-                                             project_uuid=project_uuid,
-                                             app_name=name,
-                                             status=status)
+    r: requests.Response = get_app_from_name(
+        conn=conn, project_uuid=project_uuid, app_name=name, status=status
+    )
 
     if not r.ok:
         raise Exception(r.text)
@@ -132,9 +129,7 @@ def stop_app(conn: Connection, app_uuid: UUID) -> None:
     if not r.ok:
         raise Exception(r.text)
 
-    clock = ClockTick(period=3,
-                      timeout=60,
-                      message="Timeout occured! Try again later.")
+    clock = ClockTick(period=3, timeout=60, message="Timeout occured! Try again later.")
     while clock.tick():
         app = get_app(conn=conn, uuid=app_uuid)
         if app.is_terminated():
@@ -154,25 +149,28 @@ def compute_mr_enclave(context: Context, tar_path: Path) -> str:
     client.images.pull(context.config.docker)
 
     command = [
-        "--size", f"{context.instance.enclave_size}M", "--code", "/tmp/app.tar",
-        "--host", context.instance.config_domain_name, "--uuid",
-        str(context.instance.id), "--application",
-        context.config.python_application, "--dry-run"
+        "--size",
+        f"{context.instance.enclave_size}M",
+        "--code",
+        "/tmp/app.tar",
+        "--host",
+        context.instance.config_domain_name,
+        "--uuid",
+        str(context.instance.id),
+        "--application",
+        context.config.python_application,
+        "--dry-run",
     ]
 
-    volumes = {f"{tar_path}": {'bind': '/tmp/app.tar', 'mode': 'rw'}}
+    volumes = {f"{tar_path}": {"bind": "/tmp/app.tar", "mode": "rw"}}
 
     if context.instance.ssl_certificate_origin == SSLCertificateOrigin.Owner:
         command.append("--certificate")
         command.append("/tmp/cert.pem")
-        volumes[f"{context.app_cert_path}"] = {
-            'bind': '/tmp/cert.pem',
-            'mode': 'rw'
-        }
+        volumes[f"{context.app_cert_path}"] = {"bind": "/tmp/cert.pem", "mode": "rw"}
     else:
         command.append("--self-signed")
-        command.append(str(int(datetime.timestamp(
-            context.instance.expires_at))))
+        command.append(str(int(datetime.timestamp(context.instance.expires_at))))
 
     container = client.containers.run(
         context.config.docker,
@@ -190,7 +188,7 @@ def compute_mr_enclave(context: Context, tar_path: Path) -> str:
     context.docker_log_path.write_bytes(container)
 
     # Get the mr_enclave from the docker output
-    pattern = 'mr_enclave:[ ]*([a-z0-9 ]{64})'
+    pattern = "mr_enclave:[ ]*([a-z0-9 ]{64})"
     m = re.search(pattern.encode("utf-8"), container)
 
     if not m:
@@ -232,7 +230,7 @@ def verify_app(mrenclave: Optional[str], ca_data: str):
     mrsigner = mr_signer_from_pk(r.content)
 
     # Check certificate's public key in quote's user report data
-    quote = ratls_verification(ca_data.encode('utf8'))
+    quote = ratls_verification(ca_data.encode("utf8"))
 
     # Proceed RA
     try:
@@ -247,15 +245,18 @@ def verify_app(mrenclave: Optional[str], ca_data: str):
             raise Exception(
                 "Code fingerprint is wrong "
                 f"(read {bytes(quote.report_body.mr_enclave).hex()} "
-                f"but should be {mrenclave})")
+                f"but should be {mrenclave})"
+            )
     else:
         LOG.warning("Code fingerprint check skipped!")
 
     if quote.report_body.mr_signer != mrsigner:
         LOG.error("Verification failed!")
-        raise Exception("Enclave signer is wrong "
-                        f"(read {bytes(quote.report_body.mr_signer).hex()} "
-                        f"but should be {bytes(mrsigner).hex()})")
+        raise Exception(
+            "Enclave signer is wrong "
+            f"(read {bytes(quote.report_body.mr_signer).hex()} "
+            f"but should be {bytes(mrsigner).hex()})"
+        )
 
 
 def non_empty_string(s):
