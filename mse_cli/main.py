@@ -1,7 +1,6 @@
 """mse_cli.main module."""
 
 import argparse
-
 from warnings import filterwarnings  # noqa: E402
 
 filterwarnings("ignore")  # noqa: E402

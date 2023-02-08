@@ -1,9 +1,9 @@
 """mse_cli.command.context module."""
 
 import shutil
-from uuid import UUID
 from datetime import datetime
 from pathlib import Path
+from uuid import UUID
 
 from pydantic import ValidationError
 from toml import TomlDecodeError

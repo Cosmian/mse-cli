@@ -12,7 +12,7 @@ from mse_cli.api.auth import Connection
 from mse_cli.api.types import App, AppStatus, SSLCertificateOrigin
 from mse_cli.command.helpers import (compute_mr_enclave, exists_in_project,
                                      get_app, get_certificate,
-                                     get_enclave_resources, get_client_docker,
+                                     get_client_docker, get_enclave_resources,
                                      get_project_from_name, prepare_code,
                                      stop_app, verify_app)
 from mse_cli.conf.app import AppConf
@@ -20,8 +20,8 @@ from mse_cli.conf.context import Context
 from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
 from mse_cli.utils.clock_tick import ClockTick
-from mse_cli.utils.spinner import Spinner
 from mse_cli.utils.color import bcolors
+from mse_cli.utils.spinner import Spinner
 
 
 def add_subparser(subparsers):

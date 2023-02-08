@@ -1,21 +1,20 @@
 """Test error scenari on cli/*.py."""
 
-from argparse import Namespace
 import os
+from argparse import Namespace
 from pathlib import Path
 
 import pytest
-
-from mse_cli.command.deploy import run as run_deploy
-from mse_cli.command.verify import run as run_verify
-from mse_cli.command.status import run as run_status
-from mse_cli.command.logs import run as run_logs
-from mse_cli.command.list_all import run as run_list
-from mse_cli.command.stop import run as run_stop
-from mse_cli.command.scaffold import run as run_scaffold
-from mse_cli.command.context import run as run_context
-
 from conftest import capture_logs
+
+from mse_cli.command.context import run as run_context
+from mse_cli.command.deploy import run as run_deploy
+from mse_cli.command.list_all import run as run_list
+from mse_cli.command.logs import run as run_logs
+from mse_cli.command.scaffold import run as run_scaffold
+from mse_cli.command.status import run as run_status
+from mse_cli.command.stop import run as run_stop
+from mse_cli.command.verify import run as run_verify
 
 
 @pytest.mark.slow

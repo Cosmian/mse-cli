@@ -3,7 +3,7 @@
 import requests
 
 from mse_cli.api.project import list_apps
-from mse_cli.api.types import PartialApp, AppStatus
+from mse_cli.api.types import AppStatus, PartialApp
 from mse_cli.command.helpers import get_project_from_name, non_empty_string
 from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG

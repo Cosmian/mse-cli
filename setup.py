@@ -1,9 +1,9 @@
 """setup module."""
 
-from pathlib import Path
 import re
+from pathlib import Path
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 name = "mse_cli"
 
