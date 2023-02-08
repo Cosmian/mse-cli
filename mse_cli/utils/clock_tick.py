@@ -4,17 +4,17 @@ import time
 
 
 class ClockTick:
-    """Class to compute spent time for infinity loop."""
+    """Class to monitor the spent time."""
 
     def __init__(self, period: int, timeout: int, message: str):
-        """Initialize the spinner."""
+        """Initialize the clock."""
         self.elapsed = 0
         self.timeout = timeout
         self.period = period
         self.message = message
 
     def tick(self) -> bool:
-        """Start spinning."""
+        """Start ticking."""
         if self.elapsed > self.timeout:
             raise Exception(self.message)
 
