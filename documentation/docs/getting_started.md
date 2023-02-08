@@ -154,7 +154,7 @@ You can now quickly test your application doing: `curl https://123456789abcdef.c
 
 That's it!
 
-Your microservice is up at `https://123456789abcdef.cosmian.app` (replace `123456789abcdef` with the one from `mse deploy` command output).
+Your microservice is up at `https://123456789abcdef.cosmian.app`.
 
 You can test your first app using `curl`:
 
@@ -241,7 +241,7 @@ The context of this creation can be retrieved using `mse context --export 248fce
 You can now quickly test your application doing: `curl https://123456789abcdef.cosmian.app/health --cacert /tmp/tmp4u_gcjwk/cert.conf.pem`
 ```
 
-Your microservice is up at `https://123456789abcdef.cosmian.app` (replace `123456789abcdef` with the one from `mse deploy` command output).
+Your microservice is up at `https://123456789abcdef.cosmian.app`.
 
 You can test your app using `curl`:
 

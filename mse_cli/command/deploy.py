@@ -253,7 +253,7 @@ def deploy_app(conn: Connection, app_conf: AppConf, tar_path: Path) -> App:
 def wait_app_creation(conn: Connection, uuid: UUID) -> App:
     """Wait for the app to be deployed."""
     spinner = Spinner()
-    spinner.start(f"Creating app {uuid}... ",)
+    spinner.start(f"Creating app {uuid}... ")
 
     try:
         while True:
