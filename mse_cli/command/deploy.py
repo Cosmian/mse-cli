@@ -1,7 +1,6 @@
 """mse_cli.command.deploy module."""
 
 from pathlib import Path
-import sys
 from typing import Any, Dict, Optional
 from uuid import UUID
 
@@ -20,6 +19,7 @@ from mse_cli.conf.app import AppConf
 from mse_cli.conf.context import Context
 from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
+from mse_cli.utils.clock_tick import ClockTick
 from mse_cli.utils.spinner import Spinner
 from mse_cli.utils.color import bcolors
 
@@ -55,6 +55,7 @@ def add_subparser(subparsers):
     parser.set_defaults(func=run)
 
 
+# pylint: disable=too-many-branches,too-many-statements
 def run(args) -> None:
     """Run the subcommand."""
     user_conf = UserConf.from_toml()
@@ -114,8 +115,9 @@ def run(args) -> None:
     context.config_cert_path.write_text(selfsigned_cert)
 
     if not args.no_verify:
-        LOG.info("Checking app trustworthiness...")
-        mr_enclave = compute_mr_enclave(context, tar_path)
+        with Spinner("Checking app trustworthiness... "):
+            mr_enclave = compute_mr_enclave(context, tar_path)
+
         LOG.info("The code fingerprint is %s", mr_enclave)
         verify_app(mr_enclave, selfsigned_cert)
         LOG.success("Verification success")  # type: ignore
@@ -161,28 +163,27 @@ def run(args) -> None:
 
 def wait_app_start(conn: Connection, uuid: UUID) -> App:
     """Wait for the app to be started."""
-    spinner = Spinner(3)
+    with Spinner("Waiting for your application to be ready... "):
+        clock = ClockTick(
+            period=3,
+            timeout=5 * 60,
+            message="MSE is at high capacity right now! Try again later.")
+        while clock.tick():
+            app = get_app(conn=conn, uuid=uuid)
 
-    sys.stdout.write("Waiting for your application to be ready... ")
+            if app.status == AppStatus.Spawning:
+                raise Exception(
+                    "The app shoudn't be in the state spawning at this stage..."
+                )
+            if app.status == AppStatus.Running:
+                break
+            if app.status == AppStatus.OnError:
+                raise Exception(
+                    "The app creation stopped because an error occurred...")
+            if app.status == AppStatus.Stopped:
+                raise Exception("The app creation stopped because it has been "
+                                "stopped in the meantime...")
 
-    while True:
-        spinner.wait()
-        app = get_app(conn=conn, uuid=uuid)
-
-        if app.status == AppStatus.Spawning:
-            raise Exception(
-                "The app shoudn't be in the state spawning at this stage...")
-        if app.status == AppStatus.Running:
-            break
-        if app.status == AppStatus.OnError:
-            raise Exception(
-                "The app creation stopped because an error occurred...")
-        if app.status == AppStatus.Stopped:
-            raise Exception(
-                "The app creation stopped because it has been stopped in the meantime..."
-            )
-
-    spinner.reset()
     return app
 
 
@@ -203,22 +204,18 @@ def check_app_conf(conn: Connection,
     ])
 
     if app:
-        LOG.info(
-            "An application with the same name in this project is already running..."
-        )
-        if force:
-            sys.stdout.write(
-                "Stopping the previous app (force mode enabled)... ")
-            stop_app(conn, app.uuid)
-        else:
+        LOG.info("An application with the same name in "
+                 "this project is already running...")
+
+        if not force:
             answer = input("Would you like to replace it [yes/no]? ")
-            if answer.lower() in ["y", "yes"]:
-                sys.stdout.write("Stopping the previous app... ")
-                stop_app(conn, app.uuid)
-            else:
+            if answer.lower() not in ["y", "yes"]:
                 LOG.info("Deployment has been canceled!")
                 LOG.info("Please rename your application")
                 return False
+
+        with Spinner("Stopping the previous app... "):
+            stop_app(conn, app.uuid)
 
     if not (app_conf.code.location /
             (app_conf.python_module.replace(".", "/") + ".py")).exists():
@@ -241,28 +238,27 @@ def deploy_app(conn: Connection, app_conf: AppConf, tar_path: Path) -> App:
 
 def wait_app_creation(conn: Connection, uuid: UUID) -> App:
     """Wait for the app to be deployed."""
-    spinner = Spinner(3)
+    with Spinner(f"Creating app {uuid}... "):
+        clock = ClockTick(
+            period=3,
+            timeout=5 * 60,
+            message="MSE is at high capacity right now! Try again later.")
+        while clock.tick():
+            app = get_app(conn=conn, uuid=uuid)
 
-    sys.stdout.write(f"Creating app {uuid}... ",)
+            if app.status == AppStatus.Initializing:
+                break
+            if app.status == AppStatus.Running:
+                raise Exception(
+                    "The app shouldn't be in the state running at this stage..."
+                )
+            if app.status == AppStatus.OnError:
+                raise Exception(
+                    "The app creation stopped because an error occurred...")
+            if app.status == AppStatus.Stopped:
+                raise Exception("The app creation stopped because it "
+                                "has been stopped in the meantime...")
 
-    while True:
-        spinner.wait()
-
-        app = get_app(conn=conn, uuid=uuid)
-
-        if app.status == AppStatus.Initializing:
-            break
-        if app.status == AppStatus.Running:
-            raise Exception(
-                "The app shouldn't be in the state running at this stage...")
-        if app.status == AppStatus.OnError:
-            raise Exception(
-                "The app creation stopped because an error occurred...")
-        if app.status == AppStatus.Stopped:
-            raise Exception("The app creation stopped because it "
-                            "has been stopped in the meantime...")
-
-    spinner.reset()
     return app
 
 

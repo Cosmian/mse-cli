@@ -11,6 +11,7 @@ from mse_cli.command.helpers import (compute_mr_enclave, get_certificate,
                                      prepare_code, verify_app)
 from mse_cli.conf.context import Context
 from mse_cli.log import LOGGER as LOG
+from mse_cli.utils.spinner import Spinner
 
 
 def add_subparser(subparsers):
@@ -71,7 +72,8 @@ def run(args) -> None:
         # Encrypt the code and create the tarball
         (tar_path, _) = prepare_code(args.code, context)
 
-        mrenclave = compute_mr_enclave(context, tar_path)
+        with Spinner("Computing the code fingerprint... "):
+            mrenclave = compute_mr_enclave(context, tar_path)
 
     # Get the certificate
     try:

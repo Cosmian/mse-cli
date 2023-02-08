@@ -15,17 +15,17 @@ from intel_sgx_ra.attest import remote_attestation
 from intel_sgx_ra.ratls import ratls_verification
 from intel_sgx_ra.signer import mr_signer_from_pk
 from mse_lib_crypto.xsalsa20_poly1305 import encrypt_directory
-from mse_cli.utils.spinner import Spinner
 
 from mse_cli import MSE_CERTIFICATES_URL, MSE_PCCS_URL
 from mse_cli.api.app import get, stop
 from mse_cli.api.auth import Connection
 from mse_cli.api.plan import get as get_plan
 from mse_cli.api.project import get_app_from_name, get_from_name
-from mse_cli.api.types import (App, AppStatus, Plan, Project,
+from mse_cli.api.types import (App, AppStatus, PartialApp, Plan, Project,
                                SSLCertificateOrigin)
 from mse_cli.conf.context import Context
 from mse_cli.log import LOGGER as LOG
+from mse_cli.utils.clock_tick import ClockTick
 from mse_cli.utils.fs import tar
 
 
@@ -106,8 +106,9 @@ def prepare_code(
     return tar_path, nonces
 
 
-def exists_in_project(conn: Connection, project_uuid: UUID, name: str,
-                      status: Optional[List[AppStatus]]) -> Optional[App]:
+def exists_in_project(
+        conn: Connection, project_uuid: UUID, name: str,
+        status: Optional[List[AppStatus]]) -> Optional[PartialApp]:
     """Say whether the app exists in the project."""
     r: requests.Response = get_app_from_name(conn=conn,
                                              project_uuid=project_uuid,
@@ -121,7 +122,7 @@ def exists_in_project(conn: Connection, project_uuid: UUID, name: str,
     if not app:
         return None
 
-    return App.from_dict(app[0])
+    return PartialApp.from_dict(app[0])
 
 
 def stop_app(conn: Connection, app_uuid: UUID) -> None:
@@ -131,15 +132,13 @@ def stop_app(conn: Connection, app_uuid: UUID) -> None:
     if not r.ok:
         raise Exception(r.text)
 
-    spinner = Spinner(3)
-    while True:
-        spinner.wait()
-
+    clock = ClockTick(period=3,
+                      timeout=60,
+                      message="Timeout occured! Try again later.")
+    while clock.tick():
         app = get_app(conn=conn, uuid=app_uuid)
         if app.is_terminated():
             break
-
-    spinner.reset()
 
     # Remove context file
     Context.clean(app_uuid, ignore_errors=True)
@@ -213,7 +212,10 @@ def get_certificate(domain_name: str) -> str:
 
     """
     with socket.create_connection((domain_name, 443)) as sock:
-        context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        context.check_hostname = False
+        context.verify_mode = ssl.CERT_NONE
+
         with context.wrap_socket(sock, server_hostname=domain_name) as ssock:
             cert = ssock.getpeercert(True)
             if not cert:
