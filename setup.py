@@ -40,7 +40,7 @@ setup(
         "docker>=6.0.1,<7.0.0",
         "intel-sgx-ra>=1.0,<1.1",
         "jinja2>=3.0,<3.1",
-        "mse-lib-crypto>=1.0,<1.1",
+        "mse-lib-crypto>=1.1,<1.2",
         "pydantic>=1.10.2,<2.0.0",
         "pyjwt>=2.6.0,<2.7.0",
         "requests>=2.28.1,<3.0.0",
