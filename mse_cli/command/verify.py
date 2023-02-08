@@ -72,14 +72,8 @@ def run(args) -> None:
         # Encrypt the code and create the tarball
         (tar_path, _) = prepare_code(args.code, context)
 
-        spinner = Spinner()
-        spinner.start("Computing the code fingerprint... ")
-        try:
+        with Spinner("Computing the code fingerprint... "):
             mrenclave = compute_mr_enclave(context, tar_path)
-        except Exception as e:
-            raise e
-        finally:
-            spinner.stop()
 
     # Get the certificate
     try:

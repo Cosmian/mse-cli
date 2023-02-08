@@ -24,13 +24,7 @@ def run(args) -> None:
     """Run the subcommand."""
     user_conf = UserConf.from_toml()
 
-    spinner = Spinner()
-    spinner.start("Stopping and destroying the app... ")
-    try:
+    with Spinner("Stopping and destroying the app... "):
         stop_app(user_conf.get_connection(), args.app_uuid)
-    except Exception as e:
-        raise e
-    finally:
-        spinner.stop()
 
     LOG.success("App gracefully stopped")  # type: ignore

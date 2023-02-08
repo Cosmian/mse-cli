@@ -25,6 +25,7 @@ from mse_cli.api.types import (App, AppStatus, PartialApp, Plan, Project,
                                SSLCertificateOrigin)
 from mse_cli.conf.context import Context
 from mse_cli.log import LOGGER as LOG
+from mse_cli.utils.clock_tick import ClockTick
 from mse_cli.utils.fs import tar
 
 
@@ -131,7 +132,10 @@ def stop_app(conn: Connection, app_uuid: UUID) -> None:
     if not r.ok:
         raise Exception(r.text)
 
-    while True:
+    clock = ClockTick(period=3,
+                      timeout=60,
+                      message="Timeout occured! Try again later.")
+    while clock.tick():
         app = get_app(conn=conn, uuid=app_uuid)
         if app.is_terminated():
             break

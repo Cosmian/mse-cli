@@ -64,13 +64,13 @@ def test_from_app_conf():
 
     ref_context_conf = Context(
         version="1.0",
-        config=ContextConf(
-            name="helloworld",
-            project="default",
-            code_secret_key=conf.config.code_secret_key,
-            python_application="app:app",
-            ssl_app_certificate=Path("tests/data/cert.pem").read_text(),
-            docker="ghcr.io/cosmian/mse-pytorch:20230104085621"),
+        config=ContextConf(name="helloworld",
+                           project="default",
+                           code_secret_key=conf.config.code_secret_key,
+                           python_application="app:app",
+                           ssl_app_certificate=(Path(__file__).parent /
+                                                "data/cert.pem").read_text(),
+                           docker="ghcr.io/cosmian/mse-pytorch:20230104085621"),
         instance=None)
 
     assert conf == ref_context_conf
