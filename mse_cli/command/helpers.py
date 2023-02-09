@@ -6,7 +6,7 @@ import ssl
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Optional, Tuple
 from uuid import UUID
 
 import docker
@@ -94,7 +94,7 @@ def prepare_code(
         key=context.config.code_secret_key,
         nonces=context.instance.nonces if context.instance else None,
         exceptions=["requirements.txt"],
-        ignore_patterns=IgnoreFile.parse(src_path),
+        ignore_patterns=list(IgnoreFile.parse(src_path)),
         out_dir_path=context.encrypted_code_path,
     )
 

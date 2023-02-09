@@ -18,8 +18,7 @@ def add_subparser(subparsers):
 
 def run(_args) -> None:
     """Run the subcommand."""
-    r = requests.post(url=f"{MSE_AUTH0_DOMAIN_NAME}/logout?federated",
-                      timeout=60)
+    r = requests.post(url=f"{MSE_AUTH0_DOMAIN_NAME}/logout?federated", timeout=60)
 
     if not r.ok:
         raise Exception(r.text)

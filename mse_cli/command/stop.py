@@ -10,14 +10,13 @@ from mse_cli.utils.spinner import Spinner
 
 def add_subparser(subparsers):
     """Define the subcommand."""
-    parser = subparsers.add_parser("stop",
-                                   help="stop a specific MSE web application")
+    parser = subparsers.add_parser("stop", help="stop a specific MSE web application")
 
     parser.set_defaults(func=run)
 
-    parser.add_argument("app_uuid",
-                        type=uuid.UUID,
-                        help="identifier of the MSE web application to stop")
+    parser.add_argument(
+        "app_uuid", type=uuid.UUID, help="identifier of the MSE web application to stop"
+    )
 
 
 def run(args) -> None:

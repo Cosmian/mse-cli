@@ -1,26 +1,23 @@
 """mse_cli.utils.ignore_file module."""
 
 from pathlib import Path
-from typing import Set
 
 
 class IgnoreFile:
-    """Class to deal with the .mseignore file"""
+    """Class to deal with the .mseignore file."""
 
     @staticmethod
     def parse(path: Path):
         """Parse the mseignore from `path`."""
         ignore_file = path / ".mseignore"
         return (
-            set(
-                [
-                    line
-                    for line in ignore_file.read_text().splitlines()
-                    # Ignore empty lines
-                    # Ignore lines being comments
-                    if line.strip() and not line.strip().startswith("#")
-                ]
-            )
+            {
+                line
+                for line in ignore_file.read_text().splitlines()
+                # Ignore empty lines
+                # Ignore lines being comments
+                if line.strip() and not line.strip().startswith("#")
+            }
             if ignore_file.exists()
             else {}
         )

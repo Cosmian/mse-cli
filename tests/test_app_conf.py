@@ -105,27 +105,27 @@ def test_ssl():
     toml = Path("tests/data/ssl.toml")
     conf = AppConf.from_toml(path=toml)
 
-    code = CodeConf(location="/tmp/code",
-                    python_application="app:app",
-                    healthcheck_endpoint="/",
-                    docker="ghcr.io/cosmian/mse-pytorch:20230104085621")
+    code = CodeConf(
+        location="/tmp/code",
+        python_application="app:app",
+        healthcheck_endpoint="/",
+        docker="ghcr.io/cosmian/mse-pytorch:20230104085621",
+    )
 
-    ssl = SSLConf(domain_name="demo.cosmilink.com",
-                  private_key=Path(__file__).parent / "data" / Path("key.pem"),
-                  certificate=Path(__file__).parent / "data" / Path("cert.pem"))
+    ssl = SSLConf(
+        domain_name="demo.cosmilink.com",
+        private_key=Path(__file__).parent / "data" / Path("key.pem"),
+        certificate=Path(__file__).parent / "data" / Path("cert.pem"),
+    )
 
-    ref_app_conf = AppConf(name="helloworld",
-                           project="default",
-                           resource="free",
-                           expiration_date=datetime(2023,
-                                                    3,
-                                                    1,
-                                                    0,
-                                                    0,
-                                                    0,
-                                                    tzinfo=timezone.utc),
-                           code=code,
-                           ssl=ssl)
+    ref_app_conf = AppConf(
+        name="helloworld",
+        project="default",
+        resource="free",
+        expiration_date=datetime(2023, 3, 1, 0, 0, 0, tzinfo=timezone.utc),
+        code=code,
+        ssl=ssl,
+    )
 
     assert conf == ref_app_conf
     assert conf.ssl.certificate_data == CERTIFICATE
@@ -137,16 +137,16 @@ def test_ssl_optionals():
     toml = Path("tests/data/optional_fields.toml")
     conf = AppConf.from_toml(path=toml)
 
-    code = CodeConf(location="/tmp/code",
-                    python_application="app:ppa",
-                    healthcheck_endpoint="/",
-                    docker="ghcr.io/cosmian/mse-pytorch:20230104085621")
+    code = CodeConf(
+        location="/tmp/code",
+        python_application="app:ppa",
+        healthcheck_endpoint="/",
+        docker="ghcr.io/cosmian/mse-pytorch:20230104085621",
+    )
 
-    ref_app_conf = AppConf(name="helloworld",
-                           project="default",
-                           resource="free",
-                           code=code,
-                           ssl=None)
+    ref_app_conf = AppConf(
+        name="helloworld", project="default", resource="free", code=code, ssl=None
+    )
 
     assert conf == ref_app_conf
 
@@ -156,10 +156,12 @@ def test_ignore_ssl():
     toml = Path("tests/data/ssl.toml")
     conf = AppConf.from_toml(path=toml, ignore_ssl=True)
 
-    code = CodeConf(location="/tmp/code",
-                    python_application="app:app",
-                    healthcheck_endpoint="/",
-                    docker="ghcr.io/cosmian/mse-pytorch:20230104085621")
+    code = CodeConf(
+        location="/tmp/code",
+        python_application="app:app",
+        healthcheck_endpoint="/",
+        docker="ghcr.io/cosmian/mse-pytorch:20230104085621",
+    )
 
     assert conf.ssl is None
 
@@ -169,19 +171,22 @@ def test_ssl_optionals():
     toml = Path("tests/data/optional_fields.toml")
     conf = AppConf.from_toml(path=toml)
 
-    code = CodeConf(location="/tmp/code",
-                    python_application="app:ppa",
-                    healthcheck_endpoint="/",
-                    docker="ghcr.io/cosmian/mse-pytorch:20230104085621",
-                    secrets=Path(__file__).parent / "data" /
-                    Path("secrets.json"))
+    code = CodeConf(
+        location="/tmp/code",
+        python_application="app:ppa",
+        healthcheck_endpoint="/",
+        docker="ghcr.io/cosmian/mse-pytorch:20230104085621",
+        secrets=Path(__file__).parent / "data" / Path("secrets.json"),
+    )
 
-    ref_app_conf = AppConf(name="helloworld",
-                           version="1.0.0",
-                           project="default",
-                           resource="free",
-                           code=code,
-                           ssl=None)
+    ref_app_conf = AppConf(
+        name="helloworld",
+        version="1.0.0",
+        project="default",
+        resource="free",
+        code=code,
+        ssl=None,
+    )
 
     assert conf == ref_app_conf
     assert conf.code.secrets_data == {"login": "user", "password": "azerty"}
@@ -192,10 +197,12 @@ def test_expiration_date():
     toml = Path("tests/data/expiration_date.toml")
     conf = AppConf.from_toml(path=toml)
 
-    code = CodeConf(location="/tmp/code",
-                    python_application="app:app",
-                    healthcheck_endpoint="/",
-                    docker="ghcr.io/cosmian/mse-pytorch:20230104085621")
+    code = CodeConf(
+        location="/tmp/code",
+        python_application="app:app",
+        healthcheck_endpoint="/",
+        docker="ghcr.io/cosmian/mse-pytorch:20230104085621",
+    )
 
     ref_app_conf = AppConf(
         name="helloworld",
@@ -209,13 +216,7 @@ def test_expiration_date():
 
     toml = Path("tests/data/optional_fields_ssl.toml")
     conf = AppConf.from_toml(path=toml)
-    assert conf.expiration_date == datetime(2023,
-                                            5,
-                                            3,
-                                            13,
-                                            32,
-                                            38,
-                                            tzinfo=timezone.utc)
+    assert conf.expiration_date == datetime(2023, 5, 3, 13, 32, 38, tzinfo=timezone.utc)
 
 
 def test_bad_domain_name():
@@ -240,15 +241,14 @@ def test_python_variable():
     assert conf.python_module == "app"
     assert conf.python_variable == "ppa"
 
-    code = CodeConf(location="/tmp/code",
-                    python_application="bad",
-                    healthcheck_endpoint="/",
-                    docker="ghcr.io/cosmian/mse-pytorch:20230104085621")
+    code = CodeConf(
+        location="/tmp/code",
+        python_application="bad",
+        healthcheck_endpoint="/",
+        docker="ghcr.io/cosmian/mse-pytorch:20230104085621",
+    )
 
-    conf = AppConf(name="helloworld",
-                   project="default",
-                   resource="free",
-                   code=code)
+    conf = AppConf(name="helloworld", project="default", resource="free", code=code)
 
     with pytest.raises(Exception) as context:
         conf.python_variable
@@ -303,7 +303,7 @@ def test_into_payload():
         "healthcheck_endpoint": "/",
         "python_application": "app:app",
         "docker": "ghcr.io/cosmian/mse-pytorch:20230104085621",
-        "expires_at": '2023-03-01T00:00:00.000000Z',
+        "expires_at": "2023-03-01T00:00:00.000000Z",
         "dev_mode": False,
         "ssl_certificate": CERTIFICATE,
         "domain_name": "demo.cosmilink.com",

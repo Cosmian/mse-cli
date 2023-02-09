@@ -33,7 +33,7 @@ class ContextInstance(BaseModel):
     # The nounces of the encrypted files
     nonces: Dict[str, bytes]
 
-    @validator('nonces', pre=True, always=True)
+    @validator("nonces", pre=True, always=True)
     # pylint: disable=no-self-argument,unused-argument
     def set_nonces(cls, v, values, **kwargs):
         """Set nonces from a value for pydantic."""
@@ -64,7 +64,7 @@ class ContextConf(BaseModel):
     # The certificate of the app if origin = Owner
     ssl_app_certificate: Optional[str] = None
 
-    @validator('code_secret_key', pre=True, always=True)
+    @validator("code_secret_key", pre=True, always=True)
     # pylint: disable=no-self-argument,unused-argument
     def set_code_secret_key(cls, v, values, **kwargs):
         """Set code_secret_key from a value for pydantic."""
@@ -112,8 +112,7 @@ class Context(BaseModel):
     @staticmethod
     def get_context_filepath(uuid: UUID, create=True) -> Path:
         """Get the path of the context file."""
-        return Context.get_dirpath(uuid,
-                                   create) / Context.get_context_filename()
+        return Context.get_dirpath(uuid, create) / Context.get_context_filename()
 
     @property
     def path(self) -> Path:
@@ -163,8 +162,9 @@ class Context(BaseModel):
     @staticmethod
     def clean(uuid: UUID, ignore_errors: bool = False):
         """Remove the context directory."""
-        shutil.rmtree(Context.get_dirpath(uuid, create=False),
-                      ignore_errors=ignore_errors)
+        shutil.rmtree(
+            Context.get_dirpath(uuid, create=False), ignore_errors=ignore_errors
+        )
 
     @staticmethod
     def from_app_conf(conf: AppConf):
@@ -172,12 +172,15 @@ class Context(BaseModel):
         cert = conf.ssl.certificate_data if conf.ssl else None
 
         context = Context(
-            config=ContextConf(name=conf.name,
-                               project=conf.project,
-                               python_application=conf.code.python_application,
-                               docker=conf.code.docker,
-                               code_secret_key=bytes(random_key()).hex(),
-                               ssl_app_certificate=cert))
+            config=ContextConf(
+                name=conf.name,
+                project=conf.project,
+                python_application=conf.code.python_application,
+                docker=conf.code.docker,
+                code_secret_key=bytes(random_key()).hex(),
+                ssl_app_certificate=cert,
+            )
+        )
 
         if cert:
             context.app_cert_path.write_text(cert)
@@ -192,9 +195,15 @@ class Context(BaseModel):
 
         return Context(**dataMap)
 
-    def run(self, uuid: UUID, enclave_size: int, config_domain_name: str,
-            expires_at: datetime, ssl_certificate_origin: SSLCertificateOrigin,
-            nonces: Dict[str, bytes]):
+    def run(
+        self,
+        uuid: UUID,
+        enclave_size: int,
+        config_domain_name: str,
+        expires_at: datetime,
+        ssl_certificate_origin: SSLCertificateOrigin,
+        nonces: Dict[str, bytes],
+    ):
         """Complete the context since the app is now running."""
         self.instance = ContextInstance(
             id=uuid,
@@ -202,7 +211,8 @@ class Context(BaseModel):
             enclave_size=enclave_size,
             expires_at=expires_at,
             ssl_certificate_origin=ssl_certificate_origin,
-            nonces=nonces)
+            nonces=nonces,
+        )
 
     def save(self) -> None:
         """Dump the current object to a file."""
@@ -214,19 +224,23 @@ class Context(BaseModel):
                     "project": self.config.project,
                     "docker": self.config.docker,
                     "python_application": self.config.python_application,
-                    "code_secret_key": bytes(self.config.code_secret_key).hex()
-                }
+                    "code_secret_key": bytes(self.config.code_secret_key).hex(),
+                },
             }
 
             if self.config.ssl_app_certificate:
                 dataMap["config"][
-                    "ssl_app_certificate"] = self.config.ssl_app_certificate
+                    "ssl_app_certificate"
+                ] = self.config.ssl_app_certificate
 
             if self.instance:
                 origin = self.instance.ssl_certificate_origin.value
                 nonces = dict(
-                    map(lambda item: (item[0], bytes(item[1]).hex()),
-                        self.instance.nonces.items()))
+                    map(
+                        lambda item: (item[0], bytes(item[1]).hex()),
+                        self.instance.nonces.items(),
+                    )
+                )
 
                 dataMap["instance"] = {
                     "id": str(self.instance.id),
@@ -234,7 +248,7 @@ class Context(BaseModel):
                     "enclave_size": self.instance.enclave_size,
                     "expires_at": str(self.instance.expires_at),
                     "ssl_certificate_origin": origin,
-                    "nonces": nonces
+                    "nonces": nonces,
                 }
 
             toml.dump(dataMap, f)
@@ -243,5 +257,5 @@ class Context(BaseModel):
         if self.instance:
             shutil.copyfile(
                 self.tar_code_path,
-                Context.get_dirpath(self.instance.id) /
-                Context.get_tar_code_filename())
+                Context.get_dirpath(self.instance.id) / Context.get_tar_code_filename(),
+            )
