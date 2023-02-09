@@ -13,14 +13,16 @@ from mse_cli.log import LOGGER as LOG
 def add_subparser(subparsers):
     """Define the subcommand."""
     parser = subparsers.add_parser(
-        "logs", help="logs (last 64kB) of a specific MSE web application")
+        "logs", help="logs (last 64kB) of a specific MSE web application"
+    )
 
     parser.set_defaults(func=run)
 
     parser.add_argument(
         "app_uuid",
         type=uuid.UUID,
-        help="identifier of the MSE web application to display logs")
+        help="identifier of the MSE web application to display logs",
+    )
 
 
 def run(args) -> None:

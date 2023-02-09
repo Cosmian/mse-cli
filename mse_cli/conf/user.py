@@ -6,8 +6,12 @@ from typing import Dict, Optional
 import toml
 from pydantic import BaseModel
 
-from mse_cli import (MSE_AUTH0_CLIENT_ID, MSE_AUTH0_DOMAIN_NAME,
-                     MSE_BACKEND_URL, MSE_CONF_DIR)
+from mse_cli import (
+    MSE_AUTH0_CLIENT_ID,
+    MSE_AUTH0_DOMAIN_NAME,
+    MSE_BACKEND_URL,
+    MSE_CONF_DIR,
+)
 from mse_cli.api.auth import Connection
 
 
@@ -53,7 +57,9 @@ class UserConf(BaseModel):
 
     def get_connection(self) -> Connection:
         """Get the connection to the backend."""
-        return Connection(base_url=MSE_BACKEND_URL,
-                          auth0_base_url=MSE_AUTH0_DOMAIN_NAME,
-                          client_id=MSE_AUTH0_CLIENT_ID,
-                          refresh_token=self.refresh_token)
+        return Connection(
+            base_url=MSE_BACKEND_URL,
+            auth0_base_url=MSE_AUTH0_DOMAIN_NAME,
+            client_id=MSE_AUTH0_CLIENT_ID,
+            refresh_token=self.refresh_token,
+        )

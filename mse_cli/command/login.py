@@ -13,8 +13,12 @@ from urllib.parse import parse_qs, urlencode, urlparse
 
 import requests
 
-from mse_cli import (MSE_AUTH0_AUDIENCE, MSE_AUTH0_CLIENT_ID,
-                     MSE_AUTH0_DOMAIN_NAME, MSE_CONSOLE_URL)
+from mse_cli import (
+    MSE_AUTH0_AUDIENCE,
+    MSE_AUTH0_CLIENT_ID,
+    MSE_AUTH0_DOMAIN_NAME,
+    MSE_CONSOLE_URL,
+)
 from mse_cli.api.types import User
 from mse_cli.api.user import me as get_me
 from mse_cli.conf.user import UserConf
@@ -26,10 +30,11 @@ CODE: Optional[str] = None
 def add_subparser(subparsers):
     """Define the subcommand."""
     parser = subparsers.add_parser(
-        "login", help="sign up or login to console.cosmian.com")
-    parser.add_argument("--whoami",
-                        action="store_true",
-                        help="display user currently logged in")
+        "login", help="sign up or login to console.cosmian.com"
+    )
+    parser.add_argument(
+        "--whoami", action="store_true", help="display user currently logged in"
+    )
 
     parser.set_defaults(func=run)
 
@@ -101,8 +106,10 @@ def run(args) -> None:
         try:
             me = get_user_info(user_conf)
         except NameError:
-            LOG.warning("Don't forget to verify your email and "
-                        "complete your profile before going on")
+            LOG.warning(
+                "Don't forget to verify your email and "
+                "complete your profile before going on"
+            )
         return
 
     # Before processing the login, let's check if the user is already logged in
@@ -111,8 +118,10 @@ def run(args) -> None:
         try:
             _ = get_user_info(user_conf)
         except NameError:
-            LOG.warning("Don't forget to verify your email and "
-                        "complete your profile before going on")
+            LOG.warning(
+                "Don't forget to verify your email and "
+                "complete your profile before going on"
+            )
         LOG.info("You are already logged in as: %s", user_conf.email)
         return
 
@@ -133,15 +142,15 @@ def run(args) -> None:
         "client_id": MSE_AUTH0_CLIENT_ID,
         "redirect_uri": redirect_uri,
         "scope": "openid profile email read:current_user "
-                 "update:current_user_metadata offline_access",
+        "update:current_user_metadata offline_access",
         "audience": MSE_AUTH0_AUDIENCE,
-        "state": state
+        "state": state,
     }
 
     # Run the server, open the browser and query auth0 "authorize"
-    code = run_server(port,
-                      f"{MSE_AUTH0_DOMAIN_NAME}/authorize?" + urlencode(params),
-                      state)
+    code = run_server(
+        port, f"{MSE_AUTH0_DOMAIN_NAME}/authorize?" + urlencode(params), state
+    )
 
     # Get an access/refresh token
     r = requests.post(
@@ -151,10 +160,11 @@ def run(args) -> None:
             "client_id": MSE_AUTH0_CLIENT_ID,
             "code_verifier": code_verifier,
             "code": code,
-            "redirect_uri": redirect_uri
+            "redirect_uri": redirect_uri,
         },
         headers={"Content-Type": "application/x-www-form-urlencoded"},
-        timeout=60)
+        timeout=60,
+    )
 
     if not r.ok:
         raise Exception(r.text)
@@ -181,8 +191,10 @@ def run(args) -> None:
         LOG.advice(  # type: ignore
             "You can use `mse scaffold <app_name>` to initialize a new application."
         )
-        LOG.warning("Don't forget to verify your email and "
-                    "complete your profile before going on")
+        LOG.warning(
+            "Don't forget to verify your email and "
+            "complete your profile before going on"
+        )
 
 
 def get_user_info(user: UserConf) -> User:
@@ -206,16 +218,14 @@ def gen_state() -> str:
 
 def gen_code_verifier() -> str:
     """Generate the code verifier."""
-    code_verifier = base64.urlsafe_b64encode(
-        secrets.token_bytes(62)).decode("utf-8")
+    code_verifier = base64.urlsafe_b64encode(secrets.token_bytes(62)).decode("utf-8")
     return re.sub("[^a-zA-Z0-9]+", "", code_verifier)
 
 
 def gen_code_challenge(code_verifier: str) -> str:
     """Generate the code challenge."""
     code_challenge = hashlib.sha256(code_verifier.encode("utf-8")).digest()
-    return base64.urlsafe_b64encode(code_challenge).decode("utf-8").replace(
-        "=", "")
+    return base64.urlsafe_b64encode(code_challenge).decode("utf-8").replace("=", "")
 
 
 def open_webbrowser(address):

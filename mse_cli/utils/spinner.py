@@ -2,30 +2,46 @@
 
 import itertools
 import sys
+import threading
 import time
 
 
 class Spinner:
     """Class to wait and print a spinner."""
 
-    def __init__(self, delay: int):
-        """Initialize the spinner to wait `delay`."""
-        self.spinner = itertools.cycle(['-', '/', '|', '\\'])
-        self.delay = delay
+    def __init__(self, message: str):
+        """Initialize the spinner."""
+        self.spinner = itertools.cycle(["-", "/", "|", "\\"])
+        self.busy = True
         self.period = 1
+        self.message = message
 
-    def wait(self):
-        """Wait `self.delay` and print a char every `self.period` seconds."""
-        delay = self.delay
-        while delay != 0:
+    def __task(self):
+        """Make the spinner spin."""
+        while self.busy:
             sys.stdout.write(next(self.spinner))  # write the next character
             sys.stdout.flush()  # flush stdout buffer (actual character display)
-            sys.stdout.write('\b')  # erase the last written char
+            sys.stdout.write("\b")  # erase the last written char
             time.sleep(self.period)  # wait for a period time
-            delay -= self.period
 
-    def reset(self):
+    def start(self):
+        """Start spinning."""
+        self.busy = True
+        sys.stdout.write(self.message)
+        threading.Thread(target=self.__task).start()
+
+    def __enter__(self):
+        """Entrypoint of the `with` statement."""
+        self.start()
+        return self
+
+    def stop(self):
         """Remove the spinner."""
-        sys.stdout.write(' ')
-        sys.stdout.write('\n')
+        self.busy = False
+        sys.stdout.write(" ")
+        sys.stdout.write("\n")
         sys.stdout.flush()  # flush stdout buffer (actual character display)
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        """Endpoint of the `with` statement."""
+        self.stop()
