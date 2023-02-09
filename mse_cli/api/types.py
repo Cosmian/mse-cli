@@ -99,7 +99,7 @@ class Plan(BaseModel):
 
     name: str
     memory: int
-    cores: float
+    cores: int
 
     @staticmethod
     def from_dict(dct: Dict[str, Any]):
