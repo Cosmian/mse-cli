@@ -4,6 +4,7 @@
 
 * Add a spinner when computing the code fingerprint
 * Add timeout when waiting for backend status
+* Add a `.mseignore` to enable the app owner to not send some files in the enclave
 
 ### Updated
 

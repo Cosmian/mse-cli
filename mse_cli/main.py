@@ -7,8 +7,20 @@ filterwarnings("ignore")  # noqa: E402
 
 # pylint: disable=wrong-import-position
 import mse_cli
-from mse_cli.command import (context, deploy, init, list_all, login, logout,
-                             logs, scaffold, status, stop, test, verify)
+from mse_cli.command import (
+    context,
+    deploy,
+    init,
+    list_all,
+    login,
+    logout,
+    logs,
+    scaffold,
+    status,
+    stop,
+    test,
+    verify,
+)
 from mse_cli.log import setup_logging
 
 
@@ -16,13 +28,16 @@ def main() -> int:
     """Entrypoint of the CLI."""
     setup_logging(False)
 
-    parser = argparse.ArgumentParser(description="MicroService Encryption CLI"
-                                     f" - {mse_cli.__version__}")
+    parser = argparse.ArgumentParser(
+        description="MicroService Encryption CLI" f" - {mse_cli.__version__}"
+    )
 
-    parser.add_argument("--version",
-                        action="version",
-                        version=f"{mse_cli.__version__}",
-                        help="version of %(prog)s binary")
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"{mse_cli.__version__}",
+        help="version of %(prog)s binary",
+    )
 
     subparsers = parser.add_subparsers(title="subcommands")
 

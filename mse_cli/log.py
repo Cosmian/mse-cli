@@ -48,13 +48,19 @@ def setup_logging(debug: bool = False):
     LOGGER.setLevel(logging.DEBUG if debug else logging.INFO)
 
     # Add a success level to the default logger (then we can write LOG.success("msg"))
-    logging.addLevelName(LOGGING_SUCCESS, 'SUCCESS')
+    logging.addLevelName(LOGGING_SUCCESS, "SUCCESS")
     # pylint: disable=protected-access
-    setattr(LOGGER, 'success',
-            lambda message, *args: LOGGER._log(LOGGING_SUCCESS, message, args))
+    setattr(
+        LOGGER,
+        "success",
+        lambda message, *args: LOGGER._log(LOGGING_SUCCESS, message, args),
+    )
 
     # Add a advice level to the default logger (then we can write LOG.advice("msg"))
-    logging.addLevelName(LOGGING_ADVICE, 'ADVICE')
+    logging.addLevelName(LOGGING_ADVICE, "ADVICE")
     # pylint: disable=protected-access
-    setattr(LOGGER, 'advice',
-            lambda message, *args: LOGGER._log(LOGGING_ADVICE, message, args))
+    setattr(
+        LOGGER,
+        "advice",
+        lambda message, *args: LOGGER._log(LOGGING_ADVICE, message, args),
+    )

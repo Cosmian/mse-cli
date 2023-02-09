@@ -1,0 +1,25 @@
+# Ignore MSE CLI files/directories
+mse.toml
+secrets.json
+.mseignore
+
+# Ignore byte-compiled / optimized files
+__pycache__
+*.py[cod]
+
+# Ignore git files/directories
+.git*
+
+# Ignore IDE files/directories
+.vscode/
+.idea/
+
+# Ignore packaging files/directories
+*.egg-info/
+*.egg
+
+# Ignore virtual env directories
+.venv
+
+# Ignore files which can contain secrets
+.env
