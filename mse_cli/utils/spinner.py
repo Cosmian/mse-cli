@@ -11,7 +11,7 @@ class Spinner:
 
     def __init__(self, message: str):
         """Initialize the spinner."""
-        self.spinner = itertools.cycle(['-', '/', '|', '\\'])
+        self.spinner = itertools.cycle(["-", "/", "|", "\\"])
         self.busy = True
         self.period = 1
         self.message = message
@@ -21,7 +21,7 @@ class Spinner:
         while self.busy:
             sys.stdout.write(next(self.spinner))  # write the next character
             sys.stdout.flush()  # flush stdout buffer (actual character display)
-            sys.stdout.write('\b')  # erase the last written char
+            sys.stdout.write("\b")  # erase the last written char
             time.sleep(self.period)  # wait for a period time
 
     def start(self):
@@ -38,8 +38,8 @@ class Spinner:
     def stop(self):
         """Remove the spinner."""
         self.busy = False
-        sys.stdout.write(' ')
-        sys.stdout.write('\n')
+        sys.stdout.write(" ")
+        sys.stdout.write("\n")
         sys.stdout.flush()  # flush stdout buffer (actual character display)
 
     def __exit__(self, exception_type, exception_value, traceback):

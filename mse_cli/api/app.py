@@ -10,8 +10,7 @@ from mse_cli.api.auth import Connection
 from mse_cli.conf.app import AppConf
 
 
-def new(conn: Connection, conf: AppConf,
-        code_tar_path: Path) -> requests.Response:
+def new(conn: Connection, conf: AppConf, code_tar_path: Path) -> requests.Response:
     """POST `/apps`."""
     if not code_tar_path.exists():
         raise FileNotFoundError("Can't find tar file!")
@@ -20,11 +19,8 @@ def new(conn: Connection, conf: AppConf,
         return conn.post(
             url="/apps",
             files={
-                "code": (code_tar_path.name, fp, "application/tar", {
-                    "Expires": "0"
-                }),
-                "conf":
-                    (None, json.dumps(conf.into_payload()), 'application/json')
+                "code": (code_tar_path.name, fp, "application/tar", {"Expires": "0"}),
+                "conf": (None, json.dumps(conf.into_payload()), "application/json"),
             },
             timeout=None,
         )

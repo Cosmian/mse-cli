@@ -13,14 +13,16 @@ from mse_cli.utils.color import bcolors
 def add_subparser(subparsers):
     """Define the subcommand."""
     parser = subparsers.add_parser(
-        "status", help="status of a specific MSE web application")
+        "status", help="status of a specific MSE web application"
+    )
 
     parser.set_defaults(func=run)
 
     parser.add_argument(
         "app_uuid",
         type=uuid.UUID,
-        help="identifier of the MSE web application to display status")
+        help="identifier of the MSE web application to display status",
+    )
 
 
 def run(args) -> None:
@@ -52,33 +54,61 @@ def run(args) -> None:
     # Note: date is printed in the current local timezone (instead of utc)
     remaining_days = app.expires_at - datetime.now(timezone.utc)
     if 0 <= remaining_days.days <= 1:
-        LOG.info("\tExpires at         = %s (%s%d seconds remaining%s)",
-                 app.expires_at.astimezone(), bcolors.WARNING,
-                 remaining_days.seconds, bcolors.ENDC)
+        LOG.info(
+            "\tExpires at         = %s (%s%d seconds remaining%s)",
+            app.expires_at.astimezone(),
+            bcolors.WARNING,
+            remaining_days.seconds,
+            bcolors.ENDC,
+        )
     elif remaining_days.days > 1:
-        LOG.info("\tExpires at         = %s (%s%d days remaining%s)",
-                 app.expires_at.astimezone(), bcolors.WARNING,
-                 remaining_days.days, bcolors.ENDC)
+        LOG.info(
+            "\tExpires at         = %s (%s%d days remaining%s)",
+            app.expires_at.astimezone(),
+            bcolors.WARNING,
+            remaining_days.days,
+            bcolors.ENDC,
+        )
     else:
-        LOG.info("\tExpired at         = %s (%s%d days remaining%s)",
-                 app.expires_at.astimezone(), bcolors.WARNING,
-                 remaining_days.days, bcolors.ENDC)
+        LOG.info(
+            "\tExpired at         = %s (%s%d days remaining%s)",
+            app.expires_at.astimezone(),
+            bcolors.WARNING,
+            remaining_days.days,
+            bcolors.ENDC,
+        )
 
     if app.status == AppStatus.Running:
-        LOG.info("\tStatus             = %s%s%s", bcolors.OKGREEN,
-                 app.status.value, bcolors.ENDC)
+        LOG.info(
+            "\tStatus             = %s%s%s",
+            bcolors.OKGREEN,
+            app.status.value,
+            bcolors.ENDC,
+        )
         if app.ready_at:
             LOG.info("\tOnline since       = %s", app.ready_at.astimezone())
     elif app.status == AppStatus.Stopped:
-        LOG.info("\tStatus             = %s%s%s", bcolors.WARNING,
-                 app.status.value, bcolors.ENDC)
+        LOG.info(
+            "\tStatus             = %s%s%s",
+            bcolors.WARNING,
+            app.status.value,
+            bcolors.ENDC,
+        )
         if app.stopped_at:
             LOG.info("\tStopped since      = %s", app.stopped_at.astimezone())
     elif app.status == AppStatus.OnError:
-        LOG.info("\tStatus             = %s%s%s", bcolors.FAIL,
-                 app.status.value, bcolors.ENDC)
+        LOG.info(
+            "\tStatus             = %s%s%s",
+            bcolors.FAIL,
+            app.status.value,
+            bcolors.ENDC,
+        )
         if app.stopped_at:
             LOG.info("\tOn error since     = %s", app.stopped_at.astimezone())
     elif app.status in (AppStatus.Initializing, AppStatus.Spawning):
-        LOG.info("\tStatus             = %s%s%s", bcolors.OKBLUE,
-                 app.status.value, bcolors.ENDC)
+        LOG.info(
+            "\tStatus             = %s%s%s",
+            bcolors.OKBLUE,
+            app.status.value,
+            bcolors.ENDC,
+        )
