@@ -107,7 +107,7 @@ You application owns a dedicated storage up to 10GB. The useful directories are 
 
 (2) The data will be removed when the application is stopped 
 
-## `.mseignore`
+## Mseignore file
 
 You can edit a `.mseignore` file in your code directory. This file is read by the cli when deploying an app and avoid sending some files remotely. 
 The syntax is the same as `.gitignore`.

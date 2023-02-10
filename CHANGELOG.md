@@ -1,4 +1,4 @@
-## \[0.10.0\] - XXXX-XX-XX
+## \[0.10.0\] - 2023-02-13
 
 ### Added
 
@@ -10,7 +10,7 @@
 
 * Support mse-backend 0.4.1:
   * Pagination for listing apps and projects
-* Bump `mse-lib-crypto` to 1.0
+* Bump `mse-lib-crypto` to 1.0 and `intel-sgx-ra` to 1.0
 
 ### Fixed
 
