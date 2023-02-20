@@ -188,7 +188,7 @@ def compute_mr_enclave(context: Context, tar_path: Path) -> str:
     context.docker_log_path.write_bytes(container)
 
     # Get the mr_enclave from the docker output
-    pattern = "mr_enclave:[ ]*([a-z0-9 ]{64})"
+    pattern = "Measurement:\n[ ]*([a-z0-9]{64})"
     m = re.search(pattern.encode("utf-8"), container)
 
     if not m:
