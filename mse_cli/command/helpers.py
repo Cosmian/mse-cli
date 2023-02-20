@@ -193,7 +193,7 @@ def compute_mr_enclave(context: Context, tar_path: Path) -> str:
 
     if not m:
         raise Exception(
-            "Fail to compute mr_enclave! See {docker_log_path} for more details."
+            f"Fail to compute mr_enclave! See {context.docker_log_path} for more details."
         )
 
     return str(m.group(1).decode("utf-8"))
