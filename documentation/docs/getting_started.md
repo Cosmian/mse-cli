@@ -165,10 +165,10 @@ $ curl "https://$MSE_UUID.cosmian.app"
 
 At this point, you can write your own Flask application and deploy it into MSE. 
 
-!!! warning "Compatibility with ASGI"
+!!! warning "Compatibility with WSGI/ASGI"
 
-    To be compliant with MSE your Python application must be an [ASGI](https://asgi.readthedocs.io) application. It is not possible to deploy a standalone Python program. 
-
+    To be compliant with MSE your Python application must be an [ASGI](https://asgi.readthedocs.io) or [WSGI](https://wsgi.readthedocs.io) application. It is not possible to deploy a standalone Python program. 
+    In the next example, this documentation will describe how to deploy Flask applications. You also can use other ASGI applications, for instance: FastAPI.
 
 !!! Examples
 
