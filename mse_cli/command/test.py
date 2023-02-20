@@ -5,6 +5,7 @@ from pathlib import Path
 from mse_cli.command.helpers import get_client_docker
 from mse_cli.conf.app import AppConf
 from mse_cli.log import LOGGER as LOG
+from docker.errors import ImageNotFound
 
 
 def add_subparser(subparsers):
@@ -32,9 +33,12 @@ def run(args) -> None:
 
     client = get_client_docker()
 
-    # Pull always before running (not for local docker)
-    if "/" in app.code.docker:
+    # Pull always before running.
+    # If image is not found: let's assume it's a local image
+    try:
         client.images.pull(app.code.docker)
+    except ImageNotFound:
+        pass
 
     LOG.info("You can stop the application at any time by typing CTRL^C")
     LOG.advice(  # type: ignore
