@@ -2,10 +2,11 @@
 
 from pathlib import Path
 
+from docker.errors import ImageNotFound
+
 from mse_cli.command.helpers import get_client_docker
 from mse_cli.conf.app import AppConf
 from mse_cli.log import LOGGER as LOG
-from docker.errors import ImageNotFound
 
 
 def add_subparser(subparsers):

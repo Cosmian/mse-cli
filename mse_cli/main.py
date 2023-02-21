@@ -21,6 +21,7 @@ from mse_cli.command import (
     test,
     verify,
 )
+from mse_cli.log import LOGGER as LOG
 from mse_cli.log import setup_logging
 
 
@@ -61,9 +62,13 @@ def main() -> int:
     except AttributeError:
         parser.error("too few arguments")
 
-    func(args)
-
-    return 0
+    try:
+        func(args)
+        return 0
+    # pylint: disable=broad-except
+    except Exception as e:
+        LOG.error(e)
+        return 1
 
 
 if __name__ == "__main__":
