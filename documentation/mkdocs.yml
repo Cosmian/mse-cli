@@ -53,6 +53,7 @@ nav:
       - Init: subcommand/init.md
       - Deploy: subcommand/deploy.md
       - List: subcommand/list.md
+      - Login: subcommand/login.md
       - Logout: subcommand/logout.md
       - Logs: subcommand/logs.md
       - Status: subcommand/status.md

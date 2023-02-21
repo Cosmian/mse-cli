@@ -188,12 +188,12 @@ def compute_mr_enclave(context: Context, tar_path: Path) -> str:
     context.docker_log_path.write_bytes(container)
 
     # Get the mr_enclave from the docker output
-    pattern = "mr_enclave:[ ]*([a-z0-9 ]{64})"
+    pattern = "Measurement:\n[ ]*([a-z0-9]{64})"
     m = re.search(pattern.encode("utf-8"), container)
 
     if not m:
         raise Exception(
-            "Fail to compute mr_enclave! See {docker_log_path} for more details."
+            f"Fail to compute mr_enclave! See {context.docker_log_path} for more details."
         )
 
     return str(m.group(1).decode("utf-8"))
@@ -209,7 +209,7 @@ def get_certificate(domain_name: str) -> str:
     OpenSSL/LibreSSL versions (particularly MacOS).
 
     """
-    with socket.create_connection((domain_name, 443)) as sock:
+    with socket.create_connection((domain_name, 443), timeout=10) as sock:
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
         context.check_hostname = False
         context.verify_mode = ssl.CERT_NONE

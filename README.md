@@ -1,5 +1,7 @@
 # Microservice Encryption Command-Line (MSE)
 
+[![PyPI version](https://badge.fury.io/py/mse-cli.svg)](https://badge.fury.io/py/mse-cli)
+
 ## Overview
 
 Python CLI for Microservice Encryption. See [Github repository](https://github.com/Cosmian/mse-cli).

@@ -92,14 +92,14 @@ def run_server(port, auth_url, state) -> str:
     return CODE
 
 
+# pylint: disable=too-many-locals
 def run(args) -> None:
     """Run the subcommand."""
     if args.whoami:
         try:
             user_conf = UserConf.from_toml()
-        except FileNotFoundError:
-            LOG.error("You are not logged in yet!")
-            return
+        except FileNotFoundError as exc:
+            raise PermissionError("You are not logged in yet!") from exc
 
         LOG.info("You are currently logged in as: %s", user_conf.email)
 

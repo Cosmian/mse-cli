@@ -34,3 +34,8 @@ $ pytest
 We recommend to run this test before any deployment.
 It ensures that the Docker contains all the dependencies needed for your own application.
 
+
+!!! warning "Opened port"
+
+    The `test` subcommand required the port 5000 to be opened and available on `localhost`
+
