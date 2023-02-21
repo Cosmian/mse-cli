@@ -94,7 +94,8 @@ def run(args) -> None:
         cert_path.write_text(ca_data)
     except (ssl.SSLZeroReturnError, socket.gaierror, ssl.SSLEOFError) as exc:
         raise ConnectionError(
-            f"Can't reach {args.domain_name}. Are you sure the application is still running?"
+            f"Can't reach {args.domain_name}. "
+            "Are you sure the application is still running?"
         ) from exc
 
     try:

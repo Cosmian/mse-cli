@@ -46,4 +46,7 @@ def run(_args) -> None:
 
     path = Path(os.getcwd())
     app.save(path)
-    LOG.success("Your app configuration has been saved in: %s", path / "mse.toml")  # type: ignore
+    LOG.success(  # type: ignore
+        "Your app configuration has been saved in: %s",
+        path / "mse.toml",
+    )

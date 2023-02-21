@@ -297,7 +297,7 @@ def _test_mse_cli(
     _test_list(f, app_conf.project, app_uuid, True)
 
     # Test stop app
-    run_stop(Namespace(**{"app_uuid": app_uuid}))
+    run_stop(Namespace(**{"app_uuid": [app_uuid]}))
 
     # Test status subcommand
     _test_status(f, app_uuid, "stopped")
