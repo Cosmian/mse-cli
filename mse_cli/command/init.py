@@ -17,7 +17,7 @@ def add_subparser(subparsers):
     parser.set_defaults(func=run)
 
 
-def run(_args):
+def run(_args) -> None:
     """Run the subcommand."""
     LOG.info("We need you to fill in the following fields\n")
 
@@ -46,4 +46,7 @@ def run(_args):
 
     path = Path(os.getcwd())
     app.save(path)
-    LOG.success("Your app configuration has been saved in: %s", path / "mse.toml")
+    LOG.success(  # type: ignore
+        "Your app configuration has been saved in: %s",
+        path / "mse.toml",
+    )

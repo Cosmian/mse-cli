@@ -1,3 +1,26 @@
+## \[0.10.1\] - 2023-02-21
+
+### Added
+
+* Doc: Add a paragraph concerning memory size limitations
+* Doc: Add a paragraph concerning opened port for `test` and `login`
+* Allow stopping several apps at once (`mse stop`)
+
+### Updated
+
+* Support gramine 1.4 when parsing stdout to get mr_enclave
+
+### Fixed
+
+* Various stdout formatting 
+* Error when local image contains '/' 
+* Return `1` if an error occurs for every subcommands. Remove error stacktrace
+
+### Removed
+
+* 
+
+
 ## \[0.10.0\] - 2023-02-13
 
 ### Added

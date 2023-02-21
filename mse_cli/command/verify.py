@@ -1,5 +1,6 @@
 """mse_cli.command.verify module."""
 
+import argparse
 import os
 import socket
 import ssl
@@ -63,12 +64,14 @@ def run(args) -> None:
 
     # Check args
     if args.fingerprint and (args.context or args.code):
-        print("[--fingerprint] and [--context & --code] are mutually exclusive")
-        return
+        raise argparse.ArgumentTypeError(
+            "[--fingerprint] and [--context & --code] are mutually exclusive"
+        )
 
     if (args.context and not args.code) or (not args.context and args.code):
-        print("[--context] and [--code] must be used together")
-        return
+        raise argparse.ArgumentTypeError(
+            "[--context] and [--code] must be used together"
+        )
 
     # Compute MRENCLAVE and decrypt the code if needed
     mrenclave = None
@@ -89,12 +92,11 @@ def run(args) -> None:
         ca_data = get_certificate(args.domain_name)
         cert_path = Path(os.getcwd()) / "cert.pem"
         cert_path.write_text(ca_data)
-    except (ssl.SSLZeroReturnError, socket.gaierror, ssl.SSLEOFError):
-        LOG.error(
-            "Can't reach %s. Are you sure the application is still running?",
-            args.domain_name,
-        )
-        return
+    except (ssl.SSLZeroReturnError, socket.gaierror, ssl.SSLEOFError) as exc:
+        raise ConnectionError(
+            f"Can't reach {args.domain_name}. "
+            "Are you sure the application is still running?"
+        ) from exc
 
     try:
         verify_app(mrenclave, ca_data)

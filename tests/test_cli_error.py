@@ -104,7 +104,7 @@ def test_stop_bad_uuid(cmd_log):
         run_stop(
             Namespace(
                 **{
-                    "app_uuid": "00000000-0000-0000-0000-000000000000",
+                    "app_uuid": ["00000000-0000-0000-0000-000000000000"],
                 }
             )
         )
@@ -115,31 +115,33 @@ def test_stop_bad_uuid(cmd_log):
 @pytest.mark.slow
 def test_verify_bad_domain(cmd_log):
     """Test verify with the error: valid domain but no exists."""
-    run_verify(
-        Namespace(
-            **{
-                "fingerprint": None,
-                "context": None,
-                "code": None,
-                "domain_name": f"notexist.{os.getenv('MSE_TEST_DOMAIN_NAME')}",
-            }
+    with pytest.raises(Exception) as exception:
+        run_verify(
+            Namespace(
+                **{
+                    "fingerprint": None,
+                    "context": None,
+                    "code": None,
+                    "domain_name": f"notexist.{os.getenv('MSE_TEST_DOMAIN_NAME')}",
+                }
+            )
         )
-    )
-    output = capture_logs(cmd_log)
-    assert "Are you sure the application is still running?" in output
 
-    run_verify(
-        Namespace(
-            **{
-                "fingerprint": None,
-                "context": None,
-                "code": None,
-                "domain_name": f"notexist.app",
-            }
+    assert "Are you sure the application is still running?" in str(exception.value)
+
+    with pytest.raises(Exception) as exception:
+        run_verify(
+            Namespace(
+                **{
+                    "fingerprint": None,
+                    "context": None,
+                    "code": None,
+                    "domain_name": f"notexist.app",
+                }
+            )
         )
-    )
-    output = capture_logs(cmd_log)
-    assert "Are you sure the application is still running?" in output
+
+    assert "Are you sure the application is still running?" in str(exception.value)
 
 
 @pytest.mark.slow
