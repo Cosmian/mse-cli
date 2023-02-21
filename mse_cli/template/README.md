@@ -36,7 +36,7 @@ $ TEST_REMOTE_URL="https://<app_domain_name>" pytest
 You can get the certificate and check it using:
 
 ```console
-$ mse verify --skip-fingerprint "<app_domain_name>"
+$ mse verify "<app_domain_name>"
 ```
 
 You can now query your microservice:
