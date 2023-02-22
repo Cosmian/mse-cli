@@ -22,8 +22,7 @@ Deploying your app...
 
 ### About domain names
 
-When deploying an application, you are given a deployment ID along the creation of the application,
-such as `04e9952c-981d-4601-a610-81152fe21315` in the following example:
+When deploying an application, a random dedicated domain name ID is given, for example:
 
 ```{.console}
 …
@@ -32,13 +31,7 @@ App 04e9952c-981d-4601-a610-81152fe21315 creating for helloworld with 512M EPC m
 You can now run `mse logs 04e9952c-981d-4601-a610-81152fe21315` if necessary
 ✅ App created!
 …
-```
-
-`04e9952c-981d-4601-a610-81152fe21315` is also used in the domain name to use your microservice, such as:
-
-```{.console}
-…
-✅ It's now ready to be used on https://04e9952c-981d-4601-a610-81152fe21315.cosmian.dev until 2023-01-10 20:30:36.860596+01:00. The application will be automatically stopped after this date.
+✅ It's now ready to be used on https://81152fe21315.cosmian.dev until 2023-01-10 20:30:36.860596+01:00. The application will be automatically stopped after this date.
 …
 ```
 
@@ -57,12 +50,12 @@ App f565385d-8c69-4001-a75d-8d84c17e312b creating for helloworld with 512M EPC m
 You can now run `mse logs f565385d-8c69-4001-a75d-8d84c17e312b` if necessary
 ✅ App created!
 …
-✅ It's now ready to be used on https://04e9952c-981d-4601-a610-81152fe21315.cosmian.dev until 2023-01-10 20:30:36.860596+01:00. The application will be automatically stopped after this date.
+✅ It's now ready to be used on https://81152fe21315.cosmian.dev until 2023-01-10 20:30:36.860596+01:00. The application will be automatically stopped after this date.
 …
 ```
 
 A new deployment ID is used: `f565385d-8c69-4001-a75d-8d84c17e312b`.
-The URL of your microservice remains the same: `https://04e9952c-981d-4601-a610-81152fe21315.cosmian.dev`
+The URL of your microservice remains the same: `https://81152fe21315.cosmian.dev`
 
 #### Domain name and SSL configuration
 

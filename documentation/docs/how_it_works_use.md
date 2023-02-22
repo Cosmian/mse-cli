@@ -2,7 +2,7 @@
 
 The application has been developed by the app owner. Therefore, how to use it depends on its own API.
 
-However, there are some specificities about the connection depending on the MSE configuration namely the scenarii chosen by the app owner.
+However, there are some specificities about the connection depending on the MSE configuration namely the scenarios chosen by the app owner.
 
 The TLS connection is specific to each scenario:
 

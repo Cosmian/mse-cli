@@ -7,14 +7,10 @@ from flask import Flask, Response
 @{{ app }}.get("{{ healthcheck_endpoint }}")
 def health_check():
     """Health check of the application."""
-    return Response(status=HTTPStatus.OK)
+    return Response(response="OK", status=HTTPStatus.OK)
 
 
 @{{ app }}.route('/')
 def hello():
     """Get a simple example."""
     return "Hello world"
-
-
-if __name__ == "__main__":
-    app.run(debug=True)

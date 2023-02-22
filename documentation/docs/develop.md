@@ -56,6 +56,26 @@ Which is used by this application code example:
 import os
 import json
 
+from pathlib import Path
+from flask import Flask
+
+app = Flask(__name__)
+
+
+@app.route('/whoami')
+def whoami():
+    """A simple example manipulating secrets."""
+    secrets = json.loads(Path(os.getenv("SECRETS_PATH")).read_text())
+    return secrets["login"]
+```
+
+## The paths
+
+Find below a small example using paths:
+
+```toml
+import os
+
 from http import HTTPStatus
 from pathlib import Path
 from datetime import datetime
@@ -64,13 +84,6 @@ from flask import Flask, Response
 app = Flask(__name__)
 
 WORKFILE: Path = Path(os.getenv("HOME")) / "date.txt"
-
-
-@app.route('/whoami')
-def whoami():
-    """A simple example manipulating secrets."""
-    secrets = json.loads(Path(os.getenv("SECRETS_PATH")).read_text())
-    return secrets["login"]
 
 
 @app.post('/')
@@ -91,8 +104,6 @@ def read_date():
     WORKFILE.unlink()
     return txt
 ```
-
-## The paths
 
 You application owns a dedicated storage up to 10GB. The useful directories are the followings:
 

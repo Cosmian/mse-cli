@@ -1,3 +1,22 @@
+## \[0.10.2\] - 2023-XX-YY
+
+### Added
+
+*
+
+### Updated
+
+* Doc: fixing several typos and misleading information
+* Scaffold: Return "Ok" to be more user-friendly
+
+### Fixed
+
+*
+
+### Removed
+
+* 
+
 ## \[0.10.1\] - 2023-02-21
 
 ### Added
