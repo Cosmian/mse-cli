@@ -84,7 +84,7 @@ def run(args) -> None:
     template_pytest_file.unlink()
 
     LOG.success(  # type: ignore
-        "An example app has been generated in the current directory"
+        "An example app has been generated in the directory: %s/", args.app_name
     )
     LOG.warning("You can configure your MSE application in: %s", conf_file)
     LOG.info(
