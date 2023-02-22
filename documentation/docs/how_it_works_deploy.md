@@ -29,7 +29,7 @@ In stage 1, because the TLS connection between the app owner and Cosmian are man
 
 The cryptography specifications are explained [here](security.md).
 
-All the [scenarii](./scenarios.md) proceed that way. 
+All the [scenarios](./scenarios.md) proceed that way. 
 
 ### MSE instance verification
 

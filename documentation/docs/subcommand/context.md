@@ -3,7 +3,7 @@
 
 ## Login
 
-The user login information is stored in: `$HOME/.config/mse/login.toml` on Linux/Darwin and `%APPDATA%\mse\login.toml` on Windows. 
+The user login information is stored in: `$HOME/.config/mse/login.toml` on Linux/MacOS and `%APPDATA%\mse\login.toml` on Windows. 
 
 ## Workspace
 
@@ -16,12 +16,12 @@ Any files created during the deployment process are stored in `/tmp/uniqueName/`
 
 ## Context
 
-`mse` also creates a directory `$HOME/.config/mse/context/uuid/` when a deployment is successfully completed.
+`mse` also creates a directory `$HOME/.config/mse/context/{uuid}/` when a deployment is successfully completed.
 
 This directory contains:
 
 - The tarball of the encrypted code
-- A TOML file with contains the details required for a user to verify the trustworthiness of the app
+- A TOML file which contains the details required for a user to verify the trustworthiness of the app
 
 
 === "Enclave certificate"
@@ -115,7 +115,9 @@ $ mse context --remove 852a4256-fffa-457a-80ed-329166a652af
 [...]
 ```
 
-!!! warning "If you do that, you will lose the configuration and the tar code. That will make you unable to share these information, thus an app user will be unable to verify the trustworthiness of your app"
+!!! warning "Warning"
+
+    If you do that, you will lose the configuration and the tar code. That will make you unable to share these information, thus an app user will be unable to verify the trustworthiness of your app
 
 
 ### Purge
@@ -127,7 +129,9 @@ $ mse context --purge
 [...]
 ```
 
-!!! warning "If you do that, you will lose the configuration and the tar code for all apps. That will make you unable to share these information, thus an app user will be unable to verify the trustworthiness of all of your apps"
+!!! warning "Warning" 
+
+    If you do that, you will lose the configuration and the tar code for all apps. That will make you unable to share these information, thus an app user will be unable to verify the trustworthiness of all of your apps
 
 
 ### Export

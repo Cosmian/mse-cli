@@ -1,7 +1,7 @@
 MSE enables two security scenarios.
 The scenario is selected through the settings of the app configuration file.
 
-!!! info "In the case of the SaaS MSE offering, Cosmian is the operator and either Azure or OVH is the cloud provider."
+!!! info "In the case of the SaaS MSE offering, Cosmian is the operator and the cloud provider is Azure or OVH."
 
 ## Zero trust: collaborative confidential computation (CCC)
 
