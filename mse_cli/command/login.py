@@ -69,7 +69,7 @@ def run_server(port, auth_url, state) -> str:
             global CODE  # pylint: disable=global-statement
             CODE = parsed_query["code"][0]
             self.send_response(301)
-            self.send_header("location", f"{MSE_CONSOLE_URL}/?origin=ctl")
+            self.send_header("location", f"{MSE_CONSOLE_URL}/?origin=cli")
             self.end_headers()
             self.kill_server()
 

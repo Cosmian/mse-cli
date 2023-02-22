@@ -22,8 +22,9 @@ docker = "ghcr.io/cosmian/mse-flask:20230124182826"
 |    resource     |    ✔️     |      string       |   Resource name you own to use for your application    |
 | expiration_date |          | YY-MM-DD HH/mm/ss | Expiration date (UTC) before the application shutdowns |
 
-
 Two applications from the same project with the same name cannot be running at the same time.
+
+You can find the name of the resources [here](https://console.cosmian.com/subscriptions).
 
 #### Expiration date of the application
 
