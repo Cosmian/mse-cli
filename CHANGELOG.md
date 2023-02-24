@@ -8,6 +8,7 @@
 
 * Doc: fixing several typos and misleading information
 * Scaffold: Return "Ok" to be more user-friendly
+* Update documentation using new dockers
 
 ### Fixed
 

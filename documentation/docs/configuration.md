@@ -10,7 +10,7 @@ resource = "free"
 location = "my_project/code"
 python_application = "app:app"
 healthcheck_endpoint = "/"
-docker = "ghcr.io/cosmian/mse-flask:20230124182826"
+docker = "ghcr.io/cosmian/mse-flask:20230223125116"
 ```
 
 ### Main section
@@ -44,7 +44,7 @@ Otherwise, it takes the value inherited from the chosen plan.
 location = "my_project/code"
 python_application = "app:app"
 healthcheck_endpoint = "/"
-docker = "ghcr.io/cosmian/mse-flask:20230124182826"
+docker = "ghcr.io/cosmian/mse-flask:20230223125116"
 ```
 
 |         Keys         | Required | Types  |                                                                                Description                                                                                |
@@ -59,8 +59,11 @@ docker = "ghcr.io/cosmian/mse-flask:20230124182826"
 
 The `docker` parameter defines which Docker image will run in the MSE node. *Cosmian* offers several Docker images (use the tag with the most recent date):
 
-- [mse-flask](https://github.com/Cosmian/mse-docker-flask/pkgs/container/mse-flask): this Docker contains flask dependencies.
-- [mse-pytorch](https://github.com/Cosmian/mse-docker-pytorch/pkgs/container/mse-pytorch): this Docker contains flask and machine learning dependencies.
+- [mse-flask](https://github.com/Cosmian/mse-docker-flask/pkgs/container/mse-flask): containing flask dependencies.
+- [mse-pytorch](https://github.com/Cosmian/mse-docker-pytorch/pkgs/container/mse-pytorch): containing flask and machine learning dependencies using pytorch.
+- [mse-tensorflow](https://github.com/Cosmian/mse-docker-tensorflow/pkgs/container/mse-tensorflow): containing flask and machine learning dependencies using tensorflow.
+- [mse-ds](https://github.com/Cosmian/mse-docker-ds/pkgs/container/mse-ds): containing flask and data science dependencies.
+- [mse-fastapi](https://github.com/Cosmian/mse-docker-fastapi/pkgs/container/mse-fastapi): containing fastapi dependencies.
 
 You can test your code properly runs inside this Docker using [`mse test`](subcommand/test.md).
 

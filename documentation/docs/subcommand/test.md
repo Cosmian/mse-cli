@@ -7,7 +7,7 @@ You can run your application inside the same Docker as MSE environment:
 
 ```{.console}
 $ mse test 
-Starting the docker: ghcr.io/cosmian/mse-flask:20230124182826...
+Starting the docker: ghcr.io/cosmian/mse-flask:20230223125116...
 You can stop the test at any time by typing CTRL^C
 From another terminal, you can now run: `curl http://localhost:5000/health` or `pytest`
 Reading args: --application app:app --debug
