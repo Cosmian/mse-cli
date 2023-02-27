@@ -109,7 +109,7 @@ resource = "free"
 
 [code]
 location = "mse_src"
-docker = "ghcr.io/cosmian/mse-flask:20230124182826"
+docker = "ghcr.io/cosmian/mse-flask:20230223125116"
 python_application = "app:app"
 healthcheck_endpoint = "/health"
 ```
@@ -159,8 +159,8 @@ Your microservice is up at `https://123456789abcdef.cosmian.app`.
 You can test your first app using `curl`:
 
 ```{.console}
-$ export MSE_UUID="..." # your UUID here
-$ curl "https://$MSE_UUID.cosmian.app" 
+$ export APP_DOMAIN_NAME="..." # your DN here
+$ curl "https://$APP_DOMAIN_NAME" 
 ```
 
 At this point, you can write your own Flask application and deploy it into MSE. 

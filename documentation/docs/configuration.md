@@ -1,32 +1,30 @@
 The configuration of an MSE application is written in a TOML file.
 The `mse.toml` file located in the current directory is used with `mse deploy` subcommand, you can specify another TOML file with argument `--path` if needed.
 
-```{.bash}
-$ cat my_project/mse.toml
-───────┬──────────────────────────────
-   1   │ name = "my_project"
-   2   │ project = "default"
-   3   │ resource = "free"
-   4   │
-   5   │ [code]
-   6   │ location = "my_project/code"
-   7   │ python_application = "app:app"
-   8   │ healthcheck_endpoint = "/"
-   9   | docker = "ghcr.io/cosmian/mse-flask:20230124182826"
-───────┴──────────────────────────────
+```{.toml}
+name = "my_project"
+project = "default"
+resource = "free"
+
+[code]
+location = "my_project/code"
+python_application = "app:app"
+healthcheck_endpoint = "/"
+docker = "ghcr.io/cosmian/mse-flask:20230223125116"
 ```
 
 ### Main section
 
-|      Keys       | Mandatory |             Types              |                       Description                        |
-| :-------------: | :-------: | :----------------------------: | :------------------------------------------------------: |
-|      name       |     ✔️     |              str               | Name of the application. It must be unique per `project` |
-|     project     |     ✔️     |        `default` or str        |     Project name to regroup applications for payment     |
-|    resource     |     ✔️     | `free` or other resource names |       Resource you own to use for your application       |
-| expiration_date |           |       YY-MM-DD HH/mm/ss        |  Expiration date (UTC) before the application shutdowns  |
-
+|      Keys       | Required |       Types       |                      Description                       |
+| :-------------: | :------: | :---------------: | :----------------------------------------------------: |
+|      name       |    ✔️     |      string       | Name of the application. It must be unique per project |
+|     project     |    ✔️     |      string       |    Project name to regroup applications for payment    |
+|    resource     |    ✔️     |      string       |   Resource name you own to use for your application    |
+| expiration_date |          | YY-MM-DD HH/mm/ss | Expiration date (UTC) before the application shutdowns |
 
 Two applications from the same project with the same name cannot be running at the same time.
+
+You can find the name of the resources [here](https://console.cosmian.com/subscriptions).
 
 #### Expiration date of the application
 
@@ -34,27 +32,38 @@ The expiration date is tied to the self-signed certificate. When the expiration 
 
 If the plan is `free` then the expiration date of the app will be overwritten to **4 hours**.
 
-In case the SSL certificate is provided by the application owner, this value should be lower than the expiration date of the certificate.
+In case the SSL certificate is provided by the application owner, the expiration date of the app should be lower than the expiration date of the certificate.
 
 If no `expiration_date` is specified in the configuration file, the expiration date of the application is the expiration date of the certificate.
 Otherwise, it takes the value inherited from the chosen plan.
 
 ### Code section
 
-|         Keys         | Mandatory |          Types          |                                                                            Description                                                                            |
-| :------------------: | :-------: | :---------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-|       location       |     ✔️     |           str           |                                                           Relative path to the application code folder                                                            |
-|        docker        |     ✔️     |           str           |                       URL to the mse docker to run. It could be a local docker to run local test but it must be a remote url when deploying                       |
-|  python_application  |     ✔️     |           str           |                                                                  module_name:flask_variable_name                                                                  |
-| healthcheck_endpoint |     ✔️     | str starting with a '/' |              `GET` endpoint to check if the application is ready. This endpoint should be unauthenticated and shouldn't require any parameters/data.              |
-|       secrets        |           |           str           | A file path (absolute or relative to the configuration file) containing secrets needed by your application to run. See [this page](develop.md) for more  details. |
+```{.toml}
+[code]
+location = "my_project/code"
+python_application = "app:app"
+healthcheck_endpoint = "/"
+docker = "ghcr.io/cosmian/mse-flask:20230223125116"
+```
+
+|         Keys         | Required | Types  |                                                                                Description                                                                                |
+| :------------------: | :------: | :----: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|       location       |    ✔️     | string |                                                               Relative path to the application code folder                                                                |
+|        docker        |    ✔️     | string | URL to the mse docker to run. It could be a local docker to run local test but it must be a remote url when deploying. See [below section](./configuration.md#mse-docker) |
+|  python_application  |    ✔️     | string |                                                                      module_name:flask_variable_name                                                                      |
+| healthcheck_endpoint |    ✔️     | string |       `GET` endpoint (starting with a `/`) to check if the application is ready. This endpoint should be unauthenticated and shouldn't require any parameters/data.       |
+|       secrets        |          | string |     A file path (absolute or relative to the configuration file) containing secrets needed by your application to run. See [this page](develop.md) for more  details.     |
 
 #### MSE docker
 
-The MSE docker parameter defines which Docker image will run in the MSE node. *Cosmian* offers several Docker images (use the tag with the most recent date):
+The `docker` parameter defines which Docker image will run in the MSE node. *Cosmian* offers several Docker images (use the tag with the most recent date):
 
-- [mse-flask](https://github.com/Cosmian/mse-docker-flask/pkgs/container/mse-flask): this Docker contains plenty of flask dependencies.
-- [mse-pytorch](https://github.com/Cosmian/mse-docker-pytorch/pkgs/container/mse-pytorch): this Docker contains plenty of flask and machine learning dependencies.
+- [mse-flask](https://github.com/Cosmian/mse-docker-flask/pkgs/container/mse-flask): containing flask dependencies.
+- [mse-pytorch](https://github.com/Cosmian/mse-docker-pytorch/pkgs/container/mse-pytorch): containing flask and machine learning dependencies using pytorch.
+- [mse-tensorflow](https://github.com/Cosmian/mse-docker-tensorflow/pkgs/container/mse-tensorflow): containing flask and machine learning dependencies using tensorflow.
+- [mse-ds](https://github.com/Cosmian/mse-docker-ds/pkgs/container/mse-ds): containing flask and data science dependencies.
+- [mse-fastapi](https://github.com/Cosmian/mse-docker-fastapi/pkgs/container/mse-fastapi): containing fastapi dependencies.
 
 You can test your code properly runs inside this Docker using [`mse test`](subcommand/test.md).
 
@@ -66,16 +75,24 @@ Note that, the `requirements.txt` from your source code directory will still be 
 
 ### SSL section
 
+```{.toml}
+[ssl]
+domain_name="demo.owner.com"
+private_key="key.pem"
+certificate="cert.pem"
+```
+
 Useful if you want to use your own custom domain name.
 For more information, see [scenarii](scenarios.md).
 
-|    Keys     | Mandatory | Types |                                                               Description                                                               |
-| :---------: | :-------: | :---: | :-------------------------------------------------------------------------------------------------------------------------------------: |
-| domain_name |     ✔️     |  str  |              Custom domain name of your application. Should also be in CN and Subject Alternative Name of the certificate               |
-| private_key |     ✔️     |  str  |       A file path (absolute or relative to the configuration file) containing the private key of the SSL connection (PEM format)        |
-| certificate |     ✔️     |  str  | A file path (absolute or relative to the configuration file) containing the full certification chain of the SSL connection (PEM format) |
+|    Keys     | Mandatory | Types  |                                                               Description                                                               |
+| :---------: | :-------: | :----: | :-------------------------------------------------------------------------------------------------------------------------------------: |
+| domain_name |     ✔️     | string |              Custom domain name of your application. Should also be in CN and Subject Alternative Name of the certificate               |
+| private_key |     ✔️     | string |       A file path (absolute or relative to the configuration file) containing the private key of the SSL connection (PEM format)        |
+| certificate |     ✔️     | string | A file path (absolute or relative to the configuration file) containing the full certification chain of the SSL connection (PEM format) |
 
-[LetsEncrypt](https://letsencrypt.org/getting-started/) is supported and recommended to get a certificate for your custom domain.
+[LetsEncrypt](https://letsencrypt.org/getting-started/) is supported and recommended to get a certificate for your custom domain. 
+Be aware that the expiration date is set to 3 months for all LetsEncrypt certificate: to run a long-life application you should probably use another certificate authority.
 
 Here is the procedure to generate the certificate with *LetsEncrypt* (e.g. *example.domain.com*).
 
