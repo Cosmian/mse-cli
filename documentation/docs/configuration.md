@@ -10,7 +10,7 @@ resource = "free"
 location = "my_project/code"
 python_application = "app:app"
 healthcheck_endpoint = "/"
-docker = "ghcr.io/cosmian/mse-flask:20230223125116"
+docker = "ghcr.io/cosmian/mse-flask:20230228091325"
 ```
 
 ### Main section
@@ -44,7 +44,7 @@ Otherwise, it takes the value inherited from the chosen plan.
 location = "my_project/code"
 python_application = "app:app"
 healthcheck_endpoint = "/"
-docker = "ghcr.io/cosmian/mse-flask:20230223125116"
+docker = "ghcr.io/cosmian/mse-flask:20230228091325"
 ```
 
 |         Keys         | Required | Types  |                                                                                Description                                                                                |
