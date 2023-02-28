@@ -1,22 +1,17 @@
+## \[0.11.0\] - 2023-XX-YY
+
+### Updated
+
+* Field `resouce` has been renamed into `hardware`
+* Complete documentation about hardware booked/bought
+
 ## \[0.10.2\] - 2023-XX-YY
-
-### Added
-
-*
 
 ### Updated
 
 * Doc: fixing several typos and misleading information
 * Scaffold: Return "Ok" to be more user-friendly
 * Update documentation using new dockers
-
-### Fixed
-
-*
-
-### Removed
-
-* 
 
 ## \[0.10.1\] - 2023-02-21
 
@@ -36,11 +31,6 @@
 * Error when local image contains '/' 
 * Return `1` if an error occurs for every subcommands. Remove error stacktrace
 
-### Removed
-
-* 
-
-
 ## \[0.10.0\] - 2023-02-13
 
 ### Added
@@ -58,11 +48,6 @@
 ### Fixed
 
 * Some bad urls in the `README.md` and the documentation
-
-### Removed
-
-* 
-
 
 ## \[0.9.0\] - 2023-02-01
 

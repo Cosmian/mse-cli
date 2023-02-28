@@ -105,7 +105,7 @@ The [configuration file](./configuration.md) is a TOML file:
 ```{.toml}
 name = "helloworld"
 project = "default"
-resource = "free"
+hardware = "512m-eu-001"
 
 [code]
 location = "mse_src"

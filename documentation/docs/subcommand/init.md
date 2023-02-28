@@ -19,7 +19,7 @@ The configuration file for the previous example would be:
 ```toml
 name = "test"
 project = "default"
-resource = "free"
+hardware = "512m-eu-001"
 
 [code]
 location = "."

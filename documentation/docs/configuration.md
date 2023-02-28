@@ -19,23 +19,27 @@ docker = "ghcr.io/cosmian/mse-flask:20230228091325"
 | :-------------: | :------: | :---------------: | :----------------------------------------------------: |
 |      name       |    ✔️     |      string       | Name of the application. It must be unique per project |
 |     project     |    ✔️     |      string       |    Project name to regroup applications for payment    |
-|    resource     |    ✔️     |      string       |   Resource name you own to use for your application    |
+|    hardware     |    ✔️     |      string       |   Hardware name you own to use for your application    |
 | expiration_date |          | YY-MM-DD HH/mm/ss | Expiration date (UTC) before the application shutdowns |
 
 Two applications from the same project with the same name cannot be running at the same time.
 
-You can find the name of the resources [here](https://console.cosmian.com/subscriptions).
+You can list the hardware you own or buy new ones [here](https://console.cosmian.com/subscriptions). 
+By default, you only own one free hardware called `512m-eu-001`. You can't reduce or grow the amount of that resource. 
+
+Let's assume you own `N` hardwares called: `2g-eu-001`. You can deployed `N` applications. If you need to deployed more applications, you need to buy new ones. 
+As soon as you have bought a new hardware, you are charge for one month. If you drop the hardware, it is immediatelly unusable without prorata pay back. 
 
 #### Expiration date of the application
 
 The expiration date is tied to the self-signed certificate. When the expiration date is reached, the application is not available anymore.
 
-If the plan is `free` then the expiration date of the app will be overwritten to **4 hours**.
+If the hardware is `free` then the expiration date of the app will be overwritten to **4 hours**.
 
 In case the SSL certificate is provided by the application owner, the expiration date of the app should be lower than the expiration date of the certificate.
 
 If no `expiration_date` is specified in the configuration file, the expiration date of the application is the expiration date of the certificate.
-Otherwise, it takes the value inherited from the chosen plan.
+Otherwise, it takes the value inherited from the chosen hardware when you bought it.
 
 ### Code section
 
