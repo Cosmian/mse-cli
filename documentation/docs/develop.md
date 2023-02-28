@@ -25,7 +25,7 @@ resource="free"
 location="./code"
 python_application="app:app"
 healthcheck_endpoint="/whoami"
-docker="ghcr.io/cosmian/mse-flask:20230223125116"
+docker="ghcr.io/cosmian/mse-flask:20230228091325"
 secrets="./secrets.json"
 
 [ssl]
