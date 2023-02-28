@@ -19,13 +19,13 @@ from mse_lib_crypto.xsalsa20_poly1305 import encrypt_directory
 from mse_cli import MSE_CERTIFICATES_URL, MSE_PCCS_URL
 from mse_cli.api.app import get, stop
 from mse_cli.api.auth import Connection
-from mse_cli.api.plan import get as get_plan
+from mse_cli.api.hardware import get as get_hardware
 from mse_cli.api.project import get_app_from_name, get_from_name
 from mse_cli.api.types import (
     App,
     AppStatus,
+    Hardware,
     PartialApp,
-    Plan,
     Project,
     SSLCertificateOrigin,
 )
@@ -58,13 +58,13 @@ def get_app(conn: Connection, uuid: UUID) -> App:
 
 def get_enclave_resources(conn: Connection, resource_name: str) -> Tuple[int, float]:
     """Get the enclave size and cores from an app."""
-    r: requests.Response = get_plan(conn=conn, name=resource_name)
+    r: requests.Response = get_hardware(conn=conn, name=resource_name)
 
     if not r.ok:
         raise Exception(r.text)
 
-    plan = Plan.from_dict(r.json())
-    return plan.memory, plan.cores
+    hardware = Hardware.from_dict(r.json())
+    return hardware.enclave_size, hardware.cores
 
 
 def get_project_from_name(conn: Connection, name: str) -> Optional[Project]:

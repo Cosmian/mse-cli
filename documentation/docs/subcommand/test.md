@@ -28,6 +28,7 @@ The docker will start your Flask server. At this point, you can interact with th
 
 ```{.console}
 $ curl http://localhost:5000/
+$ pip install -r requirements-dev.txt
 $ pytest
 ```
 

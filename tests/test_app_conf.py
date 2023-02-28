@@ -307,5 +307,5 @@ def test_into_payload():
         "dev_mode": False,
         "ssl_certificate": CERTIFICATE,
         "domain_name": "demo.cosmilink.com",
-        "plan": "free",
+        "hardware": "free",
     }

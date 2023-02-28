@@ -40,7 +40,7 @@ class App(BaseModel):
     ready_at: Optional[datetime.datetime]
     stopped_at: Optional[datetime.datetime]
     status: AppStatus
-    plan: str
+    hardware: str
     ssl_certificate_origin: SSLCertificateOrigin
     expires_at: datetime.datetime
     python_application: str
@@ -52,7 +52,7 @@ class App(BaseModel):
 
     @staticmethod
     def from_dict(dct: Dict[str, Any]):
-        """Build an App object from a dictionnary."""
+        """Build an App object from a dictionary."""
         return App(**dct)
 
 
@@ -66,11 +66,11 @@ class PartialApp(BaseModel):
     ready_at: Optional[datetime.datetime]
     stopped_at: Optional[datetime.datetime]
     status: AppStatus
-    plan: str
+    hardware: str
 
     @staticmethod
     def from_dict(dct: Dict[str, Any]):
-        """Build an App object from a dictionnary."""
+        """Build an App object from a dictionary."""
         return PartialApp(**dct)
 
 
@@ -90,21 +90,22 @@ class Project(BaseModel):
 
     @staticmethod
     def from_dict(dct: Dict[str, Any]):
-        """Build a Project object from a dictionnary."""
+        """Build a Project object from a dictionary."""
         return Project(**dct)
 
 
-class Plan(BaseModel):
-    """Plan model."""
+class Hardware(BaseModel):
+    """Hardware model."""
 
     name: str
     memory: int
     cores: int
+    enclave_size: int
 
     @staticmethod
     def from_dict(dct: Dict[str, Any]):
-        """Build a Plan object from a dictionnary."""
-        return Plan(**dct)
+        """Build a Hardware object from a dictionary."""
+        return Hardware(**dct)
 
 
 class User(BaseModel):

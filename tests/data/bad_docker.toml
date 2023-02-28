@@ -1,6 +1,6 @@
 name = "bad_docker"
 project = "default"
-resource = "free"
+hardware = "free"
 
 [code]
 location = "code/"
