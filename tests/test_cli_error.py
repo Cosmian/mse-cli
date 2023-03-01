@@ -159,7 +159,9 @@ def test_deploy_non_free(cmd_log):
             )
         )
 
-    assert "Cannot find the plan with name 'green'" in str(exception.value)
+    assert "Cannot find the hardware configuration with name 'green'" in str(
+        exception.value
+    )
 
 
 @pytest.mark.slow

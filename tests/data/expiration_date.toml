@@ -1,6 +1,6 @@
 name = "helloworld"
 project = "default"
-resource = "free"
+hardware = "free"
 expiration_date = "2023-05-01 00:00:00+00:00"
 
 [code]

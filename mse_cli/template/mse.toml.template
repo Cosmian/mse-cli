@@ -1,6 +1,6 @@
 name = "{{ name }}"
 project = "default"
-hardware = "512g-eu-001"
+hardware = "512m-eu-001"
 
 [code]
 location = "mse_src"
