@@ -34,12 +34,12 @@ def run(args) -> None:
     conn = user_conf.get_connection()
     app = get_app(conn=conn, uuid=args.app_uuid)
 
-    (enclave_size, cores) = get_enclave_resources(conn, app.hardware)
+    (enclave_size, cores) = get_enclave_resources(conn, app.hardware_name)
 
     LOG.info("\n> Microservice")
     LOG.info("\tName        = %s", app.name)
     LOG.info("\tDomain name = %s", app.domain_name)
-    LOG.info("\tResource    = %s", app.hardware)
+    LOG.info("\tHardware    = %s", app.hardware_name)
     LOG.info("\tApplication = %s", app.python_application)
     LOG.info("\tMSE docker  = %s", app.docker)
     LOG.info("\tHealthcheck = %s", app.healthcheck_endpoint)
@@ -47,7 +47,7 @@ def run(args) -> None:
     LOG.info("\n> Deployment status")
     LOG.info("\tUUID               = %s", app.uuid)
     LOG.info("\tCertificate origin = %s", app.ssl_certificate_origin.value)
-    LOG.info("\tEnclave size       = %sM", enclave_size)
+    LOG.info("\tMemory size        = %sM", enclave_size)
     LOG.info("\tCores amount       = %s", cores)
     LOG.info("\tCreated at         = %s", app.created_at.astimezone())
 

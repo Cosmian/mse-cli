@@ -14,7 +14,7 @@ def list_apps(
 ) -> requests.Response:
     """GET `/apps`."""
     return conn.get(
-        url=f"/apps",
+        url="/apps",
         params={
             "status": ",".join(map(lambda s: s.value, status)) if status else None,
             "project": str(project_uuid) if project_uuid else None,
@@ -30,7 +30,7 @@ def get_app_from_name(
 ) -> requests.Response:
     """GET `/apps?name=str&status=s1,s2,s3`."""
     return conn.get(
-        url=f"/apps",
+        url="/apps",
         params={
             "name": app_name,
             "status": ",".join(map(lambda s: s.value, status)) if status else None,

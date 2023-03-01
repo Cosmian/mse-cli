@@ -40,7 +40,7 @@ class App(BaseModel):
     ready_at: Optional[datetime.datetime]
     stopped_at: Optional[datetime.datetime]
     status: AppStatus
-    hardware: str
+    hardware_name: str
     ssl_certificate_origin: SSLCertificateOrigin
     expires_at: datetime.datetime
     python_application: str
@@ -66,7 +66,7 @@ class PartialApp(BaseModel):
     ready_at: Optional[datetime.datetime]
     stopped_at: Optional[datetime.datetime]
     status: AppStatus
-    hardware: str
+    hardware_name: str
 
     @staticmethod
     def from_dict(dct: Dict[str, Any]):
@@ -84,7 +84,6 @@ class Project(BaseModel):
     is_default: bool
     stripe_customer_id: Optional[str]
     stripe_payment_method_id: Optional[str]
-    enclave_version: Optional[str]
     created_at: datetime.datetime
     deleted_at: Optional[datetime.datetime]
 
