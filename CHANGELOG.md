@@ -4,8 +4,9 @@
 
 * Field `resouce` has been renamed into `hardware`
 * Complete documentation about hardware booked/bought
+* `mse list` does not required the project name. It's optional.
 
-## \[0.10.2\] - 2023-XX-YY
+## \[0.10.2\] - 2023-03-01
 
 ### Updated
 

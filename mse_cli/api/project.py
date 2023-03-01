@@ -10,12 +10,15 @@ from mse_cli.api.types import AppStatus
 
 
 def list_apps(
-    conn: Connection, project_uuid: UUID, status: Optional[List[AppStatus]]
+    conn: Connection, project_uuid: Optional[UUID], status: Optional[List[AppStatus]]
 ) -> requests.Response:
-    """GET `/projects/{uuid}/apps`."""
+    """GET `/apps`."""
     return conn.get(
-        url=f"/projects/{str(project_uuid)}/apps",
-        params={"status": ",".join(map(lambda s: s.value, status)) if status else None},
+        url=f"/apps",
+        params={
+            "status": ",".join(map(lambda s: s.value, status)) if status else None,
+            "project": str(project_uuid) if project_uuid else None,
+        },
     )
 
 
@@ -25,12 +28,13 @@ def get_app_from_name(
     app_name: str,
     status: Optional[List[AppStatus]],
 ) -> requests.Response:
-    """GET `/projects/{uuid}/apps?name=str&status=s1,s2,s3`."""
+    """GET `/apps?name=str&status=s1,s2,s3`."""
     return conn.get(
-        url=f"/projects/{str(project_uuid)}/apps",
+        url=f"/apps",
         params={
             "name": app_name,
             "status": ",".join(map(lambda s: s.value, status)) if status else None,
+            "project": str(project_uuid),
         },
     )
 
