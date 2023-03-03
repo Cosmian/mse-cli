@@ -1,5 +1,9 @@
 ## \[0.11.0\] - 2023-XX-YY
 
+### Added
+
+* Display application metrics using `mse status`
+
 ### Updated
 
 * Field `resouce` has been renamed into `hardware`

@@ -6,7 +6,7 @@ import ssl
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 from uuid import UUID
 
 import docker
@@ -17,7 +17,7 @@ from intel_sgx_ra.signer import mr_signer_from_pk
 from mse_lib_crypto.xsalsa20_poly1305 import encrypt_directory
 
 from mse_cli import MSE_CERTIFICATES_URL, MSE_PCCS_URL
-from mse_cli.api.app import get, stop
+from mse_cli.api.app import get, metrics, stop
 from mse_cli.api.auth import Connection
 from mse_cli.api.hardware import get as get_hardware
 from mse_cli.api.project import get_app_from_name, get_from_name
@@ -54,6 +54,15 @@ def get_app(conn: Connection, uuid: UUID) -> App:
         raise Exception(r.text)
 
     return App.from_dict(r.json())
+
+
+def get_metrics(conn: Connection, uuid: UUID) -> Dict[str, Any]:
+    """Get the app metrics from the backend."""
+    r: requests.Response = metrics(conn=conn, uuid=uuid)
+    if not r.ok:
+        raise Exception(r.text)
+
+    return r.json()
 
 
 def get_enclave_resources(conn: Connection, resource_name: str) -> Tuple[int, float]:

@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime, timezone
 
 from mse_cli.api.types import AppStatus
-from mse_cli.command.helpers import get_app, get_enclave_resources
+from mse_cli.command.helpers import get_app, get_enclave_resources, get_metrics
 from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
 from mse_cli.utils.color import bcolors
@@ -25,6 +25,7 @@ def add_subparser(subparsers):
     )
 
 
+# pylint: disable=too-many-statements
 def run(args) -> None:
     """Run the subcommand."""
     user_conf = UserConf.from_toml()
@@ -111,4 +112,37 @@ def run(args) -> None:
             bcolors.OKBLUE,
             app.status.value,
             bcolors.ENDC,
+        )
+
+    if app.status == AppStatus.Running:
+        metrics = get_metrics(conn=conn, uuid=args.app_uuid)
+
+        LOG.info("\n> Current metrics")
+        LOG.info(
+            "\tAverage queue time    = %ss",
+            metrics.get("average_queue_time", ["", ""])[1],
+        )
+        LOG.info(
+            "\tAverage connect time  = %ss",
+            metrics.get("average_connect_time", ["", ""])[1],
+        )
+        LOG.info(
+            "\tAverage response time = %ss",
+            metrics.get("average_response_time", ["", ""])[1],
+        )
+        LOG.info(
+            "\tAverage query time    = %ss",
+            metrics.get("average_query_time", ["", ""])[1],
+        )
+        LOG.info(
+            "\tAmount of connection  = %s",
+            metrics.get("amount_of_connection", ["", ""])[1],
+        )
+        LOG.info("\tCPU usage             = %s", metrics.get("cpu_usage", ["", ""])[1])
+        LOG.info(
+            "\tInput throughput      = %sB", metrics.get("throughput_in", ["", ""])[1]
+        )
+        LOG.info(
+            "\tOutput throughput     = %sB",
+            metrics.get("throughput_out", ["", ""])[1],
         )
