@@ -118,31 +118,42 @@ def run(args) -> None:
         metrics = get_metrics(conn=conn, uuid=args.app_uuid)
 
         LOG.info("\n> Current metrics")
-        LOG.info(
-            "\tAverage queue time    = %ss",
-            metrics.get("average_queue_time", ["", ""])[1],
-        )
-        LOG.info(
-            "\tAverage connect time  = %ss",
-            metrics.get("average_connect_time", ["", ""])[1],
-        )
-        LOG.info(
-            "\tAverage response time = %ss",
-            metrics.get("average_response_time", ["", ""])[1],
-        )
-        LOG.info(
-            "\tAverage query time    = %ss",
-            metrics.get("average_query_time", ["", ""])[1],
-        )
-        LOG.info(
-            "\tAmount of connection  = %s",
-            metrics.get("amount_of_connection", ["", ""])[1],
-        )
-        LOG.info("\tCPU usage             = %s", metrics.get("cpu_usage", ["", ""])[1])
-        LOG.info(
-            "\tInput throughput      = %sB", metrics.get("throughput_in", ["", ""])[1]
-        )
-        LOG.info(
-            "\tOutput throughput     = %sB",
-            metrics.get("throughput_out", ["", ""])[1],
-        )
+        if metric := metrics.get("average_queue_time"):
+            LOG.info(
+                "\tAverage queue time    = %fs",
+                float(metric[1]),
+            )
+        if metric := metrics.get("average_connect_time"):
+            LOG.info(
+                "\tAverage connect time  = %fs",
+                float(metric[1]),
+            )
+        if metric := metrics.get("average_response_time"):
+            LOG.info(
+                "\tAverage response time = %fs",
+                float(metric[1]),
+            )
+        if metric := metrics.get(
+            "average_query_time",
+        ):
+            LOG.info(
+                "\tAverage query time    = %fs",
+                float(metric[1]),
+            )
+        if metric := metrics.get("amount_of_connection"):
+            LOG.info(
+                "\tAmount of connection  = %d",
+                int(metric[1]),
+            )
+        if metric := metrics.get("cpu_usage"):
+            LOG.info("\tCPU usage             = %.2f%%", float(metric[1]))
+        if metric := metrics.get("throughput_in"):
+            LOG.info(
+                "\tInput throughput      = %dB",
+                int(metric[1]),
+            )
+        if metric := metrics.get("throughput_out"):
+            LOG.info(
+                "\tOutput throughput     = %dB",
+                int(metric[1]),
+            )
