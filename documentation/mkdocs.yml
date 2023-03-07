@@ -46,6 +46,7 @@ extra_javascript:
   - https://unpkg.com/mermaid@8.7.0/dist/mermaid.min.js
   - javascripts/extra.js
 nav:
+  - Overview: overview.md
   - Getting started: getting_started.md
   - App Configuration: configuration.md
   - Command Line:
