@@ -19,4 +19,4 @@ Then, privilege users or anyone with physical access to the host machine in Cosm
 
 These assumptions remain valid as long as the TEE, namely Intel SGX, and its software stack known as the Trusted Computing Base (TCB) are not subject to severe vulnerabilities.
 
-See [Security Model](https://docs.cosmian.com/microservice_encryption/security/) for more details or just discover MSE with [Getting Started](https://docs.cosmian.com/microservice_encryption/getting_started/).
+See [Security Model](security.md) for more details or just discover MSE with [Getting Started](getting_started.md).
