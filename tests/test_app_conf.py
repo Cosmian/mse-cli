@@ -122,7 +122,7 @@ def test_ssl():
         name="helloworld",
         project="default",
         resource="free",
-        expiration_date=datetime(2023, 3, 1, 0, 0, 0, tzinfo=timezone.utc),
+        expiration_date=datetime(2023, 5, 1, 0, 0, 0, tzinfo=timezone.utc),
         code=code,
         ssl=ssl,
     )
@@ -209,7 +209,7 @@ def test_expiration_date():
         project="default",
         resource="free",
         code=code,
-        expiration_date=datetime(2023, 3, 1, 0, 0, 0, tzinfo=timezone.utc),
+        expiration_date=datetime(2023, 5, 1, 0, 0, 0, tzinfo=timezone.utc),
     )
 
     assert conf == ref_app_conf
@@ -303,7 +303,7 @@ def test_into_payload():
         "healthcheck_endpoint": "/",
         "python_application": "app:app",
         "docker": "ghcr.io/cosmian/mse-pytorch:20230104085621",
-        "expires_at": "2023-03-01T00:00:00.000000Z",
+        "expires_at": "2023-05-01T00:00:00.000000Z",
         "dev_mode": False,
         "ssl_certificate": CERTIFICATE,
         "domain_name": "demo.cosmilink.com",
