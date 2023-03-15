@@ -25,7 +25,7 @@ def add_subparser(subparsers):
     )
 
 
-# pylint: disable=too-many-statements
+# pylint: disable=too-many-statements,too-many-branches
 def run(args) -> None:
     """Run the subcommand."""
     user_conf = UserConf.from_toml()
