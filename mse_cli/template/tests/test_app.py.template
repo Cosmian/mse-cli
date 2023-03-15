@@ -1,12 +1,16 @@
+"""Unit test for our mse app."""
+
 import requests
 
 
 def test_hello(url, certificate):
-    response = requests.get(url, verify=certificate)
+    """Test get method on /."""
+    response = requests.get(url, timeout=10, verify=certificate)
     assert response.status_code == 200
     assert b"Hello world" in response.content
 
 
 def test_health(url, certificate):
-    response = requests.get(f"{url}{{ healthcheck_endpoint }}", verify=certificate)
+    """Test healthcheck endpoint."""
+    response = requests.get(f"{url}{{ healthcheck_endpoint }}", timeout=10, verify=certificate)
     assert response.status_code == 200

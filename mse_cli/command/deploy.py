@@ -5,6 +5,7 @@ from typing import Any, Dict, Optional
 from uuid import UUID
 
 import requests
+from intel_sgx_ra.ratls import get_server_certificate
 
 from mse_cli import MSE_DOC_SECURITY_MODEL_URL
 from mse_cli.api.app import new
@@ -14,7 +15,6 @@ from mse_cli.command.helpers import (
     compute_mr_enclave,
     exists_in_project,
     get_app,
-    get_certificate,
     get_client_docker,
     get_enclave_resources,
     get_project_from_name,
@@ -141,7 +141,7 @@ def run(args) -> None:
             bcolors.LINK_END,
         )
 
-    selfsigned_cert = get_certificate(app.config_domain_name)
+    selfsigned_cert = get_server_certificate((app.config_domain_name, 443))
     context.config_cert_path.write_text(selfsigned_cert)
 
     if not args.no_verify:

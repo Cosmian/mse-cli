@@ -1,8 +1,6 @@
 """mse_cli.command.helpers module."""
 
 import re
-import socket
-import ssl
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -206,28 +204,6 @@ def compute_mr_enclave(context: Context, tar_path: Path) -> str:
         )
 
     return str(m.group(1).decode("utf-8"))
-
-
-def get_certificate(domain_name: str) -> str:
-    """Get TLS certificate from `domain_name`.
-
-    Notes
-    -----
-    Don't use `ssl.get_server_certificate()` because there are some
-    issues with Server Name Indication (SNI) extension on some
-    OpenSSL/LibreSSL versions (particularly MacOS).
-
-    """
-    with socket.create_connection((domain_name, 443), timeout=10) as sock:
-        context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-        context.check_hostname = False
-        context.verify_mode = ssl.CERT_NONE
-
-        with context.wrap_socket(sock, server_hostname=domain_name) as ssock:
-            cert = ssock.getpeercert(True)
-            if not cert:
-                raise Exception("Can't get peer certificate")
-            return ssl.DER_cert_to_PEM_cert(cert)
 
 
 def verify_app(mrenclave: Optional[str], ca_data: str):
