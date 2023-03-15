@@ -4,7 +4,7 @@ The `mse.toml` file located in the current directory is used with `mse deploy` s
 ```{.toml}
 name = "my_project"
 project = "default"
-resource = "free"
+hardware = "512m-eu-001"
 
 [code]
 location = "my_project/code"
@@ -15,20 +15,20 @@ docker = "ghcr.io/cosmian/mse-flask:20230228091325"
 
 ### Main section
 
-|      Keys       | Required |       Types       |                      Description                       |
-| :-------------: | :------: | :---------------: | :----------------------------------------------------: |
-|      name       |    ✔️     |      string       | Name of the application. It must be unique per project |
-|     project     |    ✔️     |      string       |    Project name to regroup applications for payment    |
-|    hardware     |    ✔️     |      string       |   Hardware name you own to use for your application    |
-| expiration_date |          | YY-MM-DD HH/mm/ss | Expiration date (UTC) before the application shutdowns |
+|      Keys       | Required |         Types          |                                                     Description                                                     |
+| :-------------: | :------: | :--------------------: | :-----------------------------------------------------------------------------------------------------------------: |
+|      name       |    ✔️     |         string         |                               Name of the application. It must be unique per project                                |
+|     project     |    ✔️     |         string         |                                  Project name to regroup applications for payment                                   |
+|    hardware     |    ✔️     |         string         |                                  Hardware name you own to use for your application                                  |
+| expiration_date |          | YY-MM-DDTHH:mm:ss.nnnZ | Expiration date following [rfc3339](https://www.rfc-editor.org/rfc/rfc3339) format before the application shutdowns |
 
 Two applications from the same project with the same name cannot be running at the same time.
 
-You can list the hardware you own or buy new ones [here](https://console.cosmian.com/subscriptions). 
-By default, you only own one free hardware called `512m-eu-001`. You can't reduce or grow the amount of that resource. 
+You can list the hardware you own or buy new ones in the [cosmian console](https://console.cosmian.com/hardware-configurations). The hardwares are bought for a given project and can't be transferted to another project. By default, you only own one free hardware called `512m-eu-001`. You can't reduce or grow the amount of that resource. 
 
-Let's assume you own `N` hardwares called: `2g-eu-001`. You can deployed `N` applications. If you need to deployed more applications, you need to buy new ones. 
-As soon as you have bought a new hardware, you are charge for one month. If you drop the hardware, it is immediatelly unusable without prorata pay back. 
+Let's assume you own `N` hardwares called: `2g-eu-001`. You can deployed `N` applications on that specific hardware configuration. If you need to deployed more applications, you need to buy new hardwares. 
+
+As soon as you have bought a new hardware, you are charge for one month. If you drop the hardware, it is immediately unusable without prorata pay back: you get a credit instead. In the event of non-payment of an invoice, you will receive 3 reminder emails. After 7 days, if the invoice remains unpaid, all your hardware subscriptions will be cancelled and all your application will be stopped.
 
 #### Expiration date of the application
 
