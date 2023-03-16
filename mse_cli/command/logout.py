@@ -18,12 +18,12 @@ def add_subparser(subparsers):
 
 def run(_args) -> None:
     """Run the subcommand."""
-
     logout()
     LOG.success("You are now logged out.")  # type: ignore
 
 
 def logout() -> None:
+    """Log out the user."""
     r = requests.post(url=f"{MSE_AUTH0_DOMAIN_NAME}/logout?federated", timeout=60)
 
     if not r.ok:

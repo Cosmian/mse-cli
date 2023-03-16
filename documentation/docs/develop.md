@@ -40,7 +40,7 @@ It enables you to quickly setup and test your application in an MSE environment 
 
 However:
 
-- It could be hard to clearly define your dependencies and run them against the installed packages on the remote environment
+- There could be conflicts on underlying dependencies (ie: C dependencies) between installed packages and default environment ones
 - It makes your installation not reproducible. Therefore, after a deployment, it's strongly likely that your users won't be able to verify the trustworthiness of your application
   
 Then, we recommend to fork [mse-docker-flask](https://github.com/Cosmian/mse-docker-flask) to build your own Docker by integrating all your dependencies.

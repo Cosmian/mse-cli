@@ -164,8 +164,9 @@ def run(args) -> None:
 def sizeof_fmt(num: int) -> str:
     """Make the size human readable."""
     suffix = "B"
+    fnum = float(num)
     for unit in ["", "K", "M", "G", "T", "P", "E", "Z"]:
-        if abs(num) < 1024.0:
-            return f"{num:3.1f}{unit}{suffix}"
-        num /= 1024.0
-    return f"{num:.1f}Yi{suffix}"
+        if abs(fnum) < 1024.0:
+            return f"{fnum:3.1f}{unit}{suffix}"
+        fnum /= 1024.0
+    return f"{fnum:.1f}Yi{suffix}"
