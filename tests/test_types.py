@@ -20,7 +20,7 @@ def test_is_terminated():
             "docker": "c",
             "created_at": datetime.now(),
             "status": AppStatus.Spawning,
-            "hardware_name": "free",
+            "hardware_name": "512m-eu-001",
             "ssl_certificate_origin": SSLCertificateOrigin.Operator,
             "expires_at": datetime.now(),
             "python_application": "str",

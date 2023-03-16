@@ -1,6 +1,6 @@
 name = "non_free"
 project = "default"
-hardware = "green"
+hardware = "64g-eu-001"
 
 [code]
 location = "code/"

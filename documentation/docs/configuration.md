@@ -15,11 +15,11 @@ docker = "ghcr.io/cosmian/mse-flask:20230228091325"
 
 ### Main section
 
-|      Keys       | Required |         Types          |                                                     Description                                                     |
-| :-------------: | :------: | :--------------------: | :-----------------------------------------------------------------------------------------------------------------: |
-|      name       |    ✔️     |         string         |                               Name of the application. It must be unique per project                                |
-|     project     |    ✔️     |         string         |                                  Project name to regroup applications for payment                                   |
-|    hardware     |    ✔️     |         string         |                                  Name of the hardware booked to spawn your application                                  |
+|      Keys       | Required |         Types          |                                                 Description                                                 |
+| :-------------: | :------: | :--------------------: | :---------------------------------------------------------------------------------------------------------: |
+|      name       |    ✔️     |         string         |                           Name of the application. It must be unique per project                            |
+|     project     |    ✔️     |         string         |                              Project name to regroup applications for payment                               |
+|    hardware     |    ✔️     |         string         |                            Name of the hardware booked to spawn your application                            |
 | expiration_date |          | YY-MM-DDTHH:mm:ss.nnnZ | Expiration date before the application shutdowns ([rfc3339](https://www.rfc-editor.org/rfc/rfc3339) format) |
 
 Two applications from the same project with the same name cannot be running at the same time.
@@ -39,7 +39,7 @@ If the hardware is `512m-eu-001` (aka free hardware) then the expiration date of
 In case the SSL certificate is provided by the application owner, the expiration date of the app should be lower than the expiration date of the certificate.
 
 If no `expiration_date` is specified in the configuration file, the expiration date of the application is the expiration date of the certificate.
-Otherwise, it takes the value inherited from the chosen hardware when you bought it.
+Otherwise, the expiration date is set to 1 year (except for `512m-eu-001` hardware).
 
 ### Code section
 

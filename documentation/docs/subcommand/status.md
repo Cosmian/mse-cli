@@ -42,4 +42,4 @@ The status could have the following values:
 - `on_error`: the status of an app stopped with a failure. It's a terminal state.
 - `stopped`: the status of an app stopped without any errors. For example: when the expiration date is reached. It's a terminal state.
 
-The status command also print metrics measured at the current time concerning the network, cpu or filesystem usage.
+The status command also prints instant metrics, measuring the network, CPU and filesystem usages.
