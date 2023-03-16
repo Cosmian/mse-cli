@@ -1,12 +1,10 @@
 """mse_cli.command.helpers module."""
 
 import re
-import socket
-import ssl
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 from uuid import UUID
 
 import docker
@@ -17,15 +15,15 @@ from intel_sgx_ra.signer import mr_signer_from_pk
 from mse_lib_crypto.xsalsa20_poly1305 import encrypt_directory
 
 from mse_cli import MSE_CERTIFICATES_URL, MSE_PCCS_URL
-from mse_cli.api.app import get, stop
+from mse_cli.api.app import get, metrics, stop
 from mse_cli.api.auth import Connection
-from mse_cli.api.plan import get as get_plan
+from mse_cli.api.hardware import get as get_hardware
 from mse_cli.api.project import get_app_from_name, get_from_name
 from mse_cli.api.types import (
     App,
     AppStatus,
+    Hardware,
     PartialApp,
-    Plan,
     Project,
     SSLCertificateOrigin,
 )
@@ -56,15 +54,24 @@ def get_app(conn: Connection, uuid: UUID) -> App:
     return App.from_dict(r.json())
 
 
+def get_metrics(conn: Connection, uuid: UUID) -> Dict[str, Any]:
+    """Get the app metrics from the backend."""
+    r: requests.Response = metrics(conn=conn, uuid=uuid)
+    if not r.ok:
+        raise Exception(r.text)
+
+    return r.json()
+
+
 def get_enclave_resources(conn: Connection, resource_name: str) -> Tuple[int, float]:
     """Get the enclave size and cores from an app."""
-    r: requests.Response = get_plan(conn=conn, name=resource_name)
+    r: requests.Response = get_hardware(conn=conn, name=resource_name)
 
     if not r.ok:
         raise Exception(r.text)
 
-    plan = Plan.from_dict(r.json())
-    return plan.memory, plan.cores
+    hardware = Hardware.from_dict(r.json())
+    return hardware.enclave_size, hardware.cores
 
 
 def get_project_from_name(conn: Connection, name: str) -> Optional[Project]:
@@ -197,28 +204,6 @@ def compute_mr_enclave(context: Context, tar_path: Path) -> str:
         )
 
     return str(m.group(1).decode("utf-8"))
-
-
-def get_certificate(domain_name: str) -> str:
-    """Get TLS certificate from `domain_name`.
-
-    Notes
-    -----
-    Don't use `ssl.get_server_certificate()` because there are some
-    issues with Server Name Indication (SNI) extension on some
-    OpenSSL/LibreSSL versions (particularly MacOS).
-
-    """
-    with socket.create_connection((domain_name, 443), timeout=10) as sock:
-        context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-        context.check_hostname = False
-        context.verify_mode = ssl.CERT_NONE
-
-        with context.wrap_socket(sock, server_hostname=domain_name) as ssock:
-            cert = ssock.getpeercert(True)
-            if not cert:
-                raise Exception("Can't get peer certificate")
-            return ssl.DER_cert_to_PEM_cert(cert)
 
 
 def verify_app(mrenclave: Optional[str], ca_data: str):

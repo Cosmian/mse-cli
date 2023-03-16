@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime, timezone
 
 from mse_cli.api.types import AppStatus
-from mse_cli.command.helpers import get_app, get_enclave_resources
+from mse_cli.command.helpers import get_app, get_enclave_resources, get_metrics
 from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
 from mse_cli.utils.color import bcolors
@@ -25,6 +25,7 @@ def add_subparser(subparsers):
     )
 
 
+# pylint: disable=too-many-statements,too-many-branches
 def run(args) -> None:
     """Run the subcommand."""
     user_conf = UserConf.from_toml()
@@ -34,12 +35,12 @@ def run(args) -> None:
     conn = user_conf.get_connection()
     app = get_app(conn=conn, uuid=args.app_uuid)
 
-    (enclave_size, cores) = get_enclave_resources(conn, app.plan)
+    (enclave_size, cores) = get_enclave_resources(conn, app.hardware_name)
 
     LOG.info("\n> Microservice")
     LOG.info("\tName        = %s", app.name)
     LOG.info("\tDomain name = %s", app.domain_name)
-    LOG.info("\tResource    = %s", app.plan)
+    LOG.info("\tHardware    = %s", app.hardware_name)
     LOG.info("\tApplication = %s", app.python_application)
     LOG.info("\tMSE docker  = %s", app.docker)
     LOG.info("\tHealthcheck = %s", app.healthcheck_endpoint)
@@ -47,7 +48,7 @@ def run(args) -> None:
     LOG.info("\n> Deployment status")
     LOG.info("\tUUID               = %s", app.uuid)
     LOG.info("\tCertificate origin = %s", app.ssl_certificate_origin.value)
-    LOG.info("\tEnclave size       = %sM", enclave_size)
+    LOG.info("\tMemory size        = %sM", enclave_size)
     LOG.info("\tCores amount       = %s", cores)
     LOG.info("\tCreated at         = %s", app.created_at.astimezone())
 
@@ -112,3 +113,60 @@ def run(args) -> None:
             app.status.value,
             bcolors.ENDC,
         )
+
+    if app.status == AppStatus.Running:
+        metrics = get_metrics(conn=conn, uuid=args.app_uuid)
+
+        LOG.info("\n> Current metrics")
+        if metric := metrics.get("average_queue_time"):
+            LOG.info(
+                "\tAverage queue time    = %.3fs",
+                float(metric[1]),
+            )
+        if metric := metrics.get("average_connect_time"):
+            LOG.info(
+                "\tAverage connect time  = %.3fs",
+                float(metric[1]),
+            )
+        if metric := metrics.get("average_response_time"):
+            LOG.info(
+                "\tAverage response time = %.3fs",
+                float(metric[1]),
+            )
+        if metric := metrics.get(
+            "average_query_time",
+        ):
+            LOG.info(
+                "\tAverage query time    = %.3fs",
+                float(metric[1]),
+            )
+        if metric := metrics.get("amount_of_connection"):
+            LOG.info(
+                "\tAmount of connection  = %d",
+                int(metric[1]),
+            )
+        if metric := metrics.get("cpu_usage"):
+            LOG.info("\tCPU usage             = %.2f%%", float(metric[1]))
+        if metric := metrics.get("fs_usage"):
+            LOG.info("\tFS usage              = %s", sizeof_fmt(int(metric[1])))
+        if metric := metrics.get("throughput_in"):
+            LOG.info(
+                "\tInput throughput      = %s",
+                sizeof_fmt(int(metric[1])),
+            )
+        if metric := metrics.get("throughput_out"):
+            LOG.info(
+                "\tOutput throughput     = %s",
+                sizeof_fmt(int(metric[1])),
+            )
+
+
+def sizeof_fmt(num: int) -> str:
+    """Make the size human readable."""
+    suffix = "B"
+    fnum = float(num)
+    for unit in ["", "K", "M", "G", "T", "P", "E", "Z"]:
+        if abs(fnum) < 1024.0:
+            return f"{fnum:3.1f}{unit}{suffix}"
+        fnum /= 1024.0
+    return f"{fnum:.1f}Yi{suffix}"

@@ -24,7 +24,7 @@ class ContextInstance(BaseModel):
     id: UUID
     # Domain name of the configuration server
     config_domain_name: str
-    # Size of the enclave determine from the plan
+    # Size of the enclave determine from the hardware configuration
     enclave_size: int
     # Shutdown date of the spawned enclave
     expires_at: datetime

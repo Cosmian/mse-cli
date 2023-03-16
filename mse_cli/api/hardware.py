@@ -1,4 +1,4 @@
-"""mse_cli.api.plan module."""
+"""mse_cli.api.hardware module."""
 
 import requests
 
@@ -6,5 +6,5 @@ from mse_cli.api.auth import Connection
 
 
 def get(conn: Connection, name: str) -> requests.Response:
-    """GET `/plans/{name}`."""
-    return conn.get(url=f"/plans/{name}")
+    """GET `/hardwares/{name}`."""
+    return conn.get(url=f"/hardwares/{name}")

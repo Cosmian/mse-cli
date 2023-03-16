@@ -159,7 +159,10 @@ def test_deploy_non_free(cmd_log):
             )
         )
 
-    assert "Cannot find the plan with name 'green'" in str(exception.value)
+    assert (
+        "Project 'default' has not enough hardware available '64g-eu-001' to spawn app named 'non_free'"
+        in str(exception.value)
+    )
 
 
 @pytest.mark.slow

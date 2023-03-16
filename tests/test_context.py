@@ -59,7 +59,7 @@ def test_from_app_conf():
     )
 
     ref_app_conf = AppConf(
-        name="helloworld", project="default", resource="free", code=code, ssl=ssl
+        name="helloworld", project="default", hardware="512m-eu-001", code=code, ssl=ssl
     )
 
     conf = Context.from_app_conf(conf=ref_app_conf)
@@ -99,7 +99,7 @@ def test_run():
     )
 
     ref_app_conf = AppConf(
-        name="helloworld", project="default", resource="free", code=code, ssl=ssl
+        name="helloworld", project="default", hardware="free", code=code, ssl=ssl
     )
 
     conf = Context.from_app_conf(conf=ref_app_conf)

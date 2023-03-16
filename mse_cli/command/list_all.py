@@ -20,8 +20,9 @@ def add_subparser(subparsers):
 
     parser.add_argument(
         "project_name",
+        nargs="?",
         type=non_empty_string,
-        help="name of the project with MSE applications to list",
+        help="name of the project to consider when displaying the apps list",
     )
 
     parser.add_argument("--all", action="store_true", help="also list the stopped apps")
@@ -32,11 +33,16 @@ def run(args) -> None:
     user_conf = UserConf.from_toml()
     conn = user_conf.get_connection()
 
-    project = get_project_from_name(conn, args.project_name)
-    if not project:
-        raise Exception(f"Project {args.project_name} does not exist")
+    project_uuid = None
+    if args.project_name:
+        project = get_project_from_name(conn, args.project_name)
+        if not project:
+            raise Exception(f"Project {args.project_name} does not exist")
 
-    LOG.info("Fetching the project %s...", project.uuid)
+        LOG.info("Fetching the apps in project %s...", project.name)
+        project_uuid = project.uuid
+    else:
+        LOG.info("Fetching the apps in all projects...")
 
     status = None
     if not args.all:
@@ -47,7 +53,7 @@ def run(args) -> None:
         ]
 
     r: requests.Response = list_apps(
-        conn=conn, project_uuid=project.uuid, status=status
+        conn=conn, project_uuid=project_uuid, status=status
     )
 
     if not r.ok:

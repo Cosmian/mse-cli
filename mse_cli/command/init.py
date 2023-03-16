@@ -23,7 +23,7 @@ def run(_args) -> None:
 
     app_name = input("App name: ")
     project_name = input("Project name [default]: ") or "default"
-    resource = input("Resource name [free]: ") or "free"
+    hardware = input("Hardware name [512m-eu-001]: ") or "512m-eu-001"
     docker = input(f"Docker url [{MSE_DEFAULT_DOCKER}]: ") or MSE_DEFAULT_DOCKER
     code_location = input("Code location [.]:") or "."
     python_application = input("Python application [app:app]: ") or "app:app"
@@ -34,7 +34,7 @@ def run(_args) -> None:
     app = AppConf(
         name=app_name,
         project=project_name,
-        resource=resource,
+        hardware=hardware,
         code=CodeConf(
             location=code_location,
             python_application=python_application,

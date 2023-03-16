@@ -26,6 +26,11 @@ def new(conn: Connection, conf: AppConf, code_tar_path: Path) -> requests.Respon
         )
 
 
+def metrics(conn: Connection, uuid: UUID) -> requests.Response:
+    """GET `/apps/{uuid}/metrics`."""
+    return conn.get(url=f"/apps/{uuid}/metrics")
+
+
 def get(conn: Connection, uuid: UUID) -> requests.Response:
     """GET `/apps/{uuid}`."""
     return conn.get(url=f"/apps/{uuid}")

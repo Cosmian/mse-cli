@@ -87,8 +87,8 @@ class AppConf(BaseModel):
     name: Str255
     # Name of the parent project
     project: Str255
-    # MSE resource (defining the enclave memory, cpu, etc.)
-    resource: Str16
+    # MSE hardware (defining the enclave memory, cpu, etc.)
+    hardware: Str16
     # The application will stop at this date
     expiration_date: Optional[datetime]
     # Configuration of the code
@@ -229,7 +229,7 @@ class AppConf(BaseModel):
             dataMap: Dict[str, Any] = {
                 "name": self.name,
                 "project": self.project,
-                "resource": self.resource,
+                "hardware": self.hardware,
                 "code": code,
             }
 
@@ -263,6 +263,6 @@ class AppConf(BaseModel):
             "expires_at": d,
             "ssl_certificate": self.ssl.certificate_data if self.ssl else None,
             "domain_name": self.ssl.domain_name if self.ssl else None,
-            "plan": self.resource,
+            "hardware": self.hardware,
             "docker": self.code.docker,
         }  # Do not send the private_key or code location
