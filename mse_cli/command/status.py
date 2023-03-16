@@ -120,24 +120,24 @@ def run(args) -> None:
         LOG.info("\n> Current metrics")
         if metric := metrics.get("average_queue_time"):
             LOG.info(
-                "\tAverage queue time    = %fs",
+                "\tAverage queue time    = %.3fs",
                 float(metric[1]),
             )
         if metric := metrics.get("average_connect_time"):
             LOG.info(
-                "\tAverage connect time  = %fs",
+                "\tAverage connect time  = %.3fs",
                 float(metric[1]),
             )
         if metric := metrics.get("average_response_time"):
             LOG.info(
-                "\tAverage response time = %fs",
+                "\tAverage response time = %.3fs",
                 float(metric[1]),
             )
         if metric := metrics.get(
             "average_query_time",
         ):
             LOG.info(
-                "\tAverage query time    = %fs",
+                "\tAverage query time    = %.3fs",
                 float(metric[1]),
             )
         if metric := metrics.get("amount_of_connection"):
@@ -147,13 +147,25 @@ def run(args) -> None:
             )
         if metric := metrics.get("cpu_usage"):
             LOG.info("\tCPU usage             = %.2f%%", float(metric[1]))
+        if metric := metrics.get("fs_usage"):
+            LOG.info("\tFS usage              = %s", sizeof_fmt(int(metric[1])))
         if metric := metrics.get("throughput_in"):
             LOG.info(
-                "\tInput throughput      = %dB",
-                int(metric[1]),
+                "\tInput throughput      = %s",
+                sizeof_fmt(int(metric[1])),
             )
         if metric := metrics.get("throughput_out"):
             LOG.info(
-                "\tOutput throughput     = %dB",
-                int(metric[1]),
+                "\tOutput throughput     = %s",
+                sizeof_fmt(int(metric[1])),
             )
+
+
+def sizeof_fmt(num: int) -> str:
+    """Make the size human readable."""
+    suffix = "B"
+    for unit in ["", "K", "M", "G", "T", "P", "E", "Z"]:
+        if abs(num) < 1024.0:
+            return f"{num:3.1f}{unit}{suffix}"
+        num /= 1024.0
+    return f"{num:.1f}Yi{suffix}"
