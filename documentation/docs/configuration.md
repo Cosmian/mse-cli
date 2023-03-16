@@ -15,12 +15,12 @@ docker = "ghcr.io/cosmian/mse-flask:20230228091325"
 
 ### Main section
 
-|      Keys       | Required |         Types          |                                                 Description                                                 |
-| :-------------: | :------: | :--------------------: | :---------------------------------------------------------------------------------------------------------: |
-|      name       |    ✔️     |         string         |                           Name of the application. It must be unique per project                            |
-|     project     |    ✔️     |         string         |                              Project name to regroup applications for payment                               |
-|    hardware     |    ✔️     |         string         |                            Name of the hardware booked to spawn your application                            |
-| expiration_date |          | YY-MM-DDTHH:mm:ss.nnnZ | Expiration date before the application shutdowns ([rfc3339](https://www.rfc-editor.org/rfc/rfc3339) format) |
+|      Keys       | Required |          Types           |                                                 Description                                                 |
+| :-------------: | :------: | :----------------------: | :---------------------------------------------------------------------------------------------------------: |
+|      name       |    ✔️     |          string          |                           Name of the application. It must be unique per project                            |
+|     project     |    ✔️     |          string          |                              Project name to regroup applications for payment                               |
+|    hardware     |    ✔️     |          string          |                            Name of the hardware booked to spawn your application                            |
+| expiration_date |          | `YY-MM-DDTHH:mm:ss.nnnZ` | Expiration date before the application shutdowns ([rfc3339](https://www.rfc-editor.org/rfc/rfc3339) format) |
 
 Two applications from the same project with the same name cannot be running at the same time.
 
