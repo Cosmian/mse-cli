@@ -4,7 +4,7 @@ In this section, we will list good practices or various considerations you need 
 
 !!! info "Requirements"
 
-    The mse environment is running on `Ubuntu 20.04` with `python 3.8`.
+    The MSE node environment is running on `Ubuntu 20.04` with `python 3.8`.
 
 
 
@@ -13,7 +13,7 @@ In this section, we will list good practices or various considerations you need 
 This method is well-suited to test the remote environment when deploying your app.
 
 We recall that your application is deployed into a constraint environment under a specific architecture.
-This method emulates as close as possible this production environment.
+This method emulates as close as possible the MSE node environment in production.
 
 Before any deployment, it's strongly recommended to test your application locally against the MSE Docker image specified into your `mse.toml`.
 It enables you to verify that your application is compatible with the MSE environment and all required dependencies are installed.
@@ -31,12 +31,12 @@ $ pytest
 
 ## Install dependencies
 
-When you scaffold a new project, the configuration file contains a default Docker including minimal flask packages.
+When you scaffold a new project, the configuration file contains a default Docker including minimal Flask packages.
 For many reasons, this Docker could be not enough to run your own application.
 
-Let's remind that any files written in `mse_src` directory will be sent remotely to the Microservice Encryption infrastructure.
+Let's remind that any files written in `mse_src` directory will be sent remotely to the MSE node.
 If your `mse_src` directory contains a `requirements.txt`, these packages will be installed when running the Docker.
-It enables you to quickly test your application in an MSE environment without generating a new Docker.
+It enables you to quickly setup and test your application in an MSE environment without generating a new Docker.
 
 However:
 
@@ -44,7 +44,7 @@ However:
 - It makes your installation not reproducible. Therefore, after a deployment, it's strongly likely that your users won't be able to verify the trustworthiness of your application
   
 Then, we recommend to fork [mse-docker-flask](https://github.com/Cosmian/mse-docker-flask) to build your own Docker by integrating all your dependencies.
-You can test your application against your own Docker by editing the field `docker` in your `mse.toml` and running:
+You can test your application against your brand new Docker by editing the field `docker` in your `mse.toml` then run:
 
 ```{.console}
 $ cd helloworld
@@ -194,7 +194,7 @@ When calling the docker on your localhost, you can use the option `--memory` to 
 
 !!! info "Requirements"
 
-    The mse environment is running on `Ubuntu 20.04` with `python 3.8`.
+    The MSE environment is running on `Ubuntu 20.04` with `python 3.8`.
 
 
 Please find below limitations that you need to consider to be able to run your application in MSE:

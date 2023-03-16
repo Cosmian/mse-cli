@@ -19,22 +19,22 @@ docker = "ghcr.io/cosmian/mse-flask:20230228091325"
 | :-------------: | :------: | :--------------------: | :-----------------------------------------------------------------------------------------------------------------: |
 |      name       |    ✔️     |         string         |                               Name of the application. It must be unique per project                                |
 |     project     |    ✔️     |         string         |                                  Project name to regroup applications for payment                                   |
-|    hardware     |    ✔️     |         string         |                                  Hardware name you own to use for your application                                  |
-| expiration_date |          | YY-MM-DDTHH:mm:ss.nnnZ | Expiration date following [rfc3339](https://www.rfc-editor.org/rfc/rfc3339) format before the application shutdowns |
+|    hardware     |    ✔️     |         string         |                                  Name of the hardware booked to spawn your application                                  |
+| expiration_date |          | YY-MM-DDTHH:mm:ss.nnnZ | Expiration date before the application shutdowns ([rfc3339](https://www.rfc-editor.org/rfc/rfc3339) format) |
 
 Two applications from the same project with the same name cannot be running at the same time.
 
-You can list the hardware you own or buy new ones in the [cosmian console](https://console.cosmian.com/hardware-configurations). The hardwares are bought for a given project and can't be transferted to another project. By default, you only own one free hardware called `512m-eu-001`. You can't reduce or grow the amount of that resource. 
+You can list your booked hardware or buy new ones in the [Cosmian Console](https://console.cosmian.com/hardware-configurations). The hardwares are bought for a given project and can't be transferred to another project. By default, you own one and only one free hardware called `512m-eu-001` (this amount cannot be changed for free hardware). 
 
-Let's assume you own `N` hardwares called: `2g-eu-001`. You can deployed `N` applications on that specific hardware configuration. If you need to deployed more applications, you need to buy new hardwares. 
+Let's assume you own `N` hardwares called: `2g-eu-001`. You can deploy `N` applications on that specific hardware configuration. If you need to deploy more applications, you need to buy new hardwares.
 
-As soon as you have bought a new hardware, you are charge for one month. If you drop the hardware, it is immediately unusable without prorata pay back: you get a credit instead. In the event of non-payment of an invoice, you will receive 3 reminder emails. After 7 days, if the invoice remains unpaid, all your hardware subscriptions will be cancelled and all your application will be stopped.
+As soon as a new hardware is bought, you are charged for one month. If you drop the hardware before the end of the month, it is immediately unusable without prorata payback: you get a credit instead. In the event of a non-payment of a monthly invoice, you will receive 3 reminder emails. After 7 days, if the invoice remains unpaid, all your hardware subscriptions are cancelled and all your application are stopped.
 
 #### Expiration date of the application
 
 The expiration date is tied to the self-signed certificate. When the expiration date is reached, the application is not available anymore.
 
-If the hardware is `free` then the expiration date of the app will be overwritten to **4 hours**.
+If the hardware is `512m-eu-001` (aka free hardware) then the expiration date of the app will be forced to **4 hours**.
 
 In case the SSL certificate is provided by the application owner, the expiration date of the app should be lower than the expiration date of the certificate.
 

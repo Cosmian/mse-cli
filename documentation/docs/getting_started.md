@@ -74,7 +74,7 @@ helloworld/
 2 directories, 6 files
 ```
 
-The `mse_src` is your application directory designed to be dispatched by `mse-cli` in the Microservice Encryption infrastructure. The other files or directories will stay on your own host. 
+The `mse_src` is your application directory designed to be dispatched by `mse-cli` to the Microservice Encryption infrastructure. The other files or directories will stay on your own host. 
 
 The file `app.py` is a basic Flask application with no extra code. Adapt your own application to MSE does not require any modification to your Python code:
 
@@ -258,7 +258,7 @@ $ curl "https://123456789abcdef.cosmian.app" --cacert /tmp/tmpntxibdo6/cert.conf
 
 !!! info "Production deployment"
 
-    The previous fully secured deployment method without any unsecured arguments must be your preferred way to deploy your application for production
+    The previous fully secured deployment method without any insecure arguments is the preferred way to deploy your application in production
 
 
 ## Going further
@@ -269,6 +269,6 @@ Read [develop your own app](develop.md) to go further, such as:
 - Use dependencies 
 - Use secrets to query third party services
 - Use paths
-- Use mse-ignore
+- Use `mse-ignore`
 - Understand memory size
 - Understand environment limitations
