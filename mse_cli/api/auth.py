@@ -195,7 +195,7 @@ def get_access_token(url: str, client_id: str, refresh_token: str) -> str:
     )
 
     if not r.ok:
-        raise Exception(
+        raise PermissionError(
             f"Are you logged in? Can't get access token: {r.json()['error_description']}"
         )
 

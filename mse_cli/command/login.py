@@ -3,6 +3,7 @@
 import base64
 import hashlib
 import json
+import os
 import re
 import secrets
 import threading
@@ -21,6 +22,7 @@ from mse_cli import (
 )
 from mse_cli.api.types import User
 from mse_cli.api.user import me as get_me
+from mse_cli.command.logout import logout
 from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
 
@@ -95,35 +97,23 @@ def run_server(port, auth_url, state) -> str:
 # pylint: disable=too-many-locals
 def run(args) -> None:
     """Run the subcommand."""
-    if args.whoami:
-        try:
-            user_conf = UserConf.from_toml()
-        except FileNotFoundError as exc:
-            raise PermissionError("You are not logged in yet!") from exc
-
-        LOG.info("You are currently logged in as: %s", user_conf.email)
-
-        try:
-            me = get_user_info(user_conf)
-        except NameError:
-            LOG.warning(
-                "Don't forget to verify your email and "
-                "complete your profile before going on"
-            )
-        return
-
     # Before processing the login, let's check if the user is already logged in
     if UserConf.path().exists():
         user_conf = UserConf.from_toml()
         try:
             _ = get_user_info(user_conf)
+
+            login_message(args.whoami, user_conf.email, True)
+            return
         except NameError:
-            LOG.warning(
-                "Don't forget to verify your email and "
-                "complete your profile before going on"
-            )
-        LOG.info("You are already logged in as: %s", user_conf.email)
-        return
+            login_message(args.whoami, user_conf.email, False)
+            return
+        except PermissionError:
+            # The token has probably expired
+            logout()
+
+    if args.whoami:
+        raise PermissionError("You are not logged in yet!")
 
     # Otherwise, start the login process
     LOG.info("The browser will open-up to login through Cosmian website...")
@@ -246,3 +236,17 @@ def jwt_payload_decode(jwt):
     """Decode a jwt payload."""
     _, payload, _ = jwt.split(".")
     return json.loads(_b64_decode(payload))
+
+
+def login_message(whoami: bool, email: str, is_configured: bool):
+    """Display logging messages."""
+    if whoami:
+        LOG.info("You are currently logged in as: %s", email)
+    else:
+        LOG.info("You are already logged in as: %s", email)
+
+    if not is_configured:
+        LOG.warning(
+            "Don't forget to verify your email and "
+            "complete your profile before going on"
+        )

@@ -10,6 +10,7 @@
 * Complete documentation about hardware booked/bought
 * `mse list` does not required the project name. It's optional.
 * Use `get_server_certificate` from `intel-sgx-ra`
+* Support refresh token expiration
 
 ## \[0.10.2\] - 2023-03-01
 
