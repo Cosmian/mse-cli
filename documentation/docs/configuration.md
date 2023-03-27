@@ -4,7 +4,7 @@ The `mse.toml` file located in the current directory is used with `mse deploy` s
 ```{.toml}
 name = "my_project"
 project = "default"
-hardware = "512m-eu-001"
+hardware = "4g-eu-001"
 
 [code]
 location = "my_project/code"
@@ -24,7 +24,7 @@ docker = "ghcr.io/cosmian/mse-flask:20230228091325"
 
 Two applications from the same project with the same name cannot be running at the same time.
 
-You can list your booked hardware or buy new ones in the [Cosmian Console](https://console.cosmian.com/hardware-configurations). The hardwares are bought for a given project and can't be transferred to another project. By default, you own one and only one free hardware called `512m-eu-001` (this amount cannot be changed for free hardware). 
+You can list your booked hardware or buy new ones in the [Cosmian Console](https://console.cosmian.com/hardware-configurations). The hardwares are bought for a given project and can't be transferred to another project. By default, you own one and only one free hardware called `4g-eu-001` (this amount cannot be changed for free hardware). 
 
 Let's assume you own `N` hardwares called: `2g-eu-001`. You can deploy `N` applications on that specific hardware configuration. If you need to deploy more applications, you need to buy new hardwares.
 
@@ -34,12 +34,12 @@ As soon as a new hardware is bought, you are charged for one month. If you drop 
 
 The expiration date is tied to the self-signed certificate. When the expiration date is reached, the application is not available anymore.
 
-If the hardware is `512m-eu-001` (aka free hardware) then the expiration date of the app will be forced to **4 hours**.
+If the hardware is `4g-eu-001` (aka free hardware) then the expiration date of the app will be forced to **4 hours**.
 
 In case the SSL certificate is provided by the application owner, the expiration date of the app should be lower than the expiration date of the certificate.
 
 If no `expiration_date` is specified in the configuration file, the expiration date of the application is the expiration date of the certificate.
-Otherwise, the expiration date is set to 1 year (except for `512m-eu-001` hardware).
+Otherwise, the expiration date is set to 1 year (except for `4g-eu-001` hardware).
 
 ### Code section
 

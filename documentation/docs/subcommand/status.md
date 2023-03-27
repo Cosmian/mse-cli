@@ -8,7 +8,7 @@ Microservice
         Name        = float_average
         Version     = 1.0.0
         Domain name = demo.cosmian.app
-        Hardware    = 512m-eu-001
+        Hardware    = 4g-eu-001
         Application = app:app
         MSE docker  = ghcr.io/cosmian/mse-flask:20230228091325
         Healthcheck = /
