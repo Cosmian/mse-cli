@@ -6,7 +6,7 @@ We need you to fill in the following fields
 
 App name: test
 Project name [default]: 
-Hardware name [512m-eu-001]: 
+Hardware name [4g-eu-001]: 
 Docker url [ghcr.io/cosmian/mse-flask:20230228091325]: 
 Code location: .
 Python application [app:app]: 
@@ -19,7 +19,7 @@ The configuration file for the previous example would be:
 ```toml
 name = "test"
 project = "default"
-hardware = "512m-eu-001"
+hardware = "4g-eu-001"
 
 [code]
 location = "."

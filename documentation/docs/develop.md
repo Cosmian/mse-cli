@@ -73,7 +73,7 @@ Example of configuation file:
 ```toml
 name="helloworld"
 project="default"
-hardware = "512m-eu-001"
+hardware = "4g-eu-001"
 
 [code]
 location="./code"

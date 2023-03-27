@@ -121,7 +121,7 @@ def test_ssl():
     ref_app_conf = AppConf(
         name="helloworld",
         project="default",
-        hardware="512m-eu-001",
+        hardware="4g-eu-001",
         expiration_date=datetime(2023, 5, 1, 0, 0, 0, tzinfo=timezone.utc),
         code=code,
         ssl=ssl,
@@ -147,7 +147,7 @@ def test_ssl_optionals():
     ref_app_conf = AppConf(
         name="helloworld",
         project="default",
-        hardware="512m-eu-001",
+        hardware="4g-eu-001",
         code=code,
         ssl=None,
     )
@@ -187,7 +187,7 @@ def test_ssl_optionals():
         name="helloworld",
         version="1.0.0",
         project="default",
-        hardware="512m-eu-001",
+        hardware="4g-eu-001",
         code=code,
         ssl=None,
     )
@@ -211,7 +211,7 @@ def test_expiration_date():
     ref_app_conf = AppConf(
         name="helloworld",
         project="default",
-        hardware="512m-eu-001",
+        hardware="4g-eu-001",
         code=code,
         expiration_date=datetime(2023, 5, 1, 0, 0, 0, tzinfo=timezone.utc),
     )
@@ -253,7 +253,7 @@ def test_python_variable():
     )
 
     conf = AppConf(
-        name="helloworld", project="default", hardware="512m-eu-001", code=code
+        name="helloworld", project="default", hardware="4g-eu-001", code=code
     )
 
     with pytest.raises(Exception) as context:
@@ -313,5 +313,5 @@ def test_into_payload():
         "dev_mode": False,
         "ssl_certificate": CERTIFICATE,
         "domain_name": "demo.cosmilink.com",
-        "hardware": "512m-eu-001",
+        "hardware": "4g-eu-001",
     }
