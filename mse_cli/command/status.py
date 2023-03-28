@@ -1,7 +1,7 @@
 """mse_cli.command.status module."""
 
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 
 from mse_cli.api.types import AppStatus
 from mse_cli.command.helpers import get_app, get_enclave_resources, get_metrics
@@ -37,6 +37,9 @@ def run(args) -> None:
 
     (enclave_size, cores) = get_enclave_resources(conn, app.hardware_name)
 
+    # Determine once for all the timezone and use it everywhere later
+    tzinfo = app.created_at.astimezone().tzinfo
+
     LOG.info("\n> Microservice")
     LOG.info("\tName        = %s", app.name)
     LOG.info("\tDomain name = %s", app.domain_name)
@@ -50,14 +53,15 @@ def run(args) -> None:
     LOG.info("\tCertificate origin = %s", app.ssl_certificate_origin.value)
     LOG.info("\tMemory size        = %sM", enclave_size)
     LOG.info("\tCores amount       = %s", cores)
-    LOG.info("\tCreated at         = %s", app.created_at.astimezone())
+    LOG.info("\tCreated at         = %s", app.created_at.astimezone(tzinfo))
 
     # Note: date is printed in the current local timezone (instead of utc)
-    remaining_days = app.expires_at - datetime.now(timezone.utc)
+    expires_at = app.expires_at.astimezone(tzinfo)
+    remaining_days = expires_at - datetime.now(tzinfo)
     if 0 <= remaining_days.days <= 1:
         LOG.info(
             "\tExpires at         = %s (%s%d seconds remaining%s)",
-            app.expires_at.astimezone(),
+            expires_at,
             bcolors.WARNING,
             remaining_days.seconds,
             bcolors.ENDC,
@@ -65,7 +69,7 @@ def run(args) -> None:
     elif remaining_days.days > 1:
         LOG.info(
             "\tExpires at         = %s (%s%d days remaining%s)",
-            app.expires_at.astimezone(),
+            expires_at,
             bcolors.WARNING,
             remaining_days.days,
             bcolors.ENDC,
@@ -73,7 +77,7 @@ def run(args) -> None:
     else:
         LOG.info(
             "\tExpired at         = %s (%s%d days remaining%s)",
-            app.expires_at.astimezone(),
+            expires_at,
             bcolors.WARNING,
             remaining_days.days,
             bcolors.ENDC,
@@ -87,7 +91,7 @@ def run(args) -> None:
             bcolors.ENDC,
         )
         if app.ready_at:
-            LOG.info("\tOnline since       = %s", app.ready_at.astimezone())
+            LOG.info("\tOnline since       = %s", app.ready_at.astimezone(tzinfo))
     elif app.status == AppStatus.Stopped:
         LOG.info(
             "\tStatus             = %s%s%s",
@@ -96,7 +100,7 @@ def run(args) -> None:
             bcolors.ENDC,
         )
         if app.stopped_at:
-            LOG.info("\tStopped since      = %s", app.stopped_at.astimezone())
+            LOG.info("\tStopped since      = %s", app.stopped_at.astimezone(tzinfo))
     elif app.status == AppStatus.OnError:
         LOG.info(
             "\tStatus             = %s%s%s",
@@ -105,7 +109,7 @@ def run(args) -> None:
             bcolors.ENDC,
         )
         if app.stopped_at:
-            LOG.info("\tOn error since     = %s", app.stopped_at.astimezone())
+            LOG.info("\tOn error since     = %s", app.stopped_at.astimezone(tzinfo))
     elif app.status in (AppStatus.Initializing, AppStatus.Spawning):
         LOG.info(
             "\tStatus             = %s%s%s",
