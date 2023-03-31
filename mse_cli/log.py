@@ -3,7 +3,7 @@
 import logging
 import sys
 
-from mse_cli.utils.color import bcolors
+from mse_cli.utils.color import COLOR, ColorKind
 
 LOGGER = logging.getLogger("mse")
 
@@ -18,15 +18,26 @@ class MSEFormatter(logging.Formatter):
         """Initialize the formatter."""
         super().__init__()
         self.fmt = fmt
-        self.FORMATS = {
-            logging.DEBUG: self.fmt,
-            logging.INFO: self.fmt,
-            LOGGING_ADVICE: f"{bcolors.OKBLUE}💡 {self.fmt}{bcolors.ENDC}",
-            LOGGING_SUCCESS: f"{bcolors.OKGREEN}✅ {self.fmt}{bcolors.ENDC}",
-            logging.WARNING: f"{bcolors.WARNING}🚨 {self.fmt}{bcolors.ENDC}",
-            logging.ERROR: f"{bcolors.FAIL}❌ {self.fmt}{bcolors.ENDC}",
-            logging.CRITICAL: f"{bcolors.FAIL}❌ {self.fmt}{bcolors.ENDC}",
-        }
+        if COLOR.active:
+            self.FORMATS = {
+                logging.DEBUG: self.fmt,
+                logging.INFO: self.fmt,
+                LOGGING_ADVICE: f"{ColorKind.OKBLUE}💡 {self.fmt}{ColorKind.ENDC}",
+                LOGGING_SUCCESS: f"{ColorKind.OKGREEN}✅ {self.fmt}{ColorKind.ENDC}",
+                logging.WARNING: f"{ColorKind.WARNING}🚨 {self.fmt}{ColorKind.ENDC}",
+                logging.ERROR: f"{ColorKind.FAIL}❌ {self.fmt}{ColorKind.ENDC}",
+                logging.CRITICAL: f"{ColorKind.FAIL}❌ {self.fmt}{ColorKind.ENDC}",
+            }
+        else:
+            self.FORMATS = {
+                logging.DEBUG: self.fmt,
+                logging.INFO: self.fmt,
+                LOGGING_ADVICE: self.fmt,
+                LOGGING_SUCCESS: self.fmt,
+                logging.WARNING: self.fmt,
+                logging.ERROR: self.fmt,
+                logging.CRITICAL: self.fmt,
+            }
 
     def format(self, record):
         """Format the log with color and emojis."""

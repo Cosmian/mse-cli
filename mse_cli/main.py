@@ -1,6 +1,7 @@
 """mse_cli.main module."""
 
 import argparse
+from enum import Enum
 from warnings import filterwarnings  # noqa: E402
 
 filterwarnings("ignore")  # noqa: E402
@@ -22,13 +23,17 @@ from mse_cli.command import (
     verify,
 )
 from mse_cli.log import LOGGER as LOG
+from mse_cli.utils.color import COLOR, setup_color
 from mse_cli.log import setup_logging
+
+
+class ColorMode(str, Enum):
+    never = "never"
+    always = "always"
 
 
 def main() -> int:
     """Entrypoint of the CLI."""
-    setup_logging(False)
-
     parser = argparse.ArgumentParser(
         description="MicroService Encryption CLI" f" - {mse_cli.__version__}"
     )
@@ -38,6 +43,13 @@ def main() -> int:
         action="version",
         version=f"{mse_cli.__version__}",
         help="version of %(prog)s binary",
+    )
+
+    parser.add_argument(
+        "--color",
+        type=ColorMode,
+        default=1,
+        help="able (default) or disable the stdout/stderr colors",
     )
 
     subparsers = parser.add_subparsers(title="subcommands")
@@ -56,6 +68,9 @@ def main() -> int:
     verify.add_subparser(subparsers)
 
     args = parser.parse_args()
+
+    setup_color(args.color == ColorMode.always)
+    setup_logging(False)
 
     try:
         func = args.func

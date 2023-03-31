@@ -27,7 +27,7 @@ from mse_cli.conf.context import Context
 from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
 from mse_cli.utils.clock_tick import ClockTick
-from mse_cli.utils.color import bcolors
+from mse_cli.utils.color import COLOR, ColorKind
 from mse_cli.utils.spinner import Spinner
 
 
@@ -88,11 +88,11 @@ def run(args) -> None:
             "This app runs in untrusted-ssl mode with an operator certificate. "
             "The operator may access all communications with the app. "
             "Read %s%s%s%s%s for more details.",
-            bcolors.LINK_START,
+            COLOR.render(ColorKind.LINK_START),
             MSE_DOC_SECURITY_MODEL_URL,
-            bcolors.LINK_MID,
+            COLOR.render(ColorKind.LINK_MID),
             sec_doc_text,
-            bcolors.LINK_END,
+            COLOR.render(ColorKind.LINK_END),
         )
         if app_conf.ssl:
             LOG.warning("SSL conf paragraph is ignored.%s")
@@ -134,11 +134,11 @@ def run(args) -> None:
             "This app runs with an app owner certificate. "
             "The app provider may decrypt all communications with the app. "
             "Read %s%s%s%s%s for more details.",
-            bcolors.LINK_START,
+            COLOR.render(ColorKind.LINK_START),
             MSE_DOC_SECURITY_MODEL_URL,
-            bcolors.LINK_MID,
+            COLOR.render(ColorKind.LINK_MID),
             sec_doc_text,
-            bcolors.LINK_END,
+            COLOR.render(ColorKind.LINK_END),
         )
 
     selfsigned_cert = get_server_certificate((app.config_domain_name, 443))

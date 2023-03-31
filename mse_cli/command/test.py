@@ -41,7 +41,7 @@ def run(args) -> None:
     except ImageNotFound:
         pass
 
-    LOG.info("You can stop the application at any time by typing CTRL^C")
+    LOG.info("You can stop the application at any time by typing CTRL+C or CTRL+Break")
     LOG.advice(  # type: ignore
         "Once started, from another terminal, you can run: "
         "\n\n\tcurl http://localhost:5000%s\n\nor:\n\n\tpytest\n",

@@ -1,8 +1,8 @@
-"""mse_cli.utils.bcolors module."""
+"""mse_cli.utils.color module."""
 
 
-class bcolors:
-    """Default colors."""
+class ColorKind:
+    """ANSI color codes."""
 
     HEADER = "\033[95m"
     OKBLUE = "\033[94m"
@@ -16,3 +16,33 @@ class bcolors:
     LINK_START = "\u001b]8;;"
     LINK_MID = "\u001b\\"
     LINK_END = "\u001b]8;;\u001b\\"
+
+
+class ColorRender:
+    """Render class to enable or disable colors."""
+
+    def __init__(self):
+        """Initialize the object with color enabled."""
+        self.active = True
+
+    @property
+    def active(self):
+        """Say whether the color is enabled."""
+        return self._active
+
+    @active.setter
+    def active(self, value: bool):
+        """Enable or disable the color."""
+        self._active = value
+
+    def render(self, kind: ColorKind):
+        """Render the color or not depending on if it is enabled."""
+        return kind if self.active else ""
+
+
+COLOR = ColorRender()
+
+
+def setup_color(color: bool = True):
+    """Configure output coloring."""
+    COLOR.active = color

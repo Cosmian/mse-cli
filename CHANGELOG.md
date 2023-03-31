@@ -3,6 +3,7 @@
 ### Added
 
 * Display application metrics using `mse status`
+* New option `--color` to enable/disable color for stdout/stderr
 
 ### Updated
 
