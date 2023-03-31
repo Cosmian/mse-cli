@@ -36,6 +36,11 @@ def get(conn: Connection, uuid: UUID) -> requests.Response:
     return conn.get(url=f"/apps/{uuid}")
 
 
+def default(conn: Connection) -> requests.Response:
+    """GET `/apps/default`."""
+    return conn.get(url="/apps/default")
+
+
 def remove(conn: Connection, uuid: UUID) -> requests.Response:
     """DELETE `/apps/{uuid}`."""
     return conn.delete(url=f"/apps/{uuid}")

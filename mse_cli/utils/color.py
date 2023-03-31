@@ -1,7 +1,10 @@
 """mse_cli.utils.color module."""
 
 
-class ColorKind:
+from enum import Enum
+
+
+class ColorKind(str, Enum):
     """ANSI color codes."""
 
     HEADER = "\033[95m"
@@ -35,9 +38,9 @@ class ColorRender:
         """Enable or disable the color."""
         self._active = value
 
-    def render(self, kind: ColorKind):
+    def render(self, kind: ColorKind) -> str:
         """Render the color or not depending on if it is enabled."""
-        return kind if self.active else ""
+        return str(kind) if self.active else ""
 
 
 COLOR = ColorRender()

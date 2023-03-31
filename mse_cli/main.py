@@ -1,7 +1,6 @@
 """mse_cli.main module."""
 
 import argparse
-from enum import Enum
 from warnings import filterwarnings  # noqa: E402
 
 filterwarnings("ignore")  # noqa: E402
@@ -23,13 +22,8 @@ from mse_cli.command import (
     verify,
 )
 from mse_cli.log import LOGGER as LOG
-from mse_cli.utils.color import COLOR, setup_color
 from mse_cli.log import setup_logging
-
-
-class ColorMode(str, Enum):
-    never = "never"
-    always = "always"
+from mse_cli.utils.color import setup_color
 
 
 def main() -> int:
@@ -47,8 +41,8 @@ def main() -> int:
 
     parser.add_argument(
         "--color",
-        type=ColorMode,
-        default=1,
+        default="always",
+        choices=["never", "always"],
         help="able (default) or disable the stdout/stderr colors",
     )
 
@@ -69,7 +63,7 @@ def main() -> int:
 
     args = parser.parse_args()
 
-    setup_color(args.color == ColorMode.always)
+    setup_color(args.color == "always")
     setup_logging(False)
 
     try:

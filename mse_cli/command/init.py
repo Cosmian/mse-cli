@@ -3,8 +3,9 @@
 import os
 from pathlib import Path
 
-from mse_cli import MSE_DEFAULT_DOCKER
+from mse_cli.command.helpers import get_default
 from mse_cli.conf.app import AppConf, CodeConf
+from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
 
 
@@ -20,11 +21,15 @@ def add_subparser(subparsers):
 def run(_args) -> None:
     """Run the subcommand."""
     LOG.info("We need you to fill in the following fields\n")
+    user_conf = UserConf.from_toml()
+    conn = user_conf.get_connection()
+
+    config = get_default(conn=conn)
 
     app_name = input("App name: ")
-    project_name = input("Project name [default]: ") or "default"
-    hardware = input("Hardware name [4g-eu-001]: ") or "4g-eu-001"
-    docker = input(f"Docker url [{MSE_DEFAULT_DOCKER}]: ") or MSE_DEFAULT_DOCKER
+    project_name = input(f"Project name [{config.project}]: ") or config.project
+    hardware = input(f"Hardware name [{config.hardware}]: ") or config.hardware
+    docker = input(f"Docker url [{config.docker}]: ") or config.docker
     code_location = input("Code location [.]:") or "."
     python_application = input("Python application [app:app]: ") or "app:app"
     healthcheck_endpoint = input("Health check endpoint [/]: ") or "/"
