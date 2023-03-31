@@ -70,8 +70,21 @@ class PartialApp(BaseModel):
 
     @staticmethod
     def from_dict(dct: Dict[str, Any]):
-        """Build an App object from a dictionary."""
+        """Build an PartialApp object from a dictionary."""
         return PartialApp(**dct)
+
+
+class DefaultAppConfig(BaseModel):
+    """Default app config."""
+
+    project: str
+    docker: str
+    hardware: str
+
+    @staticmethod
+    def from_dict(dct: Dict[str, Any]):
+        """Build an DefaultAppConfig object from a dictionary."""
+        return DefaultAppConfig(**dct)
 
 
 class Project(BaseModel):

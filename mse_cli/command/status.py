@@ -7,7 +7,7 @@ from mse_cli.api.types import AppStatus
 from mse_cli.command.helpers import get_app, get_enclave_resources, get_metrics
 from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
-from mse_cli.utils.color import bcolors
+from mse_cli.utils.color import COLOR, ColorKind
 
 
 def add_subparser(subparsers):
@@ -62,60 +62,60 @@ def run(args) -> None:
         LOG.info(
             "\tExpires at         = %s (%s%d seconds remaining%s)",
             expires_at,
-            bcolors.WARNING,
+            COLOR.render(ColorKind.WARNING),
             remaining_days.seconds,
-            bcolors.ENDC,
+            COLOR.render(ColorKind.ENDC),
         )
     elif remaining_days.days > 1:
         LOG.info(
             "\tExpires at         = %s (%s%d days remaining%s)",
             expires_at,
-            bcolors.WARNING,
+            COLOR.render(ColorKind.WARNING),
             remaining_days.days,
-            bcolors.ENDC,
+            COLOR.render(ColorKind.ENDC),
         )
     else:
         LOG.info(
             "\tExpired at         = %s (%s%d days remaining%s)",
             expires_at,
-            bcolors.WARNING,
+            COLOR.render(ColorKind.WARNING),
             remaining_days.days,
-            bcolors.ENDC,
+            COLOR.render(ColorKind.ENDC),
         )
 
     if app.status == AppStatus.Running:
         LOG.info(
             "\tStatus             = %s%s%s",
-            bcolors.OKGREEN,
+            COLOR.render(ColorKind.OKGREEN),
             app.status.value,
-            bcolors.ENDC,
+            COLOR.render(ColorKind.ENDC),
         )
         if app.ready_at:
             LOG.info("\tOnline since       = %s", app.ready_at.astimezone(tzinfo))
     elif app.status == AppStatus.Stopped:
         LOG.info(
             "\tStatus             = %s%s%s",
-            bcolors.WARNING,
+            COLOR.render(ColorKind.WARNING),
             app.status.value,
-            bcolors.ENDC,
+            COLOR.render(ColorKind.ENDC),
         )
         if app.stopped_at:
             LOG.info("\tStopped since      = %s", app.stopped_at.astimezone(tzinfo))
     elif app.status == AppStatus.OnError:
         LOG.info(
             "\tStatus             = %s%s%s",
-            bcolors.FAIL,
+            COLOR.render(ColorKind.FAIL),
             app.status.value,
-            bcolors.ENDC,
+            COLOR.render(ColorKind.ENDC),
         )
         if app.stopped_at:
             LOG.info("\tOn error since     = %s", app.stopped_at.astimezone(tzinfo))
     elif app.status in (AppStatus.Initializing, AppStatus.Spawning):
         LOG.info(
             "\tStatus             = %s%s%s",
-            bcolors.OKBLUE,
+            COLOR.render(ColorKind.OKBLUE),
             app.status.value,
-            bcolors.ENDC,
+            COLOR.render(ColorKind.ENDC),
         )
 
     if app.status == AppStatus.Running:

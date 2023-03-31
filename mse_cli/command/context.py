@@ -10,7 +10,7 @@ from toml import TomlDecodeError
 
 from mse_cli.conf.context import Context
 from mse_cli.log import LOGGER as LOG
-from mse_cli.utils.color import bcolors
+from mse_cli.utils.color import COLOR, ColorKind
 from mse_cli.utils.fs import ls
 
 
@@ -59,17 +59,17 @@ def run(args) -> None:
                     LOG.info(
                         "%s -> %s%s%s (%s)",
                         context.instance.id,
-                        bcolors.OKBLUE,
+                        COLOR.render(ColorKind.OKBLUE),
                         context.config.name,
-                        bcolors.ENDC,
+                        COLOR.render(ColorKind.ENDC),
                         datetime.fromtimestamp(path.stat().st_ctime),
                     )
                 except (TypeError, TomlDecodeError, OSError, ValidationError):
                     LOG.info(
                         "%s -> %s[file format not supported]%s",
                         path.parent.name,
-                        bcolors.WARNING,
-                        bcolors.ENDC,
+                        COLOR.render(ColorKind.WARNING),
+                        COLOR.render(ColorKind.ENDC),
                     )
 
     if args.purge:

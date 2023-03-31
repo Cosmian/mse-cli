@@ -15,13 +15,14 @@ from intel_sgx_ra.signer import mr_signer_from_pk
 from mse_lib_crypto.xsalsa20_poly1305 import encrypt_directory
 
 from mse_cli import MSE_CERTIFICATES_URL, MSE_PCCS_URL
-from mse_cli.api.app import get, metrics, stop
+from mse_cli.api.app import default, get, metrics, stop
 from mse_cli.api.auth import Connection
 from mse_cli.api.hardware import get as get_hardware
 from mse_cli.api.project import get_app_from_name, get_from_name
 from mse_cli.api.types import (
     App,
     AppStatus,
+    DefaultAppConfig,
     Hardware,
     PartialApp,
     Project,
@@ -43,6 +44,15 @@ def get_client_docker() -> docker.client.DockerClient:
         LOG.info("MSE needs Docker to verify the app trustworthiness.")
         LOG.info("Please refer to the documentation for more details.")
         sys.exit(1)
+
+
+def get_default(conn: Connection) -> DefaultAppConfig:
+    """Get a default app configuration from the backend."""
+    r: requests.Response = default(conn=conn)
+    if not r.ok:
+        raise Exception(r.text)
+
+    return DefaultAppConfig.from_dict(r.json())
 
 
 def get_app(conn: Connection, uuid: UUID) -> App:

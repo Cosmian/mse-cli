@@ -23,12 +23,11 @@ from mse_cli.command import (
 )
 from mse_cli.log import LOGGER as LOG
 from mse_cli.log import setup_logging
+from mse_cli.utils.color import setup_color
 
 
 def main() -> int:
     """Entrypoint of the CLI."""
-    setup_logging(False)
-
     parser = argparse.ArgumentParser(
         description="MicroService Encryption CLI" f" - {mse_cli.__version__}"
     )
@@ -38,6 +37,13 @@ def main() -> int:
         action="version",
         version=f"{mse_cli.__version__}",
         help="version of %(prog)s binary",
+    )
+
+    parser.add_argument(
+        "--color",
+        default="always",
+        choices=["never", "always"],
+        help="enable (default) or disable colors on stdout/stderr",
     )
 
     subparsers = parser.add_subparsers(title="subcommands")
@@ -56,6 +62,9 @@ def main() -> int:
     verify.add_subparser(subparsers)
 
     args = parser.parse_args()
+
+    setup_color(args.color == "always")
+    setup_logging(False)
 
     try:
         func = args.func

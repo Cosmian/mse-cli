@@ -7,7 +7,7 @@ from mse_cli.api.types import AppStatus, PartialApp
 from mse_cli.command.helpers import get_project_from_name, non_empty_string
 from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
-from mse_cli.utils.color import bcolors
+from mse_cli.utils.color import COLOR, ColorKind
 
 
 def add_subparser(subparsers):
@@ -72,15 +72,15 @@ def run(args) -> None:
     for app in list_app:
         app = PartialApp.from_dict(app)
 
-        color = bcolors.OKGREEN
+        color = COLOR.render(ColorKind.OKGREEN)
         if app.status == AppStatus.Stopped:
-            color = bcolors.WARNING
+            color = COLOR.render(ColorKind.WARNING)
         elif app.status == AppStatus.OnError:
-            color = bcolors.FAIL
+            color = COLOR.render(ColorKind.FAIL)
         elif app.status == AppStatus.Initializing:
-            color = bcolors.OKBLUE
+            color = COLOR.render(ColorKind.OKBLUE)
         elif app.status == AppStatus.Spawning:
-            color = bcolors.OKBLUE
+            color = COLOR.render(ColorKind.OKBLUE)
 
         LOG.info(
             "%s | %s |%s %s %s| %s on %s%s%s",
@@ -88,9 +88,9 @@ def run(args) -> None:
             app.created_at.astimezone(),
             color,
             app.status.value.center(12),
-            bcolors.ENDC,
+            COLOR.render(ColorKind.ENDC),
             app.name,
-            bcolors.OKBLUE,
+            COLOR.render(ColorKind.OKBLUE),
             app.domain_name,
-            bcolors.ENDC,
+            COLOR.render(ColorKind.ENDC),
         )
