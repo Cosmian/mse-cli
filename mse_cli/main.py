@@ -43,7 +43,7 @@ def main() -> int:
         "--color",
         default="always",
         choices=["never", "always"],
-        help="able (default) or disable the stdout/stderr colors",
+        help="enable (default) or disable colors on stdout/stderr",
     )
 
     subparsers = parser.add_subparsers(title="subcommands")
