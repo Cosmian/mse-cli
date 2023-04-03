@@ -7,9 +7,9 @@ from pathlib import Path
 import pkg_resources
 from jinja2 import Template
 
-from mse_cli import MSE_DEFAULT_DOCKER
-from mse_cli.command.helpers import non_empty_string
+from mse_cli.command.helpers import get_default, non_empty_string
 from mse_cli.conf.app import AppConf
+from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
 
 
@@ -28,8 +28,14 @@ def add_subparser(subparsers):
     )
 
 
+# pylint: disable=too-many-locals
 def run(args) -> None:
     """Run the subcommand."""
+    user_conf = UserConf.from_toml()
+    conn = user_conf.get_connection()
+
+    config = get_default(conn=conn)
+
     project_dir = Path(os.getcwd()) / args.app_name
 
     # Copy the template files
@@ -40,7 +46,12 @@ def run(args) -> None:
 
     # Initialize the configuration file
     tm = Template(template_conf_file.read_text())
-    content = tm.render(name=args.app_name, docker=MSE_DEFAULT_DOCKER)
+    content = tm.render(
+        name=args.app_name,
+        docker=config.docker,
+        project=config.project,
+        hardware=config.hardware,
+    )
     conf_file.write_text(content)
     template_conf_file.unlink()
 

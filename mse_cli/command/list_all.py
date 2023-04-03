@@ -7,7 +7,7 @@ from mse_cli.api.types import AppStatus, PartialApp
 from mse_cli.command.helpers import get_project_from_name, non_empty_string
 from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
-from mse_cli.utils.color import bcolors
+from mse_cli.utils.color import COLOR, ColorKind
 
 
 def add_subparser(subparsers):
@@ -20,8 +20,9 @@ def add_subparser(subparsers):
 
     parser.add_argument(
         "project_name",
+        nargs="?",
         type=non_empty_string,
-        help="name of the project with MSE applications to list",
+        help="name of the project to consider when displaying the apps list",
     )
 
     parser.add_argument("--all", action="store_true", help="also list the stopped apps")
@@ -32,11 +33,16 @@ def run(args) -> None:
     user_conf = UserConf.from_toml()
     conn = user_conf.get_connection()
 
-    project = get_project_from_name(conn, args.project_name)
-    if not project:
-        raise Exception(f"Project {args.project_name} does not exist")
+    project_uuid = None
+    if args.project_name:
+        project = get_project_from_name(conn, args.project_name)
+        if not project:
+            raise Exception(f"Project {args.project_name} does not exist")
 
-    LOG.info("Fetching the project %s...", project.uuid)
+        LOG.info("Fetching the apps in project %s...", project.name)
+        project_uuid = project.uuid
+    else:
+        LOG.info("Fetching the apps in all projects...")
 
     status = None
     if not args.all:
@@ -47,7 +53,7 @@ def run(args) -> None:
         ]
 
     r: requests.Response = list_apps(
-        conn=conn, project_uuid=project.uuid, status=status
+        conn=conn, project_uuid=project_uuid, status=status
     )
 
     if not r.ok:
@@ -66,15 +72,15 @@ def run(args) -> None:
     for app in list_app:
         app = PartialApp.from_dict(app)
 
-        color = bcolors.OKGREEN
+        color = COLOR.render(ColorKind.OKGREEN)
         if app.status == AppStatus.Stopped:
-            color = bcolors.WARNING
+            color = COLOR.render(ColorKind.WARNING)
         elif app.status == AppStatus.OnError:
-            color = bcolors.FAIL
+            color = COLOR.render(ColorKind.FAIL)
         elif app.status == AppStatus.Initializing:
-            color = bcolors.OKBLUE
+            color = COLOR.render(ColorKind.OKBLUE)
         elif app.status == AppStatus.Spawning:
-            color = bcolors.OKBLUE
+            color = COLOR.render(ColorKind.OKBLUE)
 
         LOG.info(
             "%s | %s |%s %s %s| %s on %s%s%s",
@@ -82,9 +88,9 @@ def run(args) -> None:
             app.created_at.astimezone(),
             color,
             app.status.value.center(12),
-            bcolors.ENDC,
+            COLOR.render(ColorKind.ENDC),
             app.name,
-            bcolors.OKBLUE,
+            COLOR.render(ColorKind.OKBLUE),
             app.domain_name,
-            bcolors.ENDC,
+            COLOR.render(ColorKind.ENDC),
         )

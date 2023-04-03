@@ -4,7 +4,7 @@ import os
 import sys
 from pathlib import Path
 
-__version__ = "0.10.2"
+__version__ = "0.11.0"
 
 # This directory contains the login information of the user
 # and the context of all its deployments
@@ -45,9 +45,6 @@ MSE_AUTH0_AUDIENCE = os.getenv(
 
 # The URL of the MSE console
 MSE_CONSOLE_URL = os.getenv("MSE_CONSOLE_URL", default="https://console.cosmian.com")
-
-# The URL of the default MSE Docker
-MSE_DEFAULT_DOCKER = "ghcr.io/cosmian/mse-flask:20230228091325"
 
 # The URL of the MSE documentation
 MSE_DOC_URL = "https://docs.cosmian.com/microservice_encryption"

@@ -1,6 +1,6 @@
 name = "{{ name }}"
-project = "default"
-resource = "free"
+project = "{{ project }}"
+hardware = "{{ hardware }}"
 
 [code]
 location = "mse_src"

@@ -1,6 +1,6 @@
 name = "helloworld"
 project = "notexist"
-resource = "free"
+hardware = "4g-eu-001"
 
 [code]
 location = "/tmp/code"

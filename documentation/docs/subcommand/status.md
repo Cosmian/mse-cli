@@ -8,7 +8,7 @@ Microservice
         Name        = float_average
         Version     = 1.0.0
         Domain name = demo.cosmian.app
-        Resource    = free
+        Hardware    = 4g-eu-001
         Application = app:app
         MSE docker  = ghcr.io/cosmian/mse-flask:20230228091325
         Healthcheck = /
@@ -22,6 +22,17 @@ Deployement status
         Expires at         = 2022-11-18 09:04:17.414190+00:00 (-1 days remaining)
         Status             = running
         Online since       = 2022-11-17 09:04:34.043340+00:00
+
+> Current metrics
+        Average queue time    = 0.001s
+        Average connect time  = 0.001s
+        Average response time = 0.000s
+        Average query time    = 0.002s
+        Amount of connection  = 6
+        CPU usage             = 0.01%
+        FS usage              = 1.2MiB
+        Input throughput      = 4.0KiB
+        Output throughput     = 24.5KiB       
 ```
 
 The status could have the following values:
@@ -30,3 +41,5 @@ The status could have the following values:
 - `running`: the status of app running successfully 
 - `on_error`: the status of an app stopped with a failure. It's a terminal state.
 - `stopped`: the status of an app stopped without any errors. For example: when the expiration date is reached. It's a terminal state.
+
+The status command also prints instant metrics, measuring the network, CPU and filesystem usages.

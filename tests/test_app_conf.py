@@ -121,8 +121,8 @@ def test_ssl():
     ref_app_conf = AppConf(
         name="helloworld",
         project="default",
-        resource="free",
-        expiration_date=datetime(2023, 3, 1, 0, 0, 0, tzinfo=timezone.utc),
+        hardware="4g-eu-001",
+        expiration_date=datetime(2023, 5, 1, 0, 0, 0, tzinfo=timezone.utc),
         code=code,
         ssl=ssl,
     )
@@ -145,7 +145,11 @@ def test_ssl_optionals():
     )
 
     ref_app_conf = AppConf(
-        name="helloworld", project="default", resource="free", code=code, ssl=None
+        name="helloworld",
+        project="default",
+        hardware="4g-eu-001",
+        code=code,
+        ssl=None,
     )
 
     assert conf == ref_app_conf
@@ -183,7 +187,7 @@ def test_ssl_optionals():
         name="helloworld",
         version="1.0.0",
         project="default",
-        resource="free",
+        hardware="4g-eu-001",
         code=code,
         ssl=None,
     )
@@ -207,9 +211,9 @@ def test_expiration_date():
     ref_app_conf = AppConf(
         name="helloworld",
         project="default",
-        resource="free",
+        hardware="4g-eu-001",
         code=code,
-        expiration_date=datetime(2023, 3, 1, 0, 0, 0, tzinfo=timezone.utc),
+        expiration_date=datetime(2023, 5, 1, 0, 0, 0, tzinfo=timezone.utc),
     )
 
     assert conf == ref_app_conf
@@ -248,7 +252,9 @@ def test_python_variable():
         docker="ghcr.io/cosmian/mse-pytorch:20230104085621",
     )
 
-    conf = AppConf(name="helloworld", project="default", resource="free", code=code)
+    conf = AppConf(
+        name="helloworld", project="default", hardware="4g-eu-001", code=code
+    )
 
     with pytest.raises(Exception) as context:
         conf.python_variable
@@ -303,9 +309,9 @@ def test_into_payload():
         "healthcheck_endpoint": "/",
         "python_application": "app:app",
         "docker": "ghcr.io/cosmian/mse-pytorch:20230104085621",
-        "expires_at": "2023-03-01T00:00:00.000000Z",
+        "expires_at": "2023-05-01T00:00:00.000000Z",
         "dev_mode": False,
         "ssl_certificate": CERTIFICATE,
         "domain_name": "demo.cosmilink.com",
-        "plan": "free",
+        "hardware": "4g-eu-001",
     }

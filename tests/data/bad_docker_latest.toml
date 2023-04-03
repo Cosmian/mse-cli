@@ -1,6 +1,6 @@
 name = "bad_docker_latest"
 project = "default"
-resource = "free"
+hardware = "4g-eu-001"
 
 [code]
 location = "code/"

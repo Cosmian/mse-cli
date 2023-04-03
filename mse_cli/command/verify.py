@@ -7,13 +7,9 @@ import ssl
 from pathlib import Path
 
 from intel_sgx_ra.error import SGXQuoteNotFound
+from intel_sgx_ra.ratls import get_server_certificate
 
-from mse_cli.command.helpers import (
-    compute_mr_enclave,
-    get_certificate,
-    prepare_code,
-    verify_app,
-)
+from mse_cli.command.helpers import compute_mr_enclave, prepare_code, verify_app
 from mse_cli.conf.context import Context
 from mse_cli.log import LOGGER as LOG
 from mse_cli.utils.spinner import Spinner
@@ -89,7 +85,7 @@ def run(args) -> None:
 
     # Get the certificate
     try:
-        ca_data = get_certificate(args.domain_name)
+        ca_data = get_server_certificate((args.domain_name, 443))
         cert_path = Path(os.getcwd()) / "cert.pem"
         cert_path.write_text(ca_data)
     except (ssl.SSLZeroReturnError, socket.gaierror, ssl.SSLEOFError) as exc:
