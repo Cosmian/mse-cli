@@ -40,7 +40,7 @@ class ColorRender:
 
     def render(self, kind: ColorKind) -> str:
         """Render the color or not depending on if it is enabled."""
-        return str(kind) if self.active else ""
+        return kind.value if self.active else ""
 
 
 COLOR = ColorRender()
