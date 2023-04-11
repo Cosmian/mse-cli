@@ -1,0 +1,45 @@
+name: Test integrations
+
+on:
+  workflow_dispatch:
+    inputs:
+      backend:
+        description: "Backend URL"
+        required: true
+        type: string
+
+jobs:
+  tests:
+    runs-on: self-hosted
+    container:
+      image: python:3.8
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+        - /tmp:/tmp
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+          pip install .
+
+      - name: Run integration tests
+        env:
+          MSE_BASE_URL: ${{ inputs.backend }}
+          MSE_AUTH0_CLIENT_ID: "bx2WlLrS7qr35iyNqUVTs9jMo834o8mC"
+          MSE_AUTH0_DOMAIN_NAME: "https://console-dev.eu.auth0.com"
+          MSE_AUTH0_AUDIENCE: "https://console-dev.eu.auth0.com/api/v2/"
+          REFRESH_TOKEN: ${{ secrets.DEV_ALICE_REFRESH_TOKEN }}
+          MSE_TEST_DOMAIN_NAME: ${{ vars.DEV_MSE_TEST_DOMAIN_NAME }}
+          MSE_TEST_PRIVATE_KEY: ${{ secrets.DEV_MSE_TEST_PRIVATE_KEY }}
+          MSE_TEST_PUBLIC_KEY: ${{ vars.DEV_MSE_TEST_PUBLIC_KEY }}
+          MSE_CONF_PATH: ${{ github.workspace }}
+        run: |
+          echo 'email = "alice@cosmian.com"' > ${MSE_CONF_PATH}/login.toml
+          echo "refresh_token = \"${REFRESH_TOKEN}\"" >> ${MSE_CONF_PATH}/login.toml
+          echo "Running tests using ${MSE_BASE_URL}"
+          pytest -m slow
