@@ -1,0 +1,36 @@
+name: Publish
+
+on:
+  # Run on tags only
+  push:
+    tags:
+      - "*"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.8"
+
+      - name: Package metadata
+        id: metadata
+        run: |
+          echo "PACKAGE_VERSION=$(python setup.py --version)" >> $GITHUB_OUTPUT
+
+      - name: Build package
+        if: ${{ startsWith(github.ref, 'refs/tags') && endsWith(github.ref, steps.metadata.outputs.PACKAGE_VERSION) }}
+        run: python -m build
+
+      - name: Publish package to PyPi
+        if: ${{ startsWith(github.ref, 'refs/tags') && endsWith(github.ref, steps.metadata.outputs.PACKAGE_VERSION) }}
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          print_hash: true
+          user: ${{ secrets.PYPI_USERNAME }}
+          password: ${{ secrets.PYPI_PASSWORD }}
