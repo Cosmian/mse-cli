@@ -1,3 +1,13 @@
+## \[0.12.0\] - 2023-04-14
+
+### Added
+
+* 
+
+### Updated
+
+* Support MSE backend 0.5.2: changing user api
+
 ## \[0.11.0\] - 2023-04-03
 
 ### Added

@@ -19,7 +19,7 @@ def add_subparser(subparsers):
     parser.set_defaults(func=run)
 
     parser.add_argument(
-        "app_uuid",
+        "app_id",
         type=uuid.UUID,
         help="identifier of the MSE web application to display status",
     )
@@ -30,10 +30,10 @@ def run(args) -> None:
     """Run the subcommand."""
     user_conf = UserConf.from_toml()
 
-    LOG.info("Fetching the app status for %s...", args.app_uuid)
+    LOG.info("Fetching the app status for %s...", args.app_id)
 
     conn = user_conf.get_connection()
-    app = get_app(conn=conn, uuid=args.app_uuid)
+    app = get_app(conn=conn, app_id=args.app_id)
 
     (enclave_size, cores) = get_enclave_resources(conn, app.hardware_name)
 
@@ -49,7 +49,7 @@ def run(args) -> None:
     LOG.info("\tHealthcheck = %s", app.healthcheck_endpoint)
 
     LOG.info("\n> Deployment status")
-    LOG.info("\tUUID               = %s", app.uuid)
+    LOG.info("\tUUID               = %s", app.id)
     LOG.info("\tCertificate origin = %s", app.ssl_certificate_origin.value)
     LOG.info("\tMemory size        = %sM", enclave_size)
     LOG.info("\tCores amount       = %s", cores)
@@ -119,7 +119,7 @@ def run(args) -> None:
         )
 
     if app.status == AppStatus.Running:
-        metrics = get_metrics(conn=conn, uuid=args.app_uuid)
+        metrics = get_metrics(conn=conn, app_id=args.app_id)
 
         LOG.info("\n> Current metrics")
         if metric := metrics.get("average_queue_time"):
