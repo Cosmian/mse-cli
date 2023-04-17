@@ -98,7 +98,7 @@ def _test_deploy(
     output = capture_logs(f)
 
     try:
-        app_uuid = re.search("mse logs ([a-z0-9-]+)", output).group(1)
+        app_id = re.search("mse logs ([a-z0-9-]+)", output).group(1)
 
         domain_name = re.search("ready to be used on https://(.+) until", output).group(
             1
@@ -110,15 +110,15 @@ def _test_deploy(
         print(output)
         assert False
 
-    return UUID(app_uuid), domain_name, mr_enclave
+    return UUID(app_id), domain_name, mr_enclave
 
 
-def _test_context(f: io.StringIO, app_uuid: UUID) -> Context:
+def _test_context(f: io.StringIO, app_id: UUID) -> Context:
     """Test the context subcommand."""
     # Check the context directory
-    assert Context.get_context_filepath(app_uuid, create=False).exists()
+    assert Context.get_context_filepath(app_id, create=False).exists()
     assert (
-        Context.get_dirpath(app_uuid, False) / Context.get_tar_code_filename()
+        Context.get_dirpath(app_id, False) / Context.get_tar_code_filename()
     ).exists()
 
     # Check the context subcommand (listing)
@@ -127,24 +127,22 @@ def _test_context(f: io.StringIO, app_uuid: UUID) -> Context:
     )
 
     output = capture_logs(f)
-    assert str(app_uuid) in output
+    assert str(app_id) in output
 
     # Check the context subcommand (exporting)
     run_context(
-        Namespace(
-            **{"list": False, "remove": False, "purge": False, "export": app_uuid}
-        )
+        Namespace(**{"list": False, "remove": False, "purge": False, "export": app_id})
     )
 
     _ = capture_logs(f)
-    context_path = Path(f"{app_uuid}.toml")
+    context_path = Path(f"{app_id}.toml")
     assert context_path.exists()
     return Context.from_toml(context_path)
 
 
-def _test_status(f: io.StringIO, app_uuid: UUID, expecting_status: str):
+def _test_status(f: io.StringIO, app_id: UUID, expecting_status: str):
     """Test status subcommand."""
-    run_status(Namespace(**{"app_uuid": app_uuid}))
+    run_status(Namespace(**{"app_id": app_id}))
 
     output = capture_logs(f)
     assert expecting_status in output
@@ -158,22 +156,20 @@ def _test_login(f: io.StringIO):
     assert "You are currently logged in" in output
 
 
-def _test_logs(f: io.StringIO, app_uuid: UUID, expecting_output: str):
+def _test_logs(f: io.StringIO, app_id: UUID, expecting_output: str):
     """Test logs subcommand."""
-    run_logs(Namespace(**{"app_uuid": app_uuid}))
+    run_logs(Namespace(**{"app_id": app_id}))
 
     output = capture_logs(f)
     assert expecting_output in output
 
 
-def _test_list(
-    f: io.StringIO, project_name: str, app_uuid: UUID, expecting_result: bool
-):
+def _test_list(f: io.StringIO, project_name: str, app_id: UUID, expecting_result: bool):
     """Test list subcommand."""
     run_list(Namespace(**{"project_name": project_name, "all": False}))
 
     output = capture_logs(f)
-    assert (str(app_uuid) in output) == expecting_result
+    assert (str(app_id) in output) == expecting_result
 
 
 def _test_mse_cli(
@@ -206,10 +202,10 @@ def _test_mse_cli(
         assert not app_conf.ssl
 
     # Test the deploy subcommand
-    (app_uuid, domain_name, mr_enclave) = _test_deploy(f, conf, untrusted_ssl)
+    (app_id, domain_name, mr_enclave) = _test_deploy(f, conf, untrusted_ssl)
 
     # Test the context subcommand
-    context = _test_context(f, app_uuid)
+    context = _test_context(f, app_id)
 
     # Check the ssl type
     if ssl_certificate_origin == SSLCertificateOrigin.Owner and untrusted_ssl:
@@ -263,7 +259,7 @@ def _test_mse_cli(
                 Namespace(
                     **{
                         "fingerprint": None,
-                        "context": Context.get_context_filepath(app_uuid, False),
+                        "context": Context.get_context_filepath(app_id, False),
                         "code": Path("."),
                         "domain_name": domain_name,
                     }
@@ -274,7 +270,7 @@ def _test_mse_cli(
         f,
         domain_name,
         False,
-        Context.get_context_filepath(app_uuid, False),
+        Context.get_context_filepath(app_id, False),
         app_conf.code.location,
         context.instance.ssl_certificate_origin == SSLCertificateOrigin.Self,
     )
@@ -290,21 +286,21 @@ def _test_mse_cli(
     assert r.text == "Hello world"
 
     # Test status subcommand
-    _test_status(f, app_uuid, "running")
-    _test_logs(f, app_uuid, 'GET / HTTP/1.1" 200')
+    _test_status(f, app_id, "running")
+    _test_logs(f, app_id, 'GET / HTTP/1.1" 200')
 
     # Test list subcommand
-    _test_list(f, app_conf.project, app_uuid, True)
+    _test_list(f, app_conf.project, app_id, True)
 
     # Test stop app
-    run_stop(Namespace(**{"app_uuid": [app_uuid]}))
+    run_stop(Namespace(**{"app_id": [app_id]}))
 
     # Test status subcommand
-    _test_status(f, app_uuid, "stopped")
-    _test_logs(f, app_uuid, 'GET / HTTP/1.1" 200')
+    _test_status(f, app_id, "stopped")
+    _test_logs(f, app_id, 'GET / HTTP/1.1" 200')
 
     # Test list subcommand
-    _test_list(f, app_conf.project, app_uuid, False)
+    _test_list(f, app_conf.project, app_id, False)
 
     f.truncate(0)
 
@@ -314,8 +310,8 @@ def _test_mse_cli(
     )
 
     output = capture_logs(f)
-    assert str(app_uuid) not in output
-    assert not Context.get_dirpath(app_uuid, False).exists()
+    assert str(app_id) not in output
+    assert not Context.get_dirpath(app_id, False).exists()
 
 
 @pytest.mark.slow

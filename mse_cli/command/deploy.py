@@ -113,13 +113,13 @@ def run(args) -> None:
     app = deploy_app(conn, app_conf, tar_path)
 
     LOG.advice(  # type: ignore
-        "To follow the app creation, you can run: \n\n\tmse logs %s\n", app.uuid
+        "To follow the app creation, you can run: \n\n\tmse logs %s\n", app.id
     )
 
-    app = wait_app_creation(conn, app.uuid)
+    app = wait_app_creation(conn, app.id)
 
     context.run(
-        app.uuid,
+        app.id,
         enclave_size,
         app.config_domain_name,
         app.expires_at,
@@ -170,7 +170,7 @@ def run(args) -> None:
         app_secrets=app_conf.code.secrets_data,
     )
 
-    app = wait_app_start(conn, app.uuid)
+    app = wait_app_start(conn, app.id)
 
     LOG.success(  # type: ignore
         "Your application is now deployed and ready to be used on https://%s until %s",
@@ -187,7 +187,7 @@ def run(args) -> None:
     LOG.advice(  # type: ignore
         "The context of this creation can be retrieved using: \n\n\t"
         "mse context --export %s\n",
-        app.uuid,
+        app.id,
     )
 
     if app.ssl_certificate_origin == SSLCertificateOrigin.Self:
@@ -206,7 +206,7 @@ def run(args) -> None:
         )
 
 
-def wait_app_start(conn: Connection, uuid: UUID) -> App:
+def wait_app_start(conn: Connection, app_id: UUID) -> App:
     """Wait for the app to be started."""
     with Spinner("Waiting for your application to be ready... "):
         clock = ClockTick(
@@ -215,7 +215,7 @@ def wait_app_start(conn: Connection, uuid: UUID) -> App:
             message="MSE is at high capacity right now! Try again later.",
         )
         while clock.tick():
-            app = get_app(conn=conn, uuid=uuid)
+            app = get_app(conn=conn, app_id=app_id)
 
             if app.status == AppStatus.Spawning:
                 raise Exception(
@@ -244,7 +244,7 @@ def check_app_conf(conn: Connection, app_conf: AppConf, force: bool = False) -> 
     # Check that a same name application is not running yet
     app = exists_in_project(
         conn,
-        project.uuid,
+        project.id,
         app_conf.name,
         [
             AppStatus.Spawning,
@@ -266,7 +266,7 @@ def check_app_conf(conn: Connection, app_conf: AppConf, force: bool = False) -> 
                 return False
 
         with Spinner("Stopping the previous app... "):
-            stop_app(conn, app.uuid)
+            stop_app(conn, app.id)
 
     if not (
         app_conf.code.location / (app_conf.python_module.replace(".", "/") + ".py")
@@ -289,16 +289,16 @@ def deploy_app(conn: Connection, app_conf: AppConf, tar_path: Path) -> App:
     return App.from_dict(r.json())
 
 
-def wait_app_creation(conn: Connection, uuid: UUID) -> App:
+def wait_app_creation(conn: Connection, app_id: UUID) -> App:
     """Wait for the app to be deployed."""
-    with Spinner(f"Creating app {uuid}... "):
+    with Spinner(f"Creating app {app_id}... "):
         clock = ClockTick(
             period=3,
             timeout=5 * 60,
             message="MSE is at high capacity right now! Try again later.",
         )
         while clock.tick():
-            app = get_app(conn=conn, uuid=uuid)
+            app = get_app(conn=conn, app_id=app_id)
 
             if app.status == AppStatus.Initializing:
                 break

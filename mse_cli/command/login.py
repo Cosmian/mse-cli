@@ -1,6 +1,5 @@
 """mse_cli.command.login module."""
 
-import base64
 import hashlib
 import json
 import re
@@ -24,6 +23,7 @@ from mse_cli.api.user import me as get_me
 from mse_cli.command.logout import logout
 from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
+from mse_cli.utils.base64 import base64url_decode, base64url_encode
 
 CODE: Optional[str] = None
 
@@ -174,7 +174,7 @@ def run(args) -> None:
 
     try:
         me = get_user_info(user)
-        LOG.info("Welcome back to Microservice Encryption %s", me.first_name)
+        LOG.info("Welcome back to Microservice Encryption %s", me.given_name)
     except NameError:
         LOG.info("\nWelcome to Microservice Encryption.")
         LOG.advice(  # type: ignore
@@ -202,19 +202,19 @@ def get_user_info(user: UserConf) -> User:
 
 def gen_state() -> str:
     """Generate the state field."""
-    return base64.b64encode(secrets.token_bytes(43)).decode("utf-8")
+    return base64url_encode(secrets.token_bytes(43))
 
 
 def gen_code_verifier() -> str:
     """Generate the code verifier."""
-    code_verifier = base64.urlsafe_b64encode(secrets.token_bytes(62)).decode("utf-8")
+    code_verifier = base64url_encode(secrets.token_bytes(62))
     return re.sub("[^a-zA-Z0-9]+", "", code_verifier)
 
 
 def gen_code_challenge(code_verifier: str) -> str:
     """Generate the code challenge."""
     code_challenge = hashlib.sha256(code_verifier.encode("utf-8")).digest()
-    return base64.urlsafe_b64encode(code_challenge).decode("utf-8").replace("=", "")
+    return base64url_encode(code_challenge)
 
 
 def open_webbrowser(address):
@@ -225,16 +225,10 @@ def open_webbrowser(address):
         raise Exception(f"Unable to open the web browser: {e}") from e
 
 
-def _b64_decode(data):
-    """Decode the data from base64 by adding the padding."""
-    data += "=" * (4 - len(data) % 4)
-    return base64.b64decode(data).decode("utf-8")
-
-
 def jwt_payload_decode(jwt):
     """Decode a jwt payload."""
     _, payload, _ = jwt.split(".")
-    return json.loads(_b64_decode(payload))
+    return json.loads(base64url_decode(payload))
 
 
 def login_message(whoami: bool, email: str, is_configured: bool):

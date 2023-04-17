@@ -55,18 +55,18 @@ def get_default(conn: Connection) -> DefaultAppConfig:
     return DefaultAppConfig.from_dict(r.json())
 
 
-def get_app(conn: Connection, uuid: UUID) -> App:
+def get_app(conn: Connection, app_id: UUID) -> App:
     """Get an app from the backend."""
-    r: requests.Response = get(conn=conn, uuid=uuid)
+    r: requests.Response = get(conn=conn, app_id=app_id)
     if not r.ok:
         raise Exception(r.text)
 
     return App.from_dict(r.json())
 
 
-def get_metrics(conn: Connection, uuid: UUID) -> Dict[str, Any]:
+def get_metrics(conn: Connection, app_id: UUID) -> Dict[str, Any]:
     """Get the app metrics from the backend."""
-    r: requests.Response = metrics(conn=conn, uuid=uuid)
+    r: requests.Response = metrics(conn=conn, app_id=app_id)
     if not r.ok:
         raise Exception(r.text)
 
@@ -122,11 +122,11 @@ def prepare_code(
 
 
 def exists_in_project(
-    conn: Connection, project_uuid: UUID, name: str, status: Optional[List[AppStatus]]
+    conn: Connection, project_id: UUID, name: str, status: Optional[List[AppStatus]]
 ) -> Optional[PartialApp]:
     """Say whether the app exists in the project."""
     r: requests.Response = get_app_from_name(
-        conn=conn, project_uuid=project_uuid, app_name=name, status=status
+        conn=conn, project_id=project_id, app_name=name, status=status
     )
 
     if not r.ok:
@@ -139,21 +139,21 @@ def exists_in_project(
     return PartialApp.from_dict(app[0])
 
 
-def stop_app(conn: Connection, app_uuid: UUID) -> None:
+def stop_app(conn: Connection, app_id: UUID) -> None:
     """Stop the app remotely."""
-    r: requests.Response = stop(conn=conn, uuid=app_uuid)
+    r: requests.Response = stop(conn=conn, app_id=app_id)
 
     if not r.ok:
         raise Exception(r.text)
 
     clock = ClockTick(period=3, timeout=60, message="Timeout occured! Try again later.")
     while clock.tick():
-        app = get_app(conn=conn, uuid=app_uuid)
+        app = get_app(conn=conn, app_id=app_id)
         if app.is_terminated():
             break
 
     # Remove context file
-    Context.clean(app_uuid, ignore_errors=True)
+    Context.clean(app_id, ignore_errors=True)
 
 
 def compute_mr_enclave(context: Context, tar_path: Path) -> str:

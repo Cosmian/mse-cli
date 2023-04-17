@@ -26,14 +26,14 @@ def new(conn: Connection, conf: AppConf, code_tar_path: Path) -> requests.Respon
         )
 
 
-def metrics(conn: Connection, uuid: UUID) -> requests.Response:
-    """GET `/apps/{uuid}/metrics`."""
-    return conn.get(url=f"/apps/{uuid}/metrics")
+def metrics(conn: Connection, app_id: UUID) -> requests.Response:
+    """GET `/apps/{app_id}/metrics`."""
+    return conn.get(url=f"/apps/{app_id}/metrics")
 
 
-def get(conn: Connection, uuid: UUID) -> requests.Response:
-    """GET `/apps/{uuid}`."""
-    return conn.get(url=f"/apps/{uuid}")
+def get(conn: Connection, app_id: UUID) -> requests.Response:
+    """GET `/apps/{app_id}`."""
+    return conn.get(url=f"/apps/{app_id}")
 
 
 def default(conn: Connection) -> requests.Response:
@@ -41,16 +41,16 @@ def default(conn: Connection) -> requests.Response:
     return conn.get(url="/apps/default")
 
 
-def remove(conn: Connection, uuid: UUID) -> requests.Response:
-    """DELETE `/apps/{uuid}`."""
-    return conn.delete(url=f"/apps/{uuid}")
+def remove(conn: Connection, app_id: UUID) -> requests.Response:
+    """DELETE `/apps/{app_id}`."""
+    return conn.delete(url=f"/apps/{app_id}")
 
 
-def stop(conn: Connection, uuid: UUID) -> requests.Response:
-    """POST `/apps/{uuid}`."""
-    return conn.post(url=f"/apps/{uuid}/stop")
+def stop(conn: Connection, app_id: UUID) -> requests.Response:
+    """POST `/apps/{app_id}`."""
+    return conn.post(url=f"/apps/{app_id}/stop")
 
 
-def log(conn: Connection, uuid: UUID) -> requests.Response:
-    """GET `/apps/{uuid}/logs`."""
-    return conn.get(url=f"/apps/{uuid}/logs")
+def log(conn: Connection, app_id: UUID) -> requests.Response:
+    """GET `/apps/{app_id}/logs`."""
+    return conn.get(url=f"/apps/{app_id}/logs")

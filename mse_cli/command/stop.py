@@ -15,7 +15,7 @@ def add_subparser(subparsers):
     parser.set_defaults(func=run)
 
     parser.add_argument(
-        "app_uuid",
+        "app_id",
         type=uuid.UUID,
         nargs="+",
         help="identifier of the MSE web application to stop",
@@ -26,8 +26,8 @@ def run(args) -> None:
     """Run the subcommand."""
     user_conf = UserConf.from_toml()
 
-    for app_uuid in args.app_uuid:
-        with Spinner(f"Stopping and destroying the app {app_uuid}... "):
-            stop_app(user_conf.get_connection(), app_uuid)
+    for app_id in args.app_id:
+        with Spinner(f"Stopping and destroying the app {app_id}... "):
+            stop_app(user_conf.get_connection(), app_id)
 
         LOG.success("App gracefully stopped")  # type: ignore

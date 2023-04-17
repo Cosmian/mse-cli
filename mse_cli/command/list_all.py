@@ -33,14 +33,14 @@ def run(args) -> None:
     user_conf = UserConf.from_toml()
     conn = user_conf.get_connection()
 
-    project_uuid = None
+    project_id = None
     if args.project_name:
         project = get_project_from_name(conn, args.project_name)
         if not project:
             raise Exception(f"Project {args.project_name} does not exist")
 
         LOG.info("Fetching the apps in project %s...", project.name)
-        project_uuid = project.uuid
+        project_id = project.id
     else:
         LOG.info("Fetching the apps in all projects...")
 
@@ -52,9 +52,7 @@ def run(args) -> None:
             AppStatus.Running,
         ]
 
-    r: requests.Response = list_apps(
-        conn=conn, project_uuid=project_uuid, status=status
-    )
+    r: requests.Response = list_apps(conn=conn, project_id=project_id, status=status)
 
     if not r.ok:
         raise Exception(r.text)
@@ -84,7 +82,7 @@ def run(args) -> None:
 
         LOG.info(
             "%s | %s |%s %s %s| %s on %s%s%s",
-            app.uuid,
+            app.id,
             app.created_at.astimezone(),
             color,
             app.status.value.center(12),
