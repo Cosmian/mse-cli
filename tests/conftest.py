@@ -33,6 +33,6 @@ def capture_logs(f: io.StringIO) -> str:
 
 @pytest.fixture(autouse=True)
 def slow_down_tests():
-    """We sleep 1 sec between tests due to API limitation en dev env."""
+    """We sleep 1 sec between tests due to API limitation in dev env."""
     yield
     time.sleep(1)
