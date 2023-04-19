@@ -24,12 +24,12 @@ def test_status_bad_uuid(cmd_log):
         run_status(
             Namespace(
                 **{
-                    "app_uuid": "00000000-0000-0000-0000-000000000000",
+                    "app_id": "00000000-0000-0000-0000-000000000000",
                 }
             )
         )
 
-    assert "Cannot find the app with UUID " in str(exception.value)
+    assert "Cannot find the app with id " in str(exception.value)
 
 
 @pytest.mark.slow
@@ -39,12 +39,12 @@ def test_logs_bad_uuid(cmd_log):
         run_logs(
             Namespace(
                 **{
-                    "app_uuid": "00000000-0000-0000-0000-000000000000",
+                    "app_id": "00000000-0000-0000-0000-000000000000",
                 }
             )
         )
 
-    assert "Cannot find the app with UUID " in str(exception.value)
+    assert "Cannot find the app with id " in str(exception.value)
 
 
 @pytest.mark.slow
@@ -104,12 +104,12 @@ def test_stop_bad_uuid(cmd_log):
         run_stop(
             Namespace(
                 **{
-                    "app_uuid": ["00000000-0000-0000-0000-000000000000"],
+                    "app_id": ["00000000-0000-0000-0000-000000000000"],
                 }
             )
         )
 
-    assert "Cannot find the app with UUID " in str(exception.value)
+    assert "Cannot find the app with id " in str(exception.value)
 
 
 @pytest.mark.slow

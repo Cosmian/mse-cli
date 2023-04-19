@@ -105,7 +105,7 @@ def test_run():
     conf = Context.from_app_conf(conf=ref_app_conf)
     ref_context_conf.config.code_secret_key = conf.config.code_secret_key
     conf.run(
-        uuid=UUID("d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e"),
+        app_id=UUID("d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e"),
         enclave_size=1,
         config_domain_name="demo.cosmilink.com",
         expires_at=datetime.strptime(

@@ -29,10 +29,10 @@ class SSLCertificateOrigin(Enum):
 class App(BaseModel):
     """App model."""
 
-    uuid: UUID
+    id: UUID
     name: str
-    project_uuid: UUID
-    owner_uuid: UUID
+    project_id: UUID
+    owner_id: str
     domain_name: str
     config_domain_name: str
     docker: str
@@ -59,7 +59,7 @@ class App(BaseModel):
 class PartialApp(BaseModel):
     """App model (partial fields)."""
 
-    uuid: UUID
+    id: UUID
     name: str
     domain_name: str
     created_at: datetime.datetime
@@ -90,10 +90,10 @@ class DefaultAppConfig(BaseModel):
 class Project(BaseModel):
     """Project model."""
 
-    uuid: UUID
+    id: UUID
     name: str
     description: str
-    owner_uuid: UUID
+    owner_id: str
     is_default: bool
     stripe_customer_id: Optional[str]
     stripe_payment_method_id: Optional[str]
@@ -123,11 +123,13 @@ class Hardware(BaseModel):
 class User(BaseModel):
     """User model."""
 
-    uuid: UUID
-    first_name: str
-    last_name: str
+    id: str
+    given_name: str
+    family_name: str
     email: str
     created_at: datetime.datetime
+    configured: bool
+    email_verified: bool
 
     @staticmethod
     def from_dict(dct: Dict[str, Any]):

@@ -19,7 +19,7 @@ def add_subparser(subparsers):
     parser.set_defaults(func=run)
 
     parser.add_argument(
-        "app_uuid",
+        "app_id",
         type=uuid.UUID,
         help="identifier of the MSE web application to display logs",
     )
@@ -29,12 +29,12 @@ def run(args) -> None:
     """Run the subcommand."""
     user_conf = UserConf.from_toml()
 
-    LOG.info("Fetching the logs (last 64kB) for %s...", args.app_uuid)
+    LOG.info("Fetching the logs (last 64kB) for %s...", args.app_id)
 
     conn = user_conf.get_connection()
-    app = get_app(conn=conn, uuid=args.app_uuid)
+    app = get_app(conn=conn, app_id=args.app_id)
 
-    r: requests.Response = get_app_logs(conn=conn, uuid=app.uuid)
+    r: requests.Response = get_app_logs(conn=conn, app_id=app.id)
     if not r.ok:
         raise Exception(r.text)
 

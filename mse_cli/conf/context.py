@@ -197,7 +197,7 @@ class Context(BaseModel):
 
     def run(
         self,
-        uuid: UUID,
+        app_id: UUID,
         enclave_size: int,
         config_domain_name: str,
         expires_at: datetime,
@@ -206,7 +206,7 @@ class Context(BaseModel):
     ):
         """Complete the context since the app is now running."""
         self.instance = ContextInstance(
-            id=uuid,
+            id=app_id,
             config_domain_name=config_domain_name,
             enclave_size=enclave_size,
             expires_at=expires_at,
