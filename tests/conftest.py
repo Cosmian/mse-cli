@@ -1,5 +1,6 @@
 import io
 import logging
+import time
 
 import pytest
 
@@ -28,3 +29,10 @@ def capture_logs(f: io.StringIO) -> str:
     log_contents = f.getvalue()
     f.truncate(0)
     return log_contents
+
+
+@pytest.fixture(autouse=True)
+def slow_down_tests():
+    """We sleep 1 sec between tests due to API limitation en dev env."""
+    yield
+    time.sleep(1)
