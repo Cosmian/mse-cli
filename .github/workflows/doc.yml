@@ -1,8 +1,7 @@
 name: Deploy documentation
 
 on:
-  push:
-    # Only run when pull request is closed and merged into develop
+  # Only run when pull request is closed and merged into develop
   pull_request:
     branches:
       - develop
