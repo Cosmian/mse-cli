@@ -5,7 +5,6 @@ from argparse import Namespace
 from pathlib import Path
 
 import pytest
-from conftest import capture_logs
 
 from mse_cli.command.context import run as run_context
 from mse_cli.command.deploy import run as run_deploy
@@ -160,7 +159,7 @@ def test_deploy_non_free(cmd_log):
         )
 
     assert (
-        "Project 'default' has not enough hardware available '64g-eu-001' to spawn app named 'non_free'"
+        "Project `default` has not enough hardware available `64g-eu-001` to spawn app named `non_free`"
         in str(exception.value)
     )
 
@@ -219,7 +218,7 @@ def test_deploy_bad_docker(cmd_log):
         )
 
     assert (
-        "Docker 'ghcr.io/cosmian/mse-pytorch:notexist' is not approved or supported yet."
+        "Docker `ghcr.io/cosmian/mse-pytorch:notexist` is not approved or supported yet."
         in str(exception.value)
     )
 
