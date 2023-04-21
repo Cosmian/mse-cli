@@ -106,7 +106,7 @@ Example of a secret file:
 
 Which is used by this application code example:
 
-```toml
+```python
 import os
 import json
 
@@ -127,7 +127,7 @@ def whoami():
 
 Find below a small example using paths:
 
-```toml
+```python
 import os
 
 from http import HTTPStatus
@@ -202,4 +202,4 @@ Please find below limitations that you need to consider to be able to run your a
 - Do not fork processes
 - Do not run subprocess (command execution)
 
-Trying to use these system functionalities could make the app crash.
+Trying to use these system operations could make the app crash.
