@@ -28,7 +28,7 @@ def test_from_toml():
         ),
         instance=ContextInstance(
             id="d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e",
-            config_domain_name="demo.cosmilink.com",
+            config_domain_name="demo.dev.cosmilink.com",
             enclave_size=1,
             expires_at=datetime.strptime(
                 "2022-11-18 16:22:11.516125", "%Y-%m-%d %H:%M:%S.%f"
@@ -53,7 +53,7 @@ def test_from_app_conf():
     )
 
     ssl = SSLConf(
-        domain_name="demo.cosmilink.com",
+        domain_name="demo.dev.cosmilink.com",
         private_key=Path(__file__).parent / "data/key.pem",
         certificate=Path(__file__).parent / "data/cert.pem",
     )
@@ -93,7 +93,7 @@ def test_run():
     )
 
     ssl = SSLConf(
-        domain_name="demo.cosmilink.com",
+        domain_name="demo.dev.cosmilink.com",
         private_key=Path(__file__).parent / "data/key.pem",
         certificate=Path(__file__).parent / "data/cert.pem",
     )
@@ -107,7 +107,7 @@ def test_run():
     conf.run(
         app_id=UUID("d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e"),
         enclave_size=1,
-        config_domain_name="demo.cosmilink.com",
+        config_domain_name="demo.dev.cosmilink.com",
         expires_at=datetime.strptime(
             "2022-11-18T16:22:11.516125", "%Y-%m-%dT%H:%M:%S.%f"
         ),

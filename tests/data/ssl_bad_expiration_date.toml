@@ -10,6 +10,6 @@ healthcheck_endpoint = "/"
 docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
 
 [ssl]
-domain_name = "demo.cosmian.app"
+domain_name = "demo.dev.cosmilink.com"
 private_key = "key.pem"
 certificate = "cert.pem"

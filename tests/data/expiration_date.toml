@@ -1,7 +1,7 @@
 name = "helloworld"
 project = "default"
 hardware = "4g-eu-001"
-expiration_date = "2023-05-01 00:00:00+00:00"
+expiration_date = "2023-06-29 00:00:00+00:00"
 
 [code]
 location = "/tmp/code"
