@@ -12,30 +12,30 @@ from mse_cli.conf.app import AppConf, CodeConf, SSLConf
 PRIVATE_KEY = "-----BEGIN PRIVATE"
 
 CERTIFICATE = """-----BEGIN CERTIFICATE-----
-MIIEWjCCA0KgAwIBAgISAwuZSn615r3j+H9vKZjmprlHMA0GCSqGSIb3DQEBCwUA
+MIIEYTCCA0mgAwIBAgISAwxw8+/Z9R9eGAFT3pJO/p4kMA0GCSqGSIb3DQEBCwUA
 MDIxCzAJBgNVBAYTAlVTMRYwFAYDVQQKEw1MZXQncyBFbmNyeXB0MQswCQYDVQQD
-EwJSMzAeFw0yMzAyMDIxMzMyMzlaFw0yMzA1MDMxMzMyMzhaMBoxGDAWBgNVBAMM
-DyouY29zbWlsaW5rLmNvbTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABIsR4S+m
-m3PvocuaDXdWU5HkzipsDr4pPxwz/rw3tywalw2V+I7Lvf8bqci6tbt8O7sVTT/+
-rvA5xDqLLkVKhj2jggJLMIICRzAOBgNVHQ8BAf8EBAMCB4AwHQYDVR0lBBYwFAYI
-KwYBBQUHAwEGCCsGAQUFBwMCMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFD/6vr/4
-m7R9kloHkkMzeG9vpxN7MB8GA1UdIwQYMBaAFBQusxe3WFbLrlAJQOYfr52LFMLG
-MFUGCCsGAQUFBwEBBEkwRzAhBggrBgEFBQcwAYYVaHR0cDovL3IzLm8ubGVuY3Iu
-b3JnMCIGCCsGAQUFBzAChhZodHRwOi8vcjMuaS5sZW5jci5vcmcvMBoGA1UdEQQT
-MBGCDyouY29zbWlsaW5rLmNvbTBMBgNVHSAERTBDMAgGBmeBDAECATA3BgsrBgEE
-AYLfEwEBATAoMCYGCCsGAQUFBwIBFhpodHRwOi8vY3BzLmxldHNlbmNyeXB0Lm9y
-ZzCCAQUGCisGAQQB1nkCBAIEgfYEgfMA8QB3ALc++yTfnE26dfI5xbpY9Gxd/ELP
-ep81xJ4dCYEl7bSZAAABhhKLN/8AAAQDAEgwRgIhAPOh+jCkllHwgfbX4mZ27c3u
-rcXlNO6uFVOX/uXcEjjYAiEA2cPR4e6aBtyOuomCsuyV/RJdc1xMdJlixsdXHOJk
-M40AdgCt9776fP8QyIudPZwePhhqtGcpXc+xDCTKhYY069yCigAAAYYSizgsAAAE
-AwBHMEUCIHxcQ0Lv4Rs4qFp/Wg25x5qm2BNi5X7SSRPhEr6n9Ir9AiEArur7KDcV
-6ZS2F4RAqd062r5ZWPfCigFJjq77nibrj5gwDQYJKoZIhvcNAQELBQADggEBAD3Q
-Slw+RHJGE3lzj8t8NhLl/F/LERPqWHbMlOxqzEpjpzFiWTyu89hqgUPykWyfBdMJ
-QbkeSk+z5kfT90/QvguzYT7y0fXEa5kmRd7UK1Xrs7Ru8j9IoiooeS5RNE+GXp7y
-uP3rtHkO6Ro/JSPbUQmVQwuakJg9Ua2P79ArFbB4Gk9YkYo9ekouL9caz/HCAg7M
-+S7Dw1lc2pN4mnbgGqyaLuO6H0Qvsgwhcgfh4FlozGeon46+KQGc60NT6Cph2CYN
-QxXjB2lDk2jbI1SOWTkEDeaDA0lWPgCXWdG/o9W/69g1cBS+J0SwthzOkkypZ5jF
-+pE3qLyrSNpINXABCMY=
+EwJSMzAeFw0yMzAzMzEwNzMzNTlaFw0yMzA2MjkwNzMzNThaMB4xHDAaBgNVBAMM
+EyouZGV2LmNvc21pbGluay5jb20wWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAATp
+quvX2RGZpTvyAdKXYq2Xn6Im10LivhW5LJYHC0o+Vx6zh6fq7NghVuVwX+DD6bfu
+3UweMNOaj6C7E4QSuRSVo4ICTjCCAkowDgYDVR0PAQH/BAQDAgeAMB0GA1UdJQQW
+MBQGCCsGAQUFBwMBBggrBgEFBQcDAjAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBSV
+eq5hmkC6v7m+PhSWjazpzu1JJDAfBgNVHSMEGDAWgBQULrMXt1hWy65QCUDmH6+d
+ixTCxjBVBggrBgEFBQcBAQRJMEcwIQYIKwYBBQUHMAGGFWh0dHA6Ly9yMy5vLmxl
+bmNyLm9yZzAiBggrBgEFBQcwAoYWaHR0cDovL3IzLmkubGVuY3Iub3JnLzAeBgNV
+HREEFzAVghMqLmRldi5jb3NtaWxpbmsuY29tMEwGA1UdIARFMEMwCAYGZ4EMAQIB
+MDcGCysGAQQBgt8TAQEBMCgwJgYIKwYBBQUHAgEWGmh0dHA6Ly9jcHMubGV0c2Vu
+Y3J5cHQub3JnMIIBBAYKKwYBBAHWeQIEAgSB9QSB8gDwAHYAtz77JN+cTbp18jnF
+ulj0bF38Qs96nzXEnh0JgSXttJkAAAGHNs1YUQAABAMARzBFAiEAyA3P1CVW/owH
+UeIshUd2markKt+lwNQBdi7GPnp5N98CIEI90wwjs2z6Kv7j50t+Jo6zHaJcdkpe
+1Co84k1Kf593AHYArfe++nz/EMiLnT2cHj4YarRnKV3PsQwkyoWGNOvcgooAAAGH
+Ns1YhgAABAMARzBFAiB5OrNt5zXxVq+d2UyJTnEXg4x8KP1Jnqi/uWqY1nMbJwIh
+AKBP7wteQGLnIlrbjhwB33JvYskBqpXqOQKhdUnt5HyTMA0GCSqGSIb3DQEBCwUA
+A4IBAQBWLHIBldUam/s9+YtKVrOHIPbIg6WmztASPtnH1q2ehzTuxJw9R3qMiGAo
+S2LHEYBPtjWfBJMB53SD39Mlvj8KDLRlRtFNv0j5OrddKEp8TJZjsEnncpRJYLH4
+USyBj48HeYukzYuW34e7GhcqbR5Y4foKah9hMY0mNYS8CQ9gvhGDQXZjtb0NT0OC
+3uQFNovYfowmh3AugCGMHPfHJBdCYp3OWP06kMUIF0HcUf14LN59mTjLbWvpMFZY
+hTzDLxa9dujgnpDt4cWU7ImCdxPLYerbg5LMgW3vXD1QKQIFDeZLwXKw2Nb5o3MU
+E9X9WRkFtRDUHOj0PxL20reOi3jJ
 -----END CERTIFICATE-----
 -----BEGIN CERTIFICATE-----
 MIIFFjCCAv6gAwIBAgIRAJErCErPDBinU/bWLiWnX1owDQYJKoZIhvcNAQELBQAw
@@ -113,7 +113,7 @@ def test_ssl():
     )
 
     ssl = SSLConf(
-        domain_name="demo.cosmilink.com",
+        domain_name="demo.dev.cosmilink.com",
         private_key=Path(__file__).parent / "data" / Path("key.pem"),
         certificate=Path(__file__).parent / "data" / Path("cert.pem"),
     )
@@ -122,7 +122,7 @@ def test_ssl():
         name="helloworld",
         project="default",
         hardware="4g-eu-001",
-        expiration_date=datetime(2023, 5, 1, 0, 0, 0, tzinfo=timezone.utc),
+        expiration_date=datetime(2023, 6, 29, 0, 0, 0, tzinfo=timezone.utc),
         code=code,
         ssl=ssl,
     )
@@ -213,14 +213,14 @@ def test_expiration_date():
         project="default",
         hardware="4g-eu-001",
         code=code,
-        expiration_date=datetime(2023, 5, 1, 0, 0, 0, tzinfo=timezone.utc),
+        expiration_date=datetime(2023, 6, 29, 0, 0, 0, tzinfo=timezone.utc),
     )
 
     assert conf == ref_app_conf
 
     toml = Path("tests/data/optional_fields_ssl.toml")
     conf = AppConf.from_toml(path=toml)
-    assert conf.expiration_date == datetime(2023, 5, 3, 13, 32, 38, tzinfo=timezone.utc)
+    assert conf.expiration_date == datetime(2023, 6, 29, 7, 33, 58, tzinfo=timezone.utc)
 
 
 def test_bad_domain_name():
@@ -309,9 +309,9 @@ def test_into_payload():
         "healthcheck_endpoint": "/",
         "python_application": "app:app",
         "docker": "ghcr.io/cosmian/mse-pytorch:20230104085621",
-        "expires_at": "2023-05-01T00:00:00.000000Z",
+        "expires_at": "2023-06-29T00:00:00.000000Z",
         "dev_mode": False,
         "ssl_certificate": CERTIFICATE,
-        "domain_name": "demo.cosmilink.com",
+        "domain_name": "demo.dev.cosmilink.com",
         "hardware": "4g-eu-001",
     }
