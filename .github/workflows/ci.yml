@@ -16,7 +16,7 @@ env:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, docker]
     strategy:
       matrix:
         python-version: ["3.8", "3.9"]
@@ -65,7 +65,7 @@ jobs:
           pytest -m "not slow"
 
   tests:
-    runs-on: self-hosted
+    runs-on: [self-hosted, docker]
     container:
       image: python:3.8
       volumes:

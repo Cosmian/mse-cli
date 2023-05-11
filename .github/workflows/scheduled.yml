@@ -6,7 +6,7 @@ on:
 
 jobs:
   tests:
-    runs-on: self-hosted
+    runs-on: [self-hosted, docker]
     container:
       image: python:3.8
       volumes:
