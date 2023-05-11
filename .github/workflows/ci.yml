@@ -74,7 +74,8 @@ jobs:
     needs: check
 
     steps:
-      - uses: actions/checkout@v3
+      # Must use 'v1' (related issue : https://github.com/myoung34/docker-github-actions-runner/issues/279)
+      - uses: actions/checkout@v1
 
       - name: Install dependencies
         run: |
