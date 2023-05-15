@@ -96,7 +96,7 @@ jobs:
           MSE_TEST_PUBLIC_KEY: ${{ vars.DEV_MSE_TEST_PUBLIC_KEY }}
           MSE_CONF_PATH: ${{ github.workspace }}
         run: |
-          echo 'email = "alice@cosmian.com"' > ${{env.MSE_CONF_PATH}}/login.toml
-          echo "refresh_token = \"${{env.REFRESH_TOKEN}}\"" >> ${{env.MSE_CONF_PATH}}/login.toml
-          echo "Running tests using ${{env.MSE_BASE_URL}}"
+          echo 'email = "alice@cosmian.com"' > ${MSE_CONF_PATH}/login.toml
+          echo "refresh_token = \"${REFRESH_TOKEN}\"" >> ${MSE_CONF_PATH}/login.toml
+          echo "Running tests using ${MSE_BASE_URL}"
           pytest -m slow
