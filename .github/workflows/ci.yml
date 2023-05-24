@@ -77,6 +77,9 @@ jobs:
       # Must use 'v1' (related issue : https://github.com/myoung34/docker-github-actions-runner/issues/279)
       - uses: actions/checkout@v1
 
+      - name: test e
+        run: ls -la /__e
+        
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
