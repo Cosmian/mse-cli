@@ -7,8 +7,8 @@ from pathlib import Path
 from uuid import UUID
 
 from mse_cli.api.types import SSLCertificateOrigin
-from mse_cli.conf.app import AppConf, CodeConf, SSLConf
-from mse_cli.conf.context import Context, ContextConf, ContextInstance
+from mse_cli.model.app import AppConf, CodeConf, SSLConf
+from mse_cli.model.context import Context, ContextConf, ContextInstance
 
 
 def test_from_toml():

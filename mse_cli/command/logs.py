@@ -6,8 +6,8 @@ import requests
 
 from mse_cli.api.app import log as get_app_logs
 from mse_cli.command.helpers import get_app
-from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
+from mse_cli.model.user import UserConf
 
 
 def add_subparser(subparsers):

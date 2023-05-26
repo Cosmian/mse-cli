@@ -1,4 +1,4 @@
-"""mse_cli.conf.user module."""
+"""mse_cli.model.user module."""
 
 from pathlib import Path
 from typing import Dict, Optional

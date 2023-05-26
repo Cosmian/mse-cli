@@ -12,6 +12,9 @@ import requests
 from intel_sgx_ra.attest import remote_attestation
 from intel_sgx_ra.ratls import ratls_verification
 from intel_sgx_ra.signer import mr_signer_from_pk
+from mse_cli_core.clock_tick import ClockTick
+from mse_cli_core.fs import tar
+from mse_cli_core.ignore_file import IgnoreFile
 from mse_lib_crypto.xsalsa20_poly1305 import encrypt_directory
 
 from mse_cli import MSE_CERTIFICATES_URL, MSE_PCCS_URL
@@ -28,11 +31,8 @@ from mse_cli.api.types import (
     Project,
     SSLCertificateOrigin,
 )
-from mse_cli.conf.context import Context
 from mse_cli.log import LOGGER as LOG
-from mse_cli.utils.clock_tick import ClockTick
-from mse_cli.utils.fs import tar
-from mse_cli.utils.ignore_file import IgnoreFile
+from mse_cli.model.context import Context
 
 
 def get_client_docker() -> docker.client.DockerClient:

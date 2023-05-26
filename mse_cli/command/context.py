@@ -5,13 +5,13 @@ from datetime import datetime
 from pathlib import Path
 from uuid import UUID
 
+from mse_cli_core.fs import ls
 from pydantic import ValidationError
 from toml import TomlDecodeError
 
-from mse_cli.conf.context import Context
 from mse_cli.log import LOGGER as LOG
+from mse_cli.model.context import Context
 from mse_cli.utils.color import COLOR, ColorKind
-from mse_cli.utils.fs import ls
 
 
 def add_subparser(subparsers):

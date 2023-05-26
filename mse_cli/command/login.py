@@ -11,6 +11,7 @@ from typing import Optional
 from urllib.parse import parse_qs, urlencode, urlparse
 
 import requests
+from mse_cli_core.base64 import base64url_decode, base64url_encode
 
 from mse_cli import (
     MSE_AUTH0_AUDIENCE,
@@ -21,9 +22,8 @@ from mse_cli import (
 from mse_cli.api.types import User
 from mse_cli.api.user import me as get_me
 from mse_cli.command.logout import logout
-from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
-from mse_cli.utils.base64 import base64url_decode, base64url_encode
+from mse_cli.model.user import UserConf
 
 CODE: Optional[str] = None
 
