@@ -1,28 +1,23 @@
 """mse_cli.command.helpers module."""
 
-import re
 import socket
 import ssl
 import sys
-from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 from uuid import UUID
 
 import docker
 import requests
-from intel_sgx_ra.attest import remote_attestation
-from intel_sgx_ra.ratls import get_server_certificate, ratls_verification
-from intel_sgx_ra.signer import mr_signer_from_pk
+from intel_sgx_ra.error import SGXQuoteNotFound
+from intel_sgx_ra.ratls import get_server_certificate
 from mse_cli_core.clock_tick import ClockTick
-from mse_cli_core.enclave import verify_enclave
+from mse_cli_core.enclave import compute_mr_enclave, verify_enclave
 from mse_cli_core.fs import tar
 from mse_cli_core.ignore_file import IgnoreFile
-from mse_lib_crypto.xsalsa20_poly1305 import encrypt_directory
-from intel_sgx_ra.error import SGXQuoteNotFound
-
-from mse_cli_core.enclave import compute_mr_enclave
 from mse_cli_core.no_sgx_docker import NoSgxDockerConfig
+from mse_lib_crypto.xsalsa20_poly1305 import encrypt_directory
+
 from mse_cli import MSE_CERTIFICATES_URL, MSE_PCCS_URL
 from mse_cli.api.app import default, get, metrics, stop
 from mse_cli.api.auth import Connection
@@ -35,7 +30,6 @@ from mse_cli.api.types import (
     Hardware,
     PartialApp,
     Project,
-    SSLCertificateOrigin,
 )
 from mse_cli.log import LOGGER as LOG
 from mse_cli.model.context import Context
