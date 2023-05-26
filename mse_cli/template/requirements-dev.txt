@@ -1,2 +1,2 @@
-intel-sgx-ra>=1.0.1,<1.1
+intel-sgx-ra==2.0a5
 pytest==7.2.0

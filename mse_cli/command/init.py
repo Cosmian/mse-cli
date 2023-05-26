@@ -4,9 +4,9 @@ import os
 from pathlib import Path
 
 from mse_cli.command.helpers import get_default
-from mse_cli.conf.app import AppConf, CodeConf
-from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
+from mse_cli.model.app import AppConf, CodeConf
+from mse_cli.model.user import UserConf
 
 
 def add_subparser(subparsers):

@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from mse_cli.conf.app import AppConf, CodeConf, SSLConf
+from mse_cli.model.app import AppConf, CodeConf, SSLConf
 
 PRIVATE_KEY = "-----BEGIN PRIVATE"
 

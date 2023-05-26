@@ -1,4 +1,4 @@
-"""mse_cli.conf.context module."""
+"""mse_cli.model.context module."""
 
 import os
 import shutil
@@ -14,7 +14,7 @@ from pydantic import BaseModel, validator
 
 from mse_cli import MSE_CONF_DIR
 from mse_cli.api.types import SSLCertificateOrigin
-from mse_cli.conf.app import AppConf
+from mse_cli.model.app import AppConf
 
 
 class ContextInstance(BaseModel):

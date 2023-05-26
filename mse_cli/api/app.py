@@ -7,7 +7,7 @@ from uuid import UUID
 import requests
 
 from mse_cli.api.auth import Connection
-from mse_cli.conf.app import AppConf
+from mse_cli.model.app import AppConf
 
 
 def new(conn: Connection, conf: AppConf, code_tar_path: Path) -> requests.Response:

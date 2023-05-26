@@ -1,4 +1,4 @@
-"""Test cli/*.py."""
+"""Test command/*.py."""
 
 import io
 import os
@@ -23,8 +23,8 @@ from mse_cli.command.scaffold import run as run_scaffold
 from mse_cli.command.status import run as run_status
 from mse_cli.command.stop import run as run_stop
 from mse_cli.command.verify import run as run_verify
-from mse_cli.conf.app import AppConf, SSLConf
-from mse_cli.conf.context import Context
+from mse_cli.model.app import AppConf, SSLConf
+from mse_cli.model.context import Context
 
 
 def _test_verify(

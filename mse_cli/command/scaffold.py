@@ -8,9 +8,9 @@ import pkg_resources
 from jinja2 import Template
 
 from mse_cli.command.helpers import get_default, non_empty_string
-from mse_cli.conf.app import AppConf
-from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
+from mse_cli.model.app import AppConf
+from mse_cli.model.user import UserConf
 
 
 def add_subparser(subparsers):

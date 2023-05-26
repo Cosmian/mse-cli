@@ -10,8 +10,8 @@ from intel_sgx_ra.error import SGXQuoteNotFound
 from intel_sgx_ra.ratls import get_server_certificate
 
 from mse_cli.command.helpers import compute_mr_enclave, prepare_code, verify_app
-from mse_cli.conf.context import Context
 from mse_cli.log import LOGGER as LOG
+from mse_cli.model.context import Context
 from mse_cli.utils.spinner import Spinner
 
 

@@ -6,6 +6,7 @@ from uuid import UUID
 
 import requests
 from intel_sgx_ra.ratls import get_server_certificate
+from mse_cli_core.clock_tick import ClockTick
 
 from mse_cli import MSE_DOC_SECURITY_MODEL_URL
 from mse_cli.api.app import new
@@ -22,11 +23,10 @@ from mse_cli.command.helpers import (
     stop_app,
     verify_app,
 )
-from mse_cli.conf.app import AppConf
-from mse_cli.conf.context import Context
-from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
-from mse_cli.utils.clock_tick import ClockTick
+from mse_cli.model.app import AppConf
+from mse_cli.model.context import Context
+from mse_cli.model.user import UserConf
 from mse_cli.utils.color import COLOR, ColorKind
 from mse_cli.utils.spinner import Spinner
 

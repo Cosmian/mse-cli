@@ -5,8 +5,8 @@ import os
 import requests
 
 from mse_cli import MSE_AUTH0_DOMAIN_NAME
-from mse_cli.conf.user import UserConf
 from mse_cli.log import LOGGER as LOG
+from mse_cli.model.user import UserConf
 
 
 def add_subparser(subparsers):
