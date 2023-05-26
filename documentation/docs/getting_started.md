@@ -1,4 +1,4 @@
-!!! info "Welcome to Microservice Encryption deployment tutorial"
+!!! info "Welcome to Microservice Encryption Cloud deployment tutorial"
 
     To launch your first confidential microservice, follow this tutorial in your favorite terminal.
 

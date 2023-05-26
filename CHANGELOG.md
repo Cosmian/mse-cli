@@ -2,7 +2,8 @@
 
 ### Updated
 
-* 
+* Use `mse-cli-core` 
+* Adapt the code to fit new `mse-cli-core` functions definitions and `mse-home` adds such as: enclave verification, querying the configuration server, computing the code fingerprint...
 
 ## \[0.12.0\] - 2023-04-14
 
