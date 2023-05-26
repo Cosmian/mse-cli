@@ -1,22 +1,28 @@
 """mse_cli.command.helpers module."""
 
 import re
+import socket
+import ssl
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 from uuid import UUID
 
 import docker
 import requests
 from intel_sgx_ra.attest import remote_attestation
-from intel_sgx_ra.ratls import ratls_verification
+from intel_sgx_ra.ratls import get_server_certificate, ratls_verification
 from intel_sgx_ra.signer import mr_signer_from_pk
 from mse_cli_core.clock_tick import ClockTick
+from mse_cli_core.enclave import verify_enclave
 from mse_cli_core.fs import tar
 from mse_cli_core.ignore_file import IgnoreFile
 from mse_lib_crypto.xsalsa20_poly1305 import encrypt_directory
+from intel_sgx_ra.error import SGXQuoteNotFound
 
+from mse_cli_core.enclave import compute_mr_enclave
+from mse_cli_core.no_sgx_docker import NoSgxDockerConfig
 from mse_cli import MSE_CERTIFICATES_URL, MSE_PCCS_URL
 from mse_cli.api.app import default, get, metrics, stop
 from mse_cli.api.auth import Connection
@@ -33,6 +39,7 @@ from mse_cli.api.types import (
 )
 from mse_cli.log import LOGGER as LOG
 from mse_cli.model.context import Context
+from mse_cli.utils.spinner import Spinner
 
 
 def get_client_docker() -> docker.client.DockerClient:
@@ -156,106 +163,71 @@ def stop_app(conn: Connection, app_id: UUID) -> None:
     Context.clean(app_id, ignore_errors=True)
 
 
-def compute_mr_enclave(context: Context, tar_path: Path) -> str:
-    """Compute the MR enclave of an enclave."""
-    client = get_client_docker()
-
-    assert context.instance
-
-    # Pull always before running
-    client.images.pull(context.config.docker)
-
-    command = [
-        "--size",
-        f"{context.instance.enclave_size}M",
-        "--code",
-        "/tmp/app.tar",
-        "--host",
-        context.instance.config_domain_name,
-        "--uuid",
-        str(context.instance.id),
-        "--application",
-        context.config.python_application,
-        "--dry-run",
-    ]
-
-    volumes = {f"{tar_path}": {"bind": "/tmp/app.tar", "mode": "rw"}}
-
-    if context.instance.ssl_certificate_origin == SSLCertificateOrigin.Owner:
-        command.append("--certificate")
-        command.append("/tmp/cert.pem")
-        volumes[f"{context.app_cert_path}"] = {"bind": "/tmp/cert.pem", "mode": "rw"}
-    else:
-        command.append("--self-signed")
-        command.append(str(int(datetime.timestamp(context.instance.expires_at))))
-
-    container = client.containers.run(
-        context.config.docker,
-        command=command,
-        volumes=volumes,
-        entrypoint="mse-run",
-        remove=True,
-        detach=False,
-        stdout=True,
-        stderr=True,
-    )
-
-    # Save the docker output
-    LOG.debug("Write docker logs in: %s", context.docker_log_path)
-    context.docker_log_path.write_bytes(container)
-
-    # Get the mr_enclave from the docker output
-    pattern = "Measurement:\n[ ]*([a-z0-9]{64})"
-    m = re.search(pattern.encode("utf-8"), container)
-
-    if not m:
-        raise Exception(
-            f"Fail to compute mr_enclave! See {context.docker_log_path} for more details."
-        )
-
-    return str(m.group(1).decode("utf-8"))
-
-
-def verify_app(mrenclave: Optional[str], ca_data: str):
-    """Verify the app by proceeding the remote attestation."""
-    r = requests.get(url=MSE_CERTIFICATES_URL, timeout=60)
-    if not r.ok:
-        raise Exception(r.text)
-    # Compute MRSIGNER value from public key
-    mrsigner = mr_signer_from_pk(r.content)
-
-    # Check certificate's public key in quote's user report data
-    quote = ratls_verification(ca_data.encode("utf8"))
-
-    # Proceed RA
-    try:
-        remote_attestation(quote=quote, base_url=MSE_PCCS_URL)
-    except Exception as exc:
-        LOG.error("Verification failed!")
-        raise exc
-
-    if mrenclave:
-        if quote.report_body.mr_enclave != bytes.fromhex(mrenclave):
-            LOG.error("Verification failed!")
-            raise Exception(
-                "Code fingerprint is wrong "
-                f"(read {bytes(quote.report_body.mr_enclave).hex()} "
-                f"but should be {mrenclave})"
-            )
-    else:
-        LOG.warning("Code fingerprint check skipped!")
-
-    if quote.report_body.mr_signer != mrsigner:
-        LOG.error("Verification failed!")
-        raise Exception(
-            "Enclave signer is wrong "
-            f"(read {bytes(quote.report_body.mr_signer).hex()} "
-            f"but should be {bytes(mrsigner).hex()})"
-        )
-
-
 def non_empty_string(s):
     """Check if a string is empty for argparse cmdline."""
     if not s:
         raise ValueError("String cannot be empty")
     return s
+
+
+def verify_app(
+    mrenclave: Optional[Union[str, Tuple[Context, Path]]],
+    domain_name: str,
+    output_cert_path: Optional[Path],
+):
+    """Verify the app by proceeding the remote attestation."""
+    if not mrenclave:
+        LOG.warning("Code fingerprint check skipped!")
+    elif isinstance(mrenclave, Tuple):
+        # Compute the MREnclave
+        (context, tar_path) = mrenclave
+        with Spinner("Computing the code fingerprint... "):
+            mrenclave = compute_mr_enclave(
+                get_client_docker(),
+                context.config.docker,
+                NoSgxDockerConfig(
+                    host=context.instance.config_domain_name,
+                    expiration_date=context.instance.expires_at,
+                    app_cert=context.app_cert_path,
+                    size=context.instance.enclave_size,
+                    app_id=context.instance.id,
+                    application=context.config.python_application,
+                ),
+                tar_path,
+                context.docker_log_path,
+            )
+            LOG.info("The code fingerprint is %s", mrenclave)
+
+    # Get the ratls certificate
+    try:
+        ratls_cert = get_server_certificate((domain_name, 443))
+        output_cert_path.write_text(ratls_cert)
+    except (ssl.SSLZeroReturnError, socket.gaierror, ssl.SSLEOFError) as exc:
+        raise ConnectionError(
+            f"Can't reach {domain_name}. "
+            "Are you sure the application is still running?"
+        ) from exc
+
+    # Get the signer key public key
+    r = requests.get(url=MSE_CERTIFICATES_URL, timeout=60)
+    if not r.ok:
+        raise Exception(
+            "Can't get the enclave signer public key: [%d] %s", r.status_code, r.text
+        )
+
+    try:
+        verify_enclave(
+            r.content, ratls_cert.encode("utf8"), mrenclave, pccs_url=MSE_PCCS_URL
+        )
+    except SGXQuoteNotFound:
+        raise Exception(
+            "The application is not using a certificate generated by MSE."
+            "Verifying the application is therefore not possible on use"
+        )
+    except Exception as exc:
+        LOG.error("Verification failed!")
+        raise exc
+
+    LOG.success("Verification success")  # type: ignore
+    if output_cert_path:
+        LOG.info("The verified certificate has been saved at: %s", output_cert_path)
