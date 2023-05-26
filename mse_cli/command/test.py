@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from docker.errors import ImageNotFound
+from mse_cli_core.test_docker import TestDockerConfig
 
 from mse_cli.command.helpers import get_client_docker
 from mse_cli.log import LOGGER as LOG
@@ -48,24 +49,20 @@ def run(args) -> None:
         app.code.healthcheck_endpoint,
     )
 
-    command = ["--application", app.code.python_application, "--debug"]
-
-    volumes = {
-        f"{app.code.location}": {"bind": "/mse-app", "mode": "rw"},
-    }
-
-    if app.code.secrets:
-        volumes[f"{app.code.secrets}"] = {
-            "bind": "/root/.cache/mse/secrets.json",
-            "mode": "rw",
-        }
+    docker_config = TestDockerConfig(
+        code=app.code.location,
+        application=app.code.python_application,
+        secrets=app.code.secrets,
+        sealed_secrets=None,
+        port=5000,
+    )
 
     container = client.containers.run(
         app.code.docker,
-        command=command,
-        volumes=volumes,
-        entrypoint="mse-test",
-        ports={"5000/tcp": ("127.0.0.1", 5000)},
+        command=docker_config.cmd(),
+        volumes=docker_config.volumes(),
+        entrypoint=TestDockerConfig.entrypoint,
+        ports=docker_config.ports(),
         remove=True,
         detach=True,
         stdout=True,
