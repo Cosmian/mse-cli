@@ -5,7 +5,7 @@ from typing import Any, Dict, Optional
 from uuid import UUID
 
 import requests
-from intel_sgx_ra.ratls import get_server_certificate
+from mse_cli_core.bootstrap import ConfigurationPayload, configure_app
 from mse_cli_core.clock_tick import ClockTick
 
 from mse_cli import MSE_DOC_SECURITY_MODEL_URL
@@ -13,7 +13,6 @@ from mse_cli.api.app import new
 from mse_cli.api.auth import Connection
 from mse_cli.api.types import App, AppStatus, SSLCertificateOrigin
 from mse_cli.command.helpers import (
-    compute_mr_enclave,
     exists_in_project,
     get_app,
     get_client_docker,
@@ -317,24 +316,16 @@ def decrypt_private_data(
     """Send the ssl private key and the key which was used to encrypt the code."""
     assert context.instance
 
-    data: Dict[str, Any] = {
-        "code_secret_key": context.config.code_secret_key.hex(),
-        "uuid": str(context.instance.id),
-    }
-
-    if ssl_private_key:
-        data["ssl_private_key"] = ssl_private_key
-
-    if app_secrets:
-        data["app_secrets"] = app_secrets
-
-    r = requests.post(
-        url=f"https://{context.instance.config_domain_name}",
-        json=data,
-        headers={"Content-Type": "application/json"},
-        verify=str(context.config_cert_path),
-        timeout=60,
+    data = ConfigurationPayload(
+        app_id=context.instance.id,
+        secrets=app_secrets,
+        sealed_secrets=None,
+        code_secret_key=context.config.code_secret_key,
+        ssl_private_key=ssl_private_key,
     )
 
-    if not r.ok:
-        raise Exception(r.text)
+    configure_app(
+        f"https://{context.instance.config_domain_name}",
+        data.payload(),
+        str(context.config_cert_path),
+    )
