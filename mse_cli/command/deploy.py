@@ -141,22 +141,14 @@ def run(args) -> None:
             COLOR.render(ColorKind.LINK_END),
         )
 
-    selfsigned_cert = get_server_certificate((app.config_domain_name, 443))
-    context.config_cert_path.write_text(selfsigned_cert)
-
     if not args.no_verify:
-        with Spinner("Checking app trustworthiness... "):
-            mr_enclave = compute_mr_enclave(context, tar_path)
-
-        LOG.info("The code fingerprint is %s", mr_enclave)
-        verify_app(mr_enclave, selfsigned_cert)
-        LOG.success("Verification success")  # type: ignore
-
-        if app.ssl_certificate_origin == SSLCertificateOrigin.Self:
-            LOG.info(
-                "The verified certificate has been saved at: %s",
-                context.config_cert_path,
-            )
+        verify_app(
+            (context, tar_path),
+            app.config_domain_name,
+            context.config_cert_path
+            if app.ssl_certificate_origin == SSLCertificateOrigin.Self
+            else None,
+        )
     else:
         LOG.warning(
             "App trustworthiness checking skipped. The app integrity has "
