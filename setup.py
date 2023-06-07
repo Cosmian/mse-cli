@@ -32,7 +32,7 @@ setup(
     long_description=Path("README.md").read_text(),
     long_description_content_type="text/markdown",
     python_requires=">=3.8.0",
-    description="Python CLI for MicroService Encryption",
+    description="Python CLI for Microservice Encryption",
     packages=find_packages(),
     zip_safe=True,
     install_requires=[

@@ -76,7 +76,7 @@ helloworld/
 
 The `mse_src` is your application directory designed to be dispatched by `mse-cli` to the Microservice Encryption infrastructure. The other files or directories will stay on your own host. 
 
-The file `app.py` is a basic Flask application with no extra code. Adapt your own application to MSE does not require any modification to your Python code:
+The file `app.py` is a basic Flask application with no extra code. Adapting your own application to MSE does not require any modification to your Python code:
 
 ```python
 from http import HTTPStatus

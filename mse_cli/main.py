@@ -29,7 +29,7 @@ from mse_cli.utils.color import setup_color
 def main() -> int:
     """Entrypoint of the CLI."""
     parser = argparse.ArgumentParser(
-        description="MicroService Encryption CLI" f" - {mse_cli.__version__}"
+        description="Microservice Encryption CLI" f" - {mse_cli.__version__}"
     )
 
     parser.add_argument(
