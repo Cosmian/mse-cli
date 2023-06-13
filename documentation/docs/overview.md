@@ -1,6 +1,6 @@
-## What is MicroService Encryption?
+## What is Microservice Encryption?
 
-MicroService Encryption (MSE) allows to easily deploy confidential web application written in Python in Cosmian’s infrastructure with the following security features:
+Microservice Encryption (MSE) allows to easily deploy confidential web application written in Python in Cosmian’s infrastructure with the following security features:
 
 - Code runs in a Trusted Execution Environment (TEE) and is encrypted with your own key.
 - Secure channel is established directly and uniquely with your code in the TEE.
