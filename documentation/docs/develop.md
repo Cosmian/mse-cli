@@ -146,7 +146,7 @@ WORKFILE: Path = Path(os.getenv("HOME")) / "date.txt"
 
 @app.post('/')
 def write_date():
-    """A simple example of file writting."""
+    """A simple example of file writing."""
     WORKFILE.write_text(str(datetime.now()))
     return Response(status=HTTPStatus.OK)
 
