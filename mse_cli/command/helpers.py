@@ -1,5 +1,6 @@
 """mse_cli.command.helpers module."""
 
+from datetime import datetime
 import socket
 import ssl
 import sys
@@ -30,6 +31,7 @@ from mse_cli.api.types import (
     Hardware,
     PartialApp,
     Project,
+    SSLCertificateOrigin,
 )
 from mse_cli.log import LOGGER as LOG
 from mse_cli.model.context import Context
@@ -166,32 +168,34 @@ def non_empty_string(s):
 
 @no_type_check
 def verify_app(
-    mrenclave: Optional[Union[str, Tuple[Context, Path]]],
+    mrenclave: Optional[Union[str, Context]],
     domain_name: str,
     output_cert_path: Optional[Path],
 ):
     """Verify the app by proceeding the remote attestation."""
     if not mrenclave:
         LOG.warning("Code fingerprint check skipped!")
-    elif isinstance(mrenclave, Tuple[Context, Path]):
+    elif not isinstance(mrenclave, str):
         # Compute the MREnclave
-        (context, tar_path) = mrenclave
+        context = mrenclave
         with Spinner("Computing the code fingerprint... "):
             mrenclave = compute_mr_enclave(
                 get_client_docker(),
                 context.config.docker,
                 NoSgxDockerConfig(
                     host=context.instance.config_domain_name,
-                    expiration_date=context.instance.expires_at,
-                    app_cert=context.app_cert_path,
+                    expiration_date=int(datetime.timestamp(context.instance.expires_at))
+                    if context.instance.ssl_certificate_origin
+                    != SSLCertificateOrigin.Owner
+                    else None,
                     size=context.instance.enclave_size,
                     app_id=context.instance.id,
                     application=context.config.python_application,
                 ),
-                tar_path,
+                context.workspace,
                 context.docker_log_path,
             )
-            LOG.info("The code fingerprint is %s", mrenclave)
+            LOG.info("\nThe code fingerprint is %s", mrenclave)
 
     # Get the ratls certificate
     try:

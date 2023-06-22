@@ -2,10 +2,11 @@
 
 import uuid
 
+from mse_cli_core.spinner import Spinner
+
 from mse_cli.command.helpers import stop_app
 from mse_cli.log import LOGGER as LOG
 from mse_cli.model.user import UserConf
-from mse_cli.utils.spinner import Spinner
 
 
 def add_subparser(subparsers):

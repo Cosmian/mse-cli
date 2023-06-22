@@ -7,6 +7,7 @@ from uuid import UUID
 import requests
 from mse_cli_core.bootstrap import ConfigurationPayload, configure_app
 from mse_cli_core.clock_tick import ClockTick
+from mse_cli_core.spinner import Spinner
 
 from mse_cli import MSE_DOC_SECURITY_MODEL_URL
 from mse_cli.api.app import new
@@ -27,7 +28,6 @@ from mse_cli.model.app import AppConf
 from mse_cli.model.context import Context
 from mse_cli.model.user import UserConf
 from mse_cli.utils.color import COLOR, ColorKind
-from mse_cli.utils.spinner import Spinner
 
 
 def add_subparser(subparsers):
@@ -142,11 +142,9 @@ def run(args) -> None:
 
     if not args.no_verify:
         verify_app(
-            (context, tar_path),
+            context,
             app.config_domain_name,
-            context.config_cert_path
-            if app.ssl_certificate_origin == SSLCertificateOrigin.Self
-            else None,
+            context.config_cert_path,
         )
     else:
         LOG.warning(

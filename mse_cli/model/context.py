@@ -107,7 +107,7 @@ class Context(BaseModel):
     @staticmethod
     def get_tar_code_filename():
         """Get the filename of the code tarball."""
-        return "code.tar"
+        return "app.tar"
 
     @staticmethod
     def get_context_filepath(uuid: UUID, create=True) -> Path:
@@ -133,7 +133,7 @@ class Context(BaseModel):
     @property
     def app_cert_path(self):
         """Get the path to store the certificate."""
-        return self.workspace / "cert.app.pem"
+        return self.workspace / "fullchain.pem"
 
     @property
     def decrypted_code_path(self):
@@ -152,7 +152,7 @@ class Context(BaseModel):
     @property
     def tar_code_path(self):
         """Get the path to store the tar code."""
-        return self.workspace / "code.tar"
+        return self.workspace / Context.get_tar_code_filename()
 
     @property
     def workspace(self) -> Path:
