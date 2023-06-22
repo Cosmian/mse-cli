@@ -72,7 +72,7 @@ def run(args) -> None:
         context = Context.from_toml(args.context)
 
         # Encrypt the code and create the tarball
-        (tar_path, _) = prepare_code(args.code, context)
-        mrenclave = (context, tar_path)
+        prepare_code(args.code, context)
+        mrenclave = context
 
     verify_app(mrenclave, args.domain_name, Path(os.getcwd()) / "cert.pem")

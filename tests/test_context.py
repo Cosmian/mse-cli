@@ -123,7 +123,7 @@ def test_save():
     toml = Path(__file__).parent / "data/context.toml"
     conf = Context.from_toml(path=toml)
     os.makedirs(conf.workspace, exist_ok=True)
-    code = conf.workspace / "code.tar"
+    code = conf.workspace / "app.tar"
     code.write_text("test")
 
     conf.save()
@@ -146,12 +146,12 @@ def test_path():
     assert conf.workspace.exists()
     assert conf.docker_log_path == workspace / "docker.log"
     assert conf.config_cert_path == workspace / "cert.conf.pem"
-    assert conf.app_cert_path == workspace / "cert.app.pem"
+    assert conf.app_cert_path == workspace / "fullchain.pem"
     assert conf.decrypted_code_path == workspace / "decrypted_code"
     assert conf.decrypted_code_path.exists()
     assert conf.encrypted_code_path == workspace / "encrypted_code"
     assert conf.encrypted_code_path.exists()
-    assert conf.tar_code_path == workspace / "code.tar"
+    assert conf.tar_code_path == workspace / "app.tar"
     assert (
         conf.path
         == Path(
