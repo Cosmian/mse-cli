@@ -9,12 +9,12 @@ from typing import Any, Dict, Optional
 from uuid import UUID
 
 import toml
+from mse_cli_core.conf import AppConf
 from mse_lib_crypto.xsalsa20_poly1305 import random_key
 from pydantic import BaseModel, validator
 
 from mse_cli import MSE_CONF_DIR
 from mse_cli.api.types import SSLCertificateOrigin
-from mse_cli.model.app import AppConf
 
 
 class ContextInstance(BaseModel):
@@ -169,14 +169,15 @@ class Context(BaseModel):
     @staticmethod
     def from_app_conf(conf: AppConf):
         """Build a Context object from an app conf."""
-        cert = conf.ssl.certificate_data if conf.ssl else None
+        cloud_conf = conf.cloud_or_raise()
+        cert = cloud_conf.ssl.certificate_data if cloud_conf.ssl else None
 
         context = Context(
             config=ContextConf(
                 name=conf.name,
-                project=conf.project,
-                python_application=conf.code.python_application,
-                docker=conf.code.docker,
+                project=cloud_conf.project,
+                python_application=conf.python_application,
+                docker=cloud_conf.docker,
                 code_secret_key=bytes(random_key()).hex(),
                 ssl_app_certificate=cert,
             )

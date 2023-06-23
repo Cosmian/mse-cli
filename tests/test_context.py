@@ -6,8 +6,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from uuid import UUID
 
+from mse_cli_core.conf import AppConf, CloudConf, SSLConf
+
 from mse_cli.api.types import SSLCertificateOrigin
-from mse_cli.model.app import AppConf, CodeConf, SSLConf
 from mse_cli.model.context import Context, ContextConf, ContextInstance
 
 
@@ -45,21 +46,23 @@ def test_from_app_conf():
     """Test `from_app_conf` function."""
     toml = Path(__file__).parent / "data/context.toml"
 
-    code = CodeConf(
-        location="/tmp/code",
+    ref_app_conf = AppConf(
+        name="helloworld",
         python_application="app:app",
         healthcheck_endpoint="/",
-        docker="ghcr.io/cosmian/mse-pytorch:20230104085621",
-    )
-
-    ssl = SSLConf(
-        domain_name="demo.dev.cosmilink.com",
-        private_key=Path(__file__).parent / "data/key.pem",
-        certificate=Path(__file__).parent / "data/cert.pem",
-    )
-
-    ref_app_conf = AppConf(
-        name="helloworld", project="default", hardware="4g-eu-001", code=code, ssl=ssl
+        tests_cmd="pytest",
+        tests_requirements=["intel-sgx-ra>=1.0.1,<1.1", "pytest==7.2.0"],
+        cloud=CloudConf(
+            project="default",
+            hardware="4g-eu-001",
+            location="/tmp/code",
+            docker="ghcr.io/cosmian/mse-pytorch:20230104085621",
+            ssl=SSLConf(
+                domain_name="demo.dev.cosmilink.com",
+                private_key=Path(__file__).parent / "data/key.pem",
+                certificate=Path(__file__).parent / "data/cert.pem",
+            ),
+        ),
     )
 
     conf = Context.from_app_conf(conf=ref_app_conf)
@@ -85,21 +88,23 @@ def test_run():
     toml = Path(__file__).parent / "data/context.toml"
     ref_context_conf = Context.from_toml(path=toml)
 
-    code = CodeConf(
-        location="/tmp/code",
+    ref_app_conf = AppConf(
+        name="helloworld",
         python_application="app:app",
         healthcheck_endpoint="/",
-        docker="ghcr.io/cosmian/mse-pytorch:20230104085621",
-    )
-
-    ssl = SSLConf(
-        domain_name="demo.dev.cosmilink.com",
-        private_key=Path(__file__).parent / "data/key.pem",
-        certificate=Path(__file__).parent / "data/cert.pem",
-    )
-
-    ref_app_conf = AppConf(
-        name="helloworld", project="default", hardware="free", code=code, ssl=ssl
+        tests_cmd="pytest",
+        tests_requirements=["intel-sgx-ra>=1.0.1,<1.1", "pytest==7.2.0"],
+        cloud=CloudConf(
+            project="default",
+            hardware="free",
+            location="/tmp/code",
+            docker="ghcr.io/cosmian/mse-pytorch:20230104085621",
+            ssl=SSLConf(
+                domain_name="demo.dev.cosmilink.com",
+                private_key=Path(__file__).parent / "data/key.pem",
+                certificate=Path(__file__).parent / "data/cert.pem",
+            ),
+        ),
     )
 
     conf = Context.from_app_conf(conf=ref_app_conf)

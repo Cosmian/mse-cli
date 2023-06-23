@@ -6,10 +6,10 @@ from pathlib import Path
 
 import pkg_resources
 from jinja2 import Template
+from mse_cli_core.conf import AppConf
 
 from mse_cli.command.helpers import get_default, non_empty_string
 from mse_cli.log import LOGGER as LOG
-from mse_cli.model.app import AppConf
 from mse_cli.model.user import UserConf
 
 
@@ -55,23 +55,24 @@ def run(args) -> None:
     conf_file.write_text(content)
     template_conf_file.unlink()
 
-    app_conf = AppConf.from_toml(conf_file)
+    app_conf = AppConf.load(conf_file)
+    cloud_conf = app_conf.cloud_or_raise()
 
     # Initialize the python code file
-    code_dir = project_dir / app_conf.code.location
+    code_dir = project_dir / cloud_conf.location
     template_code_file = code_dir / (app_conf.python_module + ".py.template")
     code_file = template_code_file.with_suffix("")
 
     tm = Template(template_code_file.read_text())
     content = tm.render(
         app=app_conf.python_variable,
-        healthcheck_endpoint=app_conf.code.healthcheck_endpoint,
+        healthcheck_endpoint=app_conf.healthcheck_endpoint,
     )
     code_file.write_text(content)
     template_code_file.unlink()
 
     # Initialize the .mseignore
-    code_dir = project_dir / app_conf.code.location
+    code_dir = project_dir / cloud_conf.location
     ignore_file: Path = code_dir / "dotmseignore"
     ignore_file.rename(code_dir / ".mseignore")
 
@@ -90,7 +91,7 @@ def run(args) -> None:
     pytest_file = template_pytest_file.with_suffix("")
 
     tm = Template(template_pytest_file.read_text())
-    content = tm.render(healthcheck_endpoint=app_conf.code.healthcheck_endpoint)
+    content = tm.render(healthcheck_endpoint=app_conf.healthcheck_endpoint)
     pytest_file.write_text(content)
     template_pytest_file.unlink()
 

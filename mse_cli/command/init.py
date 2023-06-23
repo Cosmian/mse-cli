@@ -3,9 +3,10 @@
 import os
 from pathlib import Path
 
+from mse_cli_core.conf import AppConf, CloudConf
+
 from mse_cli.command.helpers import get_default
 from mse_cli.log import LOGGER as LOG
-from mse_cli.model.app import AppConf, CodeConf
 from mse_cli.model.user import UserConf
 
 
@@ -38,19 +39,21 @@ def run(_args) -> None:
 
     app = AppConf(
         name=app_name,
-        project=project_name,
-        hardware=hardware,
-        code=CodeConf(
+        python_application=python_application,
+        healthcheck_endpoint=healthcheck_endpoint,
+        tests_cmd="pytest",
+        tests_requirements=["pytest"],
+        cloud=CloudConf(
             location=code_location,
-            python_application=python_application,
-            healthcheck_endpoint=healthcheck_endpoint,
+            project=project_name,
+            hardware=hardware,
             docker=docker,
             secrets=secrets,
         ),
     )
 
     path = Path(os.getcwd())
-    app.save(path)
+    app.save(path / "mse.toml")
     LOG.success(  # type: ignore
         "Your app configuration has been saved in: %s",
         path / "mse.toml",

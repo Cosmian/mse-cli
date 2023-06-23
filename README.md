@@ -17,6 +17,8 @@ $ pip install -U .
 
 ## Usage
 
+Note: if you declare the env variable `MSE_BACKTRACE` to the value `full`, a python stacktrace will be printed in case of errors.
+
 ### Pre-requisites
 
 First of all sign up or sign in using:
