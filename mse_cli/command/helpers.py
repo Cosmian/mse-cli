@@ -1,9 +1,9 @@
 """mse_cli.command.helpers module."""
 
-from datetime import datetime
 import socket
 import ssl
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union, no_type_check
 from uuid import UUID
@@ -17,6 +17,7 @@ from mse_cli_core.enclave import compute_mr_enclave, verify_enclave
 from mse_cli_core.fs import tar
 from mse_cli_core.ignore_file import IgnoreFile
 from mse_cli_core.no_sgx_docker import NoSgxDockerConfig
+from mse_cli_core.spinner import Spinner
 from mse_lib_crypto.xsalsa20_poly1305 import encrypt_directory
 
 from mse_cli import MSE_CERTIFICATES_URL, MSE_PCCS_URL
@@ -35,7 +36,6 @@ from mse_cli.api.types import (
 )
 from mse_cli.log import LOGGER as LOG
 from mse_cli.model.context import Context
-from mse_cli.utils.spinner import Spinner
 
 
 def get_client_docker() -> docker.client.DockerClient:

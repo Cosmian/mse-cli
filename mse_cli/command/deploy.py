@@ -7,6 +7,7 @@ from uuid import UUID
 import requests
 from mse_cli_core.bootstrap import ConfigurationPayload, configure_app
 from mse_cli_core.clock_tick import ClockTick
+from mse_cli_core.conf import AppConf, AppConfParsingOption
 from mse_cli_core.spinner import Spinner
 
 from mse_cli import MSE_DOC_SECURITY_MODEL_URL
@@ -24,7 +25,6 @@ from mse_cli.command.helpers import (
     verify_app,
 )
 from mse_cli.log import LOGGER as LOG
-from mse_cli.model.app import AppConf
 from mse_cli.model.context import Context
 from mse_cli.model.user import UserConf
 from mse_cli.utils.color import COLOR, ColorKind
@@ -70,7 +70,13 @@ def add_subparser(subparsers):
 def run(args) -> None:
     """Run the subcommand."""
     user_conf = UserConf.from_toml()
-    app_conf = AppConf.from_toml(path=args.path, ignore_ssl=args.untrusted_ssl)
+    app_conf = AppConf.load(
+        path=args.path,
+        option=AppConfParsingOption.UseInsecureCloud
+        if args.untrusted_ssl
+        else AppConfParsingOption.All,
+    )
+    cloud_conf = app_conf.cloud_or_raise()
     conn = user_conf.get_connection()
 
     if not args.no_verify:
@@ -93,15 +99,15 @@ def run(args) -> None:
             sec_doc_text,
             COLOR.render(ColorKind.LINK_END),
         )
-        if app_conf.ssl:
+        if cloud_conf.ssl:
             LOG.warning("SSL conf paragraph is ignored.%s")
 
-    (enclave_size, cores) = get_enclave_resources(conn, app_conf.hardware)
+    (enclave_size, cores) = get_enclave_resources(conn, cloud_conf.hardware)
     context = Context.from_app_conf(app_conf)
     LOG.info("Temporary workspace is: %s", context.workspace)
 
     LOG.info("Encrypting your source code...")
-    (tar_path, nonces) = prepare_code(app_conf.code.location, context)
+    (tar_path, nonces) = prepare_code(cloud_conf.location, context)
 
     LOG.info(
         "Deploying your app '%s' with %dM memory and %.2f CPU cores...",
@@ -155,8 +161,8 @@ def run(args) -> None:
     LOG.info("Sending secret key and decrypting the application code...")
     decrypt_private_data(
         context,
-        ssl_private_key=app_conf.ssl.private_key_data if app_conf.ssl else None,
-        app_secrets=app_conf.code.secrets_data,
+        ssl_private_key=cloud_conf.ssl.private_key_data if cloud_conf.ssl else None,
+        app_secrets=cloud_conf.secrets_data,
     )
 
     app = wait_app_start(conn, app.id)
@@ -226,9 +232,10 @@ def wait_app_start(conn: Connection, app_id: UUID) -> App:
 def check_app_conf(conn: Connection, app_conf: AppConf, force: bool = False) -> bool:
     """Check app conf: project exist, app name exist, etc."""
     # Check that the project exists
-    project = get_project_from_name(conn, app_conf.project)
+    cloud_conf = app_conf.cloud_or_raise()
+    project = get_project_from_name(conn, cloud_conf.project)
     if not project:
-        raise Exception(f"Project {app_conf.project} does not exist")
+        raise Exception(f"Project {cloud_conf.project} does not exist")
 
     # Check that a same name application is not running yet
     app = exists_in_project(
@@ -258,11 +265,11 @@ def check_app_conf(conn: Connection, app_conf: AppConf, force: bool = False) -> 
             stop_app(conn, app.id)
 
     if not (
-        app_conf.code.location / (app_conf.python_module.replace(".", "/") + ".py")
+        cloud_conf.location / (app_conf.python_module.replace(".", "/") + ".py")
     ).exists():
         raise FileNotFoundError(
             f"Flask module '{app_conf.python_module}' "
-            f"not found in directory: {app_conf.code.location}!"
+            f"not found in directory: {cloud_conf.location}!"
         )
 
     return True

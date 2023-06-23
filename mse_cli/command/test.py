@@ -3,11 +3,11 @@
 from pathlib import Path
 
 from docker.errors import ImageNotFound
+from mse_cli_core.conf import AppConf
 from mse_cli_core.test_docker import TestDockerConfig
 
 from mse_cli.command.helpers import get_client_docker
 from mse_cli.log import LOGGER as LOG
-from mse_cli.model.app import AppConf
 
 
 def add_subparser(subparsers):
@@ -29,16 +29,17 @@ def add_subparser(subparsers):
 
 def run(args) -> None:
     """Run the subcommand."""
-    app = AppConf.from_toml(path=args.path)
+    app = AppConf.load(path=args.path)
+    cloud_conf = app.cloud_or_raise()
 
-    LOG.info("Starting the docker: %s...", app.code.docker)
+    LOG.info("Starting the docker: %s...", cloud_conf.docker)
 
     client = get_client_docker()
 
     # Pull always before running.
     # If image is not found: let's assume it's a local image
     try:
-        client.images.pull(app.code.docker)
+        client.images.pull(cloud_conf.docker)
     except ImageNotFound:
         pass
 
@@ -46,19 +47,19 @@ def run(args) -> None:
     LOG.advice(  # type: ignore
         "Once started, from another terminal, you can run: "
         "\n\n\tcurl http://localhost:5000%s\n\nor:\n\n\tpytest\n",
-        app.code.healthcheck_endpoint,
+        app.healthcheck_endpoint,
     )
 
     docker_config = TestDockerConfig(
-        code=app.code.location,
-        application=app.code.python_application,
-        secrets=app.code.secrets,
+        code=cloud_conf.location,
+        application=app.python_application,
+        secrets=cloud_conf.secrets,
         sealed_secrets=None,
         port=5000,
     )
 
     container = client.containers.run(
-        app.code.docker,
+        cloud_conf.docker,
         command=docker_config.cmd(),
         volumes=docker_config.volumes(),
         entrypoint=TestDockerConfig.entrypoint,

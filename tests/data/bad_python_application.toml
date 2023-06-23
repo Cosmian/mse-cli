@@ -1,9 +1,11 @@
 name = "bad_app"
-project = "default"
-hardware = "4g-eu-001"
-
-[code]
-location = "/tmp/code"
 python_application = "app:app"
 healthcheck_endpoint = "/"
+tests_cmd = "pytest"
+tests_requirements = [ "intel-sgx-ra>=1.0.1,<1.1", "pytest==7.2.0",]
+
+[cloud]
+location = "/tmp/code"
+project = "default"
+hardware = "4g-eu-001"
 docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"

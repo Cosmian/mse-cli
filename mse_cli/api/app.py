@@ -5,9 +5,9 @@ from pathlib import Path
 from uuid import UUID
 
 import requests
+from mse_cli_core.conf import AppConf
 
 from mse_cli.api.auth import Connection
-from mse_cli.model.app import AppConf
 
 
 def new(conn: Connection, conf: AppConf, code_tar_path: Path) -> requests.Response:
@@ -20,7 +20,11 @@ def new(conn: Connection, conf: AppConf, code_tar_path: Path) -> requests.Respon
             url="/apps",
             files={
                 "code": (code_tar_path.name, fp, "application/tar", {"Expires": "0"}),
-                "conf": (None, json.dumps(conf.into_payload()), "application/json"),
+                "conf": (
+                    None,
+                    json.dumps(conf.into_cloud_payload()),
+                    "application/json",
+                ),
             },
             timeout=None,
         )

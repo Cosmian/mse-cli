@@ -1,9 +1,15 @@
 name = "{{ name }}"
-project = "{{ project }}"
-hardware = "{{ hardware }}"
-
-[code]
-location = "mse_src"
-docker = "{{ docker }}"
 python_application = "app:app"
 healthcheck_endpoint = "/health"
+tests_cmd = "pytest"
+tests_requirements = [
+    "cryptography",
+    "intel-sgx-ra",
+    "pytest==7.2.0",
+]
+
+[cloud]
+location = "mse_src"
+docker = "{{ docker }}"
+project = "{{ project }}"
+hardware = "{{ hardware }}"
