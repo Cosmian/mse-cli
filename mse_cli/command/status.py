@@ -59,11 +59,16 @@ def run(args) -> None:
     expires_at = app.expires_at.astimezone(tzinfo)
     remaining_days = expires_at - datetime.now(tzinfo)
     if 0 <= remaining_days.days <= 1:
+        remaining_hours = remaining_days.seconds // 3600
+        remaining_minutes = remaining_days.seconds % 3600 // 60
+
         LOG.info(
-            "\tExpires at         = %s (%s%d seconds remaining%s)",
+            "\tExpires at         = %s (%s%s%s%d seconds remaining%s)",
             expires_at,
             COLOR.render(ColorKind.WARNING),
-            remaining_days.seconds,
+            f"{remaining_hours} hours, " if remaining_hours > 0 else "",
+            f"{remaining_minutes} minutes, " if remaining_minutes > 0 else "",
+            remaining_days.seconds % 60,
             COLOR.render(ColorKind.ENDC),
         )
     elif remaining_days.days > 1:
@@ -74,7 +79,7 @@ def run(args) -> None:
             remaining_days.days,
             COLOR.render(ColorKind.ENDC),
         )
-    else:
+    else:  # expired
         LOG.info(
             "\tExpired at         = %s (%s%d days remaining%s)",
             expires_at,
