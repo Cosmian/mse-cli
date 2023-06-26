@@ -1,4 +1,4 @@
-"""mse_cli_core.clock_tick module."""
+"""mse_cli.core.clock_tick module."""
 
 import time
 

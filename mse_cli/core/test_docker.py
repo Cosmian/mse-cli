@@ -1,4 +1,4 @@
-"""mse_cli_core.test_docker module."""
+"""mse_cli.core.test_docker module."""
 
 from pathlib import Path
 from typing import ClassVar, Dict, List, Optional, Tuple

@@ -1,4 +1,4 @@
-"""mse_cli_core.bootstrap module."""
+"""mse_cli.core.bootstrap module."""
 
 from typing import Any, Callable, Dict, Iterable, Optional, Union
 from uuid import UUID

@@ -36,7 +36,8 @@ def run(args) -> None:
     )
     LOG.warning("You can configure your MSE application in: %s", conf_file)
     LOG.info(
-        "You can now test it locally from the '%s/' directory using: \n\n\tmse cloud test\n\n"
+        "You can now test it locally from the '%s/' directory using: "
+        "\n\n\tmse cloud test\n\n"
         "then, in another terminal:\n\n\tpytest\n",
         args.app_name,
     )

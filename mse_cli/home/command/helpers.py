@@ -1,4 +1,4 @@
-"""mse_home.command.helpers module."""
+"""mse_cli.home.command.helpers module."""
 
 import socket
 from pathlib import Path

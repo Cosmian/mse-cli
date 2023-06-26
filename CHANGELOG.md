@@ -2,7 +2,7 @@
 
 ### Added
 
-* New version command `mse home` to run a microservice on your localhost SGX
+* New command `mse home` to run a microservice on your localhost SGX
 
 ## \[0.12.0\] - 2023-04-14
 
