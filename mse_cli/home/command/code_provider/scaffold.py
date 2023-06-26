@@ -2,7 +2,6 @@
 
 
 from mse_cli.common.helpers import scaffold
-
 from mse_cli.log import LOGGER as LOG
 
 

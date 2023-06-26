@@ -182,24 +182,24 @@ def _test_mse_cli(
 
     # Test the scaffold subcommand
     conf = _test_scaffold(workspace)
-    app_conf = AppConf.from_toml(conf)
+    app_conf = AppConf.load(conf)
 
     if ssl_certificate_origin == SSLCertificateOrigin.Owner:
-        assert not app_conf.ssl
+        assert not app_conf.cloud.ssl
 
         cert_path = workspace / "cert.pem"
         cert_path.write_text(os.getenv("MSE_TEST_PUBLIC_KEY"))
         key_path = workspace / "key.path"
         key_path.write_text(os.getenv("MSE_TEST_PRIVATE_KEY"))
 
-        app_conf.ssl = SSLConf(
+        app_conf.cloud.ssl = SSLConf(
             domain_name=f"{app_conf.name}.{os.getenv('MSE_TEST_DOMAIN_NAME')}",
             private_key=key_path,
             certificate=cert_path,
         )
-        app_conf.save(conf.parent)
+        app_conf.save(conf)
     else:
-        assert not app_conf.ssl
+        assert not app_conf.cloud.ssl
 
     # Test the deploy subcommand
     (app_id, domain_name, mr_enclave) = _test_deploy(f, conf, untrusted_ssl)
@@ -271,7 +271,7 @@ def _test_mse_cli(
         domain_name,
         False,
         Context.get_context_filepath(app_id, False),
-        app_conf.code.location,
+        app_conf.cloud.location,
         context.instance.ssl_certificate_origin == SSLCertificateOrigin.Self,
     )
 
@@ -290,7 +290,7 @@ def _test_mse_cli(
     _test_logs(f, app_id, 'GET / HTTP/1.1" 200')
 
     # Test list subcommand
-    _test_list(f, app_conf.project, app_id, True)
+    _test_list(f, app_conf.cloud.project, app_id, True)
 
     # Test stop app
     run_stop(Namespace(**{"app_id": [app_id]}))
@@ -300,7 +300,7 @@ def _test_mse_cli(
     _test_logs(f, app_id, 'GET / HTTP/1.1" 200')
 
     # Test list subcommand
-    _test_list(f, app_conf.project, app_id, False)
+    _test_list(f, app_conf.cloud.project, app_id, False)
 
     f.truncate(0)
 

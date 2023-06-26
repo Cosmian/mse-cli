@@ -7,15 +7,14 @@ from typing import Optional
 
 import pkg_resources
 from jinja2 import Template
-from mse_cli.cloud.api.types import DefaultAppConfig
 
+from mse_cli.cloud.api.types import DefaultAppConfig
 from mse_cli.core.conf import AppConf, AppConfParsingOption
 from mse_cli.home.model.package import (
     DEFAULT_CODE_DIR,
     DEFAULT_CONFIG_FILENAME,
     DEFAULT_TEST_DIR,
 )
-from mse_cli.log import LOGGER as LOG
 
 
 def scaffold(app_name: str, cloud_config: Optional[DefaultAppConfig] = None) -> Path:

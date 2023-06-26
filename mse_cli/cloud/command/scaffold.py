@@ -1,16 +1,8 @@
 """mse_cli.cloud.command.scaffold module."""
 
-import os
-import shutil
-from pathlib import Path
-
-import pkg_resources
-from jinja2 import Template
-
 from mse_cli.cloud.command.helpers import get_default, non_empty_string
 from mse_cli.cloud.model.user import UserConf
 from mse_cli.common.helpers import scaffold
-from mse_cli.core.conf import AppConf
 from mse_cli.log import LOGGER as LOG
 
 
