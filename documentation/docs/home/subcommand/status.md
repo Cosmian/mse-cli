@@ -6,7 +6,7 @@
 You can get information about a given application as follow:
 
 ```console
-$ msehome status <app_name>
+$ mse home status <app_name>
 ```
 
 The status could have the following values:

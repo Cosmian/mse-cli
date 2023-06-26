@@ -1,7 +1,7 @@
 You can create, in an interactive way, a new configuration file for your app as follow:
 
 ```console
-$ mse init
+$ mse cloud init
 We need you to fill in the following fields
 
 App name: test
@@ -18,12 +18,14 @@ The configuration file for the previous example would be:
 
 ```toml
 name = "test"
-project = "default"
-hardware = "4g-eu-001"
-
-[code]
-location = "."
 python_application = "app:app"
 healthcheck_endpoint = "/"
+tests_cmd = "pytest"
+tests_requirements = [ "intel-sgx-ra>=1.0.1,<1.1", "pytest==7.2.0",]
+
+[cloud]
+location = "."
 docker = "ghcr.io/cosmian/mse-flask:20230228091325"
+project = "default"
+hardware = "4g-eu-001"
 ```

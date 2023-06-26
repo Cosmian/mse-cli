@@ -6,7 +6,7 @@
 You can stop a running application as follow:
 
 ```console
-$ msehome stop [--remove] <app_name>
+$ mse home stop [--remove] <app_name>
 ```
 
 If you stop an app without the parameter `--remove`, you can restart it later by recovering the last app state. However you can't spawn a new app on the same port and with the same name: remove it before.

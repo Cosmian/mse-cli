@@ -2,7 +2,7 @@ You can list all your initializing and running applications as follow:
 
 ```console
 # List the apps from project 'default'
-$ mse list ---name default
+$ mse cloud list ---name default
 
               App UUID               |          Creation date           |    Status    |             App summary              
 ------------------------------------------------------------------------------------------------------------------------------

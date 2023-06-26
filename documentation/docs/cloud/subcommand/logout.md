@@ -1,7 +1,7 @@
 You can log out from `mse`:
 
 ```console
-$ mse logout
+$ mse cloud logout
 You are now logged out.
 ```
 

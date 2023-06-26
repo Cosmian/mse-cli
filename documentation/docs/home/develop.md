@@ -54,7 +54,7 @@ def whoami():
 !!! info "Encrypting some secrets"
 
     If your application requires some secrets to be hidden from the SGX operator, write those secrets in another file, for example `secrets_to_seal.json`.
-    Then you can seal this `secrets_to_seal.json` file with the `msehome seal` command.
+    Then you can seal this `secrets_to_seal.json` file with the `mse home seal` command.
     This command encrypts the `secrets.json` file using the trusted RA-TLS certificate.
     This certificate embeds the public key of the enclave, ensuring that only the enclave is able to decrypt the sealed `secrets.json` file.
 

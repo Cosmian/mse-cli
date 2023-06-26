@@ -2,6 +2,9 @@
 
     To launch your first confidential microservice, follow this tutorial in your favorite terminal.
 
+    You don't need to be logged in the MSE console to run MSE Home.
+
+
 MSE Home 🏕️ is designed to start an MSE application on your own SGX hardware without using the MSE cloud infrastructure at all. 
 
 We explain later how all the subscommands can be chained to deploy your own application. 
@@ -19,37 +22,40 @@ You have to install and configure an SGX machine before going any further.
 
 ## Install the MSE Home CLI
 
-The CLI tool [`msehome`](https://github.com/Cosmian/mse-home-cli) requires at least [Python](https://www.python.org/downloads/) 3.8 and [OpenSSL](https://www.openssl.org/source/) 1.1.1 series.
+The CLI tool [`mse home`](https://github.com/Cosmian/mse-cli) requires at least [Python](https://www.python.org/downloads/) 3.8 and [OpenSSL](https://www.openssl.org/source/) 1.1.1 series.
 It is recommended to use [pyenv](https://github.com/pyenv/pyenv) to manage different Python interpreters.
 
 ```{.console}
 $ pip3 install mse-home-cli
-$ msehome --help
-usage: msehome [-h] [--version] {decrypt,evidence,scaffold,list,logs,package,restart,run,status,seal,spawn,stop,test,test-dev,verify} ...
-
-Microservice Encryption Home CLI - 0.1.0
+$ mse home --help
+usage: mse home [-h]
+                {decrypt,evidence,scaffold,list,logs,package,restart,run,status,seal,spawn,stop,test,test-dev,verify}
+                ...
 
 options:
   -h, --help            show this help message and exit
-  --version             version of msehome binary
 
-subcommands:
+operations:
   {decrypt,evidence,scaffold,list,logs,package,restart,run,status,seal,spawn,stop,test,test-dev,verify}
-    decrypt             Decrypt a file encrypted using the sealed key
-    evidence            Collect the evidences to verify on offline mode the application and the enclave
-    scaffold            create a new boilerplate MSE web application
-    list                List the running MSE applications
-    logs                Print the MSE docker logs
-    package             Generate a package containing the Docker image and the code to run on MSE
-    restart             Restart an stopped MSE docker
-    run                 Finalise the configuration of the application docker and run the application code
-    status              Print the MSE docker status
-    seal                Seal the secrets to be share with an MSE app
-    spawn               Spawn a MSE docker
-    stop                Stop and optionally remove a running MSE docker
+    decrypt             decrypt a file using Fernet symmetric encryption
+    evidence            collect the evidences to verify on offline mode the application
+                        and the enclave
+    scaffold            create a new boilerplate MSE application
+    list                list the running MSE applications
+    logs                print the MSE docker logs
+    package             generate a package containing the Docker image and the code to
+                        run on MSE
+    restart             restart an stopped MSE docker
+    run                 finalise the configuration of the application docker and run the
+                        application code
+    status              print the MSE docker status
+    seal                seal the secrets to be share with an MSE app
+    spawn               spawn a MSE docker
+    stop                stop and optionally remove a running MSE docker
     test                Test a deployed MSE app
-    test-dev            Test a MSE app in a development context
-    verify              Verify the trustworthiness of a running MSE web application and get the RA-TLS certificate
+    test-dev            test a MSE app in a development context
+    verify              verify the trustworthiness of a running MSE web application and
+                        get the RA-TLS certificate
 ```
 
 !!! info "Pre-requisites"
@@ -65,7 +71,7 @@ subcommands:
 
 
 ```console
-$ msehome scaffold example
+$ mse home scaffold example
 $ tree -a example
 example/
 ├── mse.toml
@@ -83,7 +89,7 @@ example/
 2 directories, 9 files
 ```
 
-The `mse_src` is your application directory designed to be started by `msehome` cli. 
+The `mse_src` is your application directory designed to be started by `mse home` cli. 
 
 The `Dockerfile` should inherit from the `mse-docker-base` and include all dependencies required to run your app. This docker will be run by the SGX operator.
 
@@ -139,7 +145,7 @@ This project also contains a test directory enabling you to test this project lo
 
     Visit [mse-app-examples](https://github.com/Cosmian/mse-app-examples) to find MSE application examples.
 
-## Test your app, your docker and your msehome configuration
+## Test your app, your docker and your mse home configuration
 
 
 !!! info User
@@ -148,16 +154,16 @@ This project also contains a test directory enabling you to test this project lo
 
 
 ```console
-$ msehome test-dev --code example/mse_src/ \
-                   --dockerfile example/Dockerfile \
-                   --config example/mse.toml \
-                   --test example/tests/
+$ mse home test-dev --code example/mse_src/ \
+                    --dockerfile example/Dockerfile \
+                    --config example/mse.toml \
+                    --test example/tests/
 ```
 
 or more concisely:
 
 ```console
-$ msehome test-dev --project example
+$ mse home test-dev --project example
 ```
 
 Testing your code before sending it to the SGX operator is recommended. Be aware that any error will require to restart the deployment flow from scratch.
@@ -174,18 +180,18 @@ This command generates a tarball named `package_<app_name>_<timestamp>.tar`.
 The generated package can now be sent to the SGX operator.
 
 ```console
-$ msehome package --code example/mse_src/ \
-                  --dockerfile example/Dockerfile \
-                  --config example/mse.toml \
-                  --test example/tests/ \
-                  --output workspace/code_provider
+$ mse home package --code example/mse_src/ \
+                   --dockerfile example/Dockerfile \
+                   --config example/mse.toml \
+                   --test example/tests/ \
+                   --output workspace/code_provider
 ```
 
 or more concisely:
 
 ```console
-$ msehome package --project example \
-                  --output workspace/code_provider 
+$ mse home package --project example \
+                   --output workspace/code_provider 
 ```
 
 ## Spawn the MSE docker
@@ -196,12 +202,12 @@ $ msehome package --project example \
 
 
 ```console
-$ msehome spawn --host myapp.fr \
-                --port 7777 \
-                --size 4096 \
-                --package workspace/code_provider/package_mse_src_1683276327723953661.tar \
-                --output workspace/sgx_operator/ \
-                app_name
+$ mse home spawn --host myapp.fr \
+                 --port 7777 \
+                 --size 4096 \
+                 --package workspace/code_provider/package_mse_src_1683276327723953661.tar \
+                 --output workspace/sgx_operator/ \
+                 app_name
 ```
 
 Mandatory arguments are:
@@ -228,8 +234,8 @@ The application is now started in an intermediate state waiting for any secrets:
 
 
 ```console
-$ msehome evidence --output workspace/sgx_operator/ \
-                   app_name
+$ mse home evidence --output workspace/sgx_operator/ \
+                    app_name
 ```
 
 This command collects cryptographic proofs related to the enclave and serialize them as a file named `evidence.json`.
@@ -252,9 +258,9 @@ The trustworthiness is established based on multiple information:
 Verification of the enclave information:
 
     ```console
-    $ msehome verify --package workspace/code_provider/package_mse_src_1683276327723953661.tar \
-                     --evidence output/evidence.json \
-                     --output /tmp
+    $ mse home verify --package workspace/code_provider/package_mse_src_1683276327723953661.tar \
+                      --evidence output/evidence.json \
+                      --output /tmp
     ```
 
     If the verification succeed, you get the RA-TLS certificate (writte as a file named `ratls.pem`) and you can now seal the code key to share it with the SGX operator.
@@ -268,9 +274,9 @@ Verification of the enclave information:
 A sealed secrets file is designed to be shared with the application by hidding them from the SGX operator.
 
 ```console
-$ msehome seal --secrets example/secrets_to_seal.json \
-               --cert /tmp/ratls.pem \
-               --output workspace/code_provider/
+$ mse home seal --secrets example/secrets_to_seal.json \
+                --cert /tmp/ratls.pem \
+                --output workspace/code_provider/
 ```
 
 In this example, sealed secrets file is generated as `secrets_to_seal.json.sealed` file.
@@ -284,9 +290,9 @@ Share the sealed secrets file with the SGX operator.
     This command is designed to be used by the **SGX operator**
 
 ```console
-$ msehome run --sealed-secrets workspace/code_provider/secrets_to_seal.json.sealed \
-              --secrets example/secrets.json
-              app_name
+$ mse home run --sealed-secrets workspace/code_provider/secrets_to_seal.json.sealed \
+               --secrets example/secrets.json
+               app_name
 ```
 
 From now, the real application developed by the code provider is fully operational and running. The configuration server started during the previous `spawn` step has been shutdown. Therefore, if you want to change the configuration or the secrets, you need to stop&remove this application and restart the deployment flow from scratch.
@@ -298,9 +304,9 @@ From now, the real application developed by the code provider is fully operation
     This command is designed to be used by the **SGX operator**
 
 ```console
-$ msehome test --test workspace/sgx_operator/tests/ \
-               --config workspace/sgx_operator/mse.toml \
-               app_name
+$ mse home test --test workspace/sgx_operator/tests/ \
+                --config workspace/sgx_operator/mse.toml \
+                app_name
 ```
 
 This step is mandatory to check that the application is executed properly as the code provider expects. 
@@ -336,9 +342,9 @@ This encrypted result is then sent by external means to the code provider.
 Finally, the code provider can decrypt the result:
 
 ```console
-$ msehome decrypt --aes 00112233445566778899aabbccddeeff \
-                  --output workspace/code_provider/result.plain \
-                  result.enc
+$ mse home decrypt --aes 00112233445566778899aabbccddeeff \
+                   --output workspace/code_provider/result.plain \
+                   result.enc
 $ cat workspace/code_provider/result.plain
 secret message with secrets.json
 ```
@@ -376,9 +382,9 @@ This encrypted result is then sent by external means to the code provider.
 Finally, the code provider can decrypt the result:
 
 ```console
-$ msehome decrypt --key key.txt \
-                  --output workspace/code_provider/result.plain \
-                  result.enc
+$ mse home decrypt --key key.txt \
+                   --output workspace/code_provider/result.plain \
+                   result.enc
 $ cat workspace/code_provider/result.plain
 ```
 

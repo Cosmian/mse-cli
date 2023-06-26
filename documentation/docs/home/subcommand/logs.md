@@ -6,5 +6,5 @@
 Application logs can be fetched as follow:
 
 ```console
-$ msehome logs [-f] <app_name>
+$ mse home logs [-f] <app_name>
 ```
