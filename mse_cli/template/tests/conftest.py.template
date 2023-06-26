@@ -1,9 +1,8 @@
 """Conftest."""
 
 import os
-import tempfile
 from pathlib import Path
-from typing import Union
+from typing import {% if mse_home is defined %}Optional, {% endif %}Union
 
 import pytest
 from cryptography import x509
@@ -15,11 +14,25 @@ def url() -> str:
     """Get the url of the mse app."""
     return os.getenv("TEST_REMOTE_URL", "http://localhost:5000/")
 
+{% if mse_home is defined %}
+@pytest.fixture(scope="module")
+def secret_json() -> Optional[Path]:
+    """Get the secret.json path."""
+    e = os.getenv("TEST_SECRET_JSON")
+    return Path(e) if e else None
+
 
 @pytest.fixture(scope="module")
-def workspace() -> Path:
+def sealed_secret_json() -> Optional[Path]:
+    """Get the sealed_secret.json path."""
+    e = os.getenv("TEST_SEALED_SECRET_JSON")
+    return Path(e) if e else None
+
+{% endif %}
+@pytest.fixture(scope="module")
+def workspace(tmp_path_factory) -> Path:
     """Get the path of the test work directory."""
-    return Path(tempfile.mkdtemp())
+    return tmp_path_factory.mktemp("workspace")
 
 
 @pytest.fixture(scope="module")

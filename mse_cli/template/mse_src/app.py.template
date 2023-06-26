@@ -1,11 +1,23 @@
 """Microservice Encryption application."""
+{% if mse_home %}
+import base64
+import json
+import os
+from http import HTTPStatus
+from pathlib import Path
 
+from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
+from flask import Flask, Response
+
+sealed_secret_json = Path(os.getenv("SEALED_SECRETS_PATH"))
+secret_json = Path(os.getenv("SECRETS_PATH"))
+{% else %}
 from http import HTTPStatus
 
 from flask import Flask, Response
-
+{% endif %}
 {{ app }} = Flask(__name__)
-
 
 @{{ app }}.get("{{ healthcheck_endpoint }}")
 def health_check():
@@ -17,3 +29,23 @@ def health_check():
 def hello():
     """Get a simple example."""
     return "Hello world"
+
+{% if mse_home %}
+
+@app.route("/result/secrets")
+def result_with_secret():
+    """Get a simple result using password and salt."""
+    salt: bytes = base64.urlsafe_b64decode(
+        json.loads(secret_json.read_bytes())["salt"].encode("ascii"))
+    password: bytes = json.loads(secret_json.read_bytes())["password"].encode("utf-8")
+    kdf = Scrypt(salt=salt, length=32, n=2**14, r=8, p=1)
+    sk: bytes = base64.urlsafe_b64encode(kdf.derive(password))
+    return Fernet(sk).encrypt(b"message using password and salt from SECRETS")
+
+
+@app.route("/result/sealed_secrets")
+def result_with_sealed_secret():
+    """Get a simple result using sealed secrets."""
+    sk: bytes = json.loads(sealed_secret_json.read_bytes())["result_sk"].encode("ascii")
+    return Fernet(sk).encrypt(b"message using result_sk from SEALED_SECRETS")
+{% endif %}
