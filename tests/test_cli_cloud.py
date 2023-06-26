@@ -3,7 +3,6 @@
 import io
 import os
 import re
-import tempfile
 from argparse import Namespace
 from pathlib import Path
 from typing import Optional, Tuple
@@ -13,18 +12,18 @@ import pytest
 import requests
 from conftest import capture_logs
 
-from mse_cli.api.types import SSLCertificateOrigin
-from mse_cli.command.context import run as run_context
-from mse_cli.command.deploy import run as run_deploy
-from mse_cli.command.list_all import run as run_list
-from mse_cli.command.login import run as run_login
-from mse_cli.command.logs import run as run_logs
-from mse_cli.command.scaffold import run as run_scaffold
-from mse_cli.command.status import run as run_status
-from mse_cli.command.stop import run as run_stop
-from mse_cli.command.verify import run as run_verify
-from mse_cli.model.app import AppConf, SSLConf
-from mse_cli.model.context import Context
+from mse_cli.cloud.api.types import SSLCertificateOrigin
+from mse_cli.cloud.command.context import run as run_context
+from mse_cli.cloud.command.deploy import run as run_deploy
+from mse_cli.cloud.command.list_all import run as run_list
+from mse_cli.cloud.command.login import run as run_login
+from mse_cli.cloud.command.logs import run as run_logs
+from mse_cli.cloud.command.scaffold import run as run_scaffold
+from mse_cli.cloud.command.status import run as run_status
+from mse_cli.cloud.command.stop import run as run_stop
+from mse_cli.cloud.command.verify import run as run_verify
+from mse_cli.cloud.model.context import Context
+from mse_cli.core.conf import AppConf, SSLConf
 
 
 def _test_verify(
@@ -59,22 +58,21 @@ def _test_verify(
     return None
 
 
-def _test_scaffold() -> Path:
+def _test_scaffold(workspace) -> Path:
     """ "Test the scaffold subcommand."""
     # Generate a random unique app name
     unique_name = str(uuid4())
 
     # Go into a unique tmp directory
-    path = Path(tempfile.mkdtemp())
-    os.chdir(path)
+    os.chdir(workspace)
 
     # Run scaffold
     run_scaffold(Namespace(**{"app_name": unique_name}))
 
     # Check creation of files
-    conf = path / unique_name / "mse.toml"
+    conf = workspace / unique_name / "mse.toml"
     assert conf.exists()
-    assert (path / unique_name / "mse_src").exists()
+    assert (workspace / unique_name / "mse_src").exists()
 
     # The viability (is that runnable?) of the code will be tested later
     return conf
@@ -173,23 +171,25 @@ def _test_list(f: io.StringIO, project_name: str, app_id: UUID, expecting_result
 
 
 def _test_mse_cli(
-    f: io.StringIO, ssl_certificate_origin: SSLCertificateOrigin, untrusted_ssl=bool
+    workspace: Path,
+    f: io.StringIO,
+    ssl_certificate_origin: SSLCertificateOrigin,
+    untrusted_ssl=bool,
 ):
     """Test a complete deployment flow."""
     # Test the login subcommand
     _test_login(f)
 
     # Test the scaffold subcommand
-    conf = _test_scaffold()
+    conf = _test_scaffold(workspace)
     app_conf = AppConf.from_toml(conf)
 
     if ssl_certificate_origin == SSLCertificateOrigin.Owner:
         assert not app_conf.ssl
 
-        path = Path(tempfile.mkdtemp())
-        cert_path = path / "cert.pem"
+        cert_path = workspace / "cert.pem"
         cert_path.write_text(os.getenv("MSE_TEST_PUBLIC_KEY"))
-        key_path = path / "key.path"
+        key_path = workspace / "key.path"
         key_path.write_text(os.getenv("MSE_TEST_PRIVATE_KEY"))
 
         app_conf.ssl = SSLConf(
@@ -314,25 +314,25 @@ def _test_mse_cli(
     assert not Context.get_dirpath(app_id, False).exists()
 
 
-@pytest.mark.slow
-def test_mse_cli_self_signed(cmd_log):
+@pytest.mark.cloud
+def test_mse_cli_self_signed(cmd_log, workspace):
     """Test a complete deployment flow for dev mode."""
-    _test_mse_cli(cmd_log, SSLCertificateOrigin.Self, False)
+    _test_mse_cli(workspace, cmd_log, SSLCertificateOrigin.Self, False)
 
 
-@pytest.mark.slow
-def test_mse_cli_with_ssl(cmd_log):
+@pytest.mark.cloud
+def test_mse_cli_with_ssl(cmd_log, workspace):
     """Test a complete deployment flow for dev mode."""
-    _test_mse_cli(cmd_log, SSLCertificateOrigin.Owner, False)
+    _test_mse_cli(workspace, cmd_log, SSLCertificateOrigin.Owner, False)
 
 
-@pytest.mark.slow
-def test_mse_cli_self_signed_untrusted(cmd_log):
+@pytest.mark.cloud
+def test_mse_cli_self_signed_untrusted(cmd_log, workspace):
     """Test a complete deployment flow for untrusted ssl."""
-    _test_mse_cli(cmd_log, SSLCertificateOrigin.Self, True)
+    _test_mse_cli(workspace, cmd_log, SSLCertificateOrigin.Self, True)
 
 
-@pytest.mark.slow
-def test_mse_cli_with_ssl_untrusted(cmd_log):
+@pytest.mark.cloud
+def test_mse_cli_with_ssl_untrusted(cmd_log, workspace):
     """Test a complete deployment flow for untrusted ssl."""
-    _test_mse_cli(cmd_log, SSLCertificateOrigin.Owner, True)
+    _test_mse_cli(workspace, cmd_log, SSLCertificateOrigin.Owner, True)

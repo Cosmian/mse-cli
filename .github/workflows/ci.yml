@@ -62,9 +62,9 @@ jobs:
 
       - name: Run unit tests
         run: |
-          pytest -m "not slow"
+          pytest -m "not cloud and not home"
 
-  tests:
+  tests-cloud:
     runs-on: self-hosted
     container:
       image: python:3.8
@@ -98,4 +98,31 @@ jobs:
           echo 'email = "alice@cosmian.com"' > ${MSE_CONF_PATH}/login.toml
           echo "refresh_token = \"${REFRESH_TOKEN}\"" >> ${MSE_CONF_PATH}/login.toml
           echo "Running tests using ${MSE_BASE_URL}"
-          pytest -m slow
+          pytest -m cloud
+
+  tests-home:
+    runs-on: [self-hosted, sgx]
+    strategy:
+      matrix:
+        python-version: ["3.8"]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+          pip install .
+
+      - name: Run unit tests
+        env:
+          TEST_SIGNER_KEY: /opt/cosmian-internal/cosmian-signer-key.pem
+          TEST_PCCS_URL: https://pccs.staging.mse.cosmian.com
+        run: |
+          pytest -m home

@@ -1,0 +1,5 @@
+name = "example"
+python_application = "app:app"
+healthcheck_endpoint = "/health"
+tests_cmd = "pytest"
+tests_requirements = [ "intel-sgx-ra>=1.0.1,<1.1", "pytest==7.2.0",]

@@ -1,0 +1,16 @@
+name = "helloworld"
+tests_cmd = "pytest"
+tests_requirements = [ "intel-sgx-ra>=1.0.1,<1.1", "pytest==7.2.0" ]
+python_application = "app:app"
+healthcheck_endpoint = "/"
+
+[cloud]
+location = "/tmp/code"
+project = "default"
+hardware = "4g-eu-001"
+docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
+
+[cloud.ssl]
+domain_name = "noexist.cosmian.app"
+private_key = "key.pem"
+certificate = "cert.pem"
