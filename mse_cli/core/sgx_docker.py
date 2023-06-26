@@ -1,4 +1,4 @@
-"""mse_cli_core.sgx_docker module."""
+"""mse_cli.core.sgx_docker module."""
 
 from pathlib import Path
 from typing import Any, ClassVar, Dict, List, Tuple

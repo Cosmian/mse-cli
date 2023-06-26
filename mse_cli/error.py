@@ -1,4 +1,4 @@
-"""mse_home.error module."""
+"""mse_cli.error module."""
 
 
 class AppContainerNotFound(Exception):

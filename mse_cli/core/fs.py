@@ -1,4 +1,4 @@
-"""mse_cli_core.fs module."""
+"""mse_cli.core.fs module."""
 
 import tarfile
 from pathlib import Path

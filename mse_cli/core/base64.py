@@ -1,4 +1,4 @@
-"""mse_cli_core.base64url module."""
+"""mse_cli.core.base64url module."""
 
 import base64
 import json

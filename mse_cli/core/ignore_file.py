@@ -1,4 +1,4 @@
-"""mse_cli_core.ignore_file module."""
+"""mse_cli.core.ignore_file module."""
 
 from pathlib import Path
 

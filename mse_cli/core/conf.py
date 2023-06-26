@@ -1,4 +1,4 @@
-"""mse_cli_core.conf module."""
+"""mse_cli.core.conf module."""
 
 from __future__ import annotations
 

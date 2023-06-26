@@ -1,1 +1,1 @@
-"""mse_home.command module."""
+"""mse_cli.home.command module."""

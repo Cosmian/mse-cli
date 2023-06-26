@@ -1,4 +1,4 @@
-"""mse_cli_core.enclave module."""
+"""mse_cli.core.enclave module."""
 
 import re
 import uuid
