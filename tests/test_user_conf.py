@@ -1,7 +1,7 @@
 """Test conf/user.py."""
 from pathlib import Path
 
-from mse_cli.model.user import UserConf
+from mse_cli.cloud.model.user import UserConf
 
 
 def test_from_toml():

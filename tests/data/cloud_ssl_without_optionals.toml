@@ -1,0 +1,16 @@
+name = "helloworld"
+python_application = "app:ppa"
+healthcheck_endpoint = "/"
+tests_cmd = "pytest"
+tests_requirements = [ "intel-sgx-ra>=1.0.1,<1.1", "pytest==7.2.0",]
+
+[cloud]
+location = "/tmp/code"
+docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
+project = "default"
+hardware = "4g-eu-001"
+
+[cloud.ssl]
+domain_name = "demo.dev.cosmilink.com"
+private_key = "key.pem"
+certificate = "cert.pem"

@@ -6,17 +6,17 @@ from pathlib import Path
 
 import pytest
 
-from mse_cli.command.context import run as run_context
-from mse_cli.command.deploy import run as run_deploy
-from mse_cli.command.list_all import run as run_list
-from mse_cli.command.logs import run as run_logs
-from mse_cli.command.scaffold import run as run_scaffold
-from mse_cli.command.status import run as run_status
-from mse_cli.command.stop import run as run_stop
-from mse_cli.command.verify import run as run_verify
+from mse_cli.cloud.command.context import run as run_context
+from mse_cli.cloud.command.deploy import run as run_deploy
+from mse_cli.cloud.command.list_all import run as run_list
+from mse_cli.cloud.command.logs import run as run_logs
+from mse_cli.cloud.command.scaffold import run as run_scaffold
+from mse_cli.cloud.command.status import run as run_status
+from mse_cli.cloud.command.stop import run as run_stop
+from mse_cli.cloud.command.verify import run as run_verify
 
 
-@pytest.mark.slow
+@pytest.mark.cloud
 def test_status_bad_uuid(cmd_log):
     """Test status with the error: valid id but no exists."""
     with pytest.raises(Exception) as exception:
@@ -31,7 +31,7 @@ def test_status_bad_uuid(cmd_log):
     assert "Cannot find the app with id " in str(exception.value)
 
 
-@pytest.mark.slow
+@pytest.mark.cloud
 def test_logs_bad_uuid(cmd_log):
     """Test status with the error: valid id but no exists."""
     with pytest.raises(Exception) as exception:
@@ -46,7 +46,7 @@ def test_logs_bad_uuid(cmd_log):
     assert "Cannot find the app with id " in str(exception.value)
 
 
-@pytest.mark.slow
+@pytest.mark.cloud
 def test_scaffold_bad_name(cmd_log):
     """Test scaffold with the error: bad name."""
     with pytest.raises(Exception) as exception:
@@ -55,7 +55,7 @@ def test_scaffold_bad_name(cmd_log):
     assert "File exists" in str(exception.value)
 
 
-@pytest.mark.slow
+@pytest.mark.cloud
 def test_list_bad_project_name(cmd_log):
     """Test list with the error: project name does not exist."""
     with pytest.raises(Exception) as exception:
@@ -64,7 +64,7 @@ def test_list_bad_project_name(cmd_log):
     assert "Project notexist does not exist" in str(exception.value)
 
 
-@pytest.mark.slow
+@pytest.mark.cloud
 def test_context_bad_id(cmd_log):
     """Test context with the error: id does not exist."""
     with pytest.raises(FileNotFoundError) as exception:
@@ -96,7 +96,7 @@ def test_context_bad_id(cmd_log):
     assert "Can't find context for UUID" in str(exception.value)
 
 
-@pytest.mark.slow
+@pytest.mark.cloud
 def test_stop_bad_uuid(cmd_log):
     """Test stop with the error: valid id but no exists."""
     with pytest.raises(Exception) as exception:
@@ -111,7 +111,7 @@ def test_stop_bad_uuid(cmd_log):
     assert "Cannot find the app with id " in str(exception.value)
 
 
-@pytest.mark.slow
+@pytest.mark.cloud
 def test_verify_bad_domain(cmd_log):
     """Test verify with the error: valid domain but no exists."""
     with pytest.raises(Exception) as exception:
@@ -143,7 +143,7 @@ def test_verify_bad_domain(cmd_log):
     assert "Are you sure the application is still running?" in str(exception.value)
 
 
-@pytest.mark.slow
+@pytest.mark.cloud
 def test_deploy_non_free(cmd_log):
     """Test deploy with the error: non free plan but no payment."""
     with pytest.raises(Exception) as exception:
@@ -164,7 +164,7 @@ def test_deploy_non_free(cmd_log):
     )
 
 
-@pytest.mark.slow
+@pytest.mark.cloud
 def test_deploy_bad_projet_name(cmd_log):
     """Test deploy with the error: project name does not exist."""
     with pytest.raises(Exception) as exception:
@@ -182,7 +182,7 @@ def test_deploy_bad_projet_name(cmd_log):
     assert "Project notexist does not exist" in str(exception.value)
 
 
-@pytest.mark.slow
+@pytest.mark.cloud
 def test_deploy_bad_app(cmd_log):
     """Test deploy with the error: bad python app."""
     with pytest.raises(Exception) as exception:
@@ -202,7 +202,7 @@ def test_deploy_bad_app(cmd_log):
     assert "Flask module 'app' not found in directory" in str(exception.value)
 
 
-@pytest.mark.slow
+@pytest.mark.cloud
 def test_deploy_bad_docker(cmd_log):
     """Test deploy with the error: bad docker name."""
     with pytest.raises(Exception) as exception:
@@ -223,7 +223,7 @@ def test_deploy_bad_docker(cmd_log):
     )
 
 
-@pytest.mark.slow
+@pytest.mark.cloud
 def test_deploy_latest_docker(cmd_log):
     """Test deploy with the error: latest docker name."""
     with pytest.raises(Exception) as exception:
