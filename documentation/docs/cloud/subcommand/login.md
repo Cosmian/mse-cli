@@ -3,7 +3,7 @@ Basic usage examples can be found in [Getting started](../getting_started.md) pa
 You also can print which user is logged in using:
 
 ```console
-$ mse login --whoami
+$ mse cloud login --whoami
 ```
 
 !!! warning "Opened port"

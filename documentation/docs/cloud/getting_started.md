@@ -9,36 +9,35 @@ It is recommended to use [pyenv](https://github.com/pyenv/pyenv) to manage diffe
 
 ```{.console}
 $ pip3 install mse-cli
-$ mse --help     
-usage: mse [-h] [--version]
-               {context,deploy,init,list,login,logout,remove,scaffold,status,stop,test,verify} ...
-
-Microservice Encryption CLI.
+$ mse cloud --help
+usage: mse cloud [-h]
+                 {context,deploy,init,list,login,logout,logs,scaffold,status,stop,test,verify}
+                 ...
 
 options:
   -h, --help            show this help message and exit
-  --version             The version of the CLI
 
-subcommands:
-  {context,deploy,init,list,login,logout,remove,scaffold,status,stop,test,verify}
-    context             Manage your MSE context files
-    deploy              Deploy the application from the current directory into a MSE node
-    init                Create a configuration file in the current directory.
-    list                Print the list of apps from a project
-    login               Sign up or login a user
-    logout              Log out the current user
-    remove              Stop and remove the MSE app from the project
-    scaffold            Create a new empty app in the current directory
-    status              Print the status of a MSE app
-    stop                Stop a MSE app
-    test                Test locally the application in the MSE docker
-    verify              Verify the trustworthiness of an MSE app (no sign-in required)
+operations:
+  {context,deploy,init,list,login,logout,logs,scaffold,status,stop,test,verify}
+    context             manage context of your deployed applications
+    deploy              deploy an ASGI web application to MSE
+    init                create a new configuration file in the current directory
+    list                list deployed MSE web application from a project
+    login               sign up or login to console.cosmian.com
+    logout              log out the current user
+    logs                logs (last 64kB) of a specific MSE web application
+    scaffold            create a new boilerplate MSE web application
+    status              status of a specific MSE web application
+    stop                stop a specific MSE web application
+    test                test locally the application in the MSE docker
+    verify              verify the trustworthiness of a running MSE web application (no
+                        sign-in required)
 ```
 
 ## Log in
 
 ```{.console}
-$ mse login
+$ mse cloud login
 ```
 
 It will open your browser to sign up and/or log in on [console.cosmian.com](https://console.cosmian.com).
@@ -54,11 +53,11 @@ The credential tokens are saved in `~/.config` on Linux/MacOS and `C:\Users\<use
 Let's start with a simple Flask Hello World application:
 
 ```{.console}
-$ mse scaffold helloworld
+$ mse cloud scaffold helloworld
 An example app has been generated in the current directory
 You can configure your MSE application in: helloworld/mse.toml
-You can now test it locally from 'helloworld/' directory using: `mse test` then `pytest`
-Or deploy it from 'helloworld/' directory using: `mse deploy`
+You can now test it locally from 'helloworld/' directory using: `mse cloud test` then `pytest`
+Or deploy it from 'helloworld/' directory using: `mse cloud deploy`
 Refer to the 'helloworld/README.md' for more details.
 $ tree helloworld/
 helloworld/
@@ -104,16 +103,18 @@ if __name__ == "__main__":
 
 The [configuration file](./configuration.md) is a TOML file:
 
-```{.toml}
+```toml
 name = "helloworld"
+python_application = "app:app"
+healthcheck_endpoint = "/"
+tests_cmd = "pytest"
+tests_requirements = [ "intel-sgx-ra>=1.0.1,<1.1", "pytest==7.2.0",]
+
+[cloud]
+location = "."
+docker = "ghcr.io/cosmian/mse-flask:20230228091325"
 project = "default"
 hardware = "4g-eu-001"
-
-[code]
-location = "mse_src"
-docker = "ghcr.io/cosmian/mse-flask:20230228091325"
-python_application = "app:app"
-healthcheck_endpoint = "/health"
 ```
 
 This project also contains a test directory enabling you to test this project locally without any MSE consideration.
@@ -140,20 +141,20 @@ For your first deployment, to make things easier to understand and faster to run
 
 ```{.console}
 $ cd helloworld
-$ mse deploy --no-verify --untrusted-ssl
+$ mse cloud deploy --no-verify --untrusted-ssl
 ⚠️ This app runs in untrusted-ssl mode with an operator certificate. The operator may access all communications with the app. See Documentation > Security Model for more details.
 Temporary workspace is: /tmp/tmpzdvizsb5
 Encrypting your source code...
 Deploying your app...
 App 04e9952c-981d-4601-a610-81152fe21315 creating for helloworld with 512M EPC memory and 0.38 CPU cores...
-You can now run `mse logs 04e9952c-981d-4601-a610-81152fe21315` if necessary
+You can now run `mse cloud logs 04e9952c-981d-4601-a610-81152fe21315` if necessary
 ✅ App created!
 ⚠️ App trustworthiness checking skipped. The app integrity has not been checked and shouldn't be used in production mode!
 Sending secret key and decrypting the application code...
 Waiting for application to be ready...
 Your application is now fully deployed and started...
 ✅ It's now ready to be used on https://123456789abcdef.cosmian.dev until 2023-01-10 20:30:36.860596+01:00. The application will be automatically stopped after this date.
-The context of this creation can be retrieved using `mse context --export 04e9952c-981d-4601-a610-81152fe21315`
+The context of this creation can be retrieved using `mse cloud context --export 04e9952c-981d-4601-a610-81152fe21315`
 You can now quickly test your application doing: `curl https://123456789abcdef.cosmian.dev/health`
 ```
 
@@ -194,7 +195,7 @@ For more details, please refer to [the security model](security.md).
 
 ```{.console}
 $ cd helloworld
-$ mse deploy -y --untrusted-ssl
+$ mse cloud deploy -y --untrusted-ssl
 An application with the same name in that project is already running...
 Stopping the previous app (force mode enabled)...
 ⚠️ This app runs in untrusted-ssl mode with an operator certificate. The operator may access all communications with the app. See Documentation > Security Model for more details.
@@ -202,7 +203,7 @@ Temporary workspace is: /tmp/tmpucnl7zfd
 Encrypting your source code...
 Deploying your app...
 App 74638f07-c85c-41d3-be82-238d0099e2d3 creating for helloworld with 8192M EPC memory and 6.00 CPU cores...
-You can now run `mse logs 74638f07-c85c-41d3-be82-238d0099e2d3` if necessary
+You can now run `mse cloud logs 74638f07-c85c-41d3-be82-238d0099e2d3` if necessary
 ✅ App created!
 Checking app trustworthiness...
 The code fingerprint is 9bb0342fa8a09c2707632ed8556accc5fac168515bf2453bf88992c9fa84e849
@@ -211,7 +212,7 @@ Sending secret key and decrypting the application code...
 Waiting for application to be ready...
 Your application is now fully deployed and started...
 ✅ It's now ready to be used on https://74638f07-c85c-41d3-be82-238d0099e2d3.cosmian.dev until 2023-01-10 21:23:28.929299+01:00. The application will be automatically stopped after this date.
-The context of this creation can be retrieved using `mse context --export 74638f07-c85c-41d3-be82-238d0099e2d3`
+The context of this creation can be retrieved using `mse cloud context --export 74638f07-c85c-41d3-be82-238d0099e2d3`
 You can now quickly test your application doing: `curl https://74638f07-c85c-41d3-be82-238d0099e2d3.cosmian.dev/health`
 ```
 
@@ -225,14 +226,14 @@ In this step, we will redeploy your previous app but without the insecure argume
 
 ```{.console}
 $ cd helloworld
-$ mse deploy -y
+$ mse cloud deploy -y
 An application with the same name in that project is already running...
 Stopping the previous app (force mode enabled)...
 Temporary workspace is: /tmp/tmp4u_gcjwk
 Encrypting your source code...
 Deploying your app...
 App 248fce63-bc05-49a6-816a-4436b456fa27 creating for helloworld with 8192M EPC memory and 6.00 CPU cores...
-You can now run `mse logs 248fce63-bc05-49a6-816a-4436b456fa27` if necessary
+You can now run `mse cloud logs 248fce63-bc05-49a6-816a-4436b456fa27` if necessary
 ✅ App created!
 Checking app trustworthiness...
 The code fingerprint is ecd2ed83c65906bec65d5b8bc02e18d439c0d1401272e207fed254f7228eee7e
@@ -242,7 +243,7 @@ Sending secret key and decrypting the application code...
 Waiting for application to be ready...
 Your application is now fully deployed and started...
 ✅ It's now ready to be used on https://123456789abcdef.cosmian.app until 2023-01-10 21:24:28.162324+01:00. The application will be automatically stopped after this date.
-The context of this creation can be retrieved using `mse context --export 248fce63-bc05-49a6-816a-4436b456fa27`
+The context of this creation can be retrieved using `mse cloud context --export 248fce63-bc05-49a6-816a-4436b456fa27`
 You can now quickly test your application doing: `curl https://123456789abcdef.cosmian.app/health --cacert /tmp/tmp4u_gcjwk/cert.conf.pem`
 ```
 

@@ -101,7 +101,7 @@ This directory is designed to be shared with any app users wishing to verify the
 You can list the contexts saved on your local host using:
 
 ```console
-$ mse context --list
+$ mse cloud context --list
 852a4256-fffa-457a-80ed-329166a652af -> helloworld-1.0.0 (2022-11-23 16:22:34.621387)
 [...]
 ```
@@ -111,7 +111,7 @@ $ mse context --list
 You can remove the context directory of an app using:
 
 ```console
-$ mse context --remove 852a4256-fffa-457a-80ed-329166a652af
+$ mse cloud context --remove 852a4256-fffa-457a-80ed-329166a652af
 [...]
 ```
 
@@ -125,7 +125,7 @@ $ mse context --remove 852a4256-fffa-457a-80ed-329166a652af
 You can also remove all your context directories:
 
 ```console
-$ mse context --purge
+$ mse cloud context --purge
 [...]
 ```
 
@@ -139,7 +139,7 @@ $ mse context --purge
 If you want app users to verify the trustworthiness of your apps, they will need this context file from the context directory which can be exported using:
 
 ```console
-$ mse context --export 852a4256-fffa-457a-80ed-329166a652af
+$ mse cloud context --export 852a4256-fffa-457a-80ed-329166a652af
 Exporting 852a4256-fffa-457a-80ed-329166a652af context in context.mse...
 You can now transfer this file to your app user.
 ```

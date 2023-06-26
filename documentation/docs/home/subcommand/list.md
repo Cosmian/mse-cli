@@ -7,5 +7,5 @@
 You can get the list of running MSE applications:
 
 ```console
-$ msehome list
+$ mse home list
 ```

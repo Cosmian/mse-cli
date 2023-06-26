@@ -6,5 +6,5 @@
 You can restart a stopped and not removed application as follow:
 
 ```console
-$ msehome restart <app_name>
+$ mse home restart <app_name>
 ```

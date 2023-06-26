@@ -1,26 +1,51 @@
 The configuration of an MSE application is written in a TOML file.
-The `mse.toml` file located in the current directory is used with `mse deploy` subcommand, you can specify another TOML file with argument `--path` if needed.
+The `mse.toml` file located in the current directory is used with `mse cloud deploy` subcommand, you can specify another TOML file with argument `--path` if needed.
 
-```{.toml}
-name = "my_project"
-project = "default"
-hardware = "4g-eu-001"
-
-[code]
-location = "my_project/code"
+```toml
+name = "test"
 python_application = "app:app"
 healthcheck_endpoint = "/"
+tests_cmd = "pytest"
+tests_requirements = [ "intel-sgx-ra>=1.0.1,<1.1", "pytest==7.2.0",]
+
+[cloud]
+location = "my_project/code"
 docker = "ghcr.io/cosmian/mse-flask:20230228091325"
+project = "my_project"
+hardware = "4g-eu-001"
 ```
 
 ### Main section
 
-|      Keys       | Required |          Types           |                                                 Description                                                 |
-| :-------------: | :------: | :----------------------: | :---------------------------------------------------------------------------------------------------------: |
-|      name       |    ✔️     |          string          |                           Name of the application. It must be unique per project                            |
-|     project     |    ✔️     |          string          |                              Project name to regroup applications for payment                               |
-|    hardware     |    ✔️     |          string          |                            Name of the hardware booked to spawn your application                            |
-| expiration_date |          | `YY-MM-DDTHH:mm:ss.nnnZ` | Expiration date before the application shutdowns ([rfc3339](https://www.rfc-editor.org/rfc/rfc3339) format) |
+|         Keys         | Required | Types  |                                                                          Description                                                                          |
+| :------------------: | :------: | :----: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|         name         |    ✔️     | string |                                                    Name of the application. It must be unique per project                                                     |
+|  python_application  |    ✔️     | string |                                                                module_name:flask_variable_name                                                                |
+| healthcheck_endpoint |    ✔️     | string | `GET` endpoint (starting with a `/`) to check if the application is ready. This endpoint should be unauthenticated and shouldn't require any parameters/data. |
+
+The parameters `tests_cmd` and `tests_requirements` are ignored for now. 
+
+### Cloud section
+
+```toml
+[cloud]
+location = "my_project/code"
+hardware = "4g-eu-001"
+project = "default"
+docker = "ghcr.io/cosmian/mse-flask:20230228091325"
+secrets = "secrets.json"
+expiration_date = "2023-06-29 00:00:00+00:00"
+```
+
+|      Keys       | Required |          Types           |                                                                                Description                                                                                |
+| :-------------: | :------: | :----------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|    location     |    ✔️     |          string          |                                                               Relative path to the application code folder                                                                |
+|     docker      |    ✔️     |          string          | URL to the mse docker to run. It could be a local docker to run local test but it must be a remote url when deploying. See [below section](./configuration.md#mse-docker) |
+|     project     |    ✔️     |          string          |                                                             Project name to regroup applications for payment                                                              |
+|    hardware     |    ✔️     |          string          |                                                           Name of the hardware booked to spawn your application                                                           |
+| expiration_date |          | `YY-MM-DDTHH:mm:ss.nnnZ` |                                Expiration date before the application shutdowns ([rfc3339](https://www.rfc-editor.org/rfc/rfc3339) format)                                |
+|     secrets     |          |          string          |     A file path (absolute or relative to the configuration file) containing secrets needed by your application to run. See [this page](develop.md) for more  details.     |
+
 
 Two applications from the same project with the same name cannot be running at the same time.
 
@@ -41,24 +66,6 @@ In case the SSL certificate is provided by the application owner, the expiration
 If no `expiration_date` is specified in the configuration file, the expiration date of the application is the expiration date of the certificate.
 Otherwise, the expiration date is set to 1 year (except for `4g-eu-001` hardware).
 
-### Code section
-
-```{.toml}
-[code]
-location = "my_project/code"
-python_application = "app:app"
-healthcheck_endpoint = "/"
-docker = "ghcr.io/cosmian/mse-flask:20230228091325"
-```
-
-|         Keys         | Required | Types  |                                                                                Description                                                                                |
-| :------------------: | :------: | :----: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-|       location       |    ✔️     | string |                                                               Relative path to the application code folder                                                                |
-|        docker        |    ✔️     | string | URL to the mse docker to run. It could be a local docker to run local test but it must be a remote url when deploying. See [below section](./configuration.md#mse-docker) |
-|  python_application  |    ✔️     | string |                                                                      module_name:flask_variable_name                                                                      |
-| healthcheck_endpoint |    ✔️     | string |       `GET` endpoint (starting with a `/`) to check if the application is ready. This endpoint should be unauthenticated and shouldn't require any parameters/data.       |
-|       secrets        |          | string |     A file path (absolute or relative to the configuration file) containing secrets needed by your application to run. See [this page](develop.md) for more  details.     |
-
 #### MSE docker
 
 The `docker` parameter defines which Docker image will run in the MSE node. *Cosmian* offers several Docker images (use the tag with the most recent date):
@@ -69,7 +76,7 @@ The `docker` parameter defines which Docker image will run in the MSE node. *Cos
 - [mse-ds](https://github.com/Cosmian/mse-docker-ds/pkgs/container/mse-ds): containing flask and data science dependencies.
 - [mse-fastapi](https://github.com/Cosmian/mse-docker-fastapi/pkgs/container/mse-fastapi): containing fastapi dependencies.
 
-You can test your code properly runs inside this Docker using [`mse test`](subcommand/test.md).
+You can test your code properly runs inside this Docker using [`mse cloud test`](subcommand/test.md).
 
 If you need to install other dependencies, you can create a new Docker by forking [mse-docker-flask](https://github.com/Cosmian/mse-docker-flask).
 This Docker will be allowed to be started in an MSE architecture after a review by a *Cosmian* member. To do so, please contact tech@cosmian.com and provide your `Dockerfile` and the link to your docker image.
@@ -80,7 +87,7 @@ Note that, the `requirements.txt` from your source code directory will still be 
 ### SSL section
 
 ```{.toml}
-[ssl]
+[cloud.ssl]
 domain_name="demo.owner.com"
 private_key="key.pem"
 certificate="cert.pem"
@@ -100,7 +107,7 @@ Be aware that the expiration date is set to 3 months for all LetsEncrypt certifi
 
 Here is the procedure to generate the certificate with *LetsEncrypt* (e.g. *example.domain.com*).
 
-1. In your DNS provider interface, register a `CNAME` field *example.domain.com* to the Cosmian proxy `proxy.mse.cosmian.com`. This registration must be effective before running `mse deploy`.
+1. In your DNS provider interface, register a `CNAME` field *example.domain.com* to the Cosmian proxy `proxy.mse.cosmian.com`. This registration must be effective before running `mse cloud deploy`.
 2. To generate a certificate, the DNS-001 challenge will be used. With `certbot` run:
 ```{.console}
 $ sudo certbot certonly -d example.domain.com --manual --preferred-challenges dns -m tech@domain.com --agree-tos
@@ -141,4 +148,4 @@ These files will be updated when the certificate renews.
 ```
 
 3. A DNS `TXT` record should be registered under a given name in your DNS provider interface. After doing that, the certificate will be generated. Delete this record at the end of the process.
-4. Read the two PEM files and create your own `ssl` section in the MSE configuration file. You are now ready to deploy your app using: `mse deploy`.
+4. Read the two PEM files and create your own `ssl` section in the MSE configuration file. You are now ready to deploy your app using: `mse cloud deploy`.

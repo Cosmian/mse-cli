@@ -178,7 +178,7 @@ def run(args) -> None:
     except NameError:
         LOG.info("\nWelcome to Microservice Encryption.")
         LOG.advice(  # type: ignore
-            "You can use `mse scaffold <app_name>` to initialize a new application."
+            "You can use `mse cloud scaffold <app_name>` to initialize a new application."
         )
         LOG.warning(
             "Don't forget to verify your email and "

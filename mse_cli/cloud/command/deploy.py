@@ -181,7 +181,7 @@ def run(args) -> None:
 
     LOG.advice(  # type: ignore
         "The context of this creation can be retrieved using: \n\n\t"
-        "mse context --export %s\n",
+        "mse cloud context --export %s\n",
         app.id,
     )
 

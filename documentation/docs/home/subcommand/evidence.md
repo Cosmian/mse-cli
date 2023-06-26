@@ -7,7 +7,7 @@ The evidence are collected when you run the `spawn` command. You can also retrie
 
 
 ```console
-$ msehome evidence --output workspace/sgx_operator/ \
+$ mse home evidence --output workspace/sgx_operator/ \
                    app_name
 ```
 
