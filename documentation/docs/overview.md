@@ -6,6 +6,8 @@ Microservice Encryption (MSE) allows to easily deploy confidential web applicati
 - Secure channel is established directly and uniquely with your code in the TEE.
 - Everyone interacting with your microservice can verify that your code runs in a TEE thanks to a Transport Layer Security (TLS) extension called Remote Attestation TLS (RA-TLS).
 
+You can also deploy a confidential web application on your self-managed Trusted Execution Environment in a multi-part scenario. 
+
 ## What does MSE protect?
 
 Basically MSE protects any data and metadata against us and the underlying cloud provider who owns the hardware infrastructure.

@@ -24,7 +24,7 @@ from mse_cli.cloud.command import verify as cloud_verify
 from mse_cli.color import setup_color
 from mse_cli.home.command.code_provider import decrypt as home_decrypt
 from mse_cli.home.command.code_provider import package as home_package
-from mse_cli.common.command import scaffold as home_scaffold
+from mse_cli.home.command.code_provider import scaffold as home_scaffold
 from mse_cli.home.command.code_provider import seal as home_seal
 from mse_cli.home.command.code_provider import test_dev as home_test_dev
 from mse_cli.home.command.code_provider import verify as home_verify

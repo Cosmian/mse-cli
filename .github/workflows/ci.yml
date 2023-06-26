@@ -102,16 +102,14 @@ jobs:
 
   tests-home:
     runs-on: [self-hosted, sgx]
-    strategy:
-      matrix:
-        python-version: ["3.8"]
+    needs: check
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python 3.8
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.8
 
       - name: Install dependencies
         run: |
