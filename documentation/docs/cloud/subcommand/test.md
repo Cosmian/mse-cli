@@ -2,7 +2,7 @@
 You can run your tests (specified when deployed the application) against a deployed app by simply run the `test` subcommand.
 
 ```{.console}
-$ mse cloud test 
+$ mse cloud test ea62be0e-d54c-4338-822f-5757ced14c2a
 Defaulting to user installation because normal site-packages is not writeable
 Requirement already satisfied: intel-sgx-ra in /home/seb/.local/lib/python3.10/site-packages (2.0a11)
 Requirement already satisfied: requests<3.0.0,>=2.31.0 in /home/seb/.local/lib/python3.10/site-packages (from intel-sgx-ra) (2.31.0)
@@ -35,5 +35,5 @@ test_app.py ..                                                                  
 
 !!! warning "Update tests"
 
-    If you need to change the test parameters after a deployement, you can edit the context file of the corresponding application. The context file is read when you run the `test` command. 
+    If you need to change the test parameters after a deployment, you can edit the context file of the corresponding application. The context file is read when you run the `test` command. 
 

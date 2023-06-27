@@ -8,6 +8,7 @@ from pydantic import BaseModel
 
 from mse_cli.core.base64 import base64url_encode
 from mse_cli.core.clock_tick import ClockTick
+from mse_cli.error import UnexpectedResponse
 
 
 class ConfigurationPayload(BaseModel):
@@ -51,7 +52,7 @@ def configure_app(url: str, data: Dict[str, Any], verify: Union[bool, str] = Tru
     )
 
     if not r.ok:
-        raise Exception(
+        raise UnexpectedResponse(
             "Fail to send data to the configuration server "
             f"(Response {r.status_code} {r.text})"
         )

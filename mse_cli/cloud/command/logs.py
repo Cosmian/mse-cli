@@ -7,6 +7,7 @@ import requests
 from mse_cli.cloud.api.app import log as get_app_logs
 from mse_cli.cloud.command.helpers import get_app
 from mse_cli.cloud.model.user import UserConf
+from mse_cli.error import UnexpectedResponse
 from mse_cli.log import LOGGER as LOG
 
 
@@ -36,7 +37,7 @@ def run(args) -> None:
 
     r: requests.Response = get_app_logs(conn=conn, app_id=app.id)
     if not r.ok:
-        raise Exception(r.text)
+        raise UnexpectedResponse(r.text)
 
     logs = r.json()
     LOG.info("")

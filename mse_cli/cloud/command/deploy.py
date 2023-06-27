@@ -1,7 +1,7 @@
 """mse_cli.cloud.command.deploy module."""
 
-from pathlib import Path
 import shutil
+from pathlib import Path
 from typing import Any, Dict, Optional
 from uuid import UUID
 
@@ -28,6 +28,12 @@ from mse_cli.core.bootstrap import ConfigurationPayload, configure_app
 from mse_cli.core.clock_tick import ClockTick
 from mse_cli.core.conf import AppConf, AppConfParsingOption
 from mse_cli.core.spinner import Spinner
+from mse_cli.error import (
+    AppContainerBadState,
+    AppContainerError,
+    BadApplicationInput,
+    UnexpectedResponse,
+)
 from mse_cli.log import LOGGER as LOG
 
 
@@ -219,15 +225,17 @@ def wait_app_start(conn: Connection, app_id: UUID) -> App:
             app = get_app(conn=conn, app_id=app_id)
 
             if app.status == AppStatus.Spawning:
-                raise Exception(
+                raise AppContainerBadState(
                     "The app shoudn't be in the state spawning at this stage..."
                 )
             if app.status == AppStatus.Running:
                 break
             if app.status == AppStatus.OnError:
-                raise Exception("The app creation stopped because an error occurred...")
+                raise AppContainerError(
+                    "The app creation stopped because an error occurred..."
+                )
             if app.status == AppStatus.Stopped:
-                raise Exception(
+                raise AppContainerError(
                     "The app creation stopped because it has been "
                     "stopped in the meantime..."
                 )
@@ -241,7 +249,7 @@ def check_app_conf(conn: Connection, app_conf: AppConf, force: bool = False) -> 
     cloud_conf = app_conf.cloud_or_raise()
     project = get_project_from_name(conn, cloud_conf.project)
     if not project:
-        raise Exception(f"Project {cloud_conf.project} does not exist")
+        raise BadApplicationInput(f"Project {cloud_conf.project} does not exist")
 
     # Check that a same name application is not running yet
     app = exists_in_project(
@@ -286,7 +294,7 @@ def deploy_app(conn: Connection, app_conf: AppConf, tar_path: Path) -> App:
     r: requests.Response = new(conn=conn, conf=app_conf, code_tar_path=tar_path)
 
     if not r.ok:
-        raise Exception(r.text)
+        raise UnexpectedResponse(r.text)
 
     return App.from_dict(r.json())
 
@@ -305,13 +313,15 @@ def wait_app_creation(conn: Connection, app_id: UUID) -> App:
             if app.status == AppStatus.Initializing:
                 break
             if app.status == AppStatus.Running:
-                raise Exception(
+                raise AppContainerBadState(
                     "The app shouldn't be in the state running at this stage..."
                 )
             if app.status == AppStatus.OnError:
-                raise Exception("The app creation stopped because an error occurred...")
+                raise AppContainerError(
+                    "The app creation stopped because an error occurred..."
+                )
             if app.status == AppStatus.Stopped:
-                raise Exception(
+                raise AppContainerError(
                     "The app creation stopped because it "
                     "has been stopped in the meantime..."
                 )

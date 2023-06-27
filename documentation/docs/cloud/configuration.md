@@ -40,11 +40,10 @@ secrets = "secrets.json"
 expiration_date = "2023-06-29 00:00:00+00:00"
 ```
 
-| Keys  | Required | Types  |                  Description                  |
-| :---: | :------: | :----: | :-------------------------------------------: |
-| code  |    ✔️     | string | Relative path to the application code folder  |
-| tests |    ✔️     | string | Relative path to the application tests folder |
-
+|      Keys       | Required |          Types           |                                                                                Description                                                                                |
+| :-------------: | :------: | :----------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|      code       |    ✔️     |          string          |                                                               Relative path to the application code folder                                                                |
+|      tests      |    ✔️     |          string          |                                                               Relative path to the application tests folder                                                               |
 |     docker      |    ✔️     |          string          | URL to the mse docker to run. It could be a local docker to run local test but it must be a remote url when deploying. See [below section](./configuration.md#mse-docker) |
 |     project     |    ✔️     |          string          |                                                             Project name to regroup applications for payment                                                              |
 |    hardware     |    ✔️     |          string          |                                                           Name of the hardware booked to spawn your application                                                           |

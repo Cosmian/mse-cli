@@ -17,6 +17,7 @@ from mse_cli.core.bootstrap import is_ready
 from mse_cli.core.clock_tick import ClockTick
 from mse_cli.core.conf import AppConf, AppConfParsingOption
 from mse_cli.core.test_docker import TestDockerConfig
+from mse_cli.error import AppContainerError
 from mse_cli.home.model.package import (
     DEFAULT_CODE_DIR,
     DEFAULT_CONFIG_FILENAME,
@@ -178,7 +179,7 @@ def run_app_test_docker(
         container = client.containers.get(container_name)
 
         if container.status == "exited":
-            raise Exception("Application docker fails to start")
+            raise AppContainerError("Application docker fails to start")
 
         if is_ready(f"http://localhost:{docker_config.port}", healthcheck_endpoint):
             break

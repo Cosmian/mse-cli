@@ -7,6 +7,7 @@ from mse_cli.cloud.api.types import AppStatus, PartialApp
 from mse_cli.cloud.command.helpers import get_project_from_name, non_empty_string
 from mse_cli.cloud.model.user import UserConf
 from mse_cli.color import COLOR, ColorKind
+from mse_cli.error import BadApplicationInput, UnexpectedResponse
 from mse_cli.log import LOGGER as LOG
 
 
@@ -37,7 +38,7 @@ def run(args) -> None:
     if args.project_name:
         project = get_project_from_name(conn, args.project_name)
         if not project:
-            raise Exception(f"Project {args.project_name} does not exist")
+            raise BadApplicationInput(f"Project {args.project_name} does not exist")
 
         LOG.info("Fetching the apps in project %s...", project.name)
         project_id = project.id
@@ -55,7 +56,7 @@ def run(args) -> None:
     r: requests.Response = list_apps(conn=conn, project_id=project_id, status=status)
 
     if not r.ok:
-        raise Exception(r.text)
+        raise UnexpectedResponse(r.text)
 
     LOG.info(
         "\n%s | %s | %12s | %s ",

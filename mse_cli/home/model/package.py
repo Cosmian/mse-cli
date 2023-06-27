@@ -5,6 +5,8 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
+from mse_cli.error import PackageMalformed
+
 DEFAULT_CODE_DIR = "mse_src"
 DEFAULT_CONFIG_FILENAME = "mse.toml"
 DEFAULT_TEST_DIR = "tests"
@@ -49,18 +51,24 @@ class CodePackage(BaseModel):
         test_tar_path = workspace / TEST_TAR_NAME
 
         if not code_tar_path.exists():
-            raise Exception(f"'{CODE_TAR_NAME}' was not found in the MSE package")
+            raise PackageMalformed(
+                f"'{CODE_TAR_NAME}' was not found in the MSE package"
+            )
 
         if not image_tar_path.exists():
-            raise Exception(
+            raise PackageMalformed(
                 f"'{DOCKER_IMAGE_TAR_NAME}' was not found in the MSE package"
             )
 
         if not test_tar_path.exists():
-            raise Exception(f"'{TEST_TAR_NAME}' was not found in the mse package")
+            raise PackageMalformed(
+                f"'{TEST_TAR_NAME}' was not found in the mse package"
+            )
 
         if not code_config_path.exists():
-            raise Exception(f"'{MSE_CONFIG_NAME}' was not found in the mse package")
+            raise PackageMalformed(
+                f"'{MSE_CONFIG_NAME}' was not found in the mse package"
+            )
 
         return CodePackage(
             code_tar=code_tar_path,
