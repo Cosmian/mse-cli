@@ -7,5 +7,6 @@ healthcheck_endpoint = "/"
 [cloud]
 project = "default"
 hardware = "4g-eu-001"
-location = "code/"
+code = "code/"
+tests = "/tmp/tests"
 docker = "ghcr.io/cosmian/mse-pytorch:latest"

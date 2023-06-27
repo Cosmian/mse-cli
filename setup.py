@@ -51,7 +51,7 @@ setup(
         "console_scripts": ["mse = mse_cli.main:main"],
     },
     package_data={"mse_cli": ["template/*", "template/**/*"]},
-    tests_require=["pytest>=7.2.0,<7.3.0"],
+    tests_require=["pytest>=7.2.0,<7.5.0"],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Environment :: Console",

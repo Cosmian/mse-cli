@@ -111,7 +111,8 @@ def test_cloud_with_optionals():
         tests_cmd="pytest",
         tests_requirements=["intel-sgx-ra>=1.0.1,<1.1", "pytest==7.2.0"],
         cloud=CloudConf(
-            location="/tmp/code",
+            code="/tmp/code",
+            tests="/tmp/tests",
             project="default",
             hardware="4g-eu-001",
             docker="ghcr.io/cosmian/mse-pytorch:20230104085621",
@@ -129,7 +130,7 @@ def test_cloud_with_optionals():
     assert conf.cloud.ssl.certificate_data == CERTIFICATE
     assert conf.cloud.ssl.private_key_data == PRIVATE_KEY
     assert conf.cloud.secrets_data == {"login": "user", "password": "azerty"}
-    assert conf.cloud.dev_mode == False
+    assert conf.cloud.dev_mode is False
 
 
 def test_cloud_without_optionals():
@@ -144,7 +145,8 @@ def test_cloud_without_optionals():
         tests_cmd="pytest",
         tests_requirements=["intel-sgx-ra>=1.0.1,<1.1", "pytest==7.2.0"],
         cloud=CloudConf(
-            location="/tmp/code",
+            code="/tmp/code",
+            tests="/tmp/tests",
             project="default",
             hardware="4g-eu-001",
             docker="ghcr.io/cosmian/mse-pytorch:20230104085621",
@@ -169,7 +171,8 @@ def test_cloud_ssl_without_optionals():
         tests_cmd="pytest",
         tests_requirements=["intel-sgx-ra>=1.0.1,<1.1", "pytest==7.2.0"],
         cloud=CloudConf(
-            location="/tmp/code",
+            code="/tmp/code",
+            tests="/tmp/tests",
             project="default",
             hardware="4g-eu-001",
             docker="ghcr.io/cosmian/mse-pytorch:20230104085621",
@@ -209,7 +212,7 @@ def test_options():
     conf = AppConf.load(path=toml, option=AppConfParsingOption.UseInsecureCloud)
 
     assert conf.cloud.ssl is None
-    assert conf.cloud.dev_mode == True
+    assert conf.cloud.dev_mode is True
 
     conf = AppConf.load(path=toml, option=AppConfParsingOption.SkipCloud)
 
@@ -219,15 +222,15 @@ def test_options():
 def test_bad_domain_name():
     """Test error when domain name is not the same than in the cert."""
     toml = Path("tests/data/ssl_bad_domain_name.toml")
-    with pytest.raises(Exception) as context:
+    with pytest.raises(Exception):
         AppConf.load(path=toml)
 
 
 def test_bad_expiration_date():
     """Test error when exp doesn't fit the one in the cert."""
     toml = Path("tests/data/ssl_bad_expiration_date.toml")
-    with pytest.raises(Exception) as context:
-        conf = AppConf.load(path=toml)
+    with pytest.raises(Exception):
+        AppConf.load(path=toml)
 
 
 def test_python_variable():
@@ -247,7 +250,7 @@ def test_python_variable():
         cloud=None,
     )
 
-    with pytest.raises(Exception) as context:
+    with pytest.raises(Exception):
         conf.python_variable
         conf.python_module
 
@@ -307,5 +310,5 @@ def test_into_payload():
 
     toml = Path("tests/data/mse.toml")
     conf = AppConf.load(path=toml)
-    with pytest.raises(Exception) as context:
+    with pytest.raises(Exception):
         conf.into_cloud_payload()

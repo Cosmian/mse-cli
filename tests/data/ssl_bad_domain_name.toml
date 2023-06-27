@@ -5,7 +5,8 @@ python_application = "app:app"
 healthcheck_endpoint = "/"
 
 [cloud]
-location = "/tmp/code"
+code = "/tmp/code"
+tests = "tests/"
 project = "default"
 hardware = "4g-eu-001"
 docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
