@@ -29,19 +29,20 @@ It is recommended to use [pyenv](https://github.com/pyenv/pyenv) to manage diffe
 $ pip3 install mse-home-cli
 $ mse home --help
 usage: mse home [-h]
-                {decrypt,evidence,scaffold,list,logs,package,restart,run,status,seal,spawn,stop,test,test-dev,verify}
+                {decrypt,evidence,scaffold,list,localtest,logs,package,restart,run,status,seal,spawn,stop,test,verify}
                 ...
 
 options:
   -h, --help            show this help message and exit
 
 operations:
-  {decrypt,evidence,scaffold,list,logs,package,restart,run,status,seal,spawn,stop,test,test-dev,verify}
+  {decrypt,evidence,scaffold,list,localtest,logs,package,restart,run,status,seal,spawn,stop,test,verify}
     decrypt             decrypt a file using Fernet symmetric encryption
     evidence            collect the evidences to verify on offline mode the application
                         and the enclave
     scaffold            create a new boilerplate MSE application
     list                list the running MSE applications
+    localtest           test locally a MSE app in a development context
     logs                print the MSE docker logs
     package             generate a package containing the Docker image and the code to
                         run on MSE
@@ -52,8 +53,7 @@ operations:
     seal                seal the secrets to be share with an MSE app
     spawn               spawn a MSE docker
     stop                stop and optionally remove a running MSE docker
-    test                Test a deployed MSE app
-    test-dev            test a MSE app in a development context
+    test                test a deployed MSE app
     verify              verify the trustworthiness of a running MSE web application and
                         get the RA-TLS certificate
 ```
@@ -154,16 +154,16 @@ This project also contains a test directory enabling you to test this project lo
 
 
 ```console
-$ mse home test-dev --code example/mse_src/ \
-                    --dockerfile example/Dockerfile \
-                    --config example/mse.toml \
-                    --test example/tests/
+$ mse home localtest --code example/mse_src/ \
+                     --dockerfile example/Dockerfile \
+                     --config example/mse.toml \
+                     --test example/tests/
 ```
 
 or more concisely:
 
 ```console
-$ mse home test-dev --project example
+$ mse home localtest --project example
 ```
 
 Testing your code before sending it to the SGX operator is recommended. Be aware that any error will require to restart the deployment flow from scratch.

@@ -104,7 +104,7 @@ $ mse home scaffold example
 __User__: the code provider
 
 ```console
-$ mse home test-dev --project example/
+$ mse home localtest --project example/
 ```
 
 ### Create the MSE package with the code and the docker image

@@ -56,7 +56,7 @@ Let's start with a simple Flask Hello World application:
 $ mse cloud scaffold helloworld
 An example app has been generated in the current directory
 You can configure your MSE application in: helloworld/mse.toml
-You can now test it locally from 'helloworld/' directory using: `mse cloud test` then `pytest`
+You can now test it locally from 'helloworld/' directory using: `mse cloud localtest`
 Or deploy it from 'helloworld/' directory using: `mse cloud deploy`
 Refer to the 'helloworld/README.md' for more details.
 $ tree helloworld/
@@ -111,7 +111,8 @@ tests_cmd = "pytest"
 tests_requirements = [ "intel-sgx-ra>=1.0.1,<1.1", "pytest==7.2.0",]
 
 [cloud]
-location = "."
+code = "mse_src"
+tests = "tests"
 docker = "ghcr.io/cosmian/mse-flask:20230228091325"
 project = "default"
 hardware = "4g-eu-001"

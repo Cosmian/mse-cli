@@ -50,4 +50,4 @@ MSE_CONSOLE_URL = os.getenv("MSE_CONSOLE_URL", default="https://console.cosmian.
 MSE_DOC_URL = "https://docs.cosmian.com/microservice_encryption"
 
 # The URL of the Security model documentation
-MSE_DOC_SECURITY_MODEL_URL = f"{MSE_DOC_URL}/security/"
+MSE_DOC_SECURITY_MODEL_URL = f"{MSE_DOC_URL}/cloud/security/"

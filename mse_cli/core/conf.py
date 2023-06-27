@@ -66,8 +66,10 @@ class CloudConf(BaseModel):
 
     # Mse docker to use (containing all requirements)
     docker: StrUnlimited
-    # Location of the code (a path or an url)
-    location: Path
+    # Location of the code
+    code: Path
+    # Location of the tests
+    tests: Path
     # Name of the parent project
     project: Str255
     # MSE hardware (defining the enclave memory, cpu, etc.)
@@ -103,7 +105,8 @@ class CloudConf(BaseModel):
     def finish_loading(self, path: Path):
         """Proceed extra processings and check from the loaded toml."""
         # Make the app code location path absolute from path.parent and not cwd
-        self.location = absolute_from_conf_file(path, self.location)
+        self.code = absolute_from_conf_file(path, self.code)
+        self.tests = absolute_from_conf_file(path, self.tests)
 
         if self.secrets:
             self.secrets = absolute_from_conf_file(path, self.secrets)
@@ -224,7 +227,8 @@ class AppConf(BaseModel):
 
             if self.cloud:
                 cloud: Dict[str, Any] = {
-                    "location": str(self.cloud.location),
+                    "code": str(self.cloud.code),
+                    "tests": str(self.cloud.tests),
                     "docker": self.cloud.docker,
                     "project": self.cloud.project,
                     "hardware": self.cloud.hardware,
@@ -290,4 +294,4 @@ class AppConf(BaseModel):
             "domain_name": cloud.ssl.domain_name if cloud.ssl else None,
             "hardware": cloud.hardware,
             "docker": cloud.docker,
-        }  # Do not send the private_key or the code location
+        }  # Do not send the private_key or the code code

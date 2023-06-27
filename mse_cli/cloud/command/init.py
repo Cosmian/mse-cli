@@ -21,7 +21,7 @@ def add_subparser(subparsers):
 def run(_args) -> None:
     """Run the subcommand."""
     LOG.info("We need you to fill in the following fields\n")
-    user_conf = UserConf.from_toml()
+    user_conf = UserConf.load()
     conn = user_conf.get_connection()
 
     config = get_default(conn=conn)
@@ -30,7 +30,8 @@ def run(_args) -> None:
     project_name = input(f"Project name [{config.project}]: ") or config.project
     hardware = input(f"Hardware name [{config.hardware}]: ") or config.hardware
     docker = input(f"Docker url [{config.docker}]: ") or config.docker
-    code_location = input("Code location [.]:") or "."
+    code_location = input("Code location [mse_src]:") or "mse_src"
+    tests_location = input("Tests location [tests]:") or "tests"
     python_application = input("Python application [app:app]: ") or "app:app"
     healthcheck_endpoint = input("Health check endpoint [/]: ") or "/"
     secrets_enable = input("Do you have application secrets to provide [no]: ") or "no"
@@ -43,7 +44,8 @@ def run(_args) -> None:
         tests_cmd="pytest",
         tests_requirements=["pytest"],
         cloud=CloudConf(
-            location=code_location,
+            code=code_location,
+            tests=tests_location,
             project=project_name,
             hardware=hardware,
             docker=docker,

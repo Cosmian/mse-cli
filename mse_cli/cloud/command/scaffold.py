@@ -24,7 +24,7 @@ def add_subparser(subparsers):
 # pylint: disable=too-many-locals
 def run(args) -> None:
     """Run the subcommand."""
-    user_conf = UserConf.from_toml()
+    user_conf = UserConf.load()
     conn = user_conf.get_connection()
 
     config = get_default(conn=conn)
@@ -37,8 +37,7 @@ def run(args) -> None:
     LOG.warning("You can configure your MSE application in: %s", conf_file)
     LOG.info(
         "You can now test it locally from the '%s/' directory using: "
-        "\n\n\tmse cloud test\n\n"
-        "then, in another terminal:\n\n\tpytest\n",
+        "\n\n\tmse cloud localtest\n",
         args.app_name,
     )
     LOG.advice(  # type: ignore

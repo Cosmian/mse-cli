@@ -16,7 +16,7 @@ from mse_cli.home.command.code_provider.decrypt import run as do_decrypt
 from mse_cli.home.command.code_provider.package import run as do_package
 from mse_cli.home.command.code_provider.scaffold import run as do_scaffold
 from mse_cli.home.command.code_provider.seal import run as do_seal
-from mse_cli.home.command.code_provider.test_dev import run as do_test_dev
+from mse_cli.home.command.code_provider.localtest import run as do_test_dev
 from mse_cli.home.command.code_provider.verify import run as do_verify
 from mse_cli.home.command.sgx_operator.evidence import run as do_evidence
 from mse_cli.home.command.sgx_operator.list_all import run as do_list

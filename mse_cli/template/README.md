@@ -17,10 +17,10 @@ You should edit the following files:
 ### Test your app, your Docker and your msehome configuration
 
 ```console
-$ mse home test-dev --code mse_src/ \
-                    --dockerfile Dockerfile \
-                    --config mse.toml \
-                    --test tests/
+$ mse home localtest --code mse_src/ \
+                     --dockerfile Dockerfile \
+                     --config mse.toml \
+                     --test tests/
 ```
 
 ### Create the MSE package with the code and the Docker image
@@ -40,10 +40,7 @@ The generated package can now be sent to the SGX operator.
 
 ```console
 $ # From your project directory
-$ mse cloud test
-$ # From another terminal in your project directory
-$ pip install -U -r requirements-dev.txt
-$ pytest
+$ mse cloud localtest
 ```
 
 ### Deploy your application
@@ -59,7 +56,7 @@ Your application is now ready to be used
 
 ```console
 $ # From your project directory
-$ TEST_REMOTE_URL="https://<app_domain_name>" pytest
+$ mse cloud test <APP_ID>
 ```
 
 ### Use it 

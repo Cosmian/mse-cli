@@ -20,13 +20,14 @@ from mse_cli.cloud.command import scaffold as cloud_scaffold
 from mse_cli.cloud.command import status as cloud_status
 from mse_cli.cloud.command import stop as cloud_stop
 from mse_cli.cloud.command import test as cloud_test
+from mse_cli.cloud.command import localtest as cloud_localtest
 from mse_cli.cloud.command import verify as cloud_verify
 from mse_cli.color import setup_color
 from mse_cli.home.command.code_provider import decrypt as home_decrypt
 from mse_cli.home.command.code_provider import package as home_package
 from mse_cli.home.command.code_provider import scaffold as home_scaffold
 from mse_cli.home.command.code_provider import seal as home_seal
-from mse_cli.home.command.code_provider import test_dev as home_test_dev
+from mse_cli.home.command.code_provider import localtest as home_localtest
 from mse_cli.home.command.code_provider import verify as home_verify
 from mse_cli.home.command.sgx_operator import evidence as home_evidence
 from mse_cli.home.command.sgx_operator import list_all as home_list_all
@@ -82,6 +83,7 @@ def main() -> int:
     cloud_status.add_subparser(subparsers_cloud)
     cloud_stop.add_subparser(subparsers_cloud)
     cloud_test.add_subparser(subparsers_cloud)
+    cloud_localtest.add_subparser(subparsers_cloud)
     cloud_verify.add_subparser(subparsers_cloud)
 
     home_decrypt.add_subparser(subparsers_home)
@@ -97,7 +99,7 @@ def main() -> int:
     home_spawn.add_subparser(subparsers_home)
     home_stop.add_subparser(subparsers_home)
     home_test.add_subparser(subparsers_home)
-    home_test_dev.add_subparser(subparsers_home)
+    home_localtest.add_subparser(subparsers_home)
     home_verify.add_subparser(subparsers_home)
 
     args = parser.parse_args()

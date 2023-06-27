@@ -24,7 +24,7 @@ def add_subparser(subparsers):
 
 def run(args) -> None:
     """Run the subcommand."""
-    user_conf = UserConf.from_toml()
+    user_conf = UserConf.load()
 
     for app_id in args.app_id:
         with Spinner(f"Stopping and destroying the app {app_id}... "):

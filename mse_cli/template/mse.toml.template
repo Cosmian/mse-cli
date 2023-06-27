@@ -9,7 +9,8 @@ tests_requirements = [
 ]
 
 [cloud]
-location = "mse_src"
+code = "mse_src"
+tests = "tests"
 docker = "{{ docker }}"
 project = "{{ project }}"
 hardware = "{{ hardware }}"

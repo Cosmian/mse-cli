@@ -30,7 +30,7 @@ def add_subparser(subparsers):
 
 def run(args) -> None:
     """Run the subcommand."""
-    user_conf = UserConf.from_toml()
+    user_conf = UserConf.load()
     conn = user_conf.get_connection()
 
     project_id = None

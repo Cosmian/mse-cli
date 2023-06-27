@@ -55,7 +55,7 @@ def run(args) -> None:
         for path in ls(Context.get_root_dirpath()):
             if path.is_file() and path.suffix == ".mse":
                 try:
-                    context = Context.from_toml(path)
+                    context = Context.load(path)
                     LOG.info(
                         "%s -> %s%s%s (%s)",
                         context.instance.id,
