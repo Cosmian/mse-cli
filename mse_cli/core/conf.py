@@ -14,6 +14,8 @@ from cryptography import x509
 from cryptography.x509.extensions import SubjectAlternativeName
 from pydantic import BaseModel, constr, validator
 
+from mse_cli.error import BadApplicationInput
+
 if TYPE_CHECKING:
     Str255 = str
     Str16 = str
@@ -127,7 +129,7 @@ class CloudConf(BaseModel):
             elif self.expiration_date > cert.not_valid_after.replace(
                 tzinfo=timezone.utc
             ):
-                raise Exception(
+                raise BadApplicationInput(
                     f"`expiration_date` ({self.expiration_date}) can't be after "
                     f"the certificate expiration date ({cert.not_valid_after})"
                 )
@@ -142,7 +144,7 @@ class CloudConf(BaseModel):
             wildcard = ".".join(wildcard_s)
 
             if wildcard not in domains and self.ssl.domain_name not in domains:
-                raise Exception(
+                raise BadApplicationInput(
                     f"{self.ssl.domain_name} should be present in the "
                     f"SSL certificate as a Subject Alternative Name ({domains})"
                 )
@@ -150,7 +152,7 @@ class CloudConf(BaseModel):
         if self.expiration_date and self.expiration_date <= datetime.now(
             tz=timezone.utc
         ):
-            raise Exception(
+            raise BadApplicationInput(
                 f"`expiration_date` ({self.expiration_date}) is in the past"
             )
 
@@ -175,7 +177,9 @@ class AppConf(BaseModel):
     def cloud_or_raise(self) -> CloudConf:
         """Get the cloud configuration or raise if there is none."""
         if not self.cloud:
-            raise Exception("No `cloud` configuration find in the app configuration")
+            raise BadApplicationInput(
+                "No `cloud` configuration find in the app configuration"
+            )
 
         return self.cloud
 
@@ -256,7 +260,7 @@ class AppConf(BaseModel):
         """Get the python module from python_application."""
         split_str = self.python_application.split(":")
         if len(split_str) != 2:
-            raise Exception(
+            raise BadApplicationInput(
                 "`python_application` is malformed. Expected format: `module:variable`"
             )
         return split_str[0]
@@ -266,7 +270,7 @@ class AppConf(BaseModel):
         """Get the python variable from python_application."""
         split_str = self.python_application.split(":")
         if len(split_str) != 2:
-            raise Exception(
+            raise BadApplicationInput(
                 "`python_application` is malformed. Expected format: `module:variable`"
             )
         return split_str[1]
@@ -294,4 +298,4 @@ class AppConf(BaseModel):
             "domain_name": cloud.ssl.domain_name if cloud.ssl else None,
             "hardware": cloud.hardware,
             "docker": cloud.docker,
-        }  # Do not send the private_key or the code code
+        }  # Do not send the private_key or the code location

@@ -23,6 +23,7 @@ from mse_cli.cloud.api.user import me as get_me
 from mse_cli.cloud.command.logout import logout
 from mse_cli.cloud.model.user import UserConf
 from mse_cli.core.base64 import base64url_decode, base64url_encode
+from mse_cli.error import Timeout, UnexpectedResponse
 from mse_cli.log import LOGGER as LOG
 
 CODE: Optional[str] = None
@@ -88,7 +89,7 @@ def run_server(port, auth_url, state) -> str:
     httpd.serve_forever()
 
     if not CODE:
-        raise Exception("Authentication timeout.")
+        raise Timeout("Authentication timeout.")
 
     return CODE
 
@@ -156,12 +157,12 @@ def run(args) -> None:
     )
 
     if not r.ok:
-        raise Exception(r.text)
+        raise UnexpectedResponse(r.text)
 
     js = r.json()
     required_fields = ["access_token", "refresh_token", "id_token"]
     if not all(f in js for f in required_fields):
-        raise Exception("Missing fields in authentication response")
+        raise UnexpectedResponse("Missing fields in authentication response")
 
     id_token = jwt_payload_decode(js["id_token"])
 
@@ -222,7 +223,7 @@ def open_webbrowser(address):
     try:
         webbrowser.open(url=address, new=1)
     except webbrowser.Error as e:
-        raise Exception(f"Unable to open the web browser: {e}") from e
+        raise UnexpectedResponse(f"Unable to open the web browser: {e}") from e
 
 
 def jwt_payload_decode(jwt):

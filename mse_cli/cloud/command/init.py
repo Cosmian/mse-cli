@@ -35,7 +35,7 @@ def run(_args) -> None:
     python_application = input("Python application [app:app]: ") or "app:app"
     healthcheck_endpoint = input("Health check endpoint [/]: ") or "/"
     secrets_enable = input("Do you have application secrets to provide [no]: ") or "no"
-    secrets = "secrets.json" if secrets_enable.lower() in ["y", "yes"] else None
+    secrets = Path("secrets.json") if secrets_enable.lower() in ["y", "yes"] else None
 
     app = AppConf(
         name=app_name,
@@ -44,12 +44,13 @@ def run(_args) -> None:
         tests_cmd="pytest",
         tests_requirements=["pytest"],
         cloud=CloudConf(
-            code=code_location,
-            tests=tests_location,
+            code=Path(code_location),
+            tests=Path(tests_location),
             project=project_name,
             hardware=hardware,
             docker=docker,
             secrets=secrets,
+            expiration_date=None,
         ),
     )
 

@@ -8,6 +8,7 @@ from pathlib import Path
 from mse_cli.core.bootstrap import is_waiting_for_secrets
 from mse_cli.core.conf import AppConf, AppConfParsingOption
 from mse_cli.core.sgx_docker import SgxDockerConfig
+from mse_cli.error import AppContainerBadState
 from mse_cli.home.command.helpers import get_client_docker, get_running_app_container
 from mse_cli.log import LOGGER as LOG
 
@@ -47,7 +48,7 @@ def run(args) -> None:
     docker = SgxDockerConfig.load(container.attrs, container.labels)
 
     if is_waiting_for_secrets(f"https://localhost:{docker.port}"):
-        raise Exception(
+        raise AppContainerBadState(
             "Your application is waiting for secrets and can't be tested right now."
         )
 

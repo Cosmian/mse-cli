@@ -14,14 +14,12 @@ from intel_sgx_ra.ratls import ratls_verify
 from intel_sgx_ra.signer import mr_signer_from_pk
 
 from mse_cli.core.no_sgx_docker import NoSgxDockerConfig
-
-
-class WrongMREnclave(Exception):
-    """MR enclave does not matched with the expected value."""
-
-
-class WrongMRSigner(Exception):
-    """MR signer does not matched with the expected value."""
+from mse_cli.error import (
+    AppContainerError,
+    RatlsVerificationFailure,
+    WrongMREnclave,
+    WrongMRSigner,
+)
 
 
 def compute_mr_enclave(
@@ -49,7 +47,7 @@ def compute_mr_enclave(
             stderr=True,
         )
     except Exception as exc:
-        raise Exception(
+        raise AppContainerError(
             f"Error starting the docker (see logs at {docker_path_log})"
         ) from exc
     finally:
@@ -70,7 +68,7 @@ def compute_mr_enclave(
     m = re.search(pattern.encode("utf-8"), output)
 
     if not m:
-        raise Exception(
+        raise RatlsVerificationFailure(
             f"Fail to compute mr_enclave! See {docker_path_log} for more details."
         )
 

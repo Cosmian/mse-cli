@@ -6,6 +6,7 @@ import requests
 
 from mse_cli import MSE_AUTH0_DOMAIN_NAME
 from mse_cli.cloud.model.user import UserConf
+from mse_cli.error import UnexpectedResponse
 from mse_cli.log import LOGGER as LOG
 
 
@@ -27,7 +28,7 @@ def logout() -> None:
     r = requests.post(url=f"{MSE_AUTH0_DOMAIN_NAME}/logout?federated", timeout=60)
 
     if not r.ok:
-        raise Exception(r.text)
+        raise UnexpectedResponse(r.text)
 
     login_file = UserConf.path()
     if login_file.exists():

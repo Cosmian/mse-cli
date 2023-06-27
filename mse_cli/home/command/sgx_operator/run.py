@@ -12,6 +12,7 @@ from mse_cli.core.bootstrap import (
 from mse_cli.core.clock_tick import ClockTick
 from mse_cli.core.sgx_docker import SgxDockerConfig
 from mse_cli.core.spinner import Spinner
+from mse_cli.error import AppContainerBadState
 from mse_cli.home.command.helpers import get_client_docker, get_running_app_container
 from mse_cli.log import LOGGER as LOG
 
@@ -68,7 +69,7 @@ def run(args) -> None:
     docker = SgxDockerConfig.load(container.attrs, container.labels)
 
     if not is_waiting_for_secrets(f"https://localhost:{docker.port}", False):
-        raise Exception(
+        raise AppContainerBadState(
             "Your application is not waiting for secrets. Have you already set it?"
         )
 
@@ -79,6 +80,7 @@ def run(args) -> None:
         if args.sealed_secrets
         else None,
         code_secret_key=args.key.read_bytes() if args.key else None,
+        ssl_private_key=None,
     )
 
     LOG.info("Sending data to the configuration server...")

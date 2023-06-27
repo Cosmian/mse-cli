@@ -2,6 +2,8 @@
 
 import time
 
+from mse_cli.error import Timeout
+
 
 class ClockTick:
     """Class to monitor the spent time."""
@@ -16,7 +18,7 @@ class ClockTick:
     def tick(self) -> bool:
         """Start ticking."""
         if self.elapsed > self.timeout:
-            raise Exception(self.message)
+            raise Timeout(self.message)
 
         time.sleep(self.period)
         self.elapsed += self.period

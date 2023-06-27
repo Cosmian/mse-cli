@@ -179,7 +179,7 @@ class Context(BaseModel):
                 project=cloud_conf.project,
                 python_application=conf.python_application,
                 docker=cloud_conf.docker,
-                code_secret_key=bytes(random_key()).hex(),
+                code_secret_key=random_key(),
                 tests=cloud_conf.tests,
                 tests_cmd=conf.tests_cmd,
                 tests_requirements=conf.tests_requirements,

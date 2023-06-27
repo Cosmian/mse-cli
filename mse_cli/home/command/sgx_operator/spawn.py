@@ -13,6 +13,7 @@ from mse_cli.core.clock_tick import ClockTick
 from mse_cli.core.conf import AppConf, AppConfParsingOption
 from mse_cli.core.sgx_docker import SgxDockerConfig
 from mse_cli.core.spinner import Spinner
+from mse_cli.error import AppContainerAlreadyRunning, AppContainerError, PortBusy
 from mse_cli.home.command.helpers import (
     app_container_exists,
     enclave_size_integer,
@@ -114,13 +115,13 @@ def run(args) -> None:
     client = get_client_docker()
 
     if app_container_exists(client, args.name):
-        raise Exception(
+        raise AppContainerAlreadyRunning(
             f"Docker container `{args.name}` is already running. "
             "Stop and remove it before respawn it!"
         )
 
     if not is_port_free(args.port):
-        raise Exception(f"Port {args.port} is already in-used!")
+        raise PortBusy(f"Port {args.port} is already in-used!")
 
     workspace = args.output.resolve()
 
@@ -198,6 +199,6 @@ def run_docker_image(
     )
 
     if container.status != "created":
-        raise Exception(
+        raise AppContainerError(
             f"Can't create the container: {container.status} - {container.logs()}"
         )

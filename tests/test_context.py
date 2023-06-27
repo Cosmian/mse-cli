@@ -74,6 +74,7 @@ def test_from_app_conf():
 
     ref_context_conf = Context(
         version="2.0",
+        workspace=conf.workspace,
         config=ContextConf(
             name="helloworld",
             project="default",
@@ -128,6 +129,8 @@ def test_run():
         ssl_certificate_origin=SSLCertificateOrigin.Owner,
         nonces={"app.py": "f33f4a1a1555660f9396aea7811b0ff7b0f19503a7485914"},
     )
+
+    ref_context_conf.workspace = conf.workspace
 
     assert conf == ref_context_conf
 

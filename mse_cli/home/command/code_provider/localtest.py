@@ -9,6 +9,7 @@ from docker.errors import BuildError
 from mse_cli.common.helpers import try_run_test_docker
 from mse_cli.core.conf import AppConf, AppConfParsingOption
 from mse_cli.core.test_docker import TestDockerConfig
+from mse_cli.error import DockerBuildError
 from mse_cli.home.command.helpers import get_client_docker
 from mse_cli.home.model.package import (
     DEFAULT_CODE_DIR,
@@ -158,4 +159,4 @@ def build_test_docker(client, dockerfile: Path, docker_name: str):
             tag=docker_name,
         )
     except BuildError as exc:
-        raise Exception(f"Failed to build your docker: {exc}") from exc
+        raise DockerBuildError(f"Failed to build your docker: {exc}") from exc
