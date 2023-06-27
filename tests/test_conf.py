@@ -188,7 +188,7 @@ def test_cloud_ssl_without_optionals():
 
 def test_no_cloud():
     """Test no `cloud` paragraph."""
-    toml = Path("tests/data/no_cloud.toml")
+    toml = Path("tests/data/mse.toml")
     conf = AppConf.load(path=toml)
 
     ref_app_conf = AppConf(
@@ -281,7 +281,7 @@ def test_save(workspace):
 
     assert filecmp.cmp(toml, output)
 
-    toml = Path("tests/data/no_cloud.toml")
+    toml = Path("tests/data/mse.toml")
     conf = AppConf.load(path=toml)
     conf.save(output)
 
@@ -305,7 +305,7 @@ def test_into_payload():
         "hardware": "4g-eu-001",
     }
 
-    toml = Path("tests/data/no_cloud.toml")
+    toml = Path("tests/data/mse.toml")
     conf = AppConf.load(path=toml)
     with pytest.raises(Exception) as context:
         conf.into_cloud_payload()
