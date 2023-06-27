@@ -17,9 +17,9 @@ $ pip install -U .
 
 ## Usage
 
-You can run MSE cli to manage microservice deployed on the cosmian cloud infrastructure using `mse cloud` or deployed on your own SGX infrastructure using `mse home`.
+You can run MSE CLI to manage microservice deployed on the Cosmian cloud infrastructure using `mse cloud` or deployed on your own SGX infrastructure using `mse home`.
 
-MSE Cloud ☁️ is designed to start an MSE application on cosmian SGX hardware in a fully zero trust environment. 
+MSE Cloud ☁️ is designed to start an MSE application on Cosmian SGX hardware in a fully zero trust environment. 
 
 MSE Home 🏕️ is designed to start an MSE application on your own SGX hardware without using all the MSE cloud infrastructure. We explain later how all the subscommands can be chained to deploy your own application. 
 
@@ -86,7 +86,7 @@ You can use these following env variables:
 $ mse home -h
 ```
 
-Note: if you declare the env variable `MSE_BACKTRACE` to the value `full`, a python stacktrace will be printed in case of errors.
+Note: if you set the env variable `MSE_BACKTRACE=full`, a Python stacktrace will be printed in case of errors.
 
 
 You can find below the use flow step by step.
