@@ -98,7 +98,7 @@ def run(args) -> None:
     """Run the subcommand."""
     # Before processing the login, let's check if the user is already logged in
     if UserConf.path().exists():
-        user_conf = UserConf.from_toml()
+        user_conf = UserConf.load()
         try:
             _ = get_user_info(user_conf)
 

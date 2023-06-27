@@ -27,7 +27,7 @@ def add_subparser(subparsers):
 
 def run(args) -> None:
     """Run the subcommand."""
-    user_conf = UserConf.from_toml()
+    user_conf = UserConf.load()
 
     LOG.info("Fetching the logs (last 64kB) for %s...", args.app_id)
 

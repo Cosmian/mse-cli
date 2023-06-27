@@ -9,7 +9,8 @@ tests_cmd = "pytest"
 tests_requirements = [ "intel-sgx-ra>=1.0.1,<1.1", "pytest==7.2.0",]
 
 [cloud]
-location = "my_project/code"
+code = "my_project/code"
+tests = "my_project/tests"
 docker = "ghcr.io/cosmian/mse-flask:20230228091325"
 project = "my_project"
 hardware = "4g-eu-001"
@@ -17,19 +18,21 @@ hardware = "4g-eu-001"
 
 ### Main section
 
-|         Keys         | Required | Types  |                                                                          Description                                                                          |
-| :------------------: | :------: | :----: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------: |
-|         name         |    ✔️     | string |                                                    Name of the application. It must be unique per project                                                     |
-|  python_application  |    ✔️     | string |                                                                module_name:flask_variable_name                                                                |
-| healthcheck_endpoint |    ✔️     | string | `GET` endpoint (starting with a `/`) to check if the application is ready. This endpoint should be unauthenticated and shouldn't require any parameters/data. |
+|         Keys         | Required |     Types      |                                                                          Description                                                                          |
+| :------------------: | :------: | :------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|         name         |    ✔️     |     string     |                                                    Name of the application. It must be unique per project                                                     |
+|  python_application  |    ✔️     |     string     |                                                                module_name:flask_variable_name                                                                |
+| healthcheck_endpoint |    ✔️     |     string     | `GET` endpoint (starting with a `/`) to check if the application is ready. This endpoint should be unauthenticated and shouldn't require any parameters/data. |
+|      tests_cmd       |    ✔️     |     string     |                                     The comman to run to test the application (used by `test` and `localtest` commands).                                      |
+|  tests_requirements  |    ✔️     | list of string |                             The requirements to install before testing the application. (used by `test` and `localtest` commands)                             |
 
-The parameters `tests_cmd` and `tests_requirements` are ignored for now. 
 
 ### Cloud section
 
 ```toml
 [cloud]
-location = "my_project/code"
+code = "my_project/code"
+tests = "my_project/tests"
 hardware = "4g-eu-001"
 project = "default"
 docker = "ghcr.io/cosmian/mse-flask:20230228091325"
@@ -37,9 +40,11 @@ secrets = "secrets.json"
 expiration_date = "2023-06-29 00:00:00+00:00"
 ```
 
-|      Keys       | Required |          Types           |                                                                                Description                                                                                |
-| :-------------: | :------: | :----------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-|    location     |    ✔️     |          string          |                                                               Relative path to the application code folder                                                                |
+| Keys  | Required | Types  |                  Description                  |
+| :---: | :------: | :----: | :-------------------------------------------: |
+| code  |    ✔️     | string | Relative path to the application code folder  |
+| tests |    ✔️     | string | Relative path to the application tests folder |
+
 |     docker      |    ✔️     |          string          | URL to the mse docker to run. It could be a local docker to run local test but it must be a remote url when deploying. See [below section](./configuration.md#mse-docker) |
 |     project     |    ✔️     |          string          |                                                             Project name to regroup applications for payment                                                              |
 |    hardware     |    ✔️     |          string          |                                                           Name of the hardware booked to spawn your application                                                           |

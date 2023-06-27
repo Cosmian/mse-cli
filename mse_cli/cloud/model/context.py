@@ -5,7 +5,7 @@ import shutil
 import tempfile
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 from uuid import UUID
 
 import toml
@@ -63,6 +63,12 @@ class ContextConf(BaseModel):
     python_application: str
     # The certificate of the app if origin = Owner
     ssl_app_certificate: Optional[str] = None
+    # The tests path of the application
+    tests: Path
+    # The command to test the application
+    tests_cmd: str
+    # The package to install before testing the application
+    tests_requirements: List[str]
 
     @validator("code_secret_key", pre=True, always=True)
     # pylint: disable=no-self-argument,unused-argument
@@ -75,7 +81,7 @@ class Context(BaseModel):
     """Definition of a mse context."""
 
     # The version of context file
-    version: str = "1.0"
+    version: str = "2.0"
     # The config of the app
     config: ContextConf
     # The mse app instance parameters
@@ -179,6 +185,9 @@ class Context(BaseModel):
                 python_application=conf.python_application,
                 docker=cloud_conf.docker,
                 code_secret_key=bytes(random_key()).hex(),
+                tests=cloud_conf.tests,
+                tests_cmd=conf.tests_cmd,
+                tests_requirements=conf.tests_requirements,
                 ssl_app_certificate=cert,
             )
         )
@@ -189,7 +198,7 @@ class Context(BaseModel):
         return context
 
     @staticmethod
-    def from_toml(path: Path):
+    def load(path: Path):
         """Build a Context object from a toml file."""
         with open(path, encoding="utf8") as f:
             dataMap = toml.load(f)
@@ -225,6 +234,9 @@ class Context(BaseModel):
                     "project": self.config.project,
                     "docker": self.config.docker,
                     "python_application": self.config.python_application,
+                    "tests": str(self.config.tests),
+                    "tests_cmd": self.config.tests_cmd,
+                    "tests_requirements": self.config.tests_requirements,
                     "code_secret_key": bytes(self.config.code_secret_key).hex(),
                 },
             }

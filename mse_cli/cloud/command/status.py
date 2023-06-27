@@ -28,7 +28,7 @@ def add_subparser(subparsers):
 # pylint: disable=too-many-statements,too-many-branches
 def run(args) -> None:
     """Run the subcommand."""
-    user_conf = UserConf.from_toml()
+    user_conf = UserConf.load()
 
     LOG.info("Fetching the app status for %s...", args.app_id)
 

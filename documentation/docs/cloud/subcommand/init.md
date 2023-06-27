@@ -8,7 +8,8 @@ App name: test
 Project name [default]: 
 Hardware name [4g-eu-001]: 
 Docker url [ghcr.io/cosmian/mse-flask:20230228091325]: 
-Code location: .
+Code location [mse_src]: .
+Tests location [tests]: .
 Python application [app:app]: 
 Health check endpoint [/]: 
 Your app configuration has been saved in: /home/user/app/mse.toml
@@ -24,7 +25,8 @@ tests_cmd = "pytest"
 tests_requirements = [ "intel-sgx-ra>=1.0.1,<1.1", "pytest==7.2.0",]
 
 [cloud]
-location = "."
+code = "mse_src"
+tests = "tests"
 docker = "ghcr.io/cosmian/mse-flask:20230228091325"
 project = "default"
 hardware = "4g-eu-001"

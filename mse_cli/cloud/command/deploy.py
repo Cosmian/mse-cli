@@ -69,7 +69,7 @@ def add_subparser(subparsers):
 # pylint: disable=too-many-branches,too-many-statements
 def run(args) -> None:
     """Run the subcommand."""
-    user_conf = UserConf.from_toml()
+    user_conf = UserConf.load()
     app_conf = AppConf.load(
         path=args.path,
         option=AppConfParsingOption.UseInsecureCloud
@@ -107,7 +107,7 @@ def run(args) -> None:
     LOG.info("Temporary workspace is: %s", context.workspace)
 
     LOG.info("Encrypting your source code...")
-    (tar_path, nonces) = prepare_code(cloud_conf.location, context)
+    (tar_path, nonces) = prepare_code(cloud_conf.code, context)
 
     LOG.info(
         "Deploying your app '%s' with %dM memory and %.2f CPU cores...",
@@ -187,15 +187,16 @@ def run(args) -> None:
 
     if app.ssl_certificate_origin == SSLCertificateOrigin.Self:
         LOG.advice(  # type: ignore
-            "You can now test your application: \n\n\tcurl https://%s%s "
-            "--cacert %s\n",
+            "You can now test your application doing `mse home test` "
+            "or use it as follow: \n\n\tcurl https://%s%s --cacert %s\n",
             app.domain_name,
             app.healthcheck_endpoint,
             context.config_cert_path,
         )
     else:
         LOG.advice(  # type: ignore
-            "You can now test your application: \n\n\tcurl https://%s%s\n",
+            "You can now test your application doing `mse home test` "
+            "or use it as follow: \n\n\tcurl https://%s%s\n",
             app.domain_name,
             app.healthcheck_endpoint,
         )
@@ -265,11 +266,11 @@ def check_app_conf(conn: Connection, app_conf: AppConf, force: bool = False) -> 
             stop_app(conn, app.id)
 
     if not (
-        cloud_conf.location / (app_conf.python_module.replace(".", "/") + ".py")
+        cloud_conf.code / (app_conf.python_module.replace(".", "/") + ".py")
     ).exists():
         raise FileNotFoundError(
             f"Flask module '{app_conf.python_module}' "
-            f"not found in directory: {cloud_conf.location}!"
+            f"not found in directory: {cloud_conf.code}!"
         )
 
     return True

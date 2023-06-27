@@ -1,27 +1,24 @@
-"""mse_cli.cloud.command.test module.."""
+"""mse_cli.cloud.command.test module."""
 
+import os
+import subprocess
+import sys
+import uuid
 from pathlib import Path
 
-from docker.errors import ImageNotFound
-
-from mse_cli.cloud.command.helpers import get_client_docker
-from mse_cli.core.conf import AppConf
-from mse_cli.core.test_docker import TestDockerConfig
-from mse_cli.log import LOGGER as LOG
+from mse_cli.cloud.command.helpers import get_app
+from mse_cli.cloud.model.context import Context
+from mse_cli.cloud.model.user import UserConf
 
 
 def add_subparser(subparsers):
     """Define the subcommand."""
-    parser = subparsers.add_parser(
-        "test", help="test locally the application in the MSE docker"
-    )
+    parser = subparsers.add_parser("test", help="Test a deployed MSE app")
 
     parser.add_argument(
-        "--path",
-        type=Path,
-        required=False,
-        metavar="FILE",
-        help="path to the MSE app to test (current directory if not set)",
+        "app_id",
+        type=uuid.UUID,
+        help="identifier of the MSE web application to run tests against",
     )
 
     parser.set_defaults(func=run)
@@ -29,52 +26,24 @@ def add_subparser(subparsers):
 
 def run(args) -> None:
     """Run the subcommand."""
-    app = AppConf.load(path=args.path)
-    cloud_conf = app.cloud_or_raise()
+    user_conf = UserConf.load()
+    conn = user_conf.get_connection()
 
-    LOG.info("Starting the docker: %s...", cloud_conf.docker)
+    context_path: Path = Context.get_context_filepath(args.app_id, create=False)
 
-    client = get_client_docker()
+    if not context_path.exists():
+        raise FileNotFoundError(
+            f"Can't find context for UUID: {args.uuid}. Run the tests manually"
+        )
 
-    # Pull always before running.
-    # If image is not found: let's assume it's a local image
-    try:
-        client.images.pull(cloud_conf.docker)
-    except ImageNotFound:
-        pass
+    context = Context.load(context_path)
+    app = get_app(conn=conn, app_id=args.app_id)
 
-    LOG.info("You can stop the application at any time by typing CTRL+C or CTRL+Break")
-    LOG.advice(  # type: ignore
-        "Once started, from another terminal, you can run: "
-        "\n\n\tcurl http://localhost:5000%s\n\nor:\n\n\tpytest\n",
-        app.healthcheck_endpoint,
+    for package in context.config.tests_requirements:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+    subprocess.check_call(
+        context.config.tests_cmd,
+        cwd=context.config.tests,
+        env=dict(os.environ, TEST_REMOTE_URL=f"https://{app.domain_name}"),
     )
-
-    docker_config = TestDockerConfig(
-        code=cloud_conf.location,
-        application=app.python_application,
-        secrets=cloud_conf.secrets,
-        sealed_secrets=None,
-        port=5000,
-    )
-
-    container = client.containers.run(
-        cloud_conf.docker,
-        command=docker_config.cmd(),
-        volumes=docker_config.volumes(),
-        entrypoint=TestDockerConfig.entrypoint,
-        ports=docker_config.ports(),
-        remove=True,
-        detach=True,
-        stdout=True,
-        stderr=True,
-    )
-
-    try:
-        # Print logs until the docker is up
-        for line in container.logs(stream=True):
-            LOG.info(line.decode("utf-8").strip())
-    except KeyboardInterrupt:
-        # Stop the docker when user types CTRL^C
-        LOG.info("Stopping the docker container...")
-        container.stop(timeout=1)

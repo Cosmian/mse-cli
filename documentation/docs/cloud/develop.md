@@ -69,8 +69,7 @@ For example: passwords or keys to connect to a third-party service like a remote
 
 For the same reason, do not store your SSL secret key or the configuration TOML file in the code directory.
 
-If you need such secrets to run your code, you can write a `secrets.json` file and specify this file into the `code.secrets` field in the TOML configuration file. Please see the example below.
-This file will be sent to the enclave after the latter has been verified during the app deployment. Your application will then be able to read it to retrieve the secrets it needs.
+If you need such secrets to run your code, you can write a `secrets.json` file and specify this file into the `cloud.secrets` field in the TOML configuration file. Please see the example below. This file will be sent to the enclave after the latter has been verified during the app deployment. Your application will then be able to read it to retrieve the secrets it needs.
 
 Example of configuation file: 
 
@@ -82,7 +81,8 @@ tests_cmd = "pytest"
 tests_requirements = [ "intel-sgx-ra>=1.0.1,<1.1", "pytest==7.2.0",]
 
 [cloud]
-location = "./code"
+code = "./code"
+tests = "./tests"
 docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
 project = "default"
 hardware = "4g-eu-001"
@@ -94,7 +94,7 @@ certificate="./cert.secret.pem"
 private_key="./key.secret.pem"
 ```
 
-As you can see, the code directory (defined in `code.location` field) does not contain the SSL private key (defined in `ssl.private_key` field) nor the secrets file (defined in `code.secrets`).
+As you can see, the code directory (defined in `cloud.code` field) does not contain the SSL private key (defined in `ssl.private_key` field) nor the secrets file (defined in `cloud.secrets`).
 
 !!! info "Good practice"
 

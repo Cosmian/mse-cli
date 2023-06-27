@@ -29,7 +29,7 @@ class UserConf(BaseModel):
         return MSE_CONF_DIR / "login.toml"
 
     @staticmethod
-    def from_toml(path: Optional[Path] = None):
+    def load(path: Optional[Path] = None):
         """Build a UserConf object from a Toml file."""
         if not path:
             path = UserConf.path()

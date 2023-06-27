@@ -69,7 +69,7 @@ def run(args) -> None:
         mrenclave = args.fingerprint
     elif args.context:
         # Read the context file
-        context = Context.from_toml(args.context)
+        context = Context.load(args.context)
 
         # Encrypt the code and create the tarball
         prepare_code(args.code, context)
