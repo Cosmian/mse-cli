@@ -149,7 +149,6 @@ def run(args) -> None:
 
 def build_test_docker(client, dockerfile: Path, docker_name: str):
     """Build the test docker."""
-
     try:
         LOG.info("Building your docker image...")
 

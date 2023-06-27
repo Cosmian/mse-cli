@@ -114,7 +114,7 @@ def try_run_test_docker(
     secrets_path: Optional[Path],
     sealed_secrets_path: Optional[Path],
 ):
-    """Try to start the app docker to test"""
+    """Try to start the app docker to test."""
     success = False
     try:
         container = run_app_test_docker(
@@ -193,7 +193,6 @@ def run_tests(
     sealed_secrets: Optional[Path],
 ) -> bool:
     """Run the tests."""
-
     LOG.info("Installing tests requirements...")
     for package in app_config.tests_requirements:
         subprocess.check_call(
