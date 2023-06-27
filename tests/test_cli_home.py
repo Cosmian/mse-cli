@@ -13,10 +13,10 @@ from conftest import capture_logs
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 
 from mse_cli.home.command.code_provider.decrypt import run as do_decrypt
+from mse_cli.home.command.code_provider.localtest import run as do_test_dev
 from mse_cli.home.command.code_provider.package import run as do_package
 from mse_cli.home.command.code_provider.scaffold import run as do_scaffold
 from mse_cli.home.command.code_provider.seal import run as do_seal
-from mse_cli.home.command.code_provider.localtest import run as do_test_dev
 from mse_cli.home.command.code_provider.verify import run as do_verify
 from mse_cli.home.command.sgx_operator.evidence import run as do_evidence
 from mse_cli.home.command.sgx_operator.list_all import run as do_list
@@ -367,7 +367,10 @@ def test_run(cmd_log: io.StringIO, app_name: str):
 
 @pytest.mark.home
 @pytest.mark.incremental
-def test_test(app_name: str):
+def test_test(
+    app_name: str,
+    cmd_log: io.StringIO,
+):
     """Test the `test` subcommand."""
     do_test(
         Namespace(
@@ -379,14 +382,12 @@ def test_test(app_name: str):
         )
     )
 
-    assert True
+    assert "Tests successful" in capture_logs(cmd_log)
 
 
 @pytest.mark.home
 @pytest.mark.incremental
-def test_decrypt_secrets_json(
-    workspace: Path, cmd_log: io.StringIO, port: int, host: str
-):
+def test_decrypt_secrets_json(workspace: Path, port: int, host: str):
     """Test the `decrypt` subcommand with the secret json file."""
     response = requests.get(
         url=f"https://{host}:{port}/result/secrets",
@@ -425,9 +426,7 @@ def test_decrypt_secrets_json(
 
 @pytest.mark.home
 @pytest.mark.incremental
-def test_decrypt_sealed_secrets_json(
-    workspace: Path, cmd_log: io.StringIO, port: int, host: str
-):
+def test_decrypt_sealed_secrets_json(workspace: Path, port: int, host: str):
     """Test the `decrypt` subcommand with the sealed secret json file."""
     response = requests.get(
         url=f"https://{host}:{port}/result/sealed_secrets",
@@ -678,6 +677,8 @@ def test_plaintext(
         )
     )
 
+    assert "Tests successful" in capture_logs(cmd_log)
+
     do_stop(Namespace(**{"name": app_name, "remove": True}))
 
     output = capture_logs(cmd_log)
@@ -783,6 +784,8 @@ def test_plaintext_project(
             }
         )
     )
+
+    assert "Tests successful" in capture_logs(cmd_log)
 
     do_stop(Namespace(**{"name": app_name, "remove": True}))
 

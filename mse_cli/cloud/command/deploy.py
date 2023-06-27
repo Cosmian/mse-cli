@@ -1,6 +1,7 @@
 """mse_cli.cloud.command.deploy module."""
 
 from pathlib import Path
+import shutil
 from typing import Any, Dict, Optional
 from uuid import UUID
 
@@ -200,6 +201,10 @@ def run(args) -> None:
             app.domain_name,
             app.healthcheck_endpoint,
         )
+
+    # Clean up the workspace
+    LOG.info("Cleaning up the temporary workspace...")
+    shutil.rmtree(context.workspace)
 
 
 def wait_app_start(conn: Connection, app_id: UUID) -> App:

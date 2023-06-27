@@ -9,6 +9,7 @@ from mse_cli.core.bootstrap import is_waiting_for_secrets
 from mse_cli.core.conf import AppConf, AppConfParsingOption
 from mse_cli.core.sgx_docker import SgxDockerConfig
 from mse_cli.home.command.helpers import get_client_docker, get_running_app_container
+from mse_cli.log import LOGGER as LOG
 
 
 def add_subparser(subparsers):
@@ -55,8 +56,13 @@ def run(args) -> None:
     for package in code_config.tests_requirements:
         subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
-    subprocess.check_call(
-        code_config.tests_cmd,
-        cwd=args.test,
-        env=dict(os.environ, TEST_REMOTE_URL=f"https://localhost:{docker.port}"),
-    )
+    try:
+        subprocess.check_call(
+            code_config.tests_cmd,
+            cwd=args.test,
+            env=dict(os.environ, TEST_REMOTE_URL=f"https://localhost:{docker.port}"),
+        )
+
+        LOG.info("Tests successful")
+    except subprocess.CalledProcessError:
+        LOG.error("Tests failed!")

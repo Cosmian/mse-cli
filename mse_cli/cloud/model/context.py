@@ -86,9 +86,8 @@ class Context(BaseModel):
     config: ContextConf
     # The mse app instance parameters
     instance: Optional[ContextInstance] = None
-
-    # The workspace (ignore from pydantic)
-    _workspace = Path(tempfile.mkdtemp())
+    # The workspace used when deploying the app
+    workspace: Path
 
     @staticmethod
     def get_root_dirpath() -> Path:
@@ -160,11 +159,6 @@ class Context(BaseModel):
         """Get the path to store the tar code."""
         return self.workspace / Context.get_tar_code_filename()
 
-    @property
-    def workspace(self) -> Path:
-        """Get the workspace path."""
-        return self._workspace
-
     @staticmethod
     def clean(uuid: UUID, ignore_errors: bool = False):
         """Remove the context directory."""
@@ -179,6 +173,7 @@ class Context(BaseModel):
         cert = cloud_conf.ssl.certificate_data if cloud_conf.ssl else None
 
         context = Context(
+            workspace=Path(tempfile.mkdtemp()),
             config=ContextConf(
                 name=conf.name,
                 project=cloud_conf.project,
@@ -189,7 +184,7 @@ class Context(BaseModel):
                 tests_cmd=conf.tests_cmd,
                 tests_requirements=conf.tests_requirements,
                 ssl_app_certificate=cert,
-            )
+            ),
         )
 
         if cert:
@@ -202,6 +197,8 @@ class Context(BaseModel):
         """Build a Context object from a toml file."""
         with open(path, encoding="utf8") as f:
             dataMap = toml.load(f)
+
+        dataMap["workspace"] = Path(tempfile.mkdtemp())
 
         return Context(**dataMap)
 

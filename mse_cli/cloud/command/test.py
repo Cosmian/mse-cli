@@ -9,6 +9,7 @@ from pathlib import Path
 from mse_cli.cloud.command.helpers import get_app
 from mse_cli.cloud.model.context import Context
 from mse_cli.cloud.model.user import UserConf
+from mse_cli.log import LOGGER as LOG
 
 
 def add_subparser(subparsers):
@@ -42,8 +43,13 @@ def run(args) -> None:
     for package in context.config.tests_requirements:
         subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
-    subprocess.check_call(
-        context.config.tests_cmd,
-        cwd=context.config.tests,
-        env=dict(os.environ, TEST_REMOTE_URL=f"https://{app.domain_name}"),
-    )
+    try:
+        subprocess.check_call(
+            context.config.tests_cmd,
+            cwd=context.config.tests,
+            env=dict(os.environ, TEST_REMOTE_URL=f"https://{app.domain_name}"),
+        )
+
+        LOG.info("Tests successful")
+    except subprocess.CalledProcessError:
+        LOG.error("Tests failed!")

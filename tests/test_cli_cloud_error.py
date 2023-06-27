@@ -17,7 +17,7 @@ from mse_cli.cloud.command.verify import run as run_verify
 
 
 @pytest.mark.cloud
-def test_status_bad_uuid(cmd_log):
+def test_status_bad_uuid():
     """Test status with the error: valid id but no exists."""
     with pytest.raises(Exception) as exception:
         run_status(
@@ -32,7 +32,7 @@ def test_status_bad_uuid(cmd_log):
 
 
 @pytest.mark.cloud
-def test_logs_bad_uuid(cmd_log):
+def test_logs_bad_uuid():
     """Test status with the error: valid id but no exists."""
     with pytest.raises(Exception) as exception:
         run_logs(
@@ -47,7 +47,7 @@ def test_logs_bad_uuid(cmd_log):
 
 
 @pytest.mark.cloud
-def test_scaffold_bad_name(cmd_log):
+def test_scaffold_bad_name():
     """Test scaffold with the error: bad name."""
     with pytest.raises(Exception) as exception:
         run_scaffold(Namespace(**{"app_name": ""}))
@@ -56,7 +56,7 @@ def test_scaffold_bad_name(cmd_log):
 
 
 @pytest.mark.cloud
-def test_list_bad_project_name(cmd_log):
+def test_list_bad_project_name():
     """Test list with the error: project name does not exist."""
     with pytest.raises(Exception) as exception:
         run_list(Namespace(**{"project_name": "notexist", "all": False}))
@@ -65,7 +65,7 @@ def test_list_bad_project_name(cmd_log):
 
 
 @pytest.mark.cloud
-def test_context_bad_id(cmd_log):
+def test_context_bad_id():
     """Test context with the error: id does not exist."""
     with pytest.raises(FileNotFoundError) as exception:
         run_context(
@@ -97,7 +97,7 @@ def test_context_bad_id(cmd_log):
 
 
 @pytest.mark.cloud
-def test_stop_bad_uuid(cmd_log):
+def test_stop_bad_uuid():
     """Test stop with the error: valid id but no exists."""
     with pytest.raises(Exception) as exception:
         run_stop(
@@ -112,7 +112,7 @@ def test_stop_bad_uuid(cmd_log):
 
 
 @pytest.mark.cloud
-def test_verify_bad_domain(cmd_log):
+def test_verify_bad_domain():
     """Test verify with the error: valid domain but no exists."""
     with pytest.raises(Exception) as exception:
         run_verify(
@@ -135,7 +135,7 @@ def test_verify_bad_domain(cmd_log):
                     "fingerprint": None,
                     "context": None,
                     "code": None,
-                    "domain_name": f"notexist.app",
+                    "domain_name": "notexist.app",
                 }
             )
         )
@@ -144,7 +144,7 @@ def test_verify_bad_domain(cmd_log):
 
 
 @pytest.mark.cloud
-def test_deploy_non_free(cmd_log):
+def test_deploy_non_free():
     """Test deploy with the error: non free plan but no payment."""
     with pytest.raises(Exception) as exception:
         run_deploy(
@@ -165,7 +165,7 @@ def test_deploy_non_free(cmd_log):
 
 
 @pytest.mark.cloud
-def test_deploy_bad_projet_name(cmd_log):
+def test_deploy_bad_projet_name():
     """Test deploy with the error: project name does not exist."""
     with pytest.raises(Exception) as exception:
         run_deploy(
@@ -183,7 +183,7 @@ def test_deploy_bad_projet_name(cmd_log):
 
 
 @pytest.mark.cloud
-def test_deploy_bad_app(cmd_log):
+def test_deploy_bad_app():
     """Test deploy with the error: bad python app."""
     with pytest.raises(Exception) as exception:
         run_deploy(
@@ -203,7 +203,7 @@ def test_deploy_bad_app(cmd_log):
 
 
 @pytest.mark.cloud
-def test_deploy_bad_docker(cmd_log):
+def test_deploy_bad_docker():
     """Test deploy with the error: bad docker name."""
     with pytest.raises(Exception) as exception:
         run_deploy(
@@ -224,7 +224,7 @@ def test_deploy_bad_docker(cmd_log):
 
 
 @pytest.mark.cloud
-def test_deploy_latest_docker(cmd_log):
+def test_deploy_latest_docker():
     """Test deploy with the error: latest docker name."""
     with pytest.raises(Exception) as exception:
         run_deploy(
