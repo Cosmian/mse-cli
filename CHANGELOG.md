@@ -1,9 +1,8 @@
 ## \[1.0.0\] - 2023-06-01
 
-### Updated
+### Added
 
-* Use `mse-cli-core` 
-* Adapt the code to fit new `mse-cli-core` functions definitions and `mse-home` adds such as: enclave verification, querying the configuration server, computing the code fingerprint...
+* New command `mse home` to run a microservice on your localhost SGX
 
 ## \[0.12.0\] - 2023-04-14
 

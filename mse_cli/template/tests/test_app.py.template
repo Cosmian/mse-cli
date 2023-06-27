@@ -1,7 +1,15 @@
 """Unit test for our mse app."""
+{% if mse_home is defined %}
+import base64
+import json
 
+import pytest
 import requests
-
+from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
+{% else %}
+import requests
+{% endif %}
 
 def test_hello(url, certificate):
     """Test get method on /."""
@@ -14,3 +22,38 @@ def test_health(url, certificate):
     """Test healthcheck endpoint."""
     response = requests.get(f"{url}{{ healthcheck_endpoint }}", timeout=10, verify=certificate)
     assert response.status_code == 200
+
+{% if mse_home is defined %}
+def test_result_secret(url, certificate, secret_json):
+    """Test get method on /result/secrets."""
+    if not secret_json:
+        pytest.skip()
+
+    response = requests.get(f"{url}/result/secrets", timeout=10, verify=certificate)
+    assert response.status_code == 200
+
+    salt: bytes = base64.urlsafe_b64decode(
+        json.loads(secret_json.read_bytes())["salt"].encode("ascii"))
+    password: bytes = json.loads(secret_json.read_bytes())["password"].encode("utf-8")
+    kdf = Scrypt(salt=salt, length=32, n=2**14, r=8, p=1)
+    sk: bytes = base64.urlsafe_b64encode(kdf.derive(password))
+    plaintext = Fernet(sk).decrypt(response.content)
+
+    assert plaintext ==  b"message using password and salt from SECRETS"
+
+
+def test_result_sealed_secret(url, certificate, sealed_secret_json):
+    """Test get method on /result/sealed_secrets."""
+    if not sealed_secret_json:
+        pytest.skip()
+
+    response = requests.get(
+        f"{url}/result/sealed_secrets", timeout=10, verify=certificate
+    )
+    assert response.status_code == 200
+
+    sk = json.loads(sealed_secret_json.read_bytes())["result_sk"].encode("ascii")
+    plaintext = Fernet(sk).decrypt(response.content)
+
+    assert plaintext == b"message using result_sk from SEALED_SECRETS"
+{% endif %}

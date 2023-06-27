@@ -6,10 +6,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 from uuid import UUID
 
-from mse_cli_core.conf import AppConf, CloudConf, SSLConf
+from mse_cli.core.conf import AppConf, CloudConf, SSLConf
 
-from mse_cli.api.types import SSLCertificateOrigin
-from mse_cli.model.context import Context, ContextConf, ContextInstance
+from mse_cli.cloud.api.types import SSLCertificateOrigin
+from mse_cli.cloud.model.context import Context, ContextConf, ContextInstance
 
 
 def test_from_toml():

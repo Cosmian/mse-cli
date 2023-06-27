@@ -1,0 +1,18 @@
+name = "helloworld"
+python_application = "app:app"
+healthcheck_endpoint = "/"
+tests_cmd = "pytest"
+tests_requirements = [ "intel-sgx-ra>=1.0.1,<1.1", "pytest==7.2.0",]
+
+[cloud]
+location = "/tmp/code"
+docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
+project = "default"
+hardware = "4g-eu-001"
+secrets = "secrets.json"
+expiration_date = "2023-06-29 00:00:00+00:00"
+
+[cloud.ssl]
+domain_name = "demo.dev.cosmilink.com"
+private_key = "key.pem"
+certificate = "cert.pem"

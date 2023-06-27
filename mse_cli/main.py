@@ -9,23 +9,36 @@ filterwarnings("ignore")  # noqa: E402
 
 # pylint: disable=wrong-import-position
 import mse_cli
-from mse_cli.command import (
-    context,
-    deploy,
-    init,
-    list_all,
-    login,
-    logout,
-    logs,
-    scaffold,
-    status,
-    stop,
-    test,
-    verify,
-)
+from mse_cli.cloud.command import context as cloud_context
+from mse_cli.cloud.command import deploy as cloud_deploy
+from mse_cli.cloud.command import init as cloud_init
+from mse_cli.cloud.command import list_all as cloud_list_all
+from mse_cli.cloud.command import login as cloud_login
+from mse_cli.cloud.command import logout as cloud_logout
+from mse_cli.cloud.command import logs as cloud_logs
+from mse_cli.cloud.command import scaffold as cloud_scaffold
+from mse_cli.cloud.command import status as cloud_status
+from mse_cli.cloud.command import stop as cloud_stop
+from mse_cli.cloud.command import test as cloud_test
+from mse_cli.cloud.command import verify as cloud_verify
+from mse_cli.color import setup_color
+from mse_cli.home.command.code_provider import decrypt as home_decrypt
+from mse_cli.home.command.code_provider import package as home_package
+from mse_cli.home.command.code_provider import scaffold as home_scaffold
+from mse_cli.home.command.code_provider import seal as home_seal
+from mse_cli.home.command.code_provider import test_dev as home_test_dev
+from mse_cli.home.command.code_provider import verify as home_verify
+from mse_cli.home.command.sgx_operator import evidence as home_evidence
+from mse_cli.home.command.sgx_operator import list_all as home_list_all
+from mse_cli.home.command.sgx_operator import logs as home_logs
+from mse_cli.home.command.sgx_operator import restart as home_restart
+from mse_cli.home.command.sgx_operator import run as home_run
+from mse_cli.home.command.sgx_operator import spawn as home_spawn
+from mse_cli.home.command.sgx_operator import status as home_status
+from mse_cli.home.command.sgx_operator import stop as home_stop
+from mse_cli.home.command.sgx_operator import test as home_test
 from mse_cli.log import LOGGER as LOG
 from mse_cli.log import setup_logging
-from mse_cli.utils.color import setup_color
 
 
 def main() -> int:
@@ -48,20 +61,44 @@ def main() -> int:
         help="enable (default) or disable colors on stdout/stderr",
     )
 
-    subparsers = parser.add_subparsers(title="subcommands")
+    subparsers = parser.add_subparsers(title="infrastructure")
 
-    context.add_subparser(subparsers)
-    deploy.add_subparser(subparsers)
-    init.add_subparser(subparsers)
-    list_all.add_subparser(subparsers)
-    login.add_subparser(subparsers)
-    logout.add_subparser(subparsers)
-    logs.add_subparser(subparsers)
-    scaffold.add_subparser(subparsers)
-    status.add_subparser(subparsers)
-    stop.add_subparser(subparsers)
-    test.add_subparser(subparsers)
-    verify.add_subparser(subparsers)
+    parser_cloud = subparsers.add_parser(
+        "cloud", help="use Cosmain MSE Cloud infrastructure"
+    )
+    parser_home = subparsers.add_parser("home", help="use your own SGX infrastructure")
+
+    subparsers_cloud = parser_cloud.add_subparsers(title="operations")
+    subparsers_home = parser_home.add_subparsers(title="operations")
+
+    cloud_context.add_subparser(subparsers_cloud)
+    cloud_deploy.add_subparser(subparsers_cloud)
+    cloud_init.add_subparser(subparsers_cloud)
+    cloud_list_all.add_subparser(subparsers_cloud)
+    cloud_login.add_subparser(subparsers_cloud)
+    cloud_logout.add_subparser(subparsers_cloud)
+    cloud_logs.add_subparser(subparsers_cloud)
+    cloud_scaffold.add_subparser(subparsers_cloud)
+    cloud_status.add_subparser(subparsers_cloud)
+    cloud_stop.add_subparser(subparsers_cloud)
+    cloud_test.add_subparser(subparsers_cloud)
+    cloud_verify.add_subparser(subparsers_cloud)
+
+    home_decrypt.add_subparser(subparsers_home)
+    home_evidence.add_subparser(subparsers_home)
+    home_scaffold.add_subparser(subparsers_home)
+    home_list_all.add_subparser(subparsers_home)
+    home_logs.add_subparser(subparsers_home)
+    home_package.add_subparser(subparsers_home)
+    home_restart.add_subparser(subparsers_home)
+    home_run.add_subparser(subparsers_home)
+    home_status.add_subparser(subparsers_home)
+    home_seal.add_subparser(subparsers_home)
+    home_spawn.add_subparser(subparsers_home)
+    home_stop.add_subparser(subparsers_home)
+    home_test.add_subparser(subparsers_home)
+    home_test_dev.add_subparser(subparsers_home)
+    home_verify.add_subparser(subparsers_home)
 
     args = parser.parse_args()
 
