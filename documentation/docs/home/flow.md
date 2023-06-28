@@ -12,4 +12,4 @@ MSE Home deals with several trust issues. No one has to trust anyone:
 
 The following flow sums up the chained steps to deploy and run the code while being compliant with the previous privacy & security levels
 
-![](./images/deploy.png)
+![](../images/deploy.png)

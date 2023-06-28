@@ -120,7 +120,7 @@ def hello():
 # ...
 ```
 
-The [configuration file](./configuration.md) is a TOML file used to give information to the SGX operator, allowing to start correctly the application:
+The [configuration file](../cloud/configuration.md) is a TOML file used to give information to the SGX operator, allowing to start correctly the application:
 
 ```{.toml}
 name = "example"

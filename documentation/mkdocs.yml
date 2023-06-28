@@ -55,6 +55,7 @@ nav:
           - Init: cloud/subcommand/init.md
           - Deploy: cloud/subcommand/deploy.md
           - List: cloud/subcommand/list.md
+          - Test: cloud/subcommand/localtest.md
           - Login: cloud/subcommand/login.md
           - Logout: cloud/subcommand/logout.md
           - Logs: cloud/subcommand/logs.md
@@ -73,6 +74,7 @@ nav:
       - Develop: home/develop.md
       - Flow: home/flow.md
       - Command Line:
+          - Evidence: home/subcommand/evidence.md
           - List: home/subcommand/list.md
           - Logs: home/subcommand/logs.md
           - Restart: home/subcommand/restart.md
