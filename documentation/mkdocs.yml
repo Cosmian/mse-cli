@@ -69,12 +69,12 @@ nav:
       - App Usage Flow: cloud/how_it_works_use.md
 
   - Home:
-      - Getting started: cloud/getting_started.md
-      - Develop: cloud/develop.md
-      - Flow: cloud/flow.md
+      - Getting started: home/getting_started.md
+      - Develop: home/develop.md
+      - Flow: home/flow.md
       - Command Line:
-          - List: cloud/subcommand/list.md
-          - Logs: cloud/subcommand/logs.md
-          - Restart: cloud/subcommand/restart.md
-          - Status: cloud/subcommand/status.md
-          - Stop: cloud/subcommand/stop.md
+          - List: home/subcommand/list.md
+          - Logs: home/subcommand/logs.md
+          - Restart: home/subcommand/restart.md
+          - Status: home/subcommand/status.md
+          - Stop: home/subcommand/stop.md
