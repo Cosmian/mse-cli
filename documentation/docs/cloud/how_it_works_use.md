@@ -7,13 +7,13 @@ However, there are some specificities about the connection depending on the MSE 
 The TLS connection is specific to each scenario:
 
 **Zero trust approach**
-![](./images/use-zero-trust.png)
+![](../images/use-zero-trust.png)
 
 **App owner trust approach**
-![](./images/use-app-owner-trust.png)
+![](../images/use-app-owner-trust.png)
 
 **Application deployed using `--untrusted-ssl`**
-![](./images/use-any-trust.png)
+![](../images/use-any-trust.png)
 
 
 In all scenarios but *Zero trust approach* the user trusts the app owner. Therefore, the user does not need to verify the MSE app. So, the user can use the app as if it is running inside a classic cloud. 
@@ -26,7 +26,7 @@ In *Zero trust approach* the user has to verify the MSE app and the SSL certific
 
 ## Usage process
 
-![](./images/use.png)
+![](../images/use.png)
 
 
 ### MSE instance verification

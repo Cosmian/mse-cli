@@ -14,7 +14,7 @@ In this scenario, no participant trusts any other participant.
 
 A real-world example is the collaboration between an algorithm provider (typically an AI/ML company: Medtech, Biotech, Fintech,...) and a data provider (hospital, bank, industrial,...).
 
-![](./images/ccc_scenario.png)
+![](../images/ccc_scenario.png)
 
 The Algorithm Provider (_app owner_) wishes to offer the prediction/analysis capabilities of its algorithms but wants to protect its intellectual property.
 
@@ -34,7 +34,7 @@ In this scenario, the app user trusts the app owner.
 A real-world example is a bank wishing to move to the cloud and securely operate its online
 banking application in the cloud:
 
-![](./images/fes-scenario.png)
+![](../images/fes-scenario.png)
 
 The bank (_app owner_) wishes to keep its code private from the operator and from the cloud provider.
 
