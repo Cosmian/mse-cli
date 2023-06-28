@@ -131,7 +131,7 @@ $ mse home spawn --host myapp.fr \
                  app_name
 ```
 
-Now, evidences have been automatically collected and the microservice is up.
+At this moment, evidences have been automatically collected and the microservice is up.
 
 Evidences are essential for the code provider to verify the trustworthiness of the running application.
 
@@ -191,7 +191,7 @@ __User__: the code provider
 
 Assume the SGX operator gets a result as follow: `curl https://localhost:7788/result --cacert /tmp/ratls.pem > result.enc`
 
-Then, the code provider can decrypt the result has follow:
+Then, the code provider can decrypt the result as follow:
 
 ```console
 $ mse home decrypt --key key.txt \
@@ -200,7 +200,7 @@ $ mse home decrypt --key key.txt \
 $ cat workspace/code_provider/result.plain
 ```
 
-### Manage the mse docker
+### Manage the MSE docker
 
 __User__: the SGX operator
 
@@ -216,19 +216,19 @@ You can restart a stopped and not removed docker as follow:
 $ mse home restart <app_name>
 ```
 
-You can get the mse docker logs as follow:
+You can get the MSE docker logs as follow:
 
 ```console
 $ mse home logs <app_name>
 ```
 
-You can get the mse docker status as follow:
+You can get the MSE docker status as follow:
 
 ```console
 $ mse home status <app_name>
 ```
 
-You can get the list of running mse dockers:
+You can get the list of running MSE dockers:
 
 ```console
 $ mse home list
