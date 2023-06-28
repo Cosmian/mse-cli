@@ -3,7 +3,7 @@
 import logging
 import sys
 
-from mse_cli.utils.color import COLOR, ColorKind
+from mse_cli.color import COLOR, ColorKind
 
 LOGGER = logging.getLogger("mse")
 

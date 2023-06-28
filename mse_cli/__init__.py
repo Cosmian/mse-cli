@@ -4,7 +4,7 @@ import os
 import sys
 from pathlib import Path
 
-__version__ = "0.12.0"
+__version__ = "1.0.0"
 
 # This directory contains the login information of the user
 # and the context of all its deployments
@@ -50,4 +50,4 @@ MSE_CONSOLE_URL = os.getenv("MSE_CONSOLE_URL", default="https://console.cosmian.
 MSE_DOC_URL = "https://docs.cosmian.com/microservice_encryption"
 
 # The URL of the Security model documentation
-MSE_DOC_SECURITY_MODEL_URL = f"{MSE_DOC_URL}/security/"
+MSE_DOC_SECURITY_MODEL_URL = f"{MSE_DOC_URL}/cloud/security/"

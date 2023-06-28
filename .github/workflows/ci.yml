@@ -62,19 +62,18 @@ jobs:
 
       - name: Run unit tests
         run: |
-          pytest -m "not slow"
+          pytest -m "not cloud and not home"
 
-  tests:
-    runs-on: self-hosted
-    container:
-      image: python:3.8
-      volumes:
-        - /var/run/docker.sock:/var/run/docker.sock
-        - /tmp:/tmp
+  tests-cloud:
+    runs-on: [self-hosted, not-docker]
     needs: check
-
     steps:
       - uses: actions/checkout@v3
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
 
       - name: Install dependencies
         run: |
@@ -98,4 +97,29 @@ jobs:
           echo 'email = "alice@cosmian.com"' > ${MSE_CONF_PATH}/login.toml
           echo "refresh_token = \"${REFRESH_TOKEN}\"" >> ${MSE_CONF_PATH}/login.toml
           echo "Running tests using ${MSE_BASE_URL}"
-          pytest -m slow
+          pytest -m cloud
+
+  tests-home:
+    runs-on: [self-hosted, sgx]
+    needs: check
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+          pip install .
+
+      - name: Run unit tests
+        env:
+          TEST_SIGNER_KEY: /opt/cosmian-internal/cosmian-signer-key.pem
+          TEST_PCCS_URL: https://pccs.staging.mse.cosmian.com
+        run: |
+          pytest -m home

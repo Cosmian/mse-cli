@@ -1,8 +1,15 @@
-## \[0.12.0\] - 2023-04-14
+## \[1.0.0\] - 2023-07-01
 
 ### Added
 
-* 
+* New command `mse home` to run a microservice on your localhost SGX
+* New subcommand `mse test` & `mse localtest` to run test for cloud environment
+
+### Updated
+
+* Context and application configuration files have changed (breaking changed)
+
+## \[0.12.0\] - 2023-04-14
 
 ### Updated
 

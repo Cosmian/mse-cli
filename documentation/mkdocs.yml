@@ -47,22 +47,34 @@ extra_javascript:
   - javascripts/extra.js
 nav:
   - Overview: overview.md
-  - Getting started: getting_started.md
-  - App Configuration: configuration.md
-  - Command Line:
-      - Context: subcommand/context.md
-      - Init: subcommand/init.md
-      - Deploy: subcommand/deploy.md
-      - List: subcommand/list.md
-      - Login: subcommand/login.md
-      - Logout: subcommand/logout.md
-      - Logs: subcommand/logs.md
-      - Status: subcommand/status.md
-      - Stop: subcommand/stop.md
-      - Test: subcommand/test.md
-      - Verify: subcommand/verify.md
-  - Develop your app: develop.md
-  - Usage Scenarios: scenarios.md
-  - Security Model: security.md
-  - App Deployment Flow: how_it_works_deploy.md
-  - App Usage Flow: how_it_works_use.md
+  - Cloud:
+      - Getting started: cloud/getting_started.md
+      - App Configuration: cloud/configuration.md
+      - Command Line:
+          - Context: cloud/subcommand/context.md
+          - Init: cloud/subcommand/init.md
+          - Deploy: cloud/subcommand/deploy.md
+          - List: cloud/subcommand/list.md
+          - Login: cloud/subcommand/login.md
+          - Logout: cloud/subcommand/logout.md
+          - Logs: cloud/subcommand/logs.md
+          - Status: cloud/subcommand/status.md
+          - Stop: cloud/subcommand/stop.md
+          - Test: cloud/subcommand/test.md
+          - Verify: cloud/subcommand/verify.md
+      - Develop your app: cloud/develop.md
+      - Usage Scenarios: cloud/scenarios.md
+      - Security Model: cloud/security.md
+      - App Deployment Flow: cloud/how_it_works_deploy.md
+      - App Usage Flow: cloud/how_it_works_use.md
+
+  - Home:
+      - Getting started: cloud/getting_started.md
+      - Develop: cloud/develop.md
+      - Flow: cloud/flow.md
+      - Command Line:
+          - List: cloud/subcommand/list.md
+          - Logs: cloud/subcommand/logs.md
+          - Restart: cloud/subcommand/restart.md
+          - Status: cloud/subcommand/status.md
+          - Stop: cloud/subcommand/stop.md
