@@ -26,7 +26,7 @@ The CLI tool [`mse home`](https://github.com/Cosmian/mse-cli) requires at least 
 It is recommended to use [pyenv](https://github.com/pyenv/pyenv) to manage different Python interpreters.
 
 ```{.console}
-$ pip3 install mse-home-cli
+$ pip3 install mse-cli
 $ mse home --help
 usage: mse home [-h]
                 {decrypt,evidence,scaffold,list,localtest,logs,package,restart,run,status,seal,spawn,stop,test,verify}
@@ -211,6 +211,7 @@ $ mse home spawn --host myapp.fr \
 ```
 
 Mandatory arguments are:
+
 - `host`: common name of the certificate generated later on during [verification step](#check-the-trustworthiness-of-the-application)
 - `port`: localhost port used by Docker to bind the application
 - `size`: memory size (in MB) of the enclave to spawn. Must be a power of 2 greater than 1024. This size is bounded by the SGX EPC memory.
@@ -224,7 +225,7 @@ The generated file `workspace/sgx_operator/evidence.json` contains cryptographic
 
 This evidence file is helpful for the code provider to [verify](#check-the-trustworthiness-of-the-application) the running app.
 
-The application is now started in an intermediate state waiting for any secrets: we call that the configuration server. 
+The application is now started in an intermediate state waiting for any secret: we call that the configuration server. 
 
 ## Collect the evidences to verify the application
 
@@ -240,7 +241,7 @@ $ mse home evidence --output workspace/sgx_operator/ \
 
 This command collects cryptographic proofs related to the enclave and serialize them as a file named `evidence.json`.
 
-This command will determine your PCCS url by parsing the aesmd service configuration file: `/etc/sgx_default_qcnl.conf`. You can choose another PCCS by specifying the `--pccs` parameter.
+This command will determine your PCCS URL by parsing the `aesmd` service configuration file: `/etc/sgx_default_qcnl.conf`. You can choose another PCCS by specifying the `--pccs` parameter.
 
 The file `workspace/sgx_operator/evidence.json` and the previous file `workspace/sgx_operator/args.toml` can now be shared with other participants.
 
@@ -252,18 +253,19 @@ The file `workspace/sgx_operator/evidence.json` and the previous file `workspace
 
 
 The trustworthiness is established based on multiple information:
+
 - the full code package (tarball)
 - evidences captured from the running microservice
 
 Verification of the enclave information:
 
-    ```console
-    $ mse home verify --package workspace/code_provider/package_mse_src_1683276327723953661.tar \
-                      --evidence output/evidence.json \
-                      --output /tmp
-    ```
+```console
+$ mse home verify --package workspace/code_provider/package_mse_src_1683276327723953661.tar \
+                  --evidence output/evidence.json \
+                  --output /tmp
+```
 
-    If the verification succeed, you get the RA-TLS certificate (writte as a file named `ratls.pem`) and you can now seal the code key to share it with the SGX operator.
+If the verification succeeds, the RA-TLS certificate is written as a file named `ratls.pem`, and you can now seal the code's key to share it with the SGX operator.
 
 ## Seal your secrets
 
@@ -291,11 +293,11 @@ Share the sealed secrets file with the SGX operator.
 
 ```console
 $ mse home run --sealed-secrets workspace/code_provider/secrets_to_seal.json.sealed \
-               --secrets example/secrets.json
+               --secrets example/secrets.json \
                app_name
 ```
 
-From now, the real application developed by the code provider is fully operational and running. The configuration server started during the previous `spawn` step has been shutdown. Therefore, if you want to change the configuration or the secrets, you need to stop&remove this application and restart the deployment flow from scratch.
+From now, the initial application developed by the code provider is fully operational and running. The configuration server which started during the previous `spawn` step has been shutdown. Therefore, if you want to change the configuration or the secrets, you need to stop & remove this application and restart the deployment flow from scratch.
 
 ## Test the deployed application
 
@@ -377,7 +379,7 @@ First, the SGX operator collects the encrypted result:
 $ curl --cacert /tmp/ratls.pem https://myapp.fr:7788/result/sealed_secrets > result.enc
 ```
 
-This encrypted result is then sent by external means to the code provider.
+Then this encrypted result is sent to the code provider by external means.
 
 Finally, the code provider can decrypt the result:
 
@@ -390,7 +392,7 @@ $ cat workspace/code_provider/result.plain
 
 Note that the `--key` parameter is the key contained in `secrets_to_seal.json`.
 
-The `decrypt` command only supports [Fernet](https://cryptography.io/en/latest/fernet/) algorithm. If the code provider implements another way to encrypt the result in its micro-service, another decryption code must also be written outside `mse-home`.
+The `decrypt` command only supports [Fernet](https://cryptography.io/en/latest/fernet/) algorithm. If the code provider implements another way to encrypt the result in its microservice, another decryption code must also be written outside MSE Home.
 
 
 !!! info Fix or Update

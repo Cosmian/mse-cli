@@ -14,7 +14,7 @@ from mse_cli.log import LOGGER as LOG
 
 def add_subparser(subparsers):
     """Define the subcommand."""
-    parser = subparsers.add_parser("test", help="Test a deployed MSE app")
+    parser = subparsers.add_parser("test", help="test a deployed MSE app")
 
     parser.add_argument(
         "app_id",

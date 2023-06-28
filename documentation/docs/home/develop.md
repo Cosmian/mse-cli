@@ -1,5 +1,5 @@
 One of the advantages of using MSE to protect your application and your data in the cloud, is that your original Python application does not need to be modified.
-You simply need to pick your original code, design a standard Flask application without any specific intruction, write a configuration TOML file and run the `deploy` subcommand.
+You simply need to pick your original code, design a standard Flask application without any specific instruction, write a configuration TOML file and run the `deploy` subcommand.
 
 In this section are shared good practices and some considerations you need to know before developing or deploying your application inside an MSE node.
 
@@ -14,7 +14,7 @@ Before sending the Python code of your microservice, each file is encrypted but:
 
 - `requirements.txt`
 
-This code is supposed to be sharable, as your convenience, to any user in order to check the trustworthiness of your app.
+This code is supposed to be sharable to any user, as your convenience, in order to check the trustworthiness of your app.
 As a matter of fact, *do not write any secret into your code*.
 For example: passwords or keys to connect to a third-party service like a remote storage or a database.
 
