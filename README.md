@@ -269,3 +269,24 @@ $ mkdocs serve
 ```
 
 then open your browser on: `http://127.0.0.1:8003/`
+
+## Dockerisation
+
+You can build a docker for `mse home` as follow:
+
+```console
+$ docker build -t mse-home . 
+```
+
+Then run it:
+
+```
+$ docker run -v $PWD/workspace:/mnt -v /var/run/docker.sock:/var/run/docker.sock --network=host mse-home scaffold example
+$ docker run -v $PWD/workspace:/mnt -v /var/run/docker.sock:/var/run/docker.sock --network=host mse-home package --project example  --output .
+```
+
+The current directory inside the docker is `/mnt`. You can retrieve all generated files in your current host in: `$PWD/workspace`. Make sure to create it before all.  
+
+Then you can work with `mse home` without having internet access even to install the CLI. 
+
+Note: the docker does not contain `mse cloud`. It makes no sens since `mse cloud` is designed to be used with Internet. Plus: you need to login through the web browser, which is not possible using the docker. 
