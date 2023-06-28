@@ -1,6 +1,7 @@
 """mse_cli.home.command.code_provider.package module."""
 
 import argparse
+import os
 import shutil
 import tempfile
 import time
@@ -57,10 +58,13 @@ def add_subparser(subparsers):
     parser.set_defaults(func=run)
 
 
+# pylint: disable=too-many-statements
 def run(args) -> None:
     """Run the subcommand."""
     package_path: Path = args.output.resolve()
-    if not package_path.is_dir():
+    if not package_path.exists():
+        os.makedirs(package_path)
+    elif not package_path.is_dir():
         raise NotADirectoryError(f"{package_path} does not exist")
 
     code_path: Path
