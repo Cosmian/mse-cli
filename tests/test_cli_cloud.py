@@ -380,9 +380,6 @@ def test_mse_cli_appid_self_signed(cmd_log, workspace):
     conf, app_id, domain_name = _test_mse_cli(
         workspace, cmd_log, SSLCertificateOrigin.Self, False
     )
-
-    reset_conf_ssl_parag(conf)
-
     _, app_id_2, domain_name_2 = _test_mse_cli(
         workspace, cmd_log, SSLCertificateOrigin.Self, False, conf=conf
     )
@@ -396,9 +393,6 @@ def test_mse_cli_appid_untrusted_ssl(cmd_log, workspace):
     conf, app_id, domain_name = _test_mse_cli(
         workspace, cmd_log, SSLCertificateOrigin.Operator, True
     )
-
-    reset_conf_ssl_parag(conf)
-
     _, app_id_2, domain_name_2 = _test_mse_cli(
         workspace, cmd_log, SSLCertificateOrigin.Operator, True, conf=conf
     )
@@ -412,9 +406,6 @@ def test_mse_cli_appid_dn_untrusted_to_self_signed(cmd_log, workspace):
     conf, app_id, domain_name = _test_mse_cli(
         workspace, cmd_log, SSLCertificateOrigin.Operator, True
     )
-
-    reset_conf_ssl_parag(conf)
-
     _, app_id_2, domain_name_2 = _test_mse_cli(
         workspace, cmd_log, SSLCertificateOrigin.Self, False, conf=conf
     )
@@ -428,9 +419,6 @@ def test_mse_cli_appid_dn_self_signed_to_untrusted(cmd_log, workspace):
     conf, app_id, domain_name = _test_mse_cli(
         workspace, cmd_log, SSLCertificateOrigin.Self, False
     )
-
-    reset_conf_ssl_parag(conf)
-
     _, app_id_2, domain_name_2 = _test_mse_cli(
         workspace, cmd_log, SSLCertificateOrigin.Operator, True, conf=conf
     )
@@ -460,9 +448,6 @@ def test_mse_cli_appid_dn_self_signed_to_ssl(cmd_log, workspace):
     conf, app_id, domain_name = _test_mse_cli(
         workspace, cmd_log, SSLCertificateOrigin.Self, False
     )
-
-    reset_conf_ssl_parag(conf)
-
     _, app_id_2, domain_name_2 = _test_mse_cli(
         workspace, cmd_log, SSLCertificateOrigin.Owner, False, conf=conf
     )
@@ -492,9 +477,6 @@ def test_mse_cli_appid_dn_untrusted_to_ssl(cmd_log, workspace):
     conf, app_id, domain_name = _test_mse_cli(
         workspace, cmd_log, SSLCertificateOrigin.Operator, True
     )
-
-    reset_conf_ssl_parag(conf)
-
     _, app_id_2, domain_name_2 = _test_mse_cli(
         workspace, cmd_log, SSLCertificateOrigin.Owner, False, conf=conf
     )
