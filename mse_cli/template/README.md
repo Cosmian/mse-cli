@@ -14,7 +14,7 @@ You should edit the following files:
   
 ## MSE HOME
 
-### Test your app, your Docker and your msehome configuration
+### Test your app, your Docker and your mse home configuration
 
 ```console
 $ mse home localtest --code mse_src/ \

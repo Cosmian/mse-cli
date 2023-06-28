@@ -99,7 +99,7 @@ __User__: the code provider
 $ mse home scaffold example
 ```
 
-### Test your app, your docker and your msehome configuration
+### Test your app, your docker and your mse home configuration
 
 __User__: the code provider
 

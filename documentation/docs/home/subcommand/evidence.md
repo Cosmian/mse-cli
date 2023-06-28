@@ -1,4 +1,4 @@
-The evidence are collected when you run the `spawn` command. You can also retrieve them using the `evidence` command. 
+The evidences are collected when you run the `spawn` command. You can also retrieve them using the `evidence` command. 
 
 
 !!! info User
@@ -7,12 +7,12 @@ The evidence are collected when you run the `spawn` command. You can also retrie
 
 
 ```console
-$ mse home evidence --output workspace/sgx_operator/ \
-                   app_name
+$ mse home evidence --output sgx_operator/ \
+                    app_name
 ```
 
-This command collects cryptographic proofs related to the enclave and serialize them as a file named `evidence.json`.
+This command collects cryptographic proofs related to the enclave and serializes them as a file named `evidence.json`.
 
-This command will determine your pccs url by parsing the aesmd service configuration file: `/etc/sgx_default_qcnl.conf`. You can choose another pccs by specifying the `--pccs` parameter.
+This command will determine your PCCS URL by parsing the `aesmd` service configuration file: `/etc/sgx_default_qcnl.conf`. You can choose another PCCS by specifying the `--pccs` parameter.
 
-The file `workspace/sgx_operator/evidence.json` can now be shared with other participants.
+The file `sgx_operator/evidence.json` can now be shared with other participants.

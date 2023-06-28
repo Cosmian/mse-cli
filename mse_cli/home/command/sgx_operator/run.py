@@ -109,4 +109,4 @@ def run(args) -> None:
         )
 
     LOG.info("Application ready!")
-    LOG.info("Feel free to test it using the `msehome test` command")
+    LOG.info("Feel free to test it using the `mse home test` command")
