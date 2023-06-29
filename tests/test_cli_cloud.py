@@ -194,19 +194,22 @@ def _test_mse_cli(
     workspace: Path,
     f: io.StringIO,
     ssl_certificate_origin: SSLCertificateOrigin,
-    untrusted_ssl=bool,
-):
+    untrusted_ssl: bool,
+    conf: Optional[Path] = None,
+) -> Tuple[Path, str, str]:
     """Test a complete deployment flow."""
     # Test the login subcommand
     _test_login(f)
 
     # Test the scaffold subcommand
-    conf = _test_scaffold(workspace)
+    if conf is None:
+        conf = _test_scaffold(workspace)
+
     app_conf = AppConf.load(conf)
 
-    if ssl_certificate_origin == SSLCertificateOrigin.Owner:
-        assert not app_conf.cloud.ssl
+    assert not app_conf.cloud.ssl
 
+    if ssl_certificate_origin == SSLCertificateOrigin.Owner:
         cert_path = workspace / "cert.pem"
         cert_path.write_text(os.getenv("MSE_TEST_PUBLIC_KEY"))
         key_path = workspace / "key.path"
@@ -218,8 +221,6 @@ def _test_mse_cli(
             certificate=cert_path,
         )
         app_conf.save(conf)
-    else:
-        assert not app_conf.cloud.ssl
 
     # The the localtest subcommand
     _test_localtest(f, conf)
@@ -339,6 +340,15 @@ def _test_mse_cli(
     assert str(app_id) not in output
     assert not Context.get_dirpath(app_id, False).exists()
 
+    return conf, app_id, domain_name
+
+
+def reset_conf_ssl_parag(conf: Path):
+    """Reset the SSL parag from configuration."""
+    app_conf = AppConf.load(conf)
+    app_conf.cloud.ssl = None
+    app_conf.save(conf)
+
 
 @pytest.mark.cloud
 def test_mse_cli_self_signed(cmd_log, workspace):
@@ -362,3 +372,129 @@ def test_mse_cli_self_signed_untrusted(cmd_log, workspace):
 def test_mse_cli_with_ssl_untrusted(cmd_log, workspace):
     """Test a complete deployment flow for untrusted ssl."""
     _test_mse_cli(workspace, cmd_log, SSLCertificateOrigin.Owner, True)
+
+
+@pytest.mark.cloud
+def test_mse_cli_appid_self_signed(cmd_log, workspace):
+    """Test successive `deploy` in self-signed mode."""
+    conf, app_id, domain_name = _test_mse_cli(
+        workspace, cmd_log, SSLCertificateOrigin.Self, False
+    )
+    _, app_id_2, domain_name_2 = _test_mse_cli(
+        workspace, cmd_log, SSLCertificateOrigin.Self, False, conf=conf
+    )
+    assert app_id != app_id_2
+    assert domain_name == domain_name_2  # domain name does not change
+
+
+@pytest.mark.cloud
+def test_mse_cli_appid_untrusted_ssl(cmd_log, workspace):
+    """Test successive `deploy` in untrusted SSL mode."""
+    conf, app_id, domain_name = _test_mse_cli(
+        workspace, cmd_log, SSLCertificateOrigin.Operator, True
+    )
+    _, app_id_2, domain_name_2 = _test_mse_cli(
+        workspace, cmd_log, SSLCertificateOrigin.Operator, True, conf=conf
+    )
+    assert app_id != app_id_2
+    assert domain_name == domain_name_2  # domain name does not change
+
+
+@pytest.mark.cloud
+def test_mse_cli_appid_dn_ssl_to_ssl(cmd_log, workspace):
+    """Test successive `deploy` from SSL to SSL."""
+    conf, app_id, domain_name = _test_mse_cli(
+        workspace, cmd_log, SSLCertificateOrigin.Owner, False
+    )
+
+    reset_conf_ssl_parag(conf)
+
+    _, app_id_2, domain_name_2 = _test_mse_cli(
+        workspace, cmd_log, SSLCertificateOrigin.Owner, False, conf=conf
+    )
+    assert app_id != app_id_2
+    assert domain_name == domain_name_2  # domain name does not change
+
+
+@pytest.mark.cloud
+def test_mse_cli_appid_dn_untrusted_to_self_signed(cmd_log, workspace):
+    """Test successive `deploy` from untrusted SSL to self-signed."""
+    conf, app_id, domain_name = _test_mse_cli(
+        workspace, cmd_log, SSLCertificateOrigin.Operator, True
+    )
+    _, app_id_2, domain_name_2 = _test_mse_cli(
+        workspace, cmd_log, SSLCertificateOrigin.Self, False, conf=conf
+    )
+    assert app_id != app_id_2
+    assert domain_name != domain_name_2
+
+
+@pytest.mark.cloud
+def test_mse_cli_appid_dn_self_signed_to_untrusted(cmd_log, workspace):
+    """Test successive `deploy` from self-signed to untrusted SSL."""
+    conf, app_id, domain_name = _test_mse_cli(
+        workspace, cmd_log, SSLCertificateOrigin.Self, False
+    )
+    _, app_id_2, domain_name_2 = _test_mse_cli(
+        workspace, cmd_log, SSLCertificateOrigin.Operator, True, conf=conf
+    )
+    assert app_id != app_id_2
+    assert domain_name != domain_name_2
+
+
+@pytest.mark.cloud
+def test_mse_cli_appid_dn_ssl_to_self_signed(cmd_log, workspace):
+    """Test successive `deploy` from SSL to self-signed."""
+    conf, app_id, domain_name = _test_mse_cli(
+        workspace, cmd_log, SSLCertificateOrigin.Owner, False
+    )
+
+    reset_conf_ssl_parag(conf)
+
+    _, app_id_2, domain_name_2 = _test_mse_cli(
+        workspace, cmd_log, SSLCertificateOrigin.Self, False, conf=conf
+    )
+    assert app_id != app_id_2
+    assert domain_name != domain_name_2
+
+
+@pytest.mark.cloud
+def test_mse_cli_appid_dn_self_signed_to_ssl(cmd_log, workspace):
+    """Test successive `deploy` from self-signed to SSL."""
+    conf, app_id, domain_name = _test_mse_cli(
+        workspace, cmd_log, SSLCertificateOrigin.Self, False
+    )
+    _, app_id_2, domain_name_2 = _test_mse_cli(
+        workspace, cmd_log, SSLCertificateOrigin.Owner, False, conf=conf
+    )
+    assert app_id != app_id_2
+    assert domain_name != domain_name_2
+
+
+@pytest.mark.cloud
+def test_mse_cli_appid_dn_ssl_to_operator(cmd_log, workspace):
+    """Test successive `deploy` from SSL to untrusted SSL."""
+    conf, app_id, domain_name = _test_mse_cli(
+        workspace, cmd_log, SSLCertificateOrigin.Owner, False
+    )
+
+    reset_conf_ssl_parag(conf)
+
+    _, app_id_2, domain_name_2 = _test_mse_cli(
+        workspace, cmd_log, SSLCertificateOrigin.Operator, True, conf=conf
+    )
+    assert app_id != app_id_2
+    assert domain_name != domain_name_2
+
+
+@pytest.mark.cloud
+def test_mse_cli_appid_dn_untrusted_to_ssl(cmd_log, workspace):
+    """Test successive `deploy` from untrusted SSL to SSL."""
+    conf, app_id, domain_name = _test_mse_cli(
+        workspace, cmd_log, SSLCertificateOrigin.Operator, True
+    )
+    _, app_id_2, domain_name_2 = _test_mse_cli(
+        workspace, cmd_log, SSLCertificateOrigin.Owner, False, conf=conf
+    )
+    assert app_id != app_id_2
+    assert domain_name != domain_name_2
