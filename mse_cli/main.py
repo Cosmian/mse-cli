@@ -104,7 +104,7 @@ def main() -> int:
     home_localtest.add_subparser(subparsers_home)
     home_verify.add_subparser(subparsers_home)
 
-    # We infer the targetted env if the user
+    # We infer the targeted env if the user
     # doesn't specify it in the command
     if default_env := os.getenv("MSE_DEFAULT_ENV"):
         if sys.argv[1] not in ["cloud", "home"]:

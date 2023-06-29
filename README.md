@@ -27,7 +27,7 @@ In that latter usage, two actors are required:
 - The code provider (who can also consume the result of the MSE application)
 - The SGX operator (who also owns the data to run against the MSE application)
 
-If writting `home` or `cloud` every time upsets you, you can set the `MSE_DEFAULT_ENV` env variable to one of these values and then just omit that word in the future commands. By default, the cli will target this default environment. 
+If writing the subcommand part `home` or `cloud` every time upsets you, you can set the `MSE_DEFAULT_ENV` env variable to one of these values and then just omit that word in the future commands. By default, the CLI will target this default environment. For example: `mse cloud test` turns into `mse test`
 
 
 ## Usage - MSE cloud

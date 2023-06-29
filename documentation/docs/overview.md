@@ -28,4 +28,4 @@ See [Security Model](cloud/security.md) for more details or just discover MSE Cl
 
 !!! info "For further use"
 
-    If writting `home` or `cloud` every time upsets you, you can set the `MSE_DEFAULT_ENV` env variable to one of these values and then just omit that word in the future commands. By default, the cli will target this default environment. 
+    If writing the subcommand part `home` or `cloud` every time upsets you, you can set the `MSE_DEFAULT_ENV` env variable to one of these values and then just omit that word in the future commands. By default, the CLI will target this default environment. For example: `mse cloud test` turns into `mse test`
