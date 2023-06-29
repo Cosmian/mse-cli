@@ -68,6 +68,12 @@ jobs:
     runs-on: [self-hosted, not-docker]
     needs: check
     steps:
+      # Solve perm denied issue on GA
+      # see: https://github.com/actions/checkout/issues/211
+      - name: Chown user
+        run: |
+          sudo chown -R $USER:$USER $GITHUB_WORKSPACE
+
       - uses: actions/checkout@v3
 
       - name: Set up Python 3.8
@@ -103,6 +109,12 @@ jobs:
     runs-on: [self-hosted, sgx]
     needs: check
     steps:
+      # Solve perm denied issue on GA
+      # see: https://github.com/actions/checkout/issues/211
+      - name: Chown user
+        run: |
+          sudo chown -R $USER:$USER $GITHUB_WORKSPACE
+
       - uses: actions/checkout@v3
 
       - name: Set up Python 3.8
