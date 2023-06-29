@@ -290,7 +290,6 @@ $ sudo mkdir /mnt/workspace
 $ # Scaffold a project
 $ docker run -v /mnt/workspace:/mnt/workspace \
              -v /var/run/docker.sock:/var/run/docker.sock \
-            --network=host \
             mse-home scaffold example
 $ # Test it
 $ docker run -v /mnt/workspace:/mnt/workspace \
@@ -300,7 +299,6 @@ $ docker run -v /mnt/workspace:/mnt/workspace \
 $ # Package it
 $ docker run -v /mnt/workspace:/mnt/workspace \
              -v /var/run/docker.sock:/var/run/docker.sock \
-             --network=host \
              mse-home package --project example \
                               --output .
 $ # Spawn it
@@ -319,14 +317,12 @@ $ docker run -v /mnt/workspace:/mnt/workspace \
 $ # Verify the evidences
 $ docker run -v /mnt/workspace:/mnt/workspace \
              -v /var/run/docker.sock:/var/run/docker.sock \
-             --network=host \
              mse-home verify --package package_example_1688025211482089576.tar \
                              --evidence evidence.json \
                              --output .
 $ # Seal the secrets
 $ docker run -v /mnt/workspace:/mnt/workspace \
              -v /var/run/docker.sock:/var/run/docker.sock \
-             --network=host \
              mse-home seal --secrets example/secrets_to_seal.json \
                            --cert ratls.pem \
                            --output  .
@@ -345,7 +341,6 @@ $ docker run -v /mnt/workspace:/mnt/workspace \
                            --config mse.toml test_docker
 $ # Remove it
 $ docker run -v /var/run/docker.sock:/var/run/docker.sock \
-             --network=host \
              mse-home stop --remove test_docker
 ```
 
