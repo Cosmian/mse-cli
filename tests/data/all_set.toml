@@ -11,7 +11,7 @@ docker = "ghcr.io/cosmian/mse-pytorch:20230104085621"
 project = "default"
 hardware = "4g-eu-001"
 secrets = "secrets.json"
-expiration_date = "2023-06-29 00:00:00+00:00"
+expiration_date = "2023-09-27 00:00:00+00:00"
 
 [cloud.ssl]
 domain_name = "demo.dev.cosmilink.com"
