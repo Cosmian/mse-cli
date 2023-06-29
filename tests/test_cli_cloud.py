@@ -401,6 +401,19 @@ def test_mse_cli_appid_untrusted_ssl(cmd_log, workspace):
 
 
 @pytest.mark.cloud
+def test_mse_cli_appid_dn_ssl_to_ssl(cmd_log, workspace):
+    """Test successive `deploy` from SSL to SSL."""
+    conf, app_id, domain_name = _test_mse_cli(
+        workspace, cmd_log, SSLCertificateOrigin.Owner, False
+    )
+    _, app_id_2, domain_name_2 = _test_mse_cli(
+        workspace, cmd_log, SSLCertificateOrigin.Owner, False, conf=conf
+    )
+    assert app_id != app_id_2
+    assert domain_name == domain_name_2  # domain name does not change
+
+
+@pytest.mark.cloud
 def test_mse_cli_appid_dn_untrusted_to_self_signed(cmd_log, workspace):
     """Test successive `deploy` from untrusted SSL to self-signed."""
     conf, app_id, domain_name = _test_mse_cli(
