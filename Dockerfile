@@ -15,6 +15,7 @@ RUN git clone https://github.com/Cosmian/mse-cli
 WORKDIR /mse-cli
 RUN pip install -r requirements.txt && pip install -U .
 
-WORKDIR /mnt
+RUN mkdir -p /mnt/workspace
+WORKDIR /mnt/workspace
 
 ENTRYPOINT [ "mse", "home" ] 

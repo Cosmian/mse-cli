@@ -51,7 +51,7 @@ def run(args) -> None:
     if not args.output.is_dir():
         raise NotADirectoryError(f"{args.output} does not exist")
 
-    workspace = Path(tempfile.mkdtemp())
+    workspace = Path(tempfile.mkdtemp(dir=args.output))
     log_path = workspace / "docker.log"
 
     evidence = ApplicationEvidence.load(args.evidence)

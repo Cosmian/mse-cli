@@ -280,12 +280,72 @@ $ docker build -t mse-home .
 
 Then run it:
 
-```
-$ docker run -v $PWD/workspace:/mnt -v /var/run/docker.sock:/var/run/docker.sock --network=host mse-home scaffold example
-$ docker run -v $PWD/workspace:/mnt -v /var/run/docker.sock:/var/run/docker.sock --network=host mse-home package --project example  --output .
+```console
+$ # You have to create /mnt/workspace
+$ sudo mkdir /mnt/workspace
+$ # Scaffold a project
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v /var/run/docker.sock:/var/run/docker.sock \
+            --network=host \
+            mse-home scaffold example
+$ # Test it
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v /var/run/docker.sock:/var/run/docker.sock\
+             --network=host \
+             mse-home localtest --project example
+$ # Package it
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v /var/run/docker.sock:/var/run/docker.sock \
+             --network=host \
+             mse-home package --project example \
+                              --output .
+$ # Spawn it
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v /var/run/docker.sock:/var/run/docker.sock \
+             --network=host \
+             mse-home spawn --host localhost \
+                            --port 7779 \
+                            --days 365 \
+                            --signer-key /opt/cosmian-internal/cosmian-signer-key.pem \
+                            --size 32768 \
+                            --pccs https://pccs.staging.mse.cosmian.com \
+                            --package package_example_1688025211482089576.tar \
+                            --output . \
+                            test_docker
+$ # Verify the evidences
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v /var/run/docker.sock:/var/run/docker.sock \
+             --network=host \
+             mse-home verify --package package_example_1688025211482089576.tar \
+                             --evidence evidence.json \
+                             --output .
+$ # Seal the secrets
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v /var/run/docker.sock:/var/run/docker.sock \
+             --network=host \
+             mse-home seal --secrets example/secrets_to_seal.json \
+                           --cert ratls.pem \
+                           --output  .
+$ # Complete the configuration
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v /var/run/docker.sock:/var/run/docker.sock \
+            --network=host \
+            mse-home run --sealed-secrets secrets_to_seal.json.sealed test_docker
+$ # Query it
+$ curl https://localhost:7779 --cacert /mnt/workspace/ratls.pem 
+$ # Test it
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v /var/run/docker.sock:/var/run/docker.sock \
+             --network=host \
+             mse-home test --test example/tests \
+                           --config mse.toml test_docker
+$ # Remove it
+$ docker run -v /var/run/docker.sock:/var/run/docker.sock \
+             --network=host \
+             mse-home stop --remove test_docker
 ```
 
-The current directory inside the docker is `/mnt`. You can retrieve all generated files in your current host in: `$PWD/workspace`. Make sure to create it before all.  
+The current directory inside the docker is `/mnt/workspace`. You can retrieve all generated files in your current host in: `/mnt/workspace`. Make sure to create it before all at the exact location `/mnt/workspace` (it will not work if both locations are not aligned).  
 
 Then you can work with `mse home` without having internet access even to install the CLI. 
 
