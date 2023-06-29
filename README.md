@@ -351,4 +351,4 @@ The current directory inside the docker is `/mnt/workspace`. You can retrieve al
 
 Then you can work with `mse home` without having internet access even to install the CLI. 
 
-Note: the docker does not contain `mse cloud`. It makes no sens since `mse cloud` is designed to be used with Internet. Plus: you need to login through the web browser, which is not possible using the docker. 
+Note: the docker does not contain `mse cloud`. It makes no sense since `mse cloud` is designed to be used with Internet. Plus: you need to login through the web browser, which is not possible using the docker. 
