@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import sys
 import traceback
 from warnings import filterwarnings  # noqa: E402
 
@@ -101,6 +102,12 @@ def main() -> int:
     home_test.add_subparser(subparsers_home)
     home_localtest.add_subparser(subparsers_home)
     home_verify.add_subparser(subparsers_home)
+
+    # We infer the targetted env if the user
+    # doesn't specify it in the command
+    if default_env := os.getenv("MSE_DEFAULT_ENV"):
+        if sys.argv[1] not in ["cloud", "home"]:
+            sys.argv.insert(1, default_env)
 
     args = parser.parse_args()
 

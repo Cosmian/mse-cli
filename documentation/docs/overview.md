@@ -24,3 +24,8 @@ Then, privileged users or anyone with physical access to the host machine in Cos
 These assumptions remain valid as long as the TEE, namely Intel SGX, and its software stack known as the Trusted Computing Base (TCB) are not subject to severe vulnerabilities.
 
 See [Security Model](cloud/security.md) for more details or just discover MSE Cloud with [Getting Started](cloud/getting_started.md).
+
+
+!!! info "For further use"
+
+    If writting `home` or `cloud` every time upsets you, you can set the `MSE_DEFAULT_ENV` env variable to one of these values and then just omit that word in the future commands. By default, the cli will target this default environment. 
