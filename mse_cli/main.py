@@ -43,6 +43,7 @@ from mse_cli.log import LOGGER as LOG
 from mse_cli.log import setup_logging
 
 
+# pylint: disable=too-many-statements
 def main() -> int:
     """Entrypoint of the CLI."""
     parser = argparse.ArgumentParser(

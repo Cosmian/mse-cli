@@ -274,6 +274,8 @@ then open your browser on: `http://127.0.0.1:8003/`
 
 ## Dockerisation
 
+You can work with `mse home` without having internet access even to install the CLI by running the CLI docker. 
+
 You can build a docker for `mse home` as follow:
 
 ```console
@@ -349,6 +351,5 @@ $ docker run -v /var/run/docker.sock:/var/run/docker.sock \
 
 The current directory inside the docker is `/mnt/workspace`. You can retrieve all generated files in your current host in: `/mnt/workspace`. Make sure to create it before all at the exact location `/mnt/workspace` (it will not work if both locations are not aligned).  
 
-Then you can work with `mse home` without having internet access even to install the CLI. 
 
 Note: the docker does not contain `mse cloud`. It makes no sense since `mse cloud` is designed to be used with Internet. Plus: you need to login through the web browser, which is not possible using the docker. 
