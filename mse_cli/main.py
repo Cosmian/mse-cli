@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import sys
 import traceback
 from warnings import filterwarnings  # noqa: E402
 
@@ -42,6 +43,7 @@ from mse_cli.log import LOGGER as LOG
 from mse_cli.log import setup_logging
 
 
+# pylint: disable=too-many-statements
 def main() -> int:
     """Entrypoint of the CLI."""
     parser = argparse.ArgumentParser(
@@ -101,6 +103,12 @@ def main() -> int:
     home_test.add_subparser(subparsers_home)
     home_localtest.add_subparser(subparsers_home)
     home_verify.add_subparser(subparsers_home)
+
+    # We infer the targeted env if the user
+    # doesn't specify it in the command
+    if default_env := os.getenv("MSE_DEFAULT_ENV"):
+        if sys.argv[1] not in ["cloud", "home"]:
+            sys.argv.insert(1, default_env)
 
     args = parser.parse_args()
 

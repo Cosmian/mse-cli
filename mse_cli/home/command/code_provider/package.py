@@ -112,7 +112,7 @@ def run(args) -> None:
 
     code_config = AppConf.load(config_path, option=AppConfParsingOption.SkipCloud)
 
-    workspace = Path(tempfile.mkdtemp())
+    workspace = Path(tempfile.mkdtemp(dir=package_path))
 
     LOG.info("A workspace has been created at: %s", str(workspace))
 

@@ -27,6 +27,8 @@ In that latter usage, two actors are required:
 - The code provider (who can also consume the result of the MSE application)
 - The SGX operator (who also owns the data to run against the MSE application)
 
+If writing the subcommand part `home` or `cloud` every time upsets you, you can set the `MSE_DEFAULT_ENV` env variable to one of these values and then just omit that word in the future commands. By default, the CLI will target this default environment. For example: `mse cloud test` turns into `mse test`
+
 
 ## Usage - MSE cloud
 
@@ -269,3 +271,80 @@ $ mkdocs serve
 ```
 
 then open your browser on: `http://127.0.0.1:8003/`
+
+## Dockerisation
+
+You can work with `mse home` without having internet access even to install the CLI by running the CLI docker. 
+
+You can build a docker for `mse home` as follow:
+
+```console
+$ docker build -t mse-home . 
+```
+
+Then run it:
+
+```console
+$ # You have to create /mnt/workspace
+$ sudo mkdir /mnt/workspace
+$ # Scaffold a project
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v /var/run/docker.sock:/var/run/docker.sock \
+            mse-home scaffold example
+$ # Test it
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v /var/run/docker.sock:/var/run/docker.sock\
+             --network=host \
+             mse-home localtest --project example
+$ # Package it
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v /var/run/docker.sock:/var/run/docker.sock \
+             mse-home package --project example \
+                              --output .
+$ # Spawn it
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v /var/run/docker.sock:/var/run/docker.sock \
+             --network=host \
+             mse-home spawn --host localhost \
+                            --port 7779 \
+                            --days 365 \
+                            --signer-key /opt/cosmian-internal/cosmian-signer-key.pem \
+                            --size 32768 \
+                            --pccs https://pccs.staging.mse.cosmian.com \
+                            --package package_example_1688025211482089576.tar \
+                            --output . \
+                            test_docker
+$ # Verify the evidences
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v /var/run/docker.sock:/var/run/docker.sock \
+             mse-home verify --package package_example_1688025211482089576.tar \
+                             --evidence evidence.json \
+                             --output .
+$ # Seal the secrets
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v /var/run/docker.sock:/var/run/docker.sock \
+             mse-home seal --secrets example/secrets_to_seal.json \
+                           --cert ratls.pem \
+                           --output  .
+$ # Complete the configuration
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v /var/run/docker.sock:/var/run/docker.sock \
+            --network=host \
+            mse-home run --sealed-secrets secrets_to_seal.json.sealed test_docker
+$ # Query it
+$ curl https://localhost:7779 --cacert /mnt/workspace/ratls.pem 
+$ # Test it
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v /var/run/docker.sock:/var/run/docker.sock \
+             --network=host \
+             mse-home test --test example/tests \
+                           --config mse.toml test_docker
+$ # Remove it
+$ docker run -v /var/run/docker.sock:/var/run/docker.sock \
+             mse-home stop --remove test_docker
+```
+
+The current directory inside the docker is `/mnt/workspace`. You can retrieve all generated files in your current host in: `/mnt/workspace`. Make sure to create it before all at the exact location `/mnt/workspace` (it will not work if both locations are not aligned).  
+
+
+Note: the docker does not contain `mse cloud`. It makes no sense since `mse cloud` is designed to be used with Internet. Plus: you need to login through the web browser, which is not possible using the docker. 
