@@ -38,7 +38,7 @@ def run(args) -> None:
 
     LOG.info("    App name = %s", args.name)
     LOG.info("Enclave size = %dM", docker.size)
-    LOG.info(" Common name = %s", docker.host)
+    LOG.info(" Common name = %s", docker.subject_alternative_name)
     LOG.info("        Port = %d", docker.port)
     LOG.info(" Healthcheck = %s", docker.healthcheck)
     LOG.info(

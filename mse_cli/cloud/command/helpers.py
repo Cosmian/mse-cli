@@ -188,7 +188,14 @@ def verify_app(
                 get_client_docker(),
                 context.config.docker,
                 NoSgxDockerConfig(
-                    host=context.instance.config_domain_name,
+                    subject=(
+                        "CN=cosmian.app,"
+                        "O=Cosmian Tech,"
+                        "C=FR,"
+                        "L=Paris,"
+                        "ST=Ile-de-France"
+                    ),
+                    subject_alternative_name=context.instance.config_domain_name,
                     expiration_date=int(datetime.timestamp(context.instance.expires_at))
                     if context.instance.ssl_certificate_origin
                     != SSLCertificateOrigin.Owner

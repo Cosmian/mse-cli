@@ -26,19 +26,12 @@ class ApplicationEvidence(BaseModel):
     """Definition of an enclave evidence."""
 
     ratls_certificate: Certificate
-
     root_ca_crl: CertificateRevocationList
-
     pck_platform_crl: CertificateRevocationList
-
     tcb_info: bytes
-
     qe_identity: bytes
-
     tcb_cert: Certificate
-
     signer_pk: PublicKeyTypes
-
     input_args: NoSgxDockerConfig
 
     class Config:
@@ -65,31 +58,34 @@ class ApplicationEvidence(BaseModel):
     def load(path: Path):
         """Load the evidence from a json file."""
         with open(path, encoding="utf8") as f:
-            dataMap = json.load(f)
+            data_map = json.load(f)
 
             return ApplicationEvidence(
-                input_args=NoSgxDockerConfig(**dataMap["input_args"]),
+                input_args=NoSgxDockerConfig(**data_map["input_args"]),
                 ratls_certificate=load_pem_x509_certificate(
-                    dataMap["ratls_certificate"].encode("utf-8")
+                    data_map["ratls_certificate"].encode("utf-8")
                 ),
-                root_ca_crl=load_pem_x509_crl(dataMap["root_ca_crl"].encode("utf-8")),
+                root_ca_crl=load_pem_x509_crl(data_map["root_ca_crl"].encode("utf-8")),
                 pck_platform_crl=load_pem_x509_crl(
-                    dataMap["pck_platform_crl"].encode("utf-8")
+                    data_map["pck_platform_crl"].encode("utf-8")
                 ),
-                tcb_info=base64.b64decode(dataMap["tcb_info"].encode("utf-8")),
-                qe_identity=base64.b64decode(dataMap["qe_identity"].encode("utf-8")),
-                tcb_cert=load_pem_x509_certificate(dataMap["tcb_cert"].encode("utf-8")),
+                tcb_info=base64.b64decode(data_map["tcb_info"].encode("utf-8")),
+                qe_identity=base64.b64decode(data_map["qe_identity"].encode("utf-8")),
+                tcb_cert=load_pem_x509_certificate(
+                    data_map["tcb_cert"].encode("utf-8")
+                ),
                 signer_pk=load_pem_public_key(
-                    dataMap["signer_pk"].encode("utf-8"),
+                    data_map["signer_pk"].encode("utf-8"),
                 ),
             )
 
     def save(self, path: Path) -> None:
         """Save the evidence into a json file."""
         with open(path, "w", encoding="utf8") as f:
-            dataMap: Dict[str, Any] = {
+            data_map: Dict[str, Any] = {
                 "input_args": {
-                    "host": self.input_args.host,
+                    "subject": self.input_args.subject,
+                    "subject_alternative_name": self.input_args.subject_alternative_name,
                     "expiration_date": self.input_args.expiration_date
                     if self.input_args.expiration_date
                     else None,
@@ -117,4 +113,4 @@ class ApplicationEvidence(BaseModel):
                 ).decode("utf-8"),
             }
 
-            json.dump(dataMap, f, indent=4)
+            json.dump(data_map, f, indent=4)

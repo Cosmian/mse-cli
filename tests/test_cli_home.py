@@ -197,6 +197,8 @@ def test_spawn(
                 "pccs": pccs_url,
                 "package": pytest.package_path,
                 "host": host,
+                "subject": f"CN={host},O=MyApp Company,C=FR,L=Paris,ST=Ile-de-France",
+                "san": host,
                 "days": 2,
                 "port": port,
                 "size": 4096,
@@ -629,6 +631,8 @@ def test_plaintext(
                 "name": app_name,
                 "package": pytest.package_path,
                 "host": host,
+                "subject": f"CN={host},O=MyApp Company,C=FR,L=Paris,ST=Ile-de-France",
+                "san": host,
                 "days": 2,
                 # We use `port2` because we do not manage when
                 # docker releases the free previous port
@@ -738,6 +742,8 @@ def test_plaintext_project(
                 "pccs": pccs_url,
                 "package": pytest.package_path,
                 "host": host,
+                "subject": f"CN={host},O=MyApp Company,C=FR,L=Paris,ST=Ile-de-France",
+                "san": host,
                 "days": 2,
                 # We use `port3` because we do not manage when
                 # docker releases the free previous port

@@ -1,5 +1,6 @@
 """mse_cli.core.enclave module."""
 
+import logging
 import re
 import uuid
 from pathlib import Path
@@ -10,6 +11,7 @@ from cryptography.x509 import Certificate, CertificateRevocationList
 from docker.client import DockerClient
 from docker.errors import NotFound
 from intel_sgx_ra.attest import verify_quote
+from intel_sgx_ra.maa.attest import verify_quote as azure_verify_quote
 from intel_sgx_ra.ratls import ratls_verify
 from intel_sgx_ra.signer import mr_signer_from_pk
 
@@ -34,7 +36,7 @@ def compute_mr_enclave(
     output = b""
 
     try:
-        container = client.containers.run(
+        _ = client.containers.run(
             image,
             name=container_name,
             command=app_args.cmd(),
@@ -105,8 +107,15 @@ def verify_enclave(
             f"but should be {bytes(mrsigner).hex()})"
         )
 
-    # Check enclave certificates and information
-    verify_quote(quote=quote, collaterals=collaterals, pccs_url=pccs_url)
+    logging.info("MRSIGNER: %s", quote.report_body.mr_signer.hex())
+    logging.info("MRENCLAVE: %s", quote.report_body.mr_enclave.hex())
+
+    if collaterals is None and pccs_url is None:
+        # Azure DCAP attestation through MAA service
+        azure_verify_quote(quote=quote)
+    else:
+        # Intel DCAP attestation using PCCS url or directly collaterals if provided
+        verify_quote(quote=quote, collaterals=collaterals, pccs_url=pccs_url)
 
     # Check MRENCLAVE
     if fingerprint:

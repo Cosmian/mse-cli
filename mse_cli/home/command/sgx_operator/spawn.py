@@ -51,8 +51,22 @@ def add_subparser(subparsers):
     parser.add_argument(
         "--host",
         type=str,
-        required=True,
+        default="0.0.0.0",
         help="common name of the generated certificate",
+    )
+
+    parser.add_argument(
+        "--subject",
+        type=str,
+        default="CN=cosmian.com,O=Cosmian Tech,C=FR,L=Paris,ST=Ile-de-France",
+        help="Subject in the RA-TLS certificate",
+    )
+
+    parser.add_argument(
+        "--san",
+        type=str,
+        required=True,
+        help="Subject Alternative Name in the RA-TLS certificate",
     )
 
     parser.add_argument(
@@ -65,7 +79,7 @@ def add_subparser(subparsers):
     parser.add_argument(
         "--port",
         type=int,
-        required=True,
+        default=443,
         help="application port",
     )
 
@@ -135,8 +149,10 @@ def run(args) -> None:
 
     docker_config = SgxDockerConfig(
         size=args.size,
-        host=args.host,
+        host=args.san,
         port=args.port,
+        subject=args.subject,
+        subject_alternative_name=args.san,
         app_id=uuid4(),
         expiration_date=int((datetime.today() + timedelta(days=args.days)).timestamp()),
         app_dir=workspace,
