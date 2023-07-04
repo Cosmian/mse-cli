@@ -125,7 +125,7 @@ def run(args) -> None:
     app = deploy_app(conn, app_conf, tar_path)
 
     LOG.advice(  # type: ignore
-        "To follow the app creation, you can run: \n\n\tmse logs %s\n", app.id
+        "To follow the app creation, you can run: \n\n\tmse cloud logs %s\n", app.id
     )
 
     app = wait_app_creation(conn, app.id)
