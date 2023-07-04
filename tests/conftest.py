@@ -4,11 +4,14 @@ import io
 import logging
 import os
 import time
+from argparse import Namespace
 from pathlib import Path
+from uuid import UUID
 
 import pytest
 from docker.errors import NotFound
 
+from mse_cli.cloud.command.stop import run as run_stop
 from mse_cli.home.command.helpers import get_client_docker
 from mse_cli.log import LOGGER as LOG
 from mse_cli.log import setup_logging
@@ -111,7 +114,7 @@ def pytest_runtest_makereport(item, call):
 
             client = get_client_docker()
 
-            # The test docker running on 5000
+            # The test docker (mse home case)
             try:
                 container = client.containers.get(f"{app_name_fixture}_test")
                 container.stop(timeout=1)
@@ -119,7 +122,7 @@ def pytest_runtest_makereport(item, call):
             except NotFound:
                 pass
 
-            # The app docker running on 5555
+            # The app docker (mse home case)
             try:
                 container = client.containers.get(f"{app_name_fixture}")
                 container.stop(timeout=1)
@@ -127,10 +130,15 @@ def pytest_runtest_makereport(item, call):
             except NotFound:
                 pass
 
-            # The app docker running on 5556
-            try:
-                container = client.containers.get(f"{app_name_fixture}")
-                container.stop(timeout=1)
-                container.remove()
-            except NotFound:
-                pass
+        # We try to stop the application in case of failure (mse cloud only)
+        if "workspace" in item.funcargs:
+            workspace = Path(item.funcargs["workspace"])
+            app_id_file: Path = workspace / "app_id"
+
+            if app_id_file.exists():
+                app_id = app_id_file.read_text()
+                app_id_file.unlink()
+                try:
+                    run_stop(Namespace(**{"app_id": [UUID(app_id)]}))
+                except:
+                    pass
