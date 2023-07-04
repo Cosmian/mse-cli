@@ -116,7 +116,7 @@ def _test_deploy(
     output = capture_logs(f)
 
     try:
-        app_id = re.search("mse logs ([a-z0-9-]+)", output).group(1)
+        app_id = re.search("mse cloud logs ([a-z0-9-]+)", output).group(1)
 
         domain_name = re.search("ready to be used on https://(.+) until", output).group(
             1
