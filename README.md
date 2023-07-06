@@ -284,15 +284,15 @@ $ docker build -t mse .
 
 Then run it.
 
-In the followings, the current directory inside the docker is `/mnt/workspace`. You can retrieve all generated files in your current host in: `/mnt/workspace`. Make sure to create it before all at the exact location `/mnt/workspace` (it will not work if both locations are not aligned).  
+In the following, the current directory inside the docker is `/mnt/workspace`. You can retrieve all generated files in your current host in: `/mnt/workspace`. Make sure to create it before all at the exact location `/mnt/workspace` (it will not work if both locations are not aligned).  
 
 ### MSE Cloud
 
-You need to login through the web browser, which is not possible using the docker. You should then run the `mse login` inside the docker and copy/paste the dsplayed url into the host web browser to be logged in inside the docker. 
+You need to login through the web browser, which is not possible through Docker. You should then run the `mse login` inside the docker and copy/paste the displayed URL into the host web browser to be logged in inside the docker. 
 
-Make sure to mount `$HOME/.config/mse` into `/root/.config/mse` to be able to reuse the login credentiels or recover your previous deployment information when chaining the commmands. 
+Make sure to mount `$HOME/.config/mse` into `/root/.config/mse` to be able to reuse the login credentials or recover your previous deployment information when chaining the commands. 
 
-If you need to target another environment, use the docker parameter `-e` to specify the previous metionned MSE env variables. 
+If you need to target another environment, use the docker parameter `-e` to specify the previous mentionned MSE env variables. 
 
 ```console
 $ # You have to create /mnt/workspace
@@ -429,7 +429,7 @@ $ docker run -v /var/run/docker.sock:/var/run/docker.sock \
 
 ## Use case
 
-Let's assume your microservice have to interface with a frontend. The main issue you will face up is that the ratls certificate is not allowed in your web browser. Mainly because it's a self signed cert. Also the ratls extension is not checked by your webbrowser, yet any query to the webservice must verify the ratls extension of the certificate: the security is based on this verification. 
+Let's assume your microservice have to interface with a frontend. The main issue you will face up is that the RA-TLS certificate is not allowed in your web browser, mainly because it's a self signed cert. Also the RA-TLS extension is not checked by your webbrowser, yet any query to the webservice must verify the RA-TLS extension of the certificate: the security is based on this verification. 
 
 Therefore, the frontend can't interact straightaway with your webservice through the web browser. You need to develop a intermediate backend acting like a proxy. Or a simpler way could be to use the following nginx configuration:
 
@@ -441,7 +441,7 @@ server {
 
     location / {
          proxy_pass	https://9cc36ebf3c351eba.dev.cosmian.app;
-	     # We need the next two lines because the ratls certificate
+	     # We need the next two lines because the RA-TLS certificate
          proxy_ssl_trusted_certificate /tmp/tmp4b0174yn/cert.conf.pem;
          proxy_ssl_verify on;
 	     # We need the next two lines to allow sni routing by the haproxy
