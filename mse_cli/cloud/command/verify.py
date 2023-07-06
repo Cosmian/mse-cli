@@ -49,6 +49,13 @@ def add_subparser(subparsers):
         "(should be used with --context)",
     )
 
+    parser.add_argument(
+        "--workspace",
+        type=Path,
+        required=False,
+        help="directory to write the temporary files",
+    )
+
 
 def run(args) -> None:
     """Run the subcommand."""
@@ -71,7 +78,7 @@ def run(args) -> None:
         mrenclave = args.fingerprint
     elif args.context:
         # Read the context file
-        context = Context.load(args.context)
+        context = Context.load(args.context, workspace=args.workspace)
 
         if context.instance.ssl_certificate_origin != SSLCertificateOrigin.Self:
             raise RatlsVerificationNotSupported(

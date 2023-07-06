@@ -83,6 +83,7 @@ def run_server(port, auth_url, state) -> str:
 
     httpd = HTTPServer(("", port), LocalHTTPRequestHandler)
     # Open the browser on the authorization url to let the user login
+    LOG.info("The login URL is: %s", auth_url)
     open_webbrowser(auth_url)
     LOG.info("Waiting for session... ")
     # Wait for the code from Auth0

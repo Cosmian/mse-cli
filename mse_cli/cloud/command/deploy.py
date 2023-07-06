@@ -1,6 +1,5 @@
 """mse_cli.cloud.command.deploy module."""
 
-import shutil
 from pathlib import Path
 from typing import Any, Dict, Optional
 from uuid import UUID
@@ -70,6 +69,13 @@ def add_subparser(subparsers):
         help="use operator ssl certificates which is unsecure for production",
     )
 
+    parser.add_argument(
+        "--workspace",
+        type=Path,
+        required=False,
+        help="directory to write the temporary files",
+    )
+
     parser.set_defaults(func=run)
 
 
@@ -110,7 +116,7 @@ def run(args) -> None:
             LOG.warning("SSL conf paragraph is ignored.%s")
 
     (enclave_size, cores) = get_enclave_resources(conn, cloud_conf.hardware)
-    context = Context.from_app_conf(app_conf)
+    context = Context.from_app_conf(app_conf, workspace=args.workspace)
     LOG.info("Temporary workspace is: %s", context.workspace)
 
     LOG.info("Encrypting your source code...")
@@ -209,8 +215,8 @@ def run(args) -> None:
         )
 
     # Clean up the workspace
-    LOG.info("Cleaning up the temporary workspace...")
-    shutil.rmtree(context.workspace)
+    # LOG.info("Cleaning up the temporary workspace...")
+    # shutil.rmtree(context.workspace)
 
 
 def wait_app_start(conn: Connection, app_id: UUID) -> App:

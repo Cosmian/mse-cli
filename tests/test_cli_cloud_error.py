@@ -112,7 +112,7 @@ def test_stop_bad_uuid():
 
 
 @pytest.mark.cloud
-def test_verify_bad_domain():
+def test_verify_bad_domain(workspace):
     """Test verify with the error: valid domain but no exists."""
     with pytest.raises(Exception) as exception:
         run_verify(
@@ -122,6 +122,7 @@ def test_verify_bad_domain():
                     "context": None,
                     "code": None,
                     "domain_name": f"notexist.{os.getenv('MSE_TEST_DOMAIN_NAME')}",
+                    "workspace": workspace,
                 }
             )
         )
@@ -136,6 +137,7 @@ def test_verify_bad_domain():
                     "context": None,
                     "code": None,
                     "domain_name": "notexist.app",
+                    "workspace": workspace,
                 }
             )
         )
@@ -144,7 +146,7 @@ def test_verify_bad_domain():
 
 
 @pytest.mark.cloud
-def test_deploy_non_free():
+def test_deploy_non_free(workspace):
     """Test deploy with the error: non free plan but no payment."""
     with pytest.raises(Exception) as exception:
         run_deploy(
@@ -154,6 +156,7 @@ def test_deploy_non_free():
                     "y": False,
                     "no_verify": False,
                     "untrusted_ssl": False,
+                    "workspace": workspace,
                 }
             )
         )
@@ -165,7 +168,7 @@ def test_deploy_non_free():
 
 
 @pytest.mark.cloud
-def test_deploy_bad_projet_name():
+def test_deploy_bad_projet_name(workspace):
     """Test deploy with the error: project name does not exist."""
     with pytest.raises(Exception) as exception:
         run_deploy(
@@ -175,6 +178,7 @@ def test_deploy_bad_projet_name():
                     "y": False,
                     "no_verify": False,
                     "untrusted_ssl": False,
+                    "workspace": workspace,
                 }
             )
         )
@@ -183,7 +187,7 @@ def test_deploy_bad_projet_name():
 
 
 @pytest.mark.cloud
-def test_deploy_bad_app():
+def test_deploy_bad_app(workspace):
     """Test deploy with the error: bad python app."""
     with pytest.raises(Exception) as exception:
         run_deploy(
@@ -195,6 +199,7 @@ def test_deploy_bad_app():
                     "y": False,
                     "no_verify": False,
                     "untrusted_ssl": False,
+                    "workspace": workspace,
                 }
             )
         )
@@ -203,7 +208,7 @@ def test_deploy_bad_app():
 
 
 @pytest.mark.cloud
-def test_deploy_bad_docker():
+def test_deploy_bad_docker(workspace):
     """Test deploy with the error: bad docker name."""
     with pytest.raises(Exception) as exception:
         run_deploy(
@@ -213,6 +218,7 @@ def test_deploy_bad_docker():
                     "y": False,
                     "no_verify": False,
                     "untrusted_ssl": False,
+                    "workspace": workspace,
                 }
             )
         )
@@ -224,7 +230,7 @@ def test_deploy_bad_docker():
 
 
 @pytest.mark.cloud
-def test_deploy_latest_docker():
+def test_deploy_latest_docker(workspace):
     """Test deploy with the error: latest docker name."""
     with pytest.raises(Exception) as exception:
         run_deploy(
@@ -234,6 +240,7 @@ def test_deploy_latest_docker():
                     "y": False,
                     "no_verify": False,
                     "untrusted_ssl": False,
+                    "workspace": workspace,
                 }
             )
         )

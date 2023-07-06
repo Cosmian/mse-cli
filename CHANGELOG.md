@@ -4,6 +4,7 @@
 
 * New command `mse home` to run a microservice on your localhost SGX
 * New subcommand `mse test` & `mse localtest` to run test for cloud environment
+* Add a `Dockerfile` to use `mse` through a docker
 
 ### Updated
 

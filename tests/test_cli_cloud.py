@@ -35,6 +35,7 @@ def _test_verify(
     context: Optional[Path],
     code: Optional[Path],
     is_self_signed: bool,
+    workspace: Path,
 ) -> Optional[Path]:
     """Test the verify subcommand."""
     try:
@@ -45,6 +46,7 @@ def _test_verify(
                     "context": context,
                     "code": code,
                     "domain_name": domain_name,
+                    "workspace": workspace,
                 }
             )
         )
@@ -99,7 +101,7 @@ def _test_test(f: io.StringIO, app_id: UUID) -> None:
 
 
 def _test_deploy(
-    f: io.StringIO, conf: Path, untrusted_ssl: bool
+    f: io.StringIO, conf: Path, untrusted_ssl: bool, workspace: Path
 ) -> Tuple[UUID, str, str]:
     """Test the deploy subcommand."""
     run_deploy(
@@ -109,6 +111,7 @@ def _test_deploy(
                 "y": False,
                 "no_verify": False,
                 "untrusted_ssl": untrusted_ssl,
+                "workspace": workspace,
             }
         )
     )
@@ -229,7 +232,7 @@ def _test_mse_cli(
     _test_localtest(f, conf)
 
     # Test the deploy subcommand
-    (app_id, domain_name, mr_enclave) = _test_deploy(f, conf, untrusted_ssl)
+    (app_id, domain_name, mr_enclave) = _test_deploy(f, conf, untrusted_ssl, workspace)
 
     # Test the context subcommand
     context = _test_context(f, app_id)
@@ -257,6 +260,7 @@ def _test_mse_cli(
         None,
         None,
         context.instance.ssl_certificate_origin == SSLCertificateOrigin.Self,
+        workspace,
     )
     # Give the MR Enclave
     _test_verify(
@@ -266,6 +270,7 @@ def _test_mse_cli(
         None,
         None,
         context.instance.ssl_certificate_origin == SSLCertificateOrigin.Self,
+        workspace,
     )
     if context.instance.ssl_certificate_origin == SSLCertificateOrigin.Self:
         # Give a bad MR Enclave
@@ -277,6 +282,7 @@ def _test_mse_cli(
                         "context": None,
                         "code": None,
                         "domain_name": domain_name,
+                        "workspace": workspace,
                     }
                 )
             )
@@ -289,6 +295,7 @@ def _test_mse_cli(
                         "context": Context.get_context_filepath(app_id, False),
                         "code": Path("."),
                         "domain_name": domain_name,
+                        "workspace": workspace,
                     }
                 )
             )
@@ -300,6 +307,7 @@ def _test_mse_cli(
         Context.get_context_filepath(app_id, False),
         app_conf.cloud.code,
         context.instance.ssl_certificate_origin == SSLCertificateOrigin.Self,
+        workspace,
     )
 
     if context.instance.ssl_certificate_origin == SSLCertificateOrigin.Self:
