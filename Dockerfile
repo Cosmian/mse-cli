@@ -11,11 +11,11 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* 
 #&& pip install mse-cli
 
-RUN git clone https://github.com/Cosmian/mse-cli
+COPY . /mse-cli
 WORKDIR /mse-cli
 RUN pip install -r requirements.txt && pip install -U .
 
 RUN mkdir -p /mnt/workspace
 WORKDIR /mnt/workspace
 
-ENTRYPOINT [ "mse", "home" ] 
+ENTRYPOINT [ "mse" ] 

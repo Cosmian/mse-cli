@@ -167,13 +167,18 @@ class Context(BaseModel):
         )
 
     @staticmethod
-    def from_app_conf(conf: AppConf):
+    def from_app_conf(conf: AppConf, workspace: Optional[Path] = None):
         """Build a Context object from an app conf."""
         cloud_conf = conf.cloud_or_raise()
         cert = cloud_conf.ssl.certificate_data if cloud_conf.ssl else None
 
+        if not workspace:
+            workspace = Path(tempfile.mkdtemp())
+        else:
+            workspace = workspace.expanduser().resolve()
+
         context = Context(
-            workspace=Path(tempfile.mkdtemp()),
+            workspace=workspace,
             config=ContextConf(
                 name=conf.name,
                 project=cloud_conf.project,
@@ -193,12 +198,17 @@ class Context(BaseModel):
         return context
 
     @staticmethod
-    def load(path: Path):
+    def load(path: Path, workspace: Optional[Path] = None):
         """Build a Context object from a toml file."""
         with open(path, encoding="utf8") as f:
             dataMap = toml.load(f)
 
-        dataMap["workspace"] = Path(tempfile.mkdtemp())
+        if not workspace:
+            workspace = Path(tempfile.mkdtemp())
+        else:
+            workspace = workspace.expanduser().resolve()
+
+        dataMap["workspace"] = workspace
 
         return Context(**dataMap)
 

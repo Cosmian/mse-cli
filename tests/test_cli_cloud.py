@@ -5,6 +5,7 @@ import os
 import re
 from argparse import Namespace
 from pathlib import Path
+import tempfile
 from typing import Optional, Tuple
 from uuid import UUID, uuid4
 
@@ -15,8 +16,8 @@ from conftest import capture_logs
 from mse_cli.cloud.api.types import SSLCertificateOrigin
 from mse_cli.cloud.command.context import run as run_context
 from mse_cli.cloud.command.deploy import run as run_deploy
-from mse_cli.cloud.command.localtest import run as run_localtest
 from mse_cli.cloud.command.list_all import run as run_list
+from mse_cli.cloud.command.localtest import run as run_localtest
 from mse_cli.cloud.command.login import run as run_login
 from mse_cli.cloud.command.logs import run as run_logs
 from mse_cli.cloud.command.scaffold import run as run_scaffold
@@ -35,8 +36,11 @@ def _test_verify(
     context: Optional[Path],
     code: Optional[Path],
     is_self_signed: bool,
+    workspace: Path,
 ) -> Optional[Path]:
     """Test the verify subcommand."""
+    tmp_path = Path(tempfile.mkdtemp(dir=workspace))
+
     try:
         run_verify(
             Namespace(
@@ -45,6 +49,7 @@ def _test_verify(
                     "context": context,
                     "code": code,
                     "domain_name": domain_name,
+                    "workspace": tmp_path,
                 }
             )
         )
@@ -99,9 +104,11 @@ def _test_test(f: io.StringIO, app_id: UUID) -> None:
 
 
 def _test_deploy(
-    f: io.StringIO, conf: Path, untrusted_ssl: bool
+    f: io.StringIO, conf: Path, untrusted_ssl: bool, workspace: Path
 ) -> Tuple[UUID, str, str]:
     """Test the deploy subcommand."""
+    tmp_path = Path(tempfile.mkdtemp(dir=workspace))
+
     run_deploy(
         Namespace(
             **{
@@ -109,6 +116,7 @@ def _test_deploy(
                 "y": False,
                 "no_verify": False,
                 "untrusted_ssl": untrusted_ssl,
+                "workspace": tmp_path,
             }
         )
     )
@@ -119,7 +127,7 @@ def _test_deploy(
         app_id = re.search("mse cloud logs ([a-z0-9-]+)", output).group(1)
 
         # We use this file in the conftest.py in case of failure
-        (conf.parent.parent / "app_id").write_text(str(app_id))
+        (workspace / "app_id").write_text(str(app_id))
 
         domain_name = re.search("ready to be used on https://(.+) until", output).group(
             1
@@ -229,7 +237,7 @@ def _test_mse_cli(
     _test_localtest(f, conf)
 
     # Test the deploy subcommand
-    (app_id, domain_name, mr_enclave) = _test_deploy(f, conf, untrusted_ssl)
+    (app_id, domain_name, mr_enclave) = _test_deploy(f, conf, untrusted_ssl, workspace)
 
     # Test the context subcommand
     context = _test_context(f, app_id)
@@ -257,6 +265,7 @@ def _test_mse_cli(
         None,
         None,
         context.instance.ssl_certificate_origin == SSLCertificateOrigin.Self,
+        workspace,
     )
     # Give the MR Enclave
     _test_verify(
@@ -266,10 +275,13 @@ def _test_mse_cli(
         None,
         None,
         context.instance.ssl_certificate_origin == SSLCertificateOrigin.Self,
+        workspace,
     )
     if context.instance.ssl_certificate_origin == SSLCertificateOrigin.Self:
         # Give a bad MR Enclave
         with pytest.raises(Exception):
+            tmp_path = Path(tempfile.mkdtemp(dir=workspace))
+
             run_verify(
                 Namespace(
                     **{
@@ -277,11 +289,14 @@ def _test_mse_cli(
                         "context": None,
                         "code": None,
                         "domain_name": domain_name,
+                        "workspace": tmp_path,
                     }
                 )
             )
         # Compute the MR Enclave (bad code)
         with pytest.raises(Exception):
+            tmp_path = Path(tempfile.mkdtemp(dir=workspace))
+
             run_verify(
                 Namespace(
                     **{
@@ -289,6 +304,7 @@ def _test_mse_cli(
                         "context": Context.get_context_filepath(app_id, False),
                         "code": Path("."),
                         "domain_name": domain_name,
+                        "workspace": tmp_path,
                     }
                 )
             )
@@ -300,6 +316,7 @@ def _test_mse_cli(
         Context.get_context_filepath(app_id, False),
         app_conf.cloud.code,
         context.instance.ssl_certificate_origin == SSLCertificateOrigin.Self,
+        workspace,
     )
 
     if context.instance.ssl_certificate_origin == SSLCertificateOrigin.Self:
@@ -354,150 +371,160 @@ def reset_conf_ssl_parag(conf: Path):
 
 
 @pytest.mark.cloud
-def test_mse_cli_self_signed(cmd_log, workspace):
+def test_mse_cli_self_signed(cmd_log, tmp_path):
     """Test a complete deployment flow for dev mode."""
-    _test_mse_cli(workspace, cmd_log, SSLCertificateOrigin.Self, False)
+    # Note: we use tmp_path to get a dedicated tmp dir for each tests
+    _test_mse_cli(tmp_path, cmd_log, SSLCertificateOrigin.Self, False)
 
 
 @pytest.mark.cloud
-def test_mse_cli_with_ssl(cmd_log, workspace):
+def test_mse_cli_with_ssl(cmd_log, tmp_path):
     """Test a complete deployment flow for dev mode."""
-    _test_mse_cli(workspace, cmd_log, SSLCertificateOrigin.Owner, False)
+    _test_mse_cli(tmp_path, cmd_log, SSLCertificateOrigin.Owner, False)
 
 
 @pytest.mark.cloud
-def test_mse_cli_self_signed_untrusted(cmd_log, workspace):
+def test_mse_cli_self_signed_untrusted(cmd_log, tmp_path):
     """Test a complete deployment flow for untrusted ssl."""
-    _test_mse_cli(workspace, cmd_log, SSLCertificateOrigin.Self, True)
+    _test_mse_cli(tmp_path, cmd_log, SSLCertificateOrigin.Self, True)
 
 
 @pytest.mark.cloud
-def test_mse_cli_with_ssl_untrusted(cmd_log, workspace):
+def test_mse_cli_with_ssl_untrusted(cmd_log, tmp_path):
     """Test a complete deployment flow for untrusted ssl."""
-    _test_mse_cli(workspace, cmd_log, SSLCertificateOrigin.Owner, True)
+    _test_mse_cli(tmp_path, cmd_log, SSLCertificateOrigin.Owner, True)
 
 
 @pytest.mark.cloud
-def test_mse_cli_appid_self_signed(cmd_log, workspace):
+def test_mse_cli_appid_self_signed(cmd_log, tmp_path):
     """Test successive `deploy` in self-signed mode."""
     conf, app_id, domain_name = _test_mse_cli(
-        workspace, cmd_log, SSLCertificateOrigin.Self, False
+        tmp_path, cmd_log, SSLCertificateOrigin.Self, False
     )
     _, app_id_2, domain_name_2 = _test_mse_cli(
-        workspace, cmd_log, SSLCertificateOrigin.Self, False, conf=conf
+        tmp_path, cmd_log, SSLCertificateOrigin.Self, False, conf=conf
     )
+
     assert app_id != app_id_2
     assert domain_name == domain_name_2  # domain name does not change
 
 
 @pytest.mark.cloud
-def test_mse_cli_appid_untrusted_ssl(cmd_log, workspace):
+def test_mse_cli_appid_untrusted_ssl(cmd_log, tmp_path):
     """Test successive `deploy` in untrusted SSL mode."""
     conf, app_id, domain_name = _test_mse_cli(
-        workspace, cmd_log, SSLCertificateOrigin.Operator, True
+        tmp_path, cmd_log, SSLCertificateOrigin.Operator, True
     )
     _, app_id_2, domain_name_2 = _test_mse_cli(
-        workspace, cmd_log, SSLCertificateOrigin.Operator, True, conf=conf
+        tmp_path, cmd_log, SSLCertificateOrigin.Operator, True, conf=conf
     )
+
     assert app_id != app_id_2
     assert domain_name == domain_name_2  # domain name does not change
 
 
 @pytest.mark.cloud
-def test_mse_cli_appid_dn_ssl_to_ssl(cmd_log, workspace):
+def test_mse_cli_ssl_to_ssl(cmd_log, tmp_path):
     """Test successive `deploy` from SSL to SSL."""
     conf, app_id, domain_name = _test_mse_cli(
-        workspace, cmd_log, SSLCertificateOrigin.Owner, False
+        tmp_path, cmd_log, SSLCertificateOrigin.Owner, False
     )
 
     reset_conf_ssl_parag(conf)
 
     _, app_id_2, domain_name_2 = _test_mse_cli(
-        workspace, cmd_log, SSLCertificateOrigin.Owner, False, conf=conf
+        tmp_path, cmd_log, SSLCertificateOrigin.Owner, False, conf=conf
     )
+
     assert app_id != app_id_2
     assert domain_name == domain_name_2  # domain name does not change
 
 
 @pytest.mark.cloud
-def test_mse_cli_appid_dn_untrusted_to_self_signed(cmd_log, workspace):
+def test_mse_cli_untrusted_to_self_signed(cmd_log, tmp_path):
     """Test successive `deploy` from untrusted SSL to self-signed."""
     conf, app_id, domain_name = _test_mse_cli(
-        workspace, cmd_log, SSLCertificateOrigin.Operator, True
+        tmp_path, cmd_log, SSLCertificateOrigin.Operator, True
     )
     _, app_id_2, domain_name_2 = _test_mse_cli(
-        workspace, cmd_log, SSLCertificateOrigin.Self, False, conf=conf
+        tmp_path, cmd_log, SSLCertificateOrigin.Self, False, conf=conf
     )
+
     assert app_id != app_id_2
     assert domain_name != domain_name_2
 
 
 @pytest.mark.cloud
-def test_mse_cli_appid_dn_self_signed_to_untrusted(cmd_log, workspace):
+def test_mse_cli_self_signed_to_untrusted(cmd_log, tmp_path):
     """Test successive `deploy` from self-signed to untrusted SSL."""
     conf, app_id, domain_name = _test_mse_cli(
-        workspace, cmd_log, SSLCertificateOrigin.Self, False
+        tmp_path, cmd_log, SSLCertificateOrigin.Self, False
     )
     _, app_id_2, domain_name_2 = _test_mse_cli(
-        workspace, cmd_log, SSLCertificateOrigin.Operator, True, conf=conf
+        tmp_path, cmd_log, SSLCertificateOrigin.Operator, True, conf=conf
     )
+
     assert app_id != app_id_2
     assert domain_name != domain_name_2
 
 
 @pytest.mark.cloud
-def test_mse_cli_appid_dn_ssl_to_self_signed(cmd_log, workspace):
+def test_mse_cli_ssl_to_self_signed(cmd_log, tmp_path):
     """Test successive `deploy` from SSL to self-signed."""
     conf, app_id, domain_name = _test_mse_cli(
-        workspace, cmd_log, SSLCertificateOrigin.Owner, False
+        tmp_path, cmd_log, SSLCertificateOrigin.Owner, False
     )
 
     reset_conf_ssl_parag(conf)
 
     _, app_id_2, domain_name_2 = _test_mse_cli(
-        workspace, cmd_log, SSLCertificateOrigin.Self, False, conf=conf
+        tmp_path, cmd_log, SSLCertificateOrigin.Self, False, conf=conf
     )
+
     assert app_id != app_id_2
     assert domain_name != domain_name_2
 
 
 @pytest.mark.cloud
-def test_mse_cli_appid_dn_self_signed_to_ssl(cmd_log, workspace):
+def test_mse_cli_self_signed_to_ssl(cmd_log, tmp_path):
     """Test successive `deploy` from self-signed to SSL."""
     conf, app_id, domain_name = _test_mse_cli(
-        workspace, cmd_log, SSLCertificateOrigin.Self, False
+        tmp_path, cmd_log, SSLCertificateOrigin.Self, False
     )
     _, app_id_2, domain_name_2 = _test_mse_cli(
-        workspace, cmd_log, SSLCertificateOrigin.Owner, False, conf=conf
+        tmp_path, cmd_log, SSLCertificateOrigin.Owner, False, conf=conf
     )
+
     assert app_id != app_id_2
     assert domain_name != domain_name_2
 
 
 @pytest.mark.cloud
-def test_mse_cli_appid_dn_ssl_to_operator(cmd_log, workspace):
+def test_mse_cli_ssl_to_operator(cmd_log, tmp_path):
     """Test successive `deploy` from SSL to untrusted SSL."""
     conf, app_id, domain_name = _test_mse_cli(
-        workspace, cmd_log, SSLCertificateOrigin.Owner, False
+        tmp_path, cmd_log, SSLCertificateOrigin.Owner, False
     )
 
     reset_conf_ssl_parag(conf)
 
     _, app_id_2, domain_name_2 = _test_mse_cli(
-        workspace, cmd_log, SSLCertificateOrigin.Operator, True, conf=conf
+        tmp_path, cmd_log, SSLCertificateOrigin.Operator, True, conf=conf
     )
+
     assert app_id != app_id_2
     assert domain_name != domain_name_2
 
 
 @pytest.mark.cloud
-def test_mse_cli_appid_dn_untrusted_to_ssl(cmd_log, workspace):
+def test_mse_cli_untrusted_to_ssl(cmd_log, tmp_path):
     """Test successive `deploy` from untrusted SSL to SSL."""
     conf, app_id, domain_name = _test_mse_cli(
-        workspace, cmd_log, SSLCertificateOrigin.Operator, True
+        tmp_path, cmd_log, SSLCertificateOrigin.Operator, True
     )
     _, app_id_2, domain_name_2 = _test_mse_cli(
-        workspace, cmd_log, SSLCertificateOrigin.Owner, False, conf=conf
+        tmp_path, cmd_log, SSLCertificateOrigin.Owner, False, conf=conf
     )
+
     assert app_id != app_id_2
     assert domain_name != domain_name_2

@@ -131,8 +131,8 @@ def pytest_runtest_makereport(item, call):
                 pass
 
         # We try to stop the application in case of failure (mse cloud only)
-        if "workspace" in item.funcargs:
-            workspace = Path(item.funcargs["workspace"])
+        if "tmp_path" in item.funcargs:
+            workspace = Path(item.funcargs["tmp_path"])
             app_id_file: Path = workspace / "app_id"
 
             if app_id_file.exists():

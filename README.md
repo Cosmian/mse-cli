@@ -274,15 +274,98 @@ then open your browser on: `http://127.0.0.1:8003/`
 
 ## Dockerisation
 
-You can work with `mse home` without having internet access even to install the CLI by running the CLI docker. 
+You can work with `mse home` without having internet access even to install the CLI by running the CLI docker. Or you can easily run `mse cloud` by just pulling the CLI docker. 
 
-You can build a docker for `mse home` as follow:
+You can build a docker for `mse` as follow:
 
 ```console
-$ docker build -t mse-home . 
+$ docker build -t mse . 
 ```
 
-Then run it:
+Then run it.
+
+In the following, the current directory inside the docker is `/mnt/workspace`. You can retrieve all generated files in your current host in: `/mnt/workspace`. Make sure to create it before all at the exact location `/mnt/workspace` (it will not work if both locations are not aligned).  
+
+### MSE Cloud
+
+You need to login through the web browser, which is not possible through Docker. You should then run the `mse login` inside the docker and copy/paste the displayed URL into the host web browser to be logged in inside the docker. 
+
+Make sure to mount `$HOME/.config/mse` into `/root/.config/mse` to be able to reuse the login credentials or recover your previous deployment information when chaining the commands. 
+
+If you need to target another environment, use the docker parameter `-e` to specify the previous mentionned MSE env variables. 
+
+```console
+$ # You have to create /mnt/workspace
+$ sudo mkdir /mnt/workspace
+$ # Log in
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v $HOME/.config/mse:/root/.config/mse \
+             -v /var/run/docker.sock:/var/run/docker.sock \
+             --network=host \
+             mse cloud login
+$ # Scaffold an app
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v $HOME/.config/mse:/root/.config/mse \
+             -v /var/run/docker.sock:/var/run/docker.sock \
+             mse cloud scaffold my_app
+$ # Test it
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v $HOME/.config/mse:/root/.config/mse \
+             -v /var/run/docker.sock:/var/run/docker.sock\
+             --network=host \
+             mse cloud localtest --path my_app/mse.toml 
+$ # Deploy the app (make sure to use --workspace .)
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v $HOME/.config/mse:/root/.config/mse \
+             -v /var/run/docker.sock:/var/run/docker.sock \
+             --network=host \
+             mse cloud deploy --path my_app/mse.toml \
+                              --workspace .
+$ # Query it
+$ curl https://ae5ed58137d7ec20.dev.cosmian.app/health --cacert /mnt/workspace/cert.conf.pem
+$ # Test it
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v $HOME/.config/mse:/root/.config/mse \
+             -v /var/run/docker.sock:/var/run/docker.sock \
+             --network=host \
+             mse cloud test
+$ # Manage the context files
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v $HOME/.config/mse:/root/.config/mse \
+             -v /var/run/docker.sock:/var/run/docker.sock \
+             mse context --export 631a988f-4001-4593-a023-d316eb57d1f1
+$ # Verify the app
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v $HOME/.config/mse:/root/.config/mse \
+             -v /var/run/docker.sock:/var/run/docker.sock \
+             --network=host \
+             mse context --context 631a988f-4001-4593-a023-d316eb57d1f1.toml \
+                         --code my_app/mse_src \
+                         --workspace . \
+                         ae5ed58137d7ec20.dev.cosmian.app 
+$ # List your apps
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v $HOME/.config/mse:/root/.config/mse \
+             -v /var/run/docker.sock:/var/run/docker.sock \
+             mse list 
+$ # Get your app status
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v $HOME/.config/mse:/root/.config/mse \
+             -v /var/run/docker.sock:/var/run/docker.sock \
+             mse status 631a988f-4001-4593-a023-d316eb57d1f1
+$ # Get your app logs
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v $HOME/.config/mse:/root/.config/mse \
+             -v /var/run/docker.sock:/var/run/docker.sock \
+             mse logs 631a988f-4001-4593-a023-d316eb57d1f1
+$ # Stop it
+$ docker run -v /mnt/workspace:/mnt/workspace \
+             -v $HOME/.config/mse:/root/.config/mse \
+             -v /var/run/docker.sock:/var/run/docker.sock \
+             mse stop 631a988f-4001-4593-a023-d316eb57d1f1
+```
+
+### MSE Home
 
 ```console
 $ # You have to create /mnt/workspace
@@ -290,22 +373,22 @@ $ sudo mkdir /mnt/workspace
 $ # Scaffold a project
 $ docker run -v /mnt/workspace:/mnt/workspace \
              -v /var/run/docker.sock:/var/run/docker.sock \
-            mse-home scaffold example
+            mse home scaffold example
 $ # Test it
 $ docker run -v /mnt/workspace:/mnt/workspace \
-             -v /var/run/docker.sock:/var/run/docker.sock\
+             -v /var/run/docker.sock:/var/run/docker.sock \
              --network=host \
-             mse-home localtest --project example
+             mse home localtest --project example
 $ # Package it
 $ docker run -v /mnt/workspace:/mnt/workspace \
              -v /var/run/docker.sock:/var/run/docker.sock \
-             mse-home package --project example \
+             mse home package --project example \
                               --output .
 $ # Spawn it
 $ docker run -v /mnt/workspace:/mnt/workspace \
              -v /var/run/docker.sock:/var/run/docker.sock \
              --network=host \
-             mse-home spawn --host localhost \
+             mse home spawn --host localhost \
                             --port 7779 \
                             --days 365 \
                             --signer-key /opt/cosmian-internal/cosmian-signer-key.pem \
@@ -317,34 +400,53 @@ $ docker run -v /mnt/workspace:/mnt/workspace \
 $ # Verify the evidences
 $ docker run -v /mnt/workspace:/mnt/workspace \
              -v /var/run/docker.sock:/var/run/docker.sock \
-             mse-home verify --package package_example_1688025211482089576.tar \
+             mse home verify --package package_example_1688025211482089576.tar \
                              --evidence evidence.json \
                              --output .
 $ # Seal the secrets
 $ docker run -v /mnt/workspace:/mnt/workspace \
              -v /var/run/docker.sock:/var/run/docker.sock \
-             mse-home seal --secrets example/secrets_to_seal.json \
+             mse home seal --secrets example/secrets_to_seal.json \
                            --cert ratls.pem \
                            --output  .
 $ # Complete the configuration
 $ docker run -v /mnt/workspace:/mnt/workspace \
              -v /var/run/docker.sock:/var/run/docker.sock \
             --network=host \
-            mse-home run --sealed-secrets secrets_to_seal.json.sealed test_docker
+            mse home run --sealed-secrets secrets_to_seal.json.sealed test_docker
 $ # Query it
 $ curl https://localhost:7779 --cacert /mnt/workspace/ratls.pem 
 $ # Test it
 $ docker run -v /mnt/workspace:/mnt/workspace \
              -v /var/run/docker.sock:/var/run/docker.sock \
              --network=host \
-             mse-home test --test example/tests \
+             mse home test --test example/tests \
                            --config mse.toml test_docker
 $ # Remove it
 $ docker run -v /var/run/docker.sock:/var/run/docker.sock \
-             mse-home stop --remove test_docker
+             mse home stop --remove test_docker
 ```
 
-The current directory inside the docker is `/mnt/workspace`. You can retrieve all generated files in your current host in: `/mnt/workspace`. Make sure to create it before all at the exact location `/mnt/workspace` (it will not work if both locations are not aligned).  
+## Use case
 
+Let's assume your microservice have to interface with a frontend. The main issue you will face up is that the RA-TLS certificate is not allowed in your web browser, mainly because it's a self signed cert. Also the RA-TLS extension is not checked by your webbrowser, yet any query to the webservice must verify the RA-TLS extension of the certificate: the security is based on this verification. 
 
-Note: the docker does not contain `mse cloud`. It makes no sense since `mse cloud` is designed to be used with Internet. Plus: you need to login through the web browser, which is not possible using the docker. 
+Therefore, the frontend can't interact straightaway with your webservice through the web browser. You need to develop a intermediate backend acting like a proxy. Or a simpler way could be to use the following nginx configuration:
+
+```nginx
+server {
+    listen       8080 default_server;
+    listen       [::]:8080 default_server;
+    server_name  _;
+
+    location / {
+         proxy_pass	https://9cc36ebf3c351eba.dev.cosmian.app;
+	     # We need the next two lines because the RA-TLS certificate
+         proxy_ssl_trusted_certificate /tmp/tmp4b0174yn/cert.conf.pem;
+         proxy_ssl_verify on;
+	     # We need the next two lines to allow sni routing by the haproxy
+         proxy_ssl_name 9cc36ebf3c351eba.dev.cosmian.app;
+         proxy_ssl_server_name on;
+    }
+}
+```
