@@ -1,4 +1,4 @@
-FROM ghcr.io/cosmian/mse-base-beta:c706160c23a080e224bd9d5f26fdb3b529721c1b
+FROM ghcr.io/cosmian/mse-base:20230710124434
 
 RUN . /opt/venv/bin/activate && \
     pip3 install "flask==2.2.5" \

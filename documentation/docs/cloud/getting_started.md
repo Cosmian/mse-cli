@@ -113,7 +113,7 @@ tests_requirements = [ "intel-sgx-ra>=1.0.1,<1.1", "pytest==7.2.0",]
 [cloud]
 code = "mse_src"
 tests = "tests"
-docker = "ghcr.io/cosmian/mse-flask:20230228091325"
+docker = "ghcr.io/cosmian/mse-flask:20230710125733"
 project = "default"
 hardware = "4g-eu-001"
 ```

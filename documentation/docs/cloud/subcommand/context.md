@@ -33,7 +33,7 @@ This directory contains:
     name = "helloworld"
     project = "default"
     python_application = "app:app"
-    docker = "ghcr.io/cosmian/mse-flask:20230228091325"
+    docker = "ghcr.io/cosmian/mse-flask:20230710125733"
     tests = "/home/user/tests"
     tests_cmd = "pytest"
     tests_requirements = [ "intel-sgx-ra", "pytest==7.2.0",]
@@ -62,7 +62,7 @@ This directory contains:
     tests = "/home/user/tests"
     tests_cmd = "pytest"
     tests_requirements = [ "intel-sgx-ra", "pytest==7.2.0",]
-    docker = "ghcr.io/cosmian/mse-flask:20230228091325"
+    docker = "ghcr.io/cosmian/mse-flask:20230710125733"
     code_secret_key = "a389f8baf2e03cebd445d99f03600b29ca259faa9a3964e529c03effef206135"
     ssl_app_certificate = "-----BEGIN CERTIFICATE[...]"
 
@@ -89,7 +89,7 @@ This directory contains:
     tests = "/home/user/tests"
     tests_cmd = "pytest"
     tests_requirements = [ "intel-sgx-ra", "pytest==7.2.0",]
-    docker = "ghcr.io/cosmian/mse-flask:20230228091325"
+    docker = "ghcr.io/cosmian/mse-flask:20230710125733"
     code_secret_key = "23a143da6cdabadfba914e2bfc29272dbb90e8346f2bde9fab4c7b3f135ed4ad"
 
     [instance]

@@ -159,17 +159,11 @@ def run(args) -> None:
             COLOR.render(ColorKind.LINK_END),
         )
 
-    if not args.no_verify:
-        verify_app(
-            context,
-            app.config_domain_name,
-            context.config_cert_path,
-        )
-    else:
-        LOG.warning(
-            "App trustworthiness checking skipped. The app integrity has "
-            "not been checked and shouldn't be used in production mode!"
-        )
+    verify_app(
+        None if args.no_verify else context,
+        app.config_domain_name,
+        context.config_cert_path,
+    )
 
     LOG.info("Sending secret key and decrypting the application code...")
     decrypt_private_data(
@@ -224,7 +218,7 @@ def wait_app_start(conn: Connection, app_id: UUID) -> App:
     with Spinner("Waiting for your application to be ready... "):
         clock = ClockTick(
             period=3,
-            timeout=5 * 60,
+            timeout=15 * 60,
             message="MSE is at high capacity right now! Try again later.",
         )
         while clock.tick():
@@ -310,7 +304,7 @@ def wait_app_creation(conn: Connection, app_id: UUID) -> App:
     with Spinner(f"Creating app {app_id}... "):
         clock = ClockTick(
             period=3,
-            timeout=5 * 60,
+            timeout=15 * 60,
             message="MSE is at high capacity right now! Try again later.",
         )
         while clock.tick():
