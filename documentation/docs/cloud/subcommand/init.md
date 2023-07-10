@@ -7,7 +7,7 @@ We need you to fill in the following fields
 App name: test
 Project name [default]: 
 Hardware name [4g-eu-001]: 
-Docker url [ghcr.io/cosmian/mse-flask:20230228091325]: 
+Docker url [ghcr.io/cosmian/mse-flask:20230710125733]: 
 Code location [mse_src]: .
 Tests location [tests]: .
 Python application [app:app]: 
@@ -27,7 +27,7 @@ tests_requirements = [ "intel-sgx-ra>=1.0.1,<1.1", "pytest==7.2.0",]
 [cloud]
 code = "mse_src"
 tests = "tests"
-docker = "ghcr.io/cosmian/mse-flask:20230228091325"
+docker = "ghcr.io/cosmian/mse-flask:20230710125733"
 project = "default"
 hardware = "4g-eu-001"
 ```

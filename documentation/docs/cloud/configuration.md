@@ -11,7 +11,7 @@ tests_requirements = [ "intel-sgx-ra>=1.0.1,<1.1", "pytest==7.2.0",]
 [cloud]
 code = "my_project/code"
 tests = "my_project/tests"
-docker = "ghcr.io/cosmian/mse-flask:20230228091325"
+docker = "ghcr.io/cosmian/mse-flask:20230710125733"
 project = "my_project"
 hardware = "4g-eu-001"
 ```
@@ -35,7 +35,7 @@ code = "my_project/code"
 tests = "my_project/tests"
 hardware = "4g-eu-001"
 project = "default"
-docker = "ghcr.io/cosmian/mse-flask:20230228091325"
+docker = "ghcr.io/cosmian/mse-flask:20230710125733"
 secrets = "secrets.json"
 expiration_date = "2023-06-29 00:00:00+00:00"
 ```
@@ -74,11 +74,12 @@ Otherwise, the expiration date is set to 1 year (except for `4g-eu-001` hardware
 
 The `docker` parameter defines which Docker image will run in the MSE node. *Cosmian* offers several Docker images (use the tag with the most recent date):
 
-- [mse-flask](https://github.com/Cosmian/mse-docker-flask/pkgs/container/mse-flask): containing flask dependencies.
-- [mse-pytorch](https://github.com/Cosmian/mse-docker-pytorch/pkgs/container/mse-pytorch): containing flask and machine learning dependencies using pytorch.
-- [mse-tensorflow](https://github.com/Cosmian/mse-docker-tensorflow/pkgs/container/mse-tensorflow): containing flask and machine learning dependencies using tensorflow.
-- [mse-ds](https://github.com/Cosmian/mse-docker-ds/pkgs/container/mse-ds): containing flask and data science dependencies.
-- [mse-fastapi](https://github.com/Cosmian/mse-docker-fastapi/pkgs/container/mse-fastapi): containing fastapi dependencies.
+- [mse-flask](https://github.com/Cosmian/mse-app-examples/pkgs/container/mse-flask): containing flask dependencies.
+- [mse-pytorch](https://github.com/Cosmian/mse-app-examples/pkgs/container/mse-pytorch): containing flask and machine learning dependencies using pytorch.
+- [mse-tensorflow](https://github.com/Cosmian/mse-app-examples/pkgs/container/mse-tensorflow): containing flask and machine learning dependencies using tensorflow.
+- [mse-ds](https://github.com/Cosmian/mse-app-examples/pkgs/container/mse-ds): containing flask and data science dependencies.
+- [mse-fastapi](https://github.com/Cosmian/mse-app-examples/pkgs/container/mse-fastapi): containing fastapi dependencies.
+- [mse-nlp](https://github.com/Cosmian/mse-app-examples/pkgs/container/mse-nlp): containing natural language processing dependencies.
 
 You can test your code properly runs inside this Docker using [`mse cloud test`](subcommand/test.md).
 

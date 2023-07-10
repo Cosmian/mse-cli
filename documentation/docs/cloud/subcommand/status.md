@@ -10,7 +10,7 @@ Microservice
         Domain name = demo.cosmian.app
         Hardware    = 4g-eu-001
         Application = app:app
-        MSE docker  = ghcr.io/cosmian/mse-flask:20230228091325
+        MSE docker  = ghcr.io/cosmian/mse-flask:20230710125733
         Healthcheck = /
 
 Deployement status
