@@ -4,7 +4,7 @@ You can run your tests (specified when deployed the application) against a deplo
 ```{.console}
 $ mse cloud test ea62be0e-d54c-4338-822f-5757ced14c2a
 Defaulting to user installation because normal site-packages is not writeable
-Requirement already satisfied: intel-sgx-ra in /home/seb/.local/lib/python3.10/site-packages (2.0a11)
+Requirement already satisfied: intel-sgx-ra in /home/seb/.local/lib/python3.10/site-packages (2.0)
 Requirement already satisfied: requests<3.0.0,>=2.31.0 in /home/seb/.local/lib/python3.10/site-packages (from intel-sgx-ra) (2.31.0)
 Requirement already satisfied: cryptography<42.0.0,>=41.0.1 in /home/seb/.local/lib/python3.10/site-packages (from intel-sgx-ra) (41.0.1)
 Requirement already satisfied: cffi>=1.12 in /home/seb/.local/lib/python3.10/site-packages (from cryptography<42.0.0,>=41.0.1->intel-sgx-ra) (1.15.0)
