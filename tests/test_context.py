@@ -2,22 +2,23 @@
 
 import filecmp
 import os
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
 from uuid import UUID
 
-from mse_cli.api.types import SSLCertificateOrigin
-from mse_cli.conf.app import AppConf, CodeConf, SSLConf
-from mse_cli.conf.context import Context, ContextConf, ContextInstance
+from mse_cli.cloud.api.types import SSLCertificateOrigin
+from mse_cli.cloud.model.context import Context, ContextConf, ContextInstance
+from mse_cli.core.conf import AppConf, CloudConf, SSLConf
 
 
-def test_from_toml():
-    """Test `from_toml` function."""
+def test_load():
+    """Test `load` function."""
     toml = Path(__file__).parent / "data/context.toml"
-    conf = Context.from_toml(path=toml)
+    conf = Context.load(path=toml)
 
     ref_context_conf = Context(
-        version="1.0",
+        version="2.0",
+        workspace=conf.workspace,
         config=ContextConf(
             name="helloworld",
             project="default",
@@ -25,6 +26,12 @@ def test_from_toml():
             docker="ghcr.io/cosmian/mse-pytorch:20230104085621",
             python_application="app:app",
             ssl_app_certificate=(Path(__file__).parent / "data/cert.pem").read_text(),
+            tests="/home/user/tests",
+            tests_cmd="pytest",
+            tests_requirements=[
+                "intel-sgx-ra",
+                "pytest==7.2.0",
+            ],
         ),
         instance=ContextInstance(
             id="d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e",
@@ -43,29 +50,31 @@ def test_from_toml():
 
 def test_from_app_conf():
     """Test `from_app_conf` function."""
-    toml = Path(__file__).parent / "data/context.toml"
-
-    code = CodeConf(
-        location="/tmp/code",
+    ref_app_conf = AppConf(
+        name="helloworld",
         python_application="app:app",
         healthcheck_endpoint="/",
-        docker="ghcr.io/cosmian/mse-pytorch:20230104085621",
-    )
-
-    ssl = SSLConf(
-        domain_name="demo.dev.cosmilink.com",
-        private_key=Path(__file__).parent / "data/key.pem",
-        certificate=Path(__file__).parent / "data/cert.pem",
-    )
-
-    ref_app_conf = AppConf(
-        name="helloworld", project="default", hardware="4g-eu-001", code=code, ssl=ssl
+        tests_cmd="pytest",
+        tests_requirements=["intel-sgx-ra>=1.0.1,<1.1", "pytest==7.2.0"],
+        cloud=CloudConf(
+            project="default",
+            hardware="4g-eu-001",
+            code="/tmp/code",
+            tests="/home/user/tests",
+            docker="ghcr.io/cosmian/mse-pytorch:20230104085621",
+            ssl=SSLConf(
+                domain_name="demo.dev.cosmilink.com",
+                private_key=Path(__file__).parent / "data/key.pem",
+                certificate=Path(__file__).parent / "data/cert.pem",
+            ),
+        ),
     )
 
     conf = Context.from_app_conf(conf=ref_app_conf)
 
     ref_context_conf = Context(
-        version="1.0",
+        version="2.0",
+        workspace=conf.workspace,
         config=ContextConf(
             name="helloworld",
             project="default",
@@ -73,6 +82,9 @@ def test_from_app_conf():
             python_application="app:app",
             ssl_app_certificate=(Path(__file__).parent / "data/cert.pem").read_text(),
             docker="ghcr.io/cosmian/mse-pytorch:20230104085621",
+            tests_cmd="pytest",
+            tests_requirements=["intel-sgx-ra>=1.0.1,<1.1", "pytest==7.2.0"],
+            tests="/home/user/tests",
         ),
         instance=None,
     )
@@ -81,25 +93,28 @@ def test_from_app_conf():
 
 
 def test_run():
-    """Test `from_app_conf` function."""
+    """Test `run` function."""
     toml = Path(__file__).parent / "data/context.toml"
-    ref_context_conf = Context.from_toml(path=toml)
-
-    code = CodeConf(
-        location="/tmp/code",
-        python_application="app:app",
-        healthcheck_endpoint="/",
-        docker="ghcr.io/cosmian/mse-pytorch:20230104085621",
-    )
-
-    ssl = SSLConf(
-        domain_name="demo.dev.cosmilink.com",
-        private_key=Path(__file__).parent / "data/key.pem",
-        certificate=Path(__file__).parent / "data/cert.pem",
-    )
+    ref_context_conf = Context.load(path=toml)
 
     ref_app_conf = AppConf(
-        name="helloworld", project="default", hardware="free", code=code, ssl=ssl
+        name="helloworld",
+        python_application="app:app",
+        healthcheck_endpoint="/",
+        tests_cmd="pytest",
+        tests_requirements=["intel-sgx-ra", "pytest==7.2.0"],
+        cloud=CloudConf(
+            project="default",
+            hardware="free",
+            code="/tmp/code",
+            tests="/home/user/tests",
+            docker="ghcr.io/cosmian/mse-pytorch:20230104085621",
+            ssl=SSLConf(
+                domain_name="demo.dev.cosmilink.com",
+                private_key=Path(__file__).parent / "data/key.pem",
+                certificate=Path(__file__).parent / "data/cert.pem",
+            ),
+        ),
     )
 
     conf = Context.from_app_conf(conf=ref_app_conf)
@@ -115,15 +130,17 @@ def test_run():
         nonces={"app.py": "f33f4a1a1555660f9396aea7811b0ff7b0f19503a7485914"},
     )
 
+    ref_context_conf.workspace = conf.workspace
+
     assert conf == ref_context_conf
 
 
 def test_save():
     """Test the `save` method."""
     toml = Path(__file__).parent / "data/context.toml"
-    conf = Context.from_toml(path=toml)
+    conf = Context.load(path=toml)
     os.makedirs(conf.workspace, exist_ok=True)
-    code = conf.workspace / "code.tar"
+    code = conf.workspace / "app.tar"
     code.write_text("test")
 
     conf.save()
@@ -140,18 +157,18 @@ def test_save():
 def test_path():
     """Test path handling methods."""
     toml = Path(__file__).parent / "data/context.toml"
-    conf = Context.from_toml(path=toml)
+    conf = Context.load(path=toml)
     workspace = conf.workspace
 
     assert conf.workspace.exists()
     assert conf.docker_log_path == workspace / "docker.log"
     assert conf.config_cert_path == workspace / "cert.conf.pem"
-    assert conf.app_cert_path == workspace / "cert.app.pem"
+    assert conf.app_cert_path == workspace / "fullchain.pem"
     assert conf.decrypted_code_path == workspace / "decrypted_code"
     assert conf.decrypted_code_path.exists()
     assert conf.encrypted_code_path == workspace / "encrypted_code"
     assert conf.encrypted_code_path.exists()
-    assert conf.tar_code_path == workspace / "code.tar"
+    assert conf.tar_code_path == workspace / "app.tar"
     assert (
         conf.path
         == Path(

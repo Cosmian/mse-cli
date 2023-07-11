@@ -1,8 +1,8 @@
-"""Test utils/ignore_file.py."""
+"""Test ignore_file.py."""
 
 from pathlib import Path
 
-from mse_cli.utils.ignore_file import IgnoreFile
+from mse_cli.core.ignore_file import IgnoreFile
 
 
 def test_ignore_file():

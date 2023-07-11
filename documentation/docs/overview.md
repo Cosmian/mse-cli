@@ -1,22 +1,31 @@
-## What is MicroService Encryption?
+## What is Microservice Encryption?
 
-MicroService Encryption (MSE) allows to easily deploy confidential web application written in Python in Cosmian’s infrastructure with the following security features:
+Microservice Encryption (MSE) allows to easily deploy confidential web application written in Python in Cosmian’s infrastructure with the following security features:
 
-- Code runs in a Trusted Execution Environment (TEE) and is encrypted with your own key.
-- Secure channel is established directly and uniquely with your code in the TEE.
-- Everyone interacting with your microservice can verify that your code runs in a TEE thanks to a Transport Layer Security (TLS) extension called Remote Attestation TLS (RA-TLS).
+- Code runs in a Trusted Execution Environment (TEE) and is encrypted with your own key
+- Secure channel is established directly and uniquely with your code in the TEE
+- Everyone interacting with your microservice can verify that your code runs in a TEE thanks to a Transport Layer Security (TLS) extension called Remote Attestation TLS (RA-TLS)
+
+Discover MSE Cloud with [Getting Started](cloud/getting_started.md).
+
+You can also deploy a confidential web application on your self-managed Trusted Execution Environment in a multi-part scenario (see [MSE Home](home/getting_started.md) for more information). 
 
 ## What does MSE protect?
 
 Basically MSE protects any data and metadata against us and the underlying cloud provider who owns the hardware infrastructure.
 
-Then, privilege users or anyone with physical access to the host machine in Cosmian’s infrastructure:
+Then, privileged users or anyone with physical access to the host machine in Cosmian’s infrastructure:
 
-- Can’t alter the integrity of data and code in the protected area of the TEE.
-- Can't access the unique TLS server key of your microservice generated inside the TEE or decrypt the TLS session.
-- Can't access the secret key used to encrypt your code or obtain the code in plaintext.
-- Can’t access the persistant storage of your microservice which is tied to the TEE.
+- Can’t alter the integrity of data and code in the protected area of the TEE
+- Can't access the unique TLS server key of your microservice generated inside the TEE or decrypt the TLS session
+- Can't access the secret key used to encrypt your code or obtain the code in plaintext
+- Can’t access the persistant storage of your microservice which is tied to the TEE
 
 These assumptions remain valid as long as the TEE, namely Intel SGX, and its software stack known as the Trusted Computing Base (TCB) are not subject to severe vulnerabilities.
 
-See [Security Model](security.md) for more details or just discover MSE with [Getting Started](getting_started.md).
+See [Security Model](cloud/security.md) for more details or just discover MSE Cloud with [Getting Started](cloud/getting_started.md).
+
+
+!!! info "For further use"
+
+    If writing the subcommand part `home` or `cloud` every time upsets you, you can set the `MSE_DEFAULT_ENV` env variable to one of these values and then just omit that word in the future commands. By default, the CLI will target this default environment. For example: `mse cloud test` turns into `mse test`

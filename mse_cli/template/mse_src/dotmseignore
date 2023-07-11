@@ -1,6 +1,7 @@
 # Ignore MSE CLI files/directories
 mse.toml
 secrets.json
+secrets_to_seal.json
 .mseignore
 
 # Ignore byte-compiled / optimized files

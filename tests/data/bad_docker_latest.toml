@@ -1,9 +1,12 @@
 name = "bad_docker_latest"
+python_application = "app:app"
+tests_cmd = "pytest"
+tests_requirements = [ "intel-sgx-ra>=1.0.1,<1.1", "pytest==7.2.0",]
+healthcheck_endpoint = "/"
+
+[cloud]
 project = "default"
 hardware = "4g-eu-001"
-
-[code]
-location = "code/"
-python_application = "app:app"
-healthcheck_endpoint = "/"
+code = "code/"
+tests = "/tmp/tests"
 docker = "ghcr.io/cosmian/mse-pytorch:latest"

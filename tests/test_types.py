@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-from mse_cli.api.types import App, AppStatus, SSLCertificateOrigin
+from mse_cli.cloud.api.types import App, AppStatus, SSLCertificateOrigin
 
 
 def test_is_terminated():

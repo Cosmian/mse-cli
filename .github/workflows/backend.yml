@@ -42,4 +42,4 @@ jobs:
           echo 'email = "alice@cosmian.com"' > ${MSE_CONF_PATH}/login.toml
           echo "refresh_token = \"${REFRESH_TOKEN}\"" >> ${MSE_CONF_PATH}/login.toml
           echo "Running tests using ${MSE_BASE_URL}"
-          pytest -m slow
+          pytest -m cloud
