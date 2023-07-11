@@ -129,7 +129,7 @@ healthcheck_endpoint = "/health"
 tests_cmd = "pytest"
 tests_requirements = [
     "cryptography>=40.0.2,<41.0",
-    "intel-sgx-ra==2.0a3",
+    "intel-sgx-ra",
     "pytest==7.2.0",
 ]
 ```
