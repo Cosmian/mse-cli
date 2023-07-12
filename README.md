@@ -272,6 +272,15 @@ $ mkdocs serve
 
 then open your browser on: `http://127.0.0.1:8003/`
 
+or in PDF:
+
+```console
+$ sudo apt install pandoc
+$ sudo apt install texlive-xetex texlive-fonts-recommended texlive-fonts-extra
+$ cd documentation
+$ ./build_pdf.sh
+```
+
 ## Dockerisation
 
 You can work with `mse home` without having internet access even to install the CLI by running the CLI docker. Or you can easily run `mse cloud` by just pulling the CLI docker. 

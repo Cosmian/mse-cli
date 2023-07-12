@@ -72,6 +72,8 @@ jobs:
       # see: https://github.com/actions/checkout/issues/211
       - name: Chown user
         run: |
+          echo $USER
+          echo $GITHUB_WORKSPACE
           sudo chown -R $USER:$USER $GITHUB_WORKSPACE
 
       - uses: actions/checkout@v3
