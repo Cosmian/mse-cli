@@ -169,7 +169,7 @@ def run_app_test_docker(
 
     clock = ClockTick(
         period=5,
-        timeout=10,
+        timeout=60,
         message="Test application docker is unreachable!",
     )
 
