@@ -6,6 +6,8 @@ TODO.md
 examples
 workspace
 cosmian-signer-key.pem
+documentation/user_guide.pd
+documentation/user_guide.pdf
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

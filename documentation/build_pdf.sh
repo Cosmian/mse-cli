@@ -61,8 +61,8 @@ then
 
     # TODO : Changes must be done in .md files not in .pd
     # Replace $`...`$ by $...$
-    common_sed "s/$\`/$/g" "${doc}.pd"
-    common_sed "s/\`\\$/$/g" "${doc}.pd"
+    # common_sed "s/$\`/$/g" "${doc}.pd"
+    # common_sed "s/\`\\$/$/g" "${doc}.pd"
 
     # Replace HTML by Pandoc syntax
     common_sed 's/<div class="admonition error">/::: {.admonition .error} :::/g' "${doc}.pd"
@@ -83,7 +83,7 @@ then
 
     # generate PDF
     pdf_title="${doc}"
-    pandoc --citeproc --from markdown --template="${eisvogel_template}" includes.yml "${doc}.pd" -s  -o "${pdf_title}.pdf" --listings --pdf-engine=xelatex --filter pandoc-kroki #--filter pandoc-katex
+    pandoc  --from markdown --template="${eisvogel_template}" includes.yml "${doc}.pd" -s  -o "${pdf_title}.pdf" --listings --pdf-engine=xelatex --filter pandoc-kroki #--filter pandoc-katex
 
     rm -r site/
 else
