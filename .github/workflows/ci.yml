@@ -65,7 +65,7 @@ jobs:
           pytest -m "not cloud and not home"
 
   tests-cloud:
-    runs-on: [self-hosted, not-docker]
+    runs-on: [self-hosted, not-sgx]
     needs: check
     steps:
       # Solve perm denied issue on GA

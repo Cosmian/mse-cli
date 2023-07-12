@@ -10,7 +10,7 @@ on:
 
 jobs:
   tests:
-    runs-on: [self-hosted, not-docker]
+    runs-on: [self-hosted, not-sgx]
     steps:
       # Solve perm denied issue on GA
       # see: https://github.com/actions/checkout/issues/211
