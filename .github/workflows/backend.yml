@@ -10,15 +10,22 @@ on:
 
 jobs:
   tests:
-    runs-on: self-hosted
-    container:
-      image: python:3.8
-      volumes:
-        - /var/run/docker.sock:/var/run/docker.sock
-        - /tmp:/tmp
-
+    runs-on: [self-hosted, not-docker]
     steps:
+      # Solve perm denied issue on GA
+      # see: https://github.com/actions/checkout/issues/211
+      - name: Chown user
+        run: |
+          echo $USER
+          echo $GITHUB_WORKSPACE
+          sudo chown -R $USER:$USER $GITHUB_WORKSPACE
+
       - uses: actions/checkout@v3
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
 
       - name: Install dependencies
         run: |
