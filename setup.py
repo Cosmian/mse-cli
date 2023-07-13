@@ -38,7 +38,7 @@ setup(
     install_requires=[
         "cryptography>=41.0.1,<42.0.0",
         "docker>=6.0.1,<7.0.0",
-        "intel-sgx-ra>=2.0,<3.0",
+        "intel-sgx-ra>=2.0.1,<3.0",
         "jinja2>=3.0,<3.1",
         "mse-lib-crypto>=1.3,<1.4",
         "pydantic>=1.10.2,<2.0.0",
