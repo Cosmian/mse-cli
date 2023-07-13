@@ -34,7 +34,7 @@ def run(args) -> None:
 
     if not context_path.exists():
         raise FileNotFoundError(
-            f"Can't find context for UUID: {args.uuid}. Run the tests manually"
+            f"Can't find context for UUID: {args.app_id}. Run the tests manually"
         )
 
     context = Context.load(context_path)
