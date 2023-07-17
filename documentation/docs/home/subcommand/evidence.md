@@ -1,7 +1,7 @@
 The evidences are collected when you run the `spawn` command. You can also retrieve them using the `evidence` command. 
 
 
-!!! info User
+!!! info "User"
 
     This command is designed to be used by the **SGX operator**
 

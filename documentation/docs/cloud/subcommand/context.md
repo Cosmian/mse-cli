@@ -105,7 +105,7 @@ This directory contains:
 
 This directory is designed to be shared with any app users wishing to verify the trustworthiness of the app. 
 
-### List
+## List
 
 You can list the contexts saved on your local host using:
 
@@ -115,7 +115,7 @@ $ mse cloud context --list
 [...]
 ```
 
-### Remove
+## Remove
 
 You can remove the context directory of an app using:
 
@@ -129,7 +129,7 @@ $ mse cloud context --remove 852a4256-fffa-457a-80ed-329166a652af
     If you do that, you will lose the configuration and the tar code. That will make you unable to share these information, thus an app user will be unable to verify the trustworthiness of your app
 
 
-### Purge
+## Purge
 
 You can also remove all your context directories:
 
@@ -143,7 +143,7 @@ $ mse cloud context --purge
     If you do that, you will lose the configuration and the tar code for all apps. That will make you unable to share these information, thus an app user will be unable to verify the trustworthiness of all of your apps
 
 
-### Export
+## Export
 
 If you want app users to verify the trustworthiness of your apps, they will need this context file from the context directory which can be exported using:
 

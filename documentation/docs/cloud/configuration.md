@@ -16,7 +16,7 @@ project = "my_project"
 hardware = "4g-eu-001"
 ```
 
-### Main section
+## Main section
 
 |         Keys         | Required |     Types      |                                                                          Description                                                                          |
 | :------------------: | :------: | :------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------: |
@@ -27,7 +27,7 @@ hardware = "4g-eu-001"
 |  tests_requirements  |    ✔️     | list of string |                             The requirements to install before testing the application. (used by `test` and `localtest` commands)                             |
 
 
-### Cloud section
+## Cloud section
 
 ```toml
 [cloud]
@@ -40,15 +40,15 @@ secrets = "secrets.json"
 expiration_date = "2023-06-29 00:00:00+00:00"
 ```
 
-|      Keys       | Required |          Types           |                                                                                Description                                                                                |
-| :-------------: | :------: | :----------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-|      code       |    ✔️     |          string          |                                                               Relative path to the application code folder                                                                |
-|      tests      |    ✔️     |          string          |                                                               Relative path to the application tests folder                                                               |
-|     docker      |    ✔️     |          string          | URL to the mse docker to run. It could be a local docker to run local test but it must be a remote url when deploying. See [below section](./configuration.md#mse-docker) |
-|     project     |    ✔️     |          string          |                                                             Project name to regroup applications for payment                                                              |
-|    hardware     |    ✔️     |          string          |                                                           Name of the hardware booked to spawn your application                                                           |
-| expiration_date |          | `YY-MM-DDTHH:mm:ss.nnnZ` |                                Expiration date before the application shutdowns ([rfc3339](https://www.rfc-editor.org/rfc/rfc3339) format)                                |
-|     secrets     |          |          string          |     A file path (absolute or relative to the configuration file) containing secrets needed by your application to run. See [this page](develop.md) for more  details.     |
+|      Keys       | Required |          Types           |                                                                                Description                                                                                 |
+| :-------------: | :------: | :----------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|      code       |    ✔️     |          string          |                                                                Relative path to the application code folder                                                                |
+|      tests      |    ✔️     |          string          |                                                               Relative path to the application tests folder                                                                |
+|     docker      |    ✔️     |          string          | URL to the mse docker to run. It could be a local docker to run local test but it must be a remote url when deploying. See [ below section](./configuration.md#mse-docker) |
+|     project     |    ✔️     |          string          |                                                              Project name to regroup applications for payment                                                              |
+|    hardware     |    ✔️     |          string          |                                                           Name of the hardware booked to spawn your application                                                            |
+| expiration_date |          | `YY-MM-DDTHH:mm:ss.nnnZ` |                                Expiration date before the application shutdowns ([rfc3339](https://www.rfc-editor.org/rfc/rfc3339) format)                                 |
+|     secrets     |          |          string          |     A file path (absolute or relative to the configuration file) containing secrets needed by your application to run. See [this page](develop.md) for more  details.      |
 
 
 Two applications from the same project with the same name cannot be running at the same time.
@@ -59,7 +59,7 @@ Let's assume you own `N` hardwares called: `2g-eu-001`. You can deploy `N` appli
 
 As soon as a new hardware is bought, you are charged for one month. If you drop the hardware before the end of the month, it is immediately unusable without prorata payback: you get a credit instead. In the event of a non-payment of a monthly invoice, you will receive 3 reminder emails. After 7 days, if the invoice remains unpaid, all your hardware subscriptions are cancelled and all your application are stopped.
 
-#### Expiration date of the application
+### Expiration date of the application
 
 The expiration date is tied to the self-signed certificate. When the expiration date is reached, the application is not available anymore.
 
@@ -70,7 +70,7 @@ In case the SSL certificate is provided by the application owner, the expiration
 If no `expiration_date` is specified in the configuration file, the expiration date of the application is the expiration date of the certificate.
 Otherwise, the expiration date is set to 1 year (except for `4g-eu-001` hardware).
 
-#### MSE docker
+### MSE docker
 
 The `docker` parameter defines which Docker image will run in the MSE node. *Cosmian* offers several Docker images (use the tag with the most recent date):
 
@@ -89,7 +89,7 @@ This Docker will be allowed to be started in an MSE architecture after a review 
 Note that, the `requirements.txt` from your source code directory will still be read when the docker will run. We strongly recommend to put all your requirements into the docker and remove the `requirements.txt` from your source code.
 
 
-### SSL section
+## SSL section
 
 ```{.toml}
 [cloud.ssl]

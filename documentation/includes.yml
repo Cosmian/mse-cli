@@ -17,6 +17,10 @@ toc-title: Table Of Contents
 toc-depth: 3
 titlepage-logo: ./pandoc/cosmian.png
 lang: en-GB
+mainfont: DejaVuSans.ttf
+sansfont: DejaVuSans.ttf
+monofont: DejaVuSansMono.ttf
+mathfont: texgyredejavu-math.otf
 footer-left: Confidential
 footer-center: © Copyright 2018-2023 Cosmian. All rights reserved
 header-left: ./pandoc/favicon.png

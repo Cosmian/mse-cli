@@ -68,6 +68,12 @@ then
     # Replace ```math ... ```by $$...$$
     perl -i  -0pe "s/(\`\`\`math)(.+?)(\`\`\`)/\\$\\$\2\\$\\$/smg" "${output}.pd"
 
+    # Replace ```toml ... ```
+    perl -i  -0pe "s/(    \`\`\`toml)(.+?)(    \`\`\`)/\n\`\`\`toml\2\`\`\`/smg" "${output}.pd"
+
+    # Replace **...** by \textbf{}
+    perl -i  -0pe "s/(\*\*)([^*]+?)(\*\*)/\\\\underline{\2}/smg" "${output}.pd"
+
     # Replace !!! warning ... by \begin{warning}...\end{warning}
     perl -i  -0pe "s/(!!! warning \"[^\"\n]+\"\n\n)(.+?)\n/\\\begin{warning}\2\\\end{warning}\n/smg" "${output}.pd"
 
@@ -83,7 +89,7 @@ then
     # Replace markdown tab syntax for Pandoc
     grep -n '=== "' "${output}.pd" | cut -f1 -d: | while read -r source ; do
         #echo - "$source"
-        common_sed "${source}s/===/#####/g" "${output}.pd"
+        common_sed "${source}s/===//g" "${output}.pd"
         common_sed "${source}s/\"//g" "${output}.pd"
     done
 

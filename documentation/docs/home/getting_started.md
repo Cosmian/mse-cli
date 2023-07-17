@@ -65,7 +65,7 @@ operations:
 
 ## Scaffold your app
 
-!!! info User
+!!! info "User"
 
     This command is designed to be used by the **code provider**
 
@@ -120,7 +120,7 @@ def hello():
 # ...
 ```
 
-The [configuration file](../cloud/configuration.md) is a TOML file used to give information to the SGX operator, allowing to start correctly the application:
+The [ configuration file](../cloud/configuration.md) is a TOML file used to give information to the SGX operator, allowing to start correctly the application:
 
 ```{.toml}
 name = "example"
@@ -141,14 +141,14 @@ This project also contains a test directory enabling you to test this project lo
     To be compliant with MSE your Python application must be an [ASGI](https://asgi.readthedocs.io) or [WSGI](https://wsgi.readthedocs.io) application. It is not possible to deploy a standalone Python program. 
     In the next example, this documentation will describe how to deploy Flask applications. You can also use other ASGI applications, for instance: FastAPI.
 
-!!! Examples
+!!! Examples "Examples"
 
     Visit [mse-app-examples](https://github.com/Cosmian/mse-app-examples) to find MSE application examples.
 
 ## Test your app, your docker and your mse home configuration
 
 
-!!! info User
+!!! info "User"
 
     This command is designed to be used by the **code provider**
 
@@ -170,7 +170,7 @@ Testing your code before sending it to the SGX operator is recommended. Be aware
 
 ## Create the MSE package with the code and the docker image
 
-!!! info User
+!!! info "User"
 
     This command is designed to be used by the **code provider**
 
@@ -196,7 +196,7 @@ $ mse home package --project example \
 
 ## Spawn the MSE docker
 
-!!! info User
+!!! info "User"
 
     This command is designed to be used by the **SGX operator**
 
@@ -212,7 +212,7 @@ $ mse home spawn --host myapp.fr \
 
 Mandatory arguments are:
 
-- `host`: common name of the certificate generated later on during [verification step](#check-the-trustworthiness-of-the-application)
+- `host`: common name of the certificate generated later on during [ verification step](#check-the-trustworthiness-of-the-application)
 - `port`: localhost port used by Docker to bind the application
 - `size`: memory size (in MB) of the enclave to spawn. Must be a power of 2 greater than 1024. This size is bounded by the SGX EPC memory.
 - `pccs`: the URL of the PCCS (Provisioning Certificate Caching Service) used to generate certificate
@@ -223,13 +223,13 @@ This command first unpacks the tarball specified by the `--package` argument. No
 
 The generated file `sgx_operator/evidence.json` contains cryptographic proofs related to the enclave. It can be shared with other participants.
 
-This evidence file is helpful for the code provider to [verify](#check-the-trustworthiness-of-the-application) the running app.
+This evidence file is helpful for the code provider to [ verify](#check-the-trustworthiness-of-the-application) the running app.
 
 The application is now started in an intermediate state waiting for any secret: we call that the configuration server. 
 
 ## Collect the evidences to verify the application
 
-!!! info User
+!!! info "User"
 
     This command is designed to be used by the **SGX operator**
 
@@ -247,7 +247,7 @@ The file `sgx_operator/evidence.json` and the previous file `sgx_operator/args.t
 
 ## Check the trustworthiness of the application
 
-!!! info User
+!!! info "User"
 
     This command is designed to be used by the **code provider**
 
@@ -269,7 +269,7 @@ If the verification succeeds, the RA-TLS certificate is written as a file named 
 
 ## Seal your secrets
 
-!!! info User
+!!! info "User"
 
     This command is designed to be used by the **code provider**
 
@@ -287,7 +287,7 @@ Share the sealed secrets file with the SGX operator.
 
 ## Finalize the configuration and run the application
 
-!!! info User
+!!! info "User"
 
     This command is designed to be used by the **SGX operator**
 
@@ -301,7 +301,7 @@ From now, the initial application developed by the code provider is fully operat
 
 ## Test the deployed application
 
-!!! info User
+!!! info "User"
 
     This command is designed to be used by the **SGX operator**
 
@@ -317,7 +317,7 @@ Always run this step before communicating to the users about the deployment comp
 
 ## Decrypt the results
 
-!!! info User
+!!! info "User"
 
     This command is designed to be used by the **code provider**
 
@@ -330,9 +330,9 @@ First, the SGX operator collects the result (which is encrypted):
 $ curl --cacert /tmp/ratls.pem https://myapp.fr:7788/result/secrets > result.enc
 ```
 
-!!! info Hostname and certificate
+!!! info "Hostname and certificate"
 
-    At the [spawn](#spawn-the-mse-docker) step, remember that the parameter `--host`
+    At the [ spawn](#spawn-the-mse-docker) step, remember that the parameter `--host`
     has been set to `myapp.fr`. Thus the certificate `/tmp/ratls.pem` has been setup
     to use this name as the target host name.
     If `localhost` is fetched instead of `myapp.fr`, a SSL message will legitimately
@@ -359,13 +359,13 @@ This demonstrates that `secrets.json` file has been well setup for the enclave a
 
 ### Fetching `/result/sealed_secrets` endpoint
 
-!!! info Sealed secrets
+!!! info "Sealed secrets"
 
     From a user perspective, this is exactly the same as fetching `/result/secrets` endpoint.
     Under the hoods, the original JSON file `secrets_to_seal.json` is transfered
-    sealed to the enclave (see how to [seal secrets](#seal-your-secrets)).
+    sealed to the enclave (see how to [ seal secrets](#seal-your-secrets)).
 
-    When [starting](#finalize-the-configuration-and-run-the-application), 
+    When [ starting](#finalize-the-configuration-and-run-the-application), 
     the app seamlessly decrypts this file with the enclave's private key, 
     as sealed secrets are encrypted using the enclave's public key.
     Data from `secrets_to_seal.json` is then accessible from the Flask app, through `SEALED_SECRETS_PATH` env variable.
@@ -395,7 +395,7 @@ Note that the `--key` parameter is the key contained in `secrets_to_seal.json`.
 The `decrypt` command only supports [Fernet](https://cryptography.io/en/latest/fernet/) algorithm. If the code provider implements another way to encrypt the result in its microservice, another decryption code must also be written outside MSE Home.
 
 
-!!! info Fix or Update
+!!! info "Fix or Update"
 
-    In case of errors at any step of the deployment flow or if the code/the configuration needs to be updated, you shall stop&remove the current running application and restart from scratch the whole deployment flow. 
+    In case of errors at any step of the deployment flow or if the code/the configuration needs to be updated, you shall stop and remove the current running application and restart from scratch the whole deployment flow. 
 
