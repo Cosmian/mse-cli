@@ -66,73 +66,12 @@ $if(papersize)$
 $else$
   paper=a4,
 $endif$
-$if(beamer)$
-  ignorenonframetext,
-$if(handout)$
-  handout,
-$endif$
-$if(aspectratio)$
-  aspectratio=$aspectratio$,
-$endif$
-$endif$
 $for(classoption)$
   $classoption$$sep$,
 $endfor$
   ,captions=tableheading
-]{$if(beamer)$$documentclass$$else$$if(book)$scrbook$else$scrartcl$endif$$endif$}
-$if(beamer)$
-$if(background-image)$
-\usebackgroundtemplate{%
-  \includegraphics[width=\paperwidth]{$background-image$}%
-}
-$endif$
-\usepackage{pgfpages}
-\setbeamertemplate{caption}[numbered]
-\setbeamertemplate{caption label separator}{: }
-\setbeamercolor{caption name}{fg=normal text.fg}
-\beamertemplatenavigationsymbols$if(navigation)$$navigation$$else$empty$endif$
-$for(beameroption)$
-\setbeameroption{$beameroption$}
-$endfor$
-% Prevent slide breaks in the middle of a paragraph
-\widowpenalties 1 10000
-\raggedbottom
-$if(section-titles)$
-\setbeamertemplate{part page}{
-  \centering
-  \begin{beamercolorbox}[sep=16pt,center]{part title}
-    \usebeamerfont{part title}\insertpart\par
-  \end{beamercolorbox}
-}
-\setbeamertemplate{section page}{
-  \centering
-  \begin{beamercolorbox}[sep=12pt,center]{part title}
-    \usebeamerfont{section title}\insertsection\par
-  \end{beamercolorbox}
-}
-\setbeamertemplate{subsection page}{
-  \centering
-  \begin{beamercolorbox}[sep=8pt,center]{part title}
-    \usebeamerfont{subsection title}\insertsubsection\par
-  \end{beamercolorbox}
-}
-\AtBeginPart{
-  \frame{\partpage}
-}
-\AtBeginSection{
-  \ifbibliography
-  \else
-    \frame{\sectionpage}
-  \fi
-}
-\AtBeginSubsection{
-  \frame{\subsectionpage}
-}
-$endif$
-$endif$
-$if(beamerarticle)$
-\usepackage{beamerarticle} % needs to be loaded first
-$endif$
+]{scrartcl}
+
 \usepackage{amsmath,amssymb}
 $if(fontfamily)$
 \usepackage[$for(fontfamilyoptions)$$fontfamilyoptions$$sep$,$endfor$]{$fontfamily$}
@@ -222,26 +161,6 @@ $if(zero-width-non-joiner)$
 \fi
 %% End of ZWNJ support
 $endif$
-$if(beamer)$
-$if(theme)$
-\usetheme[$for(themeoptions)$$themeoptions$$sep$,$endfor$]{$theme$}
-$endif$
-$if(colortheme)$
-\usecolortheme{$colortheme$}
-$endif$
-$if(fonttheme)$
-\usefonttheme{$fonttheme$}
-$endif$
-$if(mainfont)$
-\usefonttheme{serif} % use mainfont rather than sansfont for slide text
-$endif$
-$if(innertheme)$
-\useinnertheme{$innertheme$}
-$endif$
-$if(outertheme)$
-\useoutertheme{$outertheme$}
-$endif$
-$endif$
 % Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \IfFileExists{microtype.sty}{% use microtype if available
@@ -308,26 +227,16 @@ $endif$
   pdfcreator={LaTeX via pandoc with the Eisvogel template}}
 \urlstyle{same} % disable monospaced font for URLs
 $if(verbatim-in-note)$
-\VerbatimFootnotes % allow verbatim text in footnotes
+  \VerbatimFootnotes % allow verbatim text in footnotes
 $endif$
 $if(geometry)$
-$if(beamer)$
-\geometry{$for(geometry)$$geometry$$sep$,$endfor$}
-$else$
-\usepackage[$for(geometry)$$geometry$$sep$,$endfor$]{geometry}
-$endif$
-$else$
-$if(beamer)$
-$else$
-\usepackage[margin=2.5cm,includehead=true,includefoot=true,centering,$for(geometry)$$geometry$$sep$,$endfor$]{geometry}
-$endif$
+  \usepackage[$for(geometry)$$geometry$$sep$,$endfor$]{geometry}
+  $else$
+  \usepackage[margin=2.5cm,includehead=true,includefoot=true,centering,$for(geometry)$$geometry$$sep$,$endfor$]{geometry}
 $endif$
 $if(titlepage-logo)$
 \usepackage[export]{adjustbox}
 \usepackage{graphicx}
-$endif$
-$if(beamer)$
-\newif\ifbibliography
 $endif$
 $if(listings)$
 \usepackage{listings}
@@ -358,27 +267,19 @@ $highlighting-macros$
 
 $endif$
 $if(tables)$
-\usepackage{longtable,booktabs,array}
-$if(multirow)$
-\usepackage{multirow}
-$endif$
-\usepackage{calc} % for calculating minipage widths
-$if(beamer)$
-\usepackage{caption}
-% Make caption package work with longtable
-\makeatletter
-\def\fnum@table{\tablename~\thetable}
-\makeatother
-$else$
-% Correct order of tables after \paragraph or \subparagraph
-\usepackage{etoolbox}
-\makeatletter
-\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
-\makeatother
-% Allow footnotes in longtable head/foot
-\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
-\makesavenoteenv{longtable}
-$endif$
+  \usepackage{longtable,booktabs,array}
+  $if(multirow)$
+    \usepackage{multirow}
+  $endif$
+  \usepackage{calc} % for calculating minipage widths
+  % Correct order of tables after \paragraph or \subparagraph
+  \usepackage{etoolbox}
+  \makeatletter
+  \patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+  \makeatother
+  % Allow footnotes in longtable head/foot
+  \IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+  \makesavenoteenv{longtable}
 $endif$
 % add backlinks to footnote references, cf. https://tex.stackexchange.com/questions/302266/make-footnote-clickable-both-ways
 $if(footnotes-disable-backlinks)$
@@ -418,8 +319,6 @@ $if(numbersections)$
 $else$
 \setcounter{secnumdepth}{-\maxdimen} % remove section numbering
 $endif$
-$if(beamer)$
-$else$
 $if(block-headings)$
 % Make \paragraph and \subparagraph free-standing
 \ifx\paragraph\undefined\else
@@ -430,7 +329,6 @@ $if(block-headings)$
   \let\oldsubparagraph\subparagraph
   \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
 \fi
-$endif$
 $endif$
 $if(pagestyle)$
 \pagestyle{$pagestyle$}
@@ -507,32 +405,16 @@ $if(title)$
 \title{$title$$if(thanks)$\thanks{$thanks$}$endif$}
 $endif$
 $if(subtitle)$
-$if(beamer)$
-$else$
-\usepackage{etoolbox}
-\makeatletter
-\providecommand{\subtitle}[1]{% add subtitle to \maketitle
-  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
-}
-\makeatother
-$endif$
-\subtitle{$subtitle$}
+  \usepackage{etoolbox}
+  \makeatletter
+  \providecommand{\subtitle}[1]{% add subtitle to \maketitle
+    \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+  }
+  \makeatother
+  \subtitle{$subtitle$}
 $endif$
 \author{$for(author)$$author$$sep$ \and $endfor$}
 \date{$date$}
-$if(beamer)$
-$if(institute)$
-\institute{$for(institute)$$institute$$sep$ \and $endfor$}
-$endif$
-$if(titlegraphic)$
-\titlegraphic{\includegraphics{$titlegraphic$}}
-$endif$
-$if(logo)$
-\logo{\includegraphics{$logo$}}
-$endif$
-$endif$
-
-
 
 %%
 %% added
@@ -572,11 +454,8 @@ $endif$
 % captions
 %
 \definecolor{caption-color}{HTML}{777777}
-$if(beamer)$
-$else$
 \usepackage[font={stretch=1.2}, textfont={color=caption-color}, position=top, skip=4mm, labelfont=bf, singlelinecheck=false, justification=$if(caption-justification)$$caption-justification$$else$raggedright$endif$]{caption}
 \setcapindent{0em}
-$endif$
 
 %
 % blockquote
@@ -632,10 +511,7 @@ $endif$
 % heading color
 %
 \definecolor{heading-color}{RGB}{40,40,40}
-$if(beamer)$
-$else$
 \addtokomafont{section}{\color{heading-color}}
-$endif$
 % When using the classes report, scrreprt, book,
 % scrbook or memoir, uncomment the following line.
 %\addtokomafont{chapter}{\color{heading-color}}
@@ -643,13 +519,11 @@ $endif$
 %
 % variables for title, author and date
 %
-$if(beamer)$
-$else$
+
 \usepackage{titling}
 \title{$title$}
 \author{$for(author)$$author$$sep$, $endfor$}
 \date{$date$}
-$endif$
 
 %
 % tables
@@ -824,8 +698,6 @@ $endif$
 %
 % header and footer
 %
-$if(beamer)$
-$else$
 $if(disable-header-and-footer)$
 $else$
 \usepackage[headsepline,footsepline]{scrlayer-scrpage}
@@ -859,65 +731,121 @@ contents={%
 }
 $endif$
 $endif$
-$endif$
 
-$if(note)$
-\definecolor{myblue}{RGB}{10,163,210}
+\AddToHook{cmd/section/before}{\clearpage}
+
+\makeatletter
+\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
+        {-2.5ex\@plus -1ex \@minus -.25ex}%
+        {1.25ex \@plus .25ex}%
+        {\normalfont\normalsize\bfseries}}
+\makeatother
+\setcounter{secnumdepth}{4}
+
+% ===============
+% Personalization 
+
+\definecolor{mylightblue}{RGB}{236,243,255}
+\definecolor{myblue}{RGB}{68,138,255}
+\definecolor{mylightorange}{RGB}{255, 244, 229}
+\definecolor{myorange}{RGB}{255, 145, 0}
+\definecolor{mylightred}{RGB}{255, 231, 236}
+\definecolor{myred}{RGB}{255, 23, 68}
+\definecolor{mylightviolet}{RGB}{242, 237, 255}
+\definecolor{myviolet}{RGB}{124, 77, 255}
+
+\newcommand{\logonote}{\includegraphics[width=0.5cm]{./pandoc/logonote.png}}
+\newcommand{\logowarning}{\includegraphics[width=0.5cm]{./pandoc/logowarning.png}}
+\newcommand{\logodanger}{\includegraphics[width=0.5cm]{./pandoc/logodanger.png}}
+\newcommand{\logoexample}{\includegraphics[width=0.5cm]{./pandoc/logoexample.png}}
+
+
+\usepackage[most]{tcolorbox}
+\tcbuselibrary{skins} 
+\tcbuselibrary{breakable}
+
+\tcbset{boxtitle/.style={title={\ifstrempty{#1}{\ignorespaces}{\strut\protect #1}}}}
+
+\tcbset{notetitle/.style={title={\logonote \; Note}}}
+\tcbset{warningtitle/.style={title={\logowarning \; Warning}}}
+\tcbset{dangertitle/.style={title={\logodanger \; Danger}}}
+\tcbset{exampletitle/.style={title={\logoexample \; Example}}}
 
 \newtcolorbox{note}[1][]{%
     colback=white,
-    colframe=myblue,
-    boxrule=0.2mm,
-    titlerule=0pt,
+    % colframe=myblue,
+    boxrule=0mm,
+    % titlerule=0pt,
     sharp corners=all,
-    colbacktitle=white,
+    colbacktitle=mylightblue,
     skin=enhanced,
-    attach boxed title to top center={yshift=-10pt},
-    boxed title style={boxrule=-1pt},
+    borderline west={2pt}{0pt}{myblue},
+    % attach boxed title to top center={yshift=-10pt},
+    % boxed title style={boxrule=-1pt},
     fonttitle=\sffamily,
-    coltitle=myblue,
-    pythontitle={},
+    coltitle=black,
+    notetitle={},
     breakable=true,
+    frame hidden,
     #1,
 }
 
-$endif$
-
-$if(danger)$
-\definecolor{myred}{RGB}{226,66,74}
-
-\newtcolorbox{danger}[1][]{%
+\newtcolorbox{warning}[1][]{%
     colback=white,
-    colframe=myred,
-    boxrule=0.2mm,
-    titlerule=0pt,
+    boxrule=0mm,
     sharp corners=all,
-    colbacktitle=white,
+    colbacktitle=mylightorange,
     skin=enhanced,
-    attach boxed title to top center={yshift=-10pt},
-    boxed title style={boxrule=-1pt},
+    borderline west={2pt}{0pt}{myorange},
     fonttitle=\sffamily,
-    coltitle=myred,
-    bonustitle={},
+    coltitle=black,
+    warningtitle={},
     breakable=true,
+    frame hidden,
     #1,
 }
 
-$endif$
+% danger is not possible as a name of LaTeX block hence dang 
+\newtcolorbox{dang}[1][]{%
+    colback=white,
+    boxrule=0mm,
+    sharp corners=all,
+    colbacktitle=mylightred,
+    skin=enhanced,
+    borderline west={2pt}{0pt}{myred},
+    fonttitle=\sffamily,
+    coltitle=black,
+    dangertitle={},
+    breakable=true,
+    frame hidden,
+    #1,
+}
+
+% example already exists in LaTeX block hence ex
+\newtcolorbox{ex}[1][]{%
+    colback=white,
+    boxrule=0mm,
+    sharp corners=all,
+    colbacktitle=mylightviolet,
+    skin=enhanced,
+    borderline west={2pt}{0pt}{myviolet},
+    fonttitle=\sffamily,
+    coltitle=black,
+    exampletitle={},
+    breakable=true,
+    frame hidden,
+    #1,
+}
 
 %%
 %% end added
 %%
-
-\input{./pandoc/macros.tex}
 
 \begin{document}
 
 %%
 %% begin titlepage
 %%
-$if(beamer)$
-$else$
 $if(titlepage)$
 \begin{titlepage}
   \newgeometry{top=2cm, right=4cm, bottom=3cm, left=4cm}
@@ -982,32 +910,29 @@ $if(titlepage)$
 \restoregeometry
 \pagenumbering{arabic}
 $endif$
-$endif$
 
 %%
 %% end titlepage
 %%
 
 
-$if(note)$
-\begin{note}%[cadretitle = Contexte - Scénario - Prérequis]
-  Dans ce projet tu vas ...
-\end{note}
-$endif$
+% $if(note)$
+% \begin{note}%[cadretitle = Contexte - Scénario - Prérequis]
+%   Dans ce projet tu vas ...
+% \end{note}
+% $endif$
 
-$if(danger)$
-\begin{danger}%[cadretitle = Contexte - Scénario - Prérequis]
-  Dans ce projet tu vas ...
-\end{danger}
-$endif$
+% $if(danger)$
+% \begin{danger}%[cadretitle = Contexte - Scénario - Prérequis]
+%   Dans ce projet tu vas ...
+% \end{danger}
+% $endif$
 
 $if(has-frontmatter)$
 \frontmatter
 $endif$
 $if(title)$
-$if(beamer)$
-\frame{\titlepage}
-$endif$
+
 $if(abstract)$
 \begin{abstract}
   $abstract$
@@ -1028,28 +953,16 @@ $if(toc)$
 $if(toc-title)$
 \renewcommand*\contentsname{$toc-title$}
 $endif$
-$if(beamer)$
-\begin{frame}[allowframebreaks]
-  $if(toc-title)$
-  \frametitle{$toc-title$}
-  $endif$
-  \tableofcontents[hideallsubsections]
-\end{frame}
+
+$if(colorlinks)$
+\hypersetup{linkcolor=$if(toccolor)$$toccolor$$else$$endif$}
+$endif$
+\setcounter{tocdepth}{$toc-depth$}
+\tableofcontents
 $if(toc-own-page)$
 \newpage
 $endif$
-$else$
-{
-    $if(colorlinks)$
-    \hypersetup{linkcolor=$if(toccolor)$$toccolor$$else$$endif$}
-    $endif$
-    \setcounter{tocdepth}{$toc-depth$}
-    \tableofcontents
-    $if(toc-own-page)$
-    \newpage
-    $endif$
-  }
-$endif$
+
 $endif$
 $if(lof)$
 \listoffigures
@@ -1077,27 +990,11 @@ $else$
 \renewcommand\refname{$biblio-title$}
 $endif$
 $endif$
-$if(beamer)$
-\begin{frame}[allowframebreaks]{$biblio-title$}
-  \bibliographytrue
-  $endif$
-  \bibliography{abbrev3,crypto}{$for(bibliography)$$bibliography$$sep$,$endfor$}
-  $if(beamer)$
-\end{frame}
-$endif$
 
 $endif$
 $endif$
 $if(biblatex)$
-$if(beamer)$
-\begin{frame}[allowframebreaks]
-  \bibliographytrue
-  \printbibliography[heading=none]
-\end{frame}
-$else$
-\printbibliography$if(biblio-title)$[title=$biblio-title$]$endif$
-$endif$
-
+  \printbibliography$if(biblio-title)$[title=$biblio-title$]$endif$
 $endif$
 $for(include-after)$
 $include-after$

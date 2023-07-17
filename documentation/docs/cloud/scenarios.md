@@ -1,7 +1,9 @@
 MSE enables two security scenarios.
 The scenario is selected through the settings of the app configuration file.
 
-!!! info "In the case of the SaaS MSE offering, Cosmian is the operator and the cloud provider is Azure or OVH."
+!!! info "Info" 
+
+    In the case of the SaaS MSE offering, Cosmian is the operator and the cloud provider is Azure or OVH.
 
 ## Zero trust: collaborative confidential computation (CCC)
 
@@ -20,7 +22,9 @@ The Algorithm Provider (_app owner_) wishes to offer the prediction/analysis cap
 
 The Data Provider (_app user_) wishes to operate the algorithms on its data but wants to keep them private from everyone (algorithm provider, operator, cloud provider, and another potential data provider).
 
-!!! info "This scenario is the **default mode** of the `deploy` subcommand."
+!!! info "Info"
+
+    This scenario is the **default mode** of the `deploy` subcommand.
 
 ## App owner trusted: fully encrypted SaaS
 
@@ -41,7 +45,9 @@ The bank (_app owner_) wishes to keep its code private from the operator and fro
 The bank's customer (_app user_) trusts the bank: the bank already has its data in clear text.
 However, the customer and the bank wish to keep the data private from the operator and the cloud provider.
 
-!!! info "The app owner has to provide an SSL certificate when deploying its application, using the `ssl` paragraph in the config file."
+!!! info "Info"
+
+    The app owner has to provide an SSL certificate when deploying its application, using the `ssl` paragraph in the config file.
 
 ## Deploying using `--untrusted-ssl`
 
