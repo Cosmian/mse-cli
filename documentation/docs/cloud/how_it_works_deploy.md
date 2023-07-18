@@ -1,4 +1,4 @@
-# Overview
+## Overview
 
 The deployment step consists for the app owner in deploying their application into MSE. Basically:
 
@@ -19,13 +19,13 @@ The deployment is breaking down into two stages:
 When you use `mse cloud deploy` these two stages are merged into this single subcommand.
 
 
-# Deployment process
+## Deployment process
 
 Let's describe in a deeper way what happens when the *app owner* uses: `mse cloud deploy`.
 
 ![](../images/deploy-process.png)
 
-## Stage 1: code encryption when dispatching
+### Stage 1: code encryption when dispatching
 
 In stage 1, because the TLS connection between the app owner and Cosmian are managed by Cosmian and because the app owner wants to protect their code from Cosmian, the code is sent encrypted to Cosmian with a key only known by the app owner. 
 
@@ -33,7 +33,7 @@ The cryptography specifications are explained [here](security.md).
 
 All the [ scenarios](./scenarios.md) proceed that way. 
 
-## MSE instance verification
+### MSE instance verification
 
 Between stage 1 and stage 2, the app owner should verify the MSE app, that is to say:
 
@@ -47,7 +47,7 @@ This stage is skipped when deploying using `--no-verify`.
 
 For more details about this step, read [security](security.md).
 
-## Stage 2: secret data configuration
+### Stage 2: secret data configuration
 
 At this point, the app owner has sent their encrypted code inside the MSE node and trusts it. 
 Before the application being able to start, the MSE node needs several extra secret parameters:
@@ -57,7 +57,7 @@ Before the application being able to start, the MSE node needs several extra sec
 
 Both these parameters are sent straight to the MSE node using the dedicated TLS connection managed by the enclave. Therefore, only the MSE app can decrypt the app code previously sent.
 
-# Start the application
+## Start the application
 
 The app owner code is decrypted and started. 
 

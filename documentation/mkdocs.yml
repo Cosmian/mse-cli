@@ -68,7 +68,6 @@ nav:
       - Security Model: cloud/security.md
       - App Deployment Flow: cloud/how_it_works_deploy.md
       - App Usage Flow: cloud/how_it_works_use.md
-
   - Home:
       - Getting started: home/getting_started.md
       - Develop: home/develop.md

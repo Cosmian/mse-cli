@@ -1,4 +1,4 @@
-# What is Microservice Encryption?
+## What is Microservice Encryption?
 
 Microservice Encryption (MSE) allows to easily deploy confidential web application written in Python in Cosmian’s infrastructure with the following security features:
 
@@ -10,7 +10,7 @@ Discover MSE Cloud with [Getting Started](cloud/getting_started.md).
 
 You can also deploy a confidential web application on your self-managed Trusted Execution Environment in a multi-part scenario (see [MSE Home](home/getting_started.md) for more information). 
 
-# What does MSE protect?
+## What does MSE protect?
 
 Basically MSE protects any data and metadata against us and the underlying cloud provider who owns the hardware infrastructure.
 

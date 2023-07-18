@@ -65,6 +65,9 @@ then
     #common_sed "s/$\`/$/g" "${output}.pd"
     #common_sed "s/\`\\$/$/g" "${output}.pd"
 
+    # Replace ### by ##
+    # perl -i  -0pe "s/(^#)(###* ?)/\2/smg" "${output}.pd"
+
     # Replace ```math ... ```by $$...$$
     perl -i  -0pe "s/(\`\`\`math)(.+?)(\`\`\`)/\\$\\$\2\\$\\$/smg" "${output}.pd"
 
