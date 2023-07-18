@@ -2,7 +2,7 @@
 
     To launch your first confidential microservice, follow this tutorial in your favorite terminal.
 
-## Install
+# Install
 
 The CLI tool `mse` requires at least [Python](https://www.python.org/downloads/) 3.8 and [OpenSSL](https://www.openssl.org/source/) 1.1.1 series.
 It is recommended to use [pyenv](https://github.com/pyenv/pyenv) to manage different Python interpreters.
@@ -34,7 +34,7 @@ operations:
                         sign-in required)
 ```
 
-## Log in
+# Log in
 
 ```{.console}
 $ mse cloud login
@@ -48,7 +48,7 @@ You can skip the payment information by selecting a free plan.
 
 The credential tokens are saved in `~/.config` on Linux/MacOS and `C:\Users\<username>\AppData` on Windows.
 
-## Deploy your first web application
+# Deploy your first web application
 
 Let's start with a simple Flask Hello World application:
 
@@ -101,7 +101,7 @@ if __name__ == "__main__":
 
 ```
 
-The [configuration file](./configuration.md) is a TOML file:
+The [ configuration file](./configuration.md) is a TOML file:
 
 ```toml
 name = "helloworld"
@@ -177,12 +177,12 @@ At this point, you can write your [own Flask application](#going-further) and de
     To be compliant with MSE your Python application must be an [ASGI](https://asgi.readthedocs.io) or [WSGI](https://wsgi.readthedocs.io) application. It is not possible to deploy a standalone Python program. 
     In the next example, this documentation will describe how to deploy Flask applications. You also can use other ASGI applications, for instance: FastAPI.
 
-!!! Examples
+!!! Examples "Examples"
 
     Visit [mse-app-examples](https://github.com/Cosmian/mse-app-examples) to find MSE application examples.
 
 
-## Verify the trustworthiness of your app (remove `--no-verify`)
+# Verify the trustworthiness of your app (remove `--no-verify`)
 
 !!! info "Pre-requisites"
 
@@ -220,7 +220,7 @@ You can now quickly test your application doing: `curl https://74638f07-c85c-41d
 As you can see, the warning message has been removed for the output of your previous command and the trustworthiness of the app has been checked.
 
 
-## Secure the SSL connection (remove `--untrusted-ssl`)
+# Secure the SSL connection (remove `--untrusted-ssl`)
 
 In this step, we will redeploy your previous app but without the insecure argument `--untrusted-ssl`. You need to use an end-to-end SSL connection from you to the application. That way, no one but the enclave can read the content of the queries. For more details, please refer to [the app deployment flow](how_it_works_deploy.md) and [the app usage flow](how_it_works_use.md).
 
@@ -263,7 +263,7 @@ $ curl "https://123456789abcdef.cosmian.app" --cacert /tmp/tmpntxibdo6/cert.conf
     The previous fully secured deployment method without any insecure arguments is the preferred way to deploy your application in production
 
 
-## Going further
+# Going further
 
 Read [develop your own app](develop.md) to go further, such as:
 

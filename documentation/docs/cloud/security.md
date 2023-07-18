@@ -1,4 +1,4 @@
-## Intel SGX and Gramine
+# Intel SGX and Gramine
 
 Intel Software Guard eXtensions (SGX) offers hardware-based memory encryption that isolates specific application code and data in memory.
 Intel SGX allows user-level code to allocate private regions of memory, called enclaves, which are designed to be protected from processes running at higher privilege levels.
@@ -6,13 +6,13 @@ Intel SGX allows user-level code to allocate private regions of memory, called e
 Because working with Intel SGX requires low-level C programming with the Intel SDK, we use Gramine-SGX, a lightweight guest OS designed to run a single Linux application with minimal host requirements and no modification.
 It is the foundation of Microservice Encryption which allows us to expose a Python confidential web microservices in the cloud.
 
-## Code encryption
+# Code encryption
 
 Before sending the Python code of your microservice, each file is encrypted with XSalsa20-Poly1305 using a random symmetric key.
 The symmetric key is provisioned when you are confident that your code is running in the microservice by doing the remote attestation.
 
 
-## Remote attestation
+# Remote attestation
 
 A very important aspect Intel SGX (and more generally Trusted Execution Environments) is attestation.
 This is a mechanism for a remote user to verify that the application runs on a real hardware in an up-to-date hardware and software with the expected initial state.
@@ -30,7 +30,7 @@ Verification of trustworthiness is done using [intel-sgx-ra](https://github.com/
 
 The *SGX quote* is embedded in the TLS certificate used by the microservice in a protocol called RA-TLS.
 
-## RA-TLS
+# RA-TLS
 
 To ease the transport of the quote without modifying TLS, the quote is directly embedded in an X509 extension of the TLS certificate.
 In addition, a SHA-256 hash digest of the certificate public key is included in the `REPORTDATA` field of the quote to link the quote to the certificate (i.e. the certificate has been generated in the code corresponding to `MRENCLAVE`).

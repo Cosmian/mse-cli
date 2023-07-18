@@ -1,4 +1,4 @@
-!!! info User
+!!! info "User"
 
     This command is designed to be used by the **SGX operator**
 
