@@ -1,11 +1,9 @@
 !!! info "Welcome to Microservice Encryption Home deployment tutorial"
 
-    To launch your first confidential microservice, follow this tutorial in your favorite terminal.
-
-    You don't need to be logged in the MSE console to run MSE Home.
+    To launch your first confidential microservice, follow this tutorial in your favorite terminal. You don't need to be logged in the MSE console to run MSE Home.
 
 
-MSE Home 🏕️ is designed to start an MSE application on your own SGX hardware without using the MSE cloud infrastructure at all. 
+MSE Home is designed to start an MSE application on your own SGX hardware without using the MSE cloud infrastructure at all. 
 
 We explain later how all the subscommands can be chained to deploy your own application. 
 
@@ -322,7 +320,7 @@ Always run this step before communicating to the users about the deployment comp
     This command is designed to be used by the **code provider**
 
 
-### Fetching `/result/secrets` endpoint
+## Fetching `/result/secrets` endpoint
 
 First, the SGX operator collects the result (which is encrypted):
 
@@ -357,7 +355,7 @@ the env variable `SECRETS_PATH` to get the `key` value, using it to encrypt a te
 
 This demonstrates that `secrets.json` file has been well setup for the enclave and is easily accessible through an env variable.
 
-### Fetching `/result/sealed_secrets` endpoint
+## Fetching `/result/sealed_secrets` endpoint
 
 !!! info "Sealed secrets"
 
