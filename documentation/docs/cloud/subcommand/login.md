@@ -1,4 +1,4 @@
-Basic usage examples can be found in [Getting started](../getting_started.md) page.
+Basic usage examples can be found in [ Getting started](../getting_started.md) page.
 
 You also can print which user is logged in using:
 

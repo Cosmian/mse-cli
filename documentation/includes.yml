@@ -1,6 +1,6 @@
 ---
 title: Cosmian Technical Documentation
-subtitle: APIs, libraries and Server Components
+subtitle: Microservice Encryption
 citation_package: biblatex
 # bibliography:
 # - biblio.bib
@@ -16,13 +16,17 @@ toc: true
 toc-title: Table Of Contents
 toc-depth: 3
 titlepage-logo: ./pandoc/cosmian.png
-logo-width: 200pt
 lang: en-GB
+mainfont: DejaVuSans.ttf
+sansfont: DejaVuSans.ttf
+monofont: DejaVuSansMono.ttf
+mathfont: texgyredejavu-math.otf
 footer-left: Confidential
 footer-center: © Copyright 2018-2023 Cosmian. All rights reserved
 header-left: ./pandoc/favicon.png
 header-includes:
   - \setcounter{page}{0} # So that the titlepage is the zeroth page
+  - \usepackage{underscore}
 pandoc-latex-admonition:
   # order is important
   - color: firebrick

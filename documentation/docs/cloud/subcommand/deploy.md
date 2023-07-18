@@ -1,7 +1,7 @@
 
-Basic usage examples can be found in [Getting started](../getting_started.md) page.
+Basic usage examples can be found in [ Getting started](../getting_started.md) page.
 
-### Deploying the same app multiple times
+## Deploying the same app multiple times
 
 The name of an application is unique in your project, so it is not possible to have twice the same named app
 running at the same time in the same project.
@@ -20,7 +20,7 @@ Deploying your app...
 …
 ```
 
-### About domain names
+## About domain names
 
 When deploying an application, a random dedicated domain name ID is given, for example:
 
@@ -57,10 +57,10 @@ You can now run `mse cloud logs f565385d-8c69-4001-a75d-8d84c17e312b` if necessa
 A new deployment ID is used: `f565385d-8c69-4001-a75d-8d84c17e312b`.
 The URL of your microservice remains the same: `https://81152fe21315.cosmian.dev`
 
-#### Domain name and SSL configuration
+## Domain name and SSL configuration
 
 If the SSL configuration change, you cannot use the same URL, because the domain name is carried by the certificate.
 
-For example, an application is running behind your own certificate ([fully encrypted SaaS](../scenarios.md#app-owner-trusted-fully-encrypted-saas) scenario), and you want to move it back in dev mode.
+For example, an application is running behind your own certificate ([ fully encrypted SaaS](../scenarios.md#app-owner-trusted-fully-encrypted-saas) scenario), and you want to move it back in dev mode.
 
 The public domain name (used with your own certificate) cannot be used by Cosmian with the certificate that will be created, because we don't own that domain name.

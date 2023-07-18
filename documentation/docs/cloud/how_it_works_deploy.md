@@ -9,9 +9,11 @@ The deployment step consists for the app owner in deploying their application in
 The deployment is breaking down into two stages: 
 
 - The first one consists in interacting with the Cosmian MSE backend by sending the code and the configuration
-![](../images/deploy-stage-1.png)
+
+  ![](../images/deploy-stage-1.png)
 
 - The second one consists in interacting right with the spawned MSE node
+
   ![](../images/deploy-stage-2.png)
 
 When you use `mse cloud deploy` these two stages are merged into this single subcommand.
@@ -29,7 +31,7 @@ In stage 1, because the TLS connection between the app owner and Cosmian are man
 
 The cryptography specifications are explained [here](security.md).
 
-All the [scenarios](./scenarios.md) proceed that way. 
+All the [ scenarios](./scenarios.md) proceed that way. 
 
 ### MSE instance verification
 
@@ -51,7 +53,7 @@ At this point, the app owner has sent their encrypted code inside the MSE node a
 Before the application being able to start, the MSE node needs several extra secret parameters:
 
 - The key to decrypt the code
-- The private key of the SSL certificate if the TLS connection of the app is managed by the app owner ([scenario #2](./scenarios.md#app-owner-trust-approach-fully-encrypted-saas))
+- The private key of the SSL certificate if the TLS connection of the app is managed by the app owner ([ scenario #2](./scenarios.md#app-owner-trust-approach-fully-encrypted-saas))
 
 Both these parameters are sent straight to the MSE node using the dedicated TLS connection managed by the enclave. Therefore, only the MSE app can decrypt the app code previously sent.
 
@@ -59,5 +61,5 @@ Both these parameters are sent straight to the MSE node using the dedicated TLS 
 
 The app owner code is decrypted and started. 
 
-The TLS connection used is described in the [next paragraph](./how_it_works_use.md)
+The TLS connection used is described in the [ next paragraph](./how_it_works_use.md)
 

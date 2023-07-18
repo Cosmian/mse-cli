@@ -55,7 +55,7 @@ $ curl http://localhost:5000/
 $ pytest
 ```
 
-Refer to [docker configuration](./configuration.md#mse-docker) for more details.
+Refer to [ docker configuration](./configuration.md#mse-docker) for more details.
 
 ## Using a third-party service with secrets
 
@@ -169,10 +169,10 @@ Your application owns a dedicated storage up to 10GB. The useful directories are
 
 |       Env       |              Path               | Encrypted (1) | Persistent (2) |                                                   Comments                                                    |
 | :-------------: | :-----------------------------: | :-----------: | :------------: | :-----------------------------------------------------------------------------------------------------------: |
-|     `$HOME`     |             `/root`             |       ✅       |       ❌        | Could be used by third-party libraries (your application dependencies) to store caches or configuration files |
-| `$SECRETS_PATH` | `$HOME/.cache/mse/secrets.json` |       ✅       |       ❌        |                The application secrets file you have sent as described in the previous section                |
-|   `$TMP_PATH`   |             `/tmp`              |       ✅       |       ❌        |                                              A temporary folder                                               |
-| `$MODULE_PATH`  |           `/mse-app`            |       ✅       |       ❌        |                                   Containing the decrypted application code                                   |
+|     `$HOME`     |             `/root`             |       ✔️       |       ✖️        | Could be used by third-party libraries (your application dependencies) to store caches or configuration files |
+| `$SECRETS_PATH` | `$HOME/.cache/mse/secrets.json` |       ✔️       |       ✖️        |                The application secrets file you have sent as described in the previous section                |
+|   `$TMP_PATH`   |             `/tmp`              |       ✔️       |       ✖️        |                                              A temporary folder                                               |
+| `$MODULE_PATH`  |           `/mse-app`            |       ✔️       |       ✖️        |                                   Containing the decrypted application code                                   |
 
 Please note that writing operations in `$HOME` are about 2.5 times slower than in a `$TMP_PATH`. However, the max file size you can allocate in `$TMP_PATH` is `hardware_memory / 4` and the number of files has no limit since the sum of their size is lower than the size still available. Choose wisely the file location based on your own application constraints.
 

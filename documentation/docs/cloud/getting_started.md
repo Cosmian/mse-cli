@@ -101,7 +101,7 @@ if __name__ == "__main__":
 
 ```
 
-The [configuration file](./configuration.md) is a TOML file:
+The [ configuration file](./configuration.md) is a TOML file:
 
 ```toml
 name = "helloworld"
@@ -177,7 +177,7 @@ At this point, you can write your [own Flask application](#going-further) and de
     To be compliant with MSE your Python application must be an [ASGI](https://asgi.readthedocs.io) or [WSGI](https://wsgi.readthedocs.io) application. It is not possible to deploy a standalone Python program. 
     In the next example, this documentation will describe how to deploy Flask applications. You also can use other ASGI applications, for instance: FastAPI.
 
-!!! Examples
+!!! Examples "Examples"
 
     Visit [mse-app-examples](https://github.com/Cosmian/mse-app-examples) to find MSE application examples.
 
