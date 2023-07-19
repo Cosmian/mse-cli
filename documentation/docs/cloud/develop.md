@@ -194,7 +194,7 @@ When running the Docker container locally, you can use the option `--memory` to 
 
 !!! info "Requirements"
 
-    The MSE environment is running on `Ubuntu 20.04` with `python 3.8`.
+    The MSE environment is running on `Ubuntu 22.04` with `python 3.10`.
 
 
 Please find below limitations that you need to consider to be able to run your application in MSE:
