@@ -23,10 +23,7 @@ Since you have installed `docker` in the previous step on your own machine, you 
 
 ```{.console}
 $ cd helloworld
-$ mse cloud test 
-$ # from another terminal
-$ curl http://localhost:5000/
-$ pytest
+$ mse cloud localtest
 ```
 
 
@@ -49,10 +46,7 @@ You can test your application against your brand new Docker by editing the field
 
 ```{.console}
 $ cd helloworld
-$ mse cloud test 
-$ # from another terminal
-$ curl http://localhost:5000/
-$ pytest
+$ mse cloud localtest
 ```
 
 Refer to [ docker configuration](./configuration.md#mse-docker) for more details.

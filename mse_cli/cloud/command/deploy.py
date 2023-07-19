@@ -194,7 +194,7 @@ def run(args) -> None:
 
     if app.ssl_certificate_origin == SSLCertificateOrigin.Self:
         LOG.advice(  # type: ignore
-            "You can now test your application doing `mse home test` "
+            "You can now test your application doing `mse cloud test` "
             "or use it as follow: \n\n\tcurl https://%s%s --cacert %s\n",
             app.domain_name,
             app.healthcheck_endpoint,
@@ -202,7 +202,7 @@ def run(args) -> None:
         )
     else:
         LOG.advice(  # type: ignore
-            "You can now test your application doing `mse home test` "
+            "You can now test your application doing `mse cloud test` "
             "or use it as follow: \n\n\tcurl https://%s%s\n",
             app.domain_name,
             app.healthcheck_endpoint,
