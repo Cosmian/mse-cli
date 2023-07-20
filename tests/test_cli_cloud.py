@@ -117,6 +117,7 @@ def _test_deploy(
                 "no_verify": False,
                 "untrusted_ssl": untrusted_ssl,
                 "workspace": tmp_path,
+                "timeout": 15,
             }
         )
     )

@@ -157,6 +157,7 @@ def test_deploy_non_free(tmp_path):
                     "no_verify": False,
                     "untrusted_ssl": False,
                     "workspace": tmp_path,
+                    "timeout": 15,
                 }
             )
         )
@@ -179,6 +180,7 @@ def test_deploy_bad_projet_name(tmp_path):
                     "no_verify": False,
                     "untrusted_ssl": False,
                     "workspace": tmp_path,
+                    "timeout": 15,
                 }
             )
         )
@@ -200,6 +202,7 @@ def test_deploy_bad_app(tmp_path):
                     "no_verify": False,
                     "untrusted_ssl": False,
                     "workspace": tmp_path,
+                    "timeout": 15,
                 }
             )
         )
@@ -219,6 +222,7 @@ def test_deploy_bad_docker(tmp_path):
                     "no_verify": False,
                     "untrusted_ssl": False,
                     "workspace": tmp_path,
+                    "timeout": 15,
                 }
             )
         )
@@ -241,6 +245,7 @@ def test_deploy_latest_docker(tmp_path):
                     "no_verify": False,
                     "untrusted_ssl": False,
                     "workspace": tmp_path,
+                    "timeout": 15,
                 }
             )
         )
