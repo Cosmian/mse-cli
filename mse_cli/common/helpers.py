@@ -114,6 +114,7 @@ def try_run_test_docker(
     test_path: Path,
     secrets_path: Optional[Path],
     sealed_secrets_path: Optional[Path],
+    ignore_tests: bool = False,
 ):
     """Try to start the app docker to test."""
     success = False
@@ -126,12 +127,25 @@ def try_run_test_docker(
             app_config.healthcheck_endpoint,
         )
 
-        success = run_tests(
-            app_config,
-            test_path,
-            secrets_path,
-            sealed_secrets_path,
-        )
+        if not ignore_tests:
+            success = run_tests(
+                app_config,
+                test_path,
+                secrets_path,
+                sealed_secrets_path,
+            )
+        else:
+            LOG.info(
+                "The docker '%s' is started. "
+                "You can now query your application on http://localhost:%s",
+                docker_name,
+                docker_config.port,
+            )
+
+            success = True
+
+            for line in container.logs(stream=True):
+                LOG.info(line.decode("utf-8").strip())
 
     except Exception as exc:
         raise exc

@@ -56,6 +56,12 @@ def add_subparser(subparsers):
         help="the secrets JSON to seal file path (unsealed for the test purpose)",
     )
 
+    parser.add_argument(
+        "--no-tests",
+        action="store_true",
+        help="do not run the tests: just start the docker",
+    )
+
     parser.set_defaults(func=run)
 
 
@@ -145,6 +151,7 @@ def run(args) -> None:
         test_path,
         secrets_path,
         sealed_secrets_path,
+        args.no_tests,
     )
 
 
