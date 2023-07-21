@@ -26,6 +26,12 @@ def add_subparser(subparsers):
         help="path to the MSE app to test (current directory if not set)",
     )
 
+    parser.add_argument(
+        "--no-tests",
+        action="store_true",
+        help="do not run the tests: just start the docker",
+    )
+
     parser.set_defaults(func=run)
 
 
@@ -61,4 +67,5 @@ def run(args) -> None:
         cloud_conf.tests,
         None,
         None,
+        args.no_tests,
     )

@@ -27,6 +27,8 @@ The docker will start your Flask server. Once started, the tests will be run bas
 We recommend to run this test before any deployment.
 It ensures that the Docker contains all the dependencies needed for your own application.
 
+You can also add an extra argument: `--no-tests`. If so, the docker is started but no test is run. You can therefore run any requests or programs against the spawned docker. 
+
 
 !!! warning "Opened port"
 
