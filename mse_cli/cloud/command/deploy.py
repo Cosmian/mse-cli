@@ -76,6 +76,15 @@ def add_subparser(subparsers):
         help="directory to write the temporary files",
     )
 
+    parser.add_argument(
+        "--timeout",
+        type=int,
+        required=False,
+        default=24 * 60,
+        help="stop the deployment if the application does not "
+        "respond after a delay (in min). (Default: 1440 min)",
+    )
+
     parser.set_defaults(func=run)
 
 
@@ -134,7 +143,7 @@ def run(args) -> None:
         "To follow the app creation, you can run: \n\n\tmse cloud logs %s\n", app.id
     )
 
-    app = wait_app_creation(conn, app.id)
+    app = wait_app_creation(conn, app.id, args.timeout)
 
     context.run(
         app.id,
@@ -172,7 +181,7 @@ def run(args) -> None:
         app_secrets=cloud_conf.secrets_data,
     )
 
-    app = wait_app_start(conn, app.id)
+    app = wait_app_start(conn, app.id, args.timeout)
 
     LOG.success(  # type: ignore
         "Your application is now deployed and ready to be used on https://%s until %s",
@@ -194,7 +203,7 @@ def run(args) -> None:
 
     if app.ssl_certificate_origin == SSLCertificateOrigin.Self:
         LOG.advice(  # type: ignore
-            "You can now test your application doing `mse home test` "
+            "You can now test your application doing `mse cloud test` "
             "or use it as follow: \n\n\tcurl https://%s%s --cacert %s\n",
             app.domain_name,
             app.healthcheck_endpoint,
@@ -202,7 +211,7 @@ def run(args) -> None:
         )
     else:
         LOG.advice(  # type: ignore
-            "You can now test your application doing `mse home test` "
+            "You can now test your application doing `mse cloud test` "
             "or use it as follow: \n\n\tcurl https://%s%s\n",
             app.domain_name,
             app.healthcheck_endpoint,
@@ -213,12 +222,12 @@ def run(args) -> None:
     # shutil.rmtree(context.workspace)
 
 
-def wait_app_start(conn: Connection, app_id: UUID) -> App:
+def wait_app_start(conn: Connection, app_id: UUID, timeout: int) -> App:
     """Wait for the app to be started."""
     with Spinner("Waiting for your application to be ready... "):
         clock = ClockTick(
             period=3,
-            timeout=15 * 60,
+            timeout=timeout * 60,
             message="MSE is at high capacity right now! Try again later.",
         )
         while clock.tick():
@@ -299,12 +308,12 @@ def deploy_app(conn: Connection, app_conf: AppConf, tar_path: Path) -> App:
     return App.from_dict(r.json())
 
 
-def wait_app_creation(conn: Connection, app_id: UUID) -> App:
+def wait_app_creation(conn: Connection, app_id: UUID, timeout: int) -> App:
     """Wait for the app to be deployed."""
     with Spinner(f"Creating app {app_id}... "):
         clock = ClockTick(
             period=3,
-            timeout=15 * 60,
+            timeout=timeout * 60,
             message="MSE is at high capacity right now! Try again later.",
         )
         while clock.tick():

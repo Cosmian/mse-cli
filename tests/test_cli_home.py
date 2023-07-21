@@ -68,6 +68,7 @@ def test_test_dev(cmd_log: io.StringIO):
                 "secrets": pytest.app_path / "secrets.json",
                 "sealed_secrets": pytest.app_path / "secrets_to_seal.json",
                 "test": pytest.app_path / "tests",
+                "no_tests": False,
             }
         )
     )
@@ -90,6 +91,7 @@ def test_test_dev_project(cmd_log: io.StringIO):
                 "secrets": None,
                 "sealed_secrets": None,
                 "test": None,
+                "no_tests": False,
             }
         )
     )

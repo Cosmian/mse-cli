@@ -1,4 +1,12 @@
-## \[1.0.0\] - 2023-07-01
+## \[1.0.1\] - 2023-07-19
+
+### Updated
+
+* Fix obsolete subcommands in the documentation
+* Add a timeout option when using `deploy` subcommand (default is 1440 minutes)
+* New args for localtest: `--no-tests`
+
+## \[1.0.0\] - 2023-07-18
 
 ### Added
 

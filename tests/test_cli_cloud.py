@@ -91,7 +91,7 @@ def _test_scaffold(workspace) -> Path:
 
 def _test_localtest(f: io.StringIO, conf: Path) -> None:
     """Test the localtest subcommand."""
-    run_localtest(Namespace(**{"path": conf}))
+    run_localtest(Namespace(**{"path": conf, "no_tests": False}))
 
     assert "Tests successful" in capture_logs(f)
 
@@ -117,6 +117,7 @@ def _test_deploy(
                 "no_verify": False,
                 "untrusted_ssl": untrusted_ssl,
                 "workspace": tmp_path,
+                "timeout": 15,
             }
         )
     )
