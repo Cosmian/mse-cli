@@ -13,7 +13,7 @@ RUN apt-get update && \
 
 COPY . /mse-cli
 WORKDIR /mse-cli
-RUN pip install -r requirements.txt && pip install -U .
+RUN pip install .
 
 RUN mkdir -p /mnt/workspace
 WORKDIR /mnt/workspace

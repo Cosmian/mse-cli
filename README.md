@@ -11,8 +11,7 @@ Read the [MSE documentation](https://docs.cosmian.com/microservice_encryption/).
 ## Install
 
 ```console
-$ pip install -r requirements.txt
-$ pip install -U .
+$ pip install mse-cli
 ```
 
 ## Usage
