@@ -80,11 +80,11 @@ def collect_evidence_and_certificate(
     # Get the certificate from the application
     try:
         ratls_cert = load_pem_x509_certificate(
-            get_server_certificate(("localhost", docker.port)).encode("utf-8")
+            get_server_certificate((docker.host, docker.port)).encode("utf-8")
         )
     except (ssl.SSLZeroReturnError, socket.gaierror, ssl.SSLEOFError) as exc:
         raise ConnectionError(
-            f"Can't reach localhost:{docker.port}. "
+            f"Can't reach {docker.host}:{docker.port}. "
             "Are you sure the application is still running?"
         ) from exc
 

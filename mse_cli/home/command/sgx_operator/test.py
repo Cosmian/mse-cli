@@ -47,7 +47,7 @@ def run(args) -> None:
 
     docker = SgxDockerConfig.load(container.attrs, container.labels)
 
-    if is_waiting_for_secrets(f"https://localhost:{docker.port}"):
+    if is_waiting_for_secrets(f"https://{docker.host}:{docker.port}"):
         raise AppContainerBadState(
             "Your application is waiting for secrets and can't be tested right now."
         )
@@ -61,7 +61,9 @@ def run(args) -> None:
         subprocess.check_call(
             code_config.tests_cmd,
             cwd=args.test,
-            env=dict(os.environ, TEST_REMOTE_URL=f"https://localhost:{docker.port}"),
+            env=dict(
+                os.environ, TEST_REMOTE_URL=f"https://{docker.host}:{docker.port}"
+            ),
         )
 
         LOG.info("Tests successful")

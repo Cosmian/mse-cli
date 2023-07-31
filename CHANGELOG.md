@@ -1,3 +1,16 @@
+# CHANGELOG
+
+## \[1.1\] - 2023-07-31
+
+### Added
+
+* [MSE Home] Support of Microsoft Azure attestation
+
+### Updated
+
+* [MSE Home] Fix hardcoded localhost occurences
+* [MSE Home] Fix explicit usage of host, subject and subject alternative name
+
 ## \[1.0.1\] - 2023-07-19
 
 ### Updated

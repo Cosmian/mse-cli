@@ -1,5 +1,6 @@
 """mse_cli.home.command.code_provider.decrypt module."""
 
+import sys
 from pathlib import Path
 
 from cryptography.fernet import Fernet
@@ -29,8 +30,7 @@ def add_subparser(subparsers):
     parser.add_argument(
         "--output",
         type=Path,
-        required=True,
-        help="output file within plaintext",
+        help="file to write decrypted result",
     )
 
     parser.set_defaults(func=run)
@@ -43,6 +43,17 @@ def run(args) -> None:
     key: bytes = args.key.read_bytes()
     encrypted_data: bytes = args.file.read_bytes()
 
-    args.output.write_bytes(Fernet(key).decrypt(encrypted_data))
+    data: bytes = Fernet(key).decrypt(encrypted_data)
 
-    LOG.info("File sucessfully decrypted in %s", args.output)
+    if args.output:
+        args.output.write_bytes(data)
+        LOG.info("File sucessfully decrypted to %s", args.output)
+    else:
+        try:
+            LOG.info("Data sucessfully decrypted!")
+            LOG.info(
+                "----------------------------------------------------------------------"
+            )
+            sys.stdout.write(data.decode("utf-8"))
+        except UnicodeDecodeError:
+            sys.stdout.write(data.hex())
