@@ -29,9 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install -r requirements-dev.txt
-          pip install .
+          python -m pip install '.[dev,deploy]'
 
       - name: Run integration tests
         env:
@@ -48,4 +46,4 @@ jobs:
           echo 'email = "alice@cosmian.com"' > ${MSE_CONF_PATH}/login.toml
           echo "refresh_token = \"${REFRESH_TOKEN}\"" >> ${MSE_CONF_PATH}/login.toml
           echo "Running tests using ${MSE_BASE_URL}"
-          pytest -m cloud
+          python -m pytest -m cloud
