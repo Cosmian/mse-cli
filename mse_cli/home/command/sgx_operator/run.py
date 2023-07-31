@@ -68,7 +68,7 @@ def run(args) -> None:
 
     docker = SgxDockerConfig.load(container.attrs, container.labels)
 
-    if not is_waiting_for_secrets(f"https://localhost:{docker.port}", False):
+    if not is_waiting_for_secrets(f"https://{docker.host}:{docker.port}", False):
         raise AppContainerBadState(
             "Your application is not waiting for secrets. Have you already set it?"
         )
@@ -85,7 +85,7 @@ def run(args) -> None:
 
     LOG.info("Sending data to the configuration server...")
     configure_app(
-        f"https://localhost:{docker.port}",
+        f"https://{docker.host}:{docker.port}",
         data.payload(),
         False,
     )
@@ -98,7 +98,7 @@ def run(args) -> None:
                 timeout=60 * args.timeout,
                 message="Your application is unreachable!",
             ),
-            f"https://localhost:{docker.port}",
+            f"https://{docker.host}:{docker.port}",
             docker.healthcheck,
             False,
             get_running_app_container,
