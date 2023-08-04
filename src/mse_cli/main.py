@@ -25,6 +25,7 @@ from mse_cli.cloud.command import test as cloud_test
 from mse_cli.cloud.command import verify as cloud_verify
 from mse_cli.color import setup_color
 from mse_cli.home.command.code_provider import decrypt as home_decrypt
+from mse_cli.home.command.code_provider import encrypt as home_encrypt
 from mse_cli.home.command.code_provider import localtest as home_localtest
 from mse_cli.home.command.code_provider import package as home_package
 from mse_cli.home.command.code_provider import scaffold as home_scaffold
@@ -88,6 +89,7 @@ def main() -> int:
     cloud_localtest.add_subparser(subparsers_cloud)
     cloud_verify.add_subparser(subparsers_cloud)
 
+    home_encrypt.add_subparser(subparsers_home)
     home_decrypt.add_subparser(subparsers_home)
     home_evidence.add_subparser(subparsers_home)
     home_scaffold.add_subparser(subparsers_home)
