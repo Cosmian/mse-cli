@@ -30,6 +30,7 @@ from mse_cli.home.command.code_provider import localtest as home_localtest
 from mse_cli.home.command.code_provider import package as home_package
 from mse_cli.home.command.code_provider import scaffold as home_scaffold
 from mse_cli.home.command.code_provider import seal as home_seal
+from mse_cli.home.command.code_provider import unseal as home_unseal
 from mse_cli.home.command.code_provider import verify as home_verify
 from mse_cli.home.command.sgx_operator import evidence as home_evidence
 from mse_cli.home.command.sgx_operator import list_all as home_list_all
@@ -100,6 +101,7 @@ def main() -> int:
     home_run.add_subparser(subparsers_home)
     home_status.add_subparser(subparsers_home)
     home_seal.add_subparser(subparsers_home)
+    home_unseal.add_subparser(subparsers_home)
     home_spawn.add_subparser(subparsers_home)
     home_stop.add_subparser(subparsers_home)
     home_test.add_subparser(subparsers_home)
@@ -121,6 +123,7 @@ def main() -> int:
         func = args.func
     except AttributeError:
         parser.error("too few arguments")
+        return 1
 
     try:
         func(args)

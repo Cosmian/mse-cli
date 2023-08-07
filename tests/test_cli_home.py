@@ -329,8 +329,8 @@ def test_seal(workspace: Path, cmd_log: io.StringIO):
     do_seal(
         Namespace(
             **{
-                "secrets": pytest.app_path / "secrets_to_seal.json",
-                "cert": pytest.ratls_cert,
+                "input": pytest.app_path / "secrets_to_seal.json",
+                "receiver_ratls_cert": pytest.ratls_cert,
                 "output": workspace,
             }
         )
@@ -340,7 +340,7 @@ def test_seal(workspace: Path, cmd_log: io.StringIO):
     try:
         pytest.sealed_secrets = Path(
             re.search(
-                "Your sealed secrets has been saved at: ([A-Za-z0-9/._-]+)", output
+                "Encrypted file saved to: ([A-Za-z0-9/._-]+)", output
             ).group(1)
         )
     except AttributeError:
