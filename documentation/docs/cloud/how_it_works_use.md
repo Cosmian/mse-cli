@@ -22,7 +22,7 @@ The TLS connection is specific to each scenario:
 In all scenarios but *Zero trust approach* the user trusts the app owner. Therefore, the user does not need to verify the MSE app. So, the user can use the app as if it is running inside a classic cloud. 
 
 ```console
-$ curl https://my_app.cosmian.app/
+$ curl https://my_app.cosmian.io/
 ```
 
 In *Zero trust approach* the user has to verify the MSE app and the SSL certificate before querying the app. The following diagram explains how it works: 
@@ -45,7 +45,7 @@ If one of those fails, the app owner must stop querying the application.
 Otherwise, the app user should use this certificate to proceed the next queries.
 
 ```console
-$ curl https://my_app.cosmian.app/ --cacert verified_cert.pem
+$ curl https://my_app.cosmian.io/ --cacert verified_cert.pem
 ```
 
 For more details about this step, read [security](security.md).
@@ -57,7 +57,7 @@ This verification can be done using: `mse cloud verify`:
 - the verification of the code fingerprint is omitted if you don't provide the previous arguments
 
 ```console
-$ mse cloud verify my_app.cosmian.app
+$ mse cloud verify my_app.cosmian.io
 Checking your app...
 Code fingerprint check skipped!
 Verification: success

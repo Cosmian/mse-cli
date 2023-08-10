@@ -41,7 +41,7 @@ This directory contains:
 
     [instance]
     id = "0b41c2a4-470e-4602-99e2-58a6bf7b123d"
-    config_domain_name = "demo.cosmian.app"
+    config_domain_name = "demo.cosmian.io"
     enclave_size = 1024
     expires_at = "2022-11-19 09:47:26.931077+00:00"
     ssl_secret_origin = "self"
@@ -68,7 +68,7 @@ This directory contains:
 
     [instance]
     id = "d17a9cbd-e2ff-4f77-ba03-e9d8ea58ca2e"
-    config_domain_name = "demo.cosmian.app"
+    config_domain_name = "demo.cosmian.io"
     enclave_size = 1024
     expires_at = "2022-11-18 16:22:11.516125"
     ssl_certificate_origin = "owner"
@@ -94,7 +94,7 @@ This directory contains:
 
     [instance]
     id = "c54a6b71-257e-4b24-bd63-cbbb38429beb"
-    config_domain_name = "demo.cosmian.app"
+    config_domain_name = "demo.cosmian.io"
     enclave_size = 1024
     expires_at = "2022-11-18 16:00:43.352980"
     ssl_certificate_origin = "operator"
