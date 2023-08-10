@@ -189,7 +189,7 @@ def verify_app(
                 context.config.docker,
                 NoSgxDockerConfig(
                     subject=(
-                        "CN=cosmian.app,"
+                        "CN=cosmian.io,"
                         "O=Cosmian Tech,"
                         "C=FR,"
                         "L=Paris,"

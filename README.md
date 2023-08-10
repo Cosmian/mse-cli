@@ -330,7 +330,7 @@ $ docker run -v /mnt/workspace:/mnt/workspace \
              mse cloud deploy --path my_app/mse.toml \
                               --workspace .
 $ # Query it
-$ curl https://ae5ed58137d7ec20.dev.cosmian.app/health --cacert /mnt/workspace/cert.conf.pem
+$ curl https://ae5ed58137d7ec20.dev.cosmian.io/health --cacert /mnt/workspace/ratls.pem
 $ # Test it
 $ docker run -v /mnt/workspace:/mnt/workspace \
              -v $HOME/.config/mse:/root/.config/mse \
@@ -350,7 +350,7 @@ $ docker run -v /mnt/workspace:/mnt/workspace \
              mse context --context 631a988f-4001-4593-a023-d316eb57d1f1.toml \
                          --code my_app/mse_src \
                          --workspace . \
-                         ae5ed58137d7ec20.dev.cosmian.app 
+                         ae5ed58137d7ec20.dev.cosmian.io 
 $ # List your apps
 $ docker run -v /mnt/workspace:/mnt/workspace \
              -v $HOME/.config/mse:/root/.config/mse \
@@ -448,12 +448,12 @@ server {
     server_name  _;
 
     location / {
-         proxy_pass	https://9cc36ebf3c351eba.dev.cosmian.app;
+         proxy_pass	https://9cc36ebf3c351eba.dev.cosmian.io;
 	     # We need the next two lines because the RA-TLS certificate
-         proxy_ssl_trusted_certificate /tmp/tmp4b0174yn/cert.conf.pem;
+         proxy_ssl_trusted_certificate /tmp/tmp4b0174yn/ratls.pem;
          proxy_ssl_verify on;
 	     # We need the next two lines to allow sni routing by the haproxy
-         proxy_ssl_name 9cc36ebf3c351eba.dev.cosmian.app;
+         proxy_ssl_name 9cc36ebf3c351eba.dev.cosmian.io;
          proxy_ssl_server_name on;
     }
 }

@@ -24,7 +24,7 @@ def add_subparser(subparsers):
     parser.add_argument(
         "domain_name",
         type=str,
-        help="domain name of the MSE web application (e.g. {uuid}.cosmian.app)",
+        help="domain name of the MSE web application (e.g. {uuid}.cosmian.io)",
     )
 
     parser.add_argument(

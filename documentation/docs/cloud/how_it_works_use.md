@@ -22,7 +22,7 @@ The TLS connection is specific to each scenario:
 In all scenarios but *Zero trust approach* the user trusts the app owner. Therefore, the user does not need to verify the MSE app. So, the user can use the app as if it is running inside a classic cloud. 
 
 ```console
-$ curl https://my_app.cosmian.app/
+$ curl https://my_app.cosmian.io/
 ```
 
 In *Zero trust approach* the user has to verify the MSE app and the SSL certificate before querying the app. The following diagram explains how it works: 
@@ -45,7 +45,7 @@ If one of those fails, the app owner must stop querying the application.
 Otherwise, the app user should use this certificate to proceed the next queries.
 
 ```console
-$ curl https://my_app.cosmian.app/ --cacert verified_cert.pem
+$ curl https://my_app.cosmian.io/ --cacert verified_cert.pem
 ```
 
 For more details about this step, read [security](security.md).
@@ -57,9 +57,34 @@ This verification can be done using: `mse cloud verify`:
 - the verification of the code fingerprint is omitted if you don't provide the previous arguments
 
 ```console
-$ mse cloud verify my_app.cosmian.app
+$ mse cloud verify my_app.cosmian.io
 Checking your app...
 Code fingerprint check skipped!
 Verification: success
 The verified certificate has been saved at: ./cert.pem
 ```
+
+## Working with the web browser
+
+As an MSE app security is based on a new SSL standard called RATLS, your browser will pop up a security warning when accessing your micro service for the first time.
+
+After downloading and verifying your webservice RATLS certificate as shown previously, you can add it to your web browser certificates store. For *Chrome* for example, run:
+
+```console
+$ sudo apt install libnss3-tools
+$ certutil -d ~/.pki/nssdb/ -A -i ratls.pem -n "<APP_ID>" -t C,,  
+$ # Read: https://wiki.archlinux.org/title/Network_Security_Services for more details
+$ # Or: https://wiki.archlinux.org/title/User:Grawity/Adding_a_trusted_CA_certificate
+```
+
+Then, you can access your microservice through your web browser. If the warning message occurs again: it means that the microservice has been updated and then you should download the new certificat, verify it again and then add it you your SSL store. 
+
+When accessing to your microservice, you can verify than the connection is managed by RATLS by checking the certificate on the left of the url field.
+
+Note than the RATLS certificate is not compatible with Firefox policies and won't work.
+
+!!! warning "Warning" 
+
+    Do not click on the button "Accept the risk": do always proceed the verification and add the certificat as described previously
+
+

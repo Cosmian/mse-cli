@@ -7,7 +7,7 @@ $ mse cloud status 4e3f9969-0fb3-45dd-a230-ef7b82d1f283
 Microservice
         Name        = float_average
         Version     = 1.0.0
-        Domain name = demo.cosmian.app
+        Domain name = demo.cosmian.io
         Hardware    = 4g-eu-001
         Application = app:app
         MSE docker  = ghcr.io/cosmian/mse-flask:20230710125733
