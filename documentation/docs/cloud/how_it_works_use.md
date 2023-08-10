@@ -63,3 +63,28 @@ Code fingerprint check skipped!
 Verification: success
 The verified certificate has been saved at: ./cert.pem
 ```
+
+## Working with the web browser
+
+As an MSE app security is based on a new SSL standard called RATLS, your browser will pop up a security warning when accessing your micro service for the first time.
+
+After downloading and verifying your webservice RATLS certificate as shown previously, you can add it to your web browser certificates store. For *Chrome* for example, run:
+
+```console
+$ sudo apt install libnss3-tools
+$ certutil -d ~/.pki/nssdb/ -A -i ratls.pem -n "<APP_ID>" -t C,,  
+$ # Read: https://wiki.archlinux.org/title/Network_Security_Services for more details
+$ # Or: https://wiki.archlinux.org/title/User:Grawity/Adding_a_trusted_CA_certificate
+```
+
+Then, you can access your microservice through your web browser. If the warning message occurs again: it means that the microservice has been updated and then you should download the new certificat, verify it again and then add it you your SSL store. 
+
+When accessing to your microservice, you can verify than the connection is managed by RATLS by checking the certificate on the left of the url field.
+
+Note than the RATLS certificate is not compatible with Firefox policies and won't work.
+
+!!! warning "Warning" 
+
+    Do not click on the button "Accept the risk": do always proceed the verification and add the certificat as described previously
+
+
