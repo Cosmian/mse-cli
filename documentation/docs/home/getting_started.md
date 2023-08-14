@@ -274,12 +274,12 @@ If the verification succeeds, the RA-TLS certificate is written as a file named 
 A sealed secrets file is designed to be shared with the application by hidding them from the SGX operator.
 
 ```console
-$ mse home seal --secrets example/secrets_to_seal.json \
+$ mse home seal --input example/secrets_to_seal.json \
                 --cert /tmp/ratls.pem \
-                --output code_provider/
+                --output code_provider/secrets_to_seal.json.seal
 ```
 
-In this example, sealed secrets file is generated as `secrets_to_seal.json.sealed` file.
+In this example, sealed secrets file is generated as `secrets_to_seal.json.seal` file.
 
 Share the sealed secrets file with the SGX operator.
 
@@ -290,7 +290,7 @@ Share the sealed secrets file with the SGX operator.
     This command is designed to be used by the **SGX operator**
 
 ```console
-$ mse home run --sealed-secrets code_provider/secrets_to_seal.json.sealed \
+$ mse home run --sealed-secrets code_provider/secrets_to_seal.json.seal \
                --secrets example/secrets.json \
                app_name
 ```
@@ -341,14 +341,15 @@ This encrypted result is then sent by external means to the code provider.
 Finally, the code provider can decrypt the result:
 
 ```console
-$ mse home decrypt --aes 00112233445566778899aabbccddeeff \
-                   --output code_provider/result.plain \
-                   result.enc
+$ # key.bin contains the URL Safe Base64 encoded key
+$ mse home decrypt --input result.enc \
+                   --key key.bin
+                   --output code_provider/result.plain
 $ cat code_provider/result.plain
 secret message with secrets.json
 ```
 
-Note that the `--aes` parameter is the key contained in `secrets.json`.
+Note that the `--key` parameter contains the same key as in `secrets.json`.
 Looking back at the Flask code shows that the `/result/secrets` endpoint loads
 the env variable `SECRETS_PATH` to get the `key` value, using it to encrypt a text message.
 
@@ -381,9 +382,9 @@ Then this encrypted result is sent to the code provider by external means.
 Finally, the code provider can decrypt the result:
 
 ```console
-$ mse home decrypt --key key.txt \
-                   --output code_provider/result.plain \
-                   result.enc
+$ mse home decrypt --input result.enc
+                   --key key.bin \
+                   --output code_provider/result.plain
 $ cat code_provider/result.plain
 ```
 
