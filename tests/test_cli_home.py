@@ -335,25 +335,20 @@ def test_verify(workspace: Path, cmd_log: io.StringIO):
 @pytest.mark.incremental
 def test_seal(workspace: Path, cmd_log: io.StringIO):
     """Test the `seal` subcommand."""
+    input_path = pytest.app_path / "secrets_to_seal.json"
+
     do_seal(
         Namespace(
             **{
-                "input": pytest.app_path / "secrets_to_seal.json",
-                "receiver_ratls_cert": pytest.ratls_cert,
+                "input": input_path,
+                "receiver_enclave": pytest.ratls_cert,
                 "receiver_public_key": None,
-                "output": workspace,
+                "output": workspace / f"{input_path.name}.seal",
             }
         )
     )
 
-    output = capture_logs(cmd_log)
-    try:
-        pytest.sealed_secrets = Path(
-            re.search("Encrypted file saved to: ([A-Za-z0-9/._-]+)", output).group(1)
-        )
-    except AttributeError:
-        print(output)
-        assert False
+    pytest.sealed_secrets = workspace / f"{input_path.name}.seal"
 
     assert pytest.sealed_secrets.exists()
 
@@ -364,6 +359,8 @@ def test_unseal(workspace: Path, cmd_log: io.StringIO):
     """Test the `unseal` subcommand."""
     input_path = pytest.app_path / "message.bin"
     input_path.write_bytes(b"Hello World!")
+
+    output_path = workspace / f"{input_path.name}.seal"
 
     receiver_priv_key = X25519PrivateKey.generate()
     receiver_sk_path = workspace / "receiver_priv_key.bin"
@@ -385,18 +382,18 @@ def test_unseal(workspace: Path, cmd_log: io.StringIO):
         Namespace(
             **{
                 "input": input_path,
-                "receiver_ratls_cert": None,
+                "receiver_enclave": None,
                 "receiver_public_key": receiver_pk_path,
-                "output": workspace,
+                "output": output_path,
             }
         )
     )
     do_unseal(
         Namespace(
             **{
-                "input": workspace / f"{input_path.name}.seal",
+                "input": output_path,
                 "private_key": receiver_sk_path,
-                "output": workspace,
+                "output": workspace / input_path.name,
             }
         )
     )
@@ -458,8 +455,8 @@ def test_encrypt(workspace: Path, port: int, host: str):
     do_encrypt(
         Namespace(
             **{
+                "input": plain_file_path,
                 "key": key_path,
-                "file": plain_file_path,
                 "output": enc_file_path,
             }
         )
@@ -470,8 +467,8 @@ def test_encrypt(workspace: Path, port: int, host: str):
     do_decrypt(
         Namespace(
             **{
+                "input": enc_file_path,
                 "key": key_path,
-                "file": enc_file_path,
                 "output": expected_plain_file_path,
             }
         )
@@ -509,8 +506,8 @@ def test_decrypt_secrets_json(workspace: Path, port: int, host: str):
     do_decrypt(
         Namespace(
             **{
+                "input": enc_file_path,
                 "key": key_path,
-                "file": enc_file_path,
                 "output": output_path,
             }
         )
@@ -543,8 +540,8 @@ def test_decrypt_sealed_secrets_json(workspace: Path, port: int, host: str):
     do_decrypt(
         Namespace(
             **{
+                "input": enc_file_path,
                 "key": key_path,
-                "file": enc_file_path,
                 "output": output_path,
             }
         )
