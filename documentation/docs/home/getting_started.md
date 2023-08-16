@@ -200,7 +200,7 @@ $ mse home package --project example \
 
 
 ```console
-$ mse home spawn --host myapp.fr \
+$ mse home spawn --san myapp.fr \
                  --port 7777 \
                  --size 4096 \
                  --package code_provider/package_mse_src_1683276327723953661.tar \
@@ -210,8 +210,8 @@ $ mse home spawn --host myapp.fr \
 
 Mandatory arguments are:
 
-- `host`: common name of the certificate generated later on during [ verification step](#check-the-trustworthiness-of-the-application)
-- `port`: localhost port used by Docker to bind the application
+- `san`: Subject Alternative Name to use for routing with SSL passthrough (domain name, IP address or localhost)
+- `port`: port used by Docker to bind the application
 - `size`: memory size (in MB) of the enclave to spawn. Must be a power of 2 greater than 1024. This size is bounded by the SGX EPC memory.
 - `pccs`: the URL of the PCCS (Provisioning Certificate Caching Service) used to generate certificate
 - `package`: the MSE application package containing the Docker images and the code
@@ -330,11 +330,10 @@ $ curl --cacert /tmp/ratls.pem https://myapp.fr:7788/result/secrets > result.enc
 
 !!! info "Hostname and certificate"
 
-    At the [ spawn](#spawn-the-mse-docker) step, remember that the parameter `--host`
-    has been set to `myapp.fr`. Thus the certificate `/tmp/ratls.pem` has been setup
-    to use this name as the target host name.
-    If `localhost` is fetched instead of `myapp.fr`, a SSL message will legitimately
-    complain about not having the expected hostname, and no secure connection can be established.
+    At the [ spawn](#spawn-the-mse-docker) step, remember that the parameter `--san`
+    has been set to `myapp.fr` and Subject Alternative Name (SAN) is added to `/tmp/ratls.pem`.
+    If Common Name (CN) or Subject Alternative Name is different from hostname, a SSL message 
+    will legitimately complain and no secure connection can be established.
 
 
 This encrypted result is then sent by external means to the code provider.

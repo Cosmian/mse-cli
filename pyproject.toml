@@ -1,0 +1,96 @@
+[build-system]
+requires = ["setuptools>=68.0.0,<69.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mse-cli"
+authors = [
+    { name = "Cosmian Tech", email = "tech@cosmian.com" },
+]
+description = "Command Line Interface for Microservice Encryption"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: Implementation :: CPython"
+]
+dependencies = [
+    "cryptography>=41.0.1,<42.0.0",
+    "docker>=6.0.1,<7.0.0",
+    "intel-sgx-ra>=2.0.1,<3.0",
+    "jinja2>=3.0,<3.1",
+    "mse-lib-crypto>=1.3,<1.4",
+    "pydantic>=1.10.2,<2.0.0",
+    "pyjwt>=2.6.0,<2.7.0",
+    "requests>=2.31.0,<3.0.0",
+    "toml>=0.10.2,<0.11.0",
+    "urllib3>=1.26.13,<1.27.0"
+]
+dynamic = ["version"]
+
+[project.urls]
+homepage = "htts://cosmian.com"
+documentation = "https://docs.cosmian.com"
+repository = "https://github.com/Cosmian/mse-cli"
+
+[tool.setuptools.dynamic]
+version = { attr = "mse_cli.__version__" }
+
+[project.optional-dependencies]
+dev = [
+    "pylint>=2.17,<3.0",
+    "pycodestyle>=2.10,<3.0",
+    "pydocstyle>=6.3,<7.0",
+    "mypy>=1.4,<2.0",
+    "black>=23.7,<24.0",
+    "isort>=5.12,<6.0",
+    "pytest>=7.4,<8.0",
+    "flask==2.2.0",
+    "numpydoc>=1.5.0,<1.6.0",
+    "sphinx>=5.3.0,<5.4.0",
+    "sphinx_rtd_theme>=1.1.1,<1.2.0",
+    "sphinx_mdinclude>=0.5.3,<0.6.0",
+    "types-requests>=2.28,<2.29",
+    "types-urllib3>=1.26,<1.27",
+    "types-toml>=0.10,<0.11",
+    "types-setuptools>=68.0.0,<69.0.0"
+]
+deploy = [
+    "build>=0.10.0,<0.11.0",
+    "wheel>=0.40.0,<0.41.0"
+]
+
+[project.scripts]
+mse = "mse_cli.main:main"
+
+[tool.pylint.MAIN]
+disable = [
+    "C0103", # invalid-name
+    "R0801", # duplicate-code
+    "R0913", # too-many-arguments
+    "R0902", # too-many-instance-attributes
+    "R0903"  # too-few-public-methods
+]
+extension-pkg-whitelist = "pydantic"
+
+[tool.isort]
+profile = "black"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "--strict-markers"
+testpaths = ["tests"]
+pythonpath = "src"
+markers = [
+    "incremental",
+    "home: marks tests requiring an sgx machine (deselect with '-m \"not home\"')",
+    "cloud: marks tests a connection to the cloud env (deselect with '-m \"not cloud\"')"
+]
+
+[[tool.mypy.overrides]]
+module = "docker.*"
+ignore_missing_imports = true

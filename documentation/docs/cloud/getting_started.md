@@ -161,7 +161,7 @@ You can now quickly test your application doing: `curl https://123456789abcdef.c
 
 That's it!
 
-Your microservice is up at `https://123456789abcdef.cosmian.app`.
+Your microservice is up at `https://123456789abcdef.cosmian.io`.
 
 You can test your first app using `curl`:
 
@@ -239,22 +239,22 @@ You can now run `mse cloud logs 248fce63-bc05-49a6-816a-4436b456fa27` if necessa
 Checking app trustworthiness...
 The code fingerprint is ecd2ed83c65906bec65d5b8bc02e18d439c0d1401272e207fed254f7228eee7e
 Verification: success
-✅ The verified certificate has been saved at: /tmp/tmp4u_gcjwk/cert.conf.pem
+✅ The verified certificate has been saved at: /tmp/tmp4u_gcjwk/ratls.pem
 Sending secret key and decrypting the application code...
 Waiting for application to be ready...
 Your application is now fully deployed and started...
-✅ It's now ready to be used on https://123456789abcdef.cosmian.app until 2023-01-10 21:24:28.162324+01:00. The application will be automatically stopped after this date.
+✅ It's now ready to be used on https://123456789abcdef.cosmian.io until 2023-01-10 21:24:28.162324+01:00. The application will be automatically stopped after this date.
 The context of this creation can be retrieved using `mse cloud context --export 248fce63-bc05-49a6-816a-4436b456fa27`
-You can now quickly test your application doing: `curl https://123456789abcdef.cosmian.app/health --cacert /tmp/tmp4u_gcjwk/cert.conf.pem`
+You can now quickly test your application doing: `curl https://123456789abcdef.cosmian.io/health --cacert /tmp/tmp4u_gcjwk/ratls.pem`
 ```
 
-Your microservice is up at `https://123456789abcdef.cosmian.app`.
+Your microservice is up at `https://123456789abcdef.cosmian.io`.
 
 You can test your app using `curl`:
 
 ```{.console}
-$ # force curl CA bundle to be /tmp/tmpntxibdo6/cert.conf.pem
-$ curl "https://123456789abcdef.cosmian.app" --cacert /tmp/tmpntxibdo6/cert.conf.pem
+$ # force curl CA bundle to be /tmp/tmpntxibdo6/ratls.pem
+$ curl "https://123456789abcdef.cosmian.io" --cacert /tmp/tmpntxibdo6/ratls.pem
 ```
 
 

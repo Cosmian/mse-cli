@@ -162,7 +162,7 @@ def test_path():
 
     assert conf.workspace.exists()
     assert conf.docker_log_path == workspace / "docker.log"
-    assert conf.config_cert_path == workspace / "cert.conf.pem"
+    assert conf.config_cert_path == workspace / "ratls.pem"
     assert conf.app_cert_path == workspace / "fullchain.pem"
     assert conf.decrypted_code_path == workspace / "decrypted_code"
     assert conf.decrypted_code_path.exists()

@@ -133,7 +133,7 @@ class Context(BaseModel):
     @property
     def config_cert_path(self):
         """Get the path to store the certificate."""
-        return self.workspace / "cert.conf.pem"
+        return self.workspace / "ratls.pem"
 
     @property
     def app_cert_path(self):

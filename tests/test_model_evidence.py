@@ -23,6 +23,8 @@ def test_load():
     ref_conf = ApplicationEvidence(
         input_args=NoSgxDockerConfig(
             host="localhost",
+            subject="CN=localhost,O=MyApp Company,C=FR,L=Paris,ST=Ile-de-France",
+            subject_alternative_name="localhost",
             expiration_date=1714058115,
             size=4096,
             app_id="63322f85-1ff8-4483-91ae-f18d7398d157",

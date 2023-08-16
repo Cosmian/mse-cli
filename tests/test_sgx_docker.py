@@ -8,8 +8,10 @@ def test_load():
     """Test `load` function."""
     ref_conf = SgxDockerConfig(
         size=4096,
-        host="myapp.fr",
+        host="127.0.0.1",
         port=7788,
+        subject="CN=myapp.fr,O=MyApp Company,C=FR,L=Paris,ST=Ile-de-France",
+        subject_alternative_name="myapp.fr",
         app_id="4141a3e6-1f2b-4ccf-8610-aa0891a1a210",
         expiration_date=1714639412,
         app_dir="/home/cosmian/workspace/sgx_operator/",
@@ -30,6 +32,8 @@ def test_load():
                 "Cmd": [
                     "--size",
                     "4096M",
+                    "--subject",
+                    "CN=myapp.fr,O=MyApp Company,C=FR,L=Paris,ST=Ile-de-France",
                     "--san",
                     "myapp.fr",
                     "--id",
@@ -76,8 +80,10 @@ def test_labels():
     """Test `labels` function."""
     ref_conf = SgxDockerConfig(
         size=4096,
-        host="myapp.fr",
+        host="127.0.0.1",
         port=7788,
+        subject="CN=myapp.fr,O=MyApp Company,C=FR,L=Paris,ST=Ile-de-France",
+        subject_alternative_name="myapp.fr",
         app_id="4141a3e6-1f2b-4ccf-8610-aa0891a1a210",
         expiration_date=1714639412,
         app_dir="/home/cosmian/workspace/sgx_operator/",
@@ -93,8 +99,10 @@ def test_devices():
     """Test `devices` function."""
     ref_conf = SgxDockerConfig(
         size=4096,
-        host="myapp.fr",
+        host="127.0.0.1",
         port=7788,
+        subject="CN=myapp.fr,O=MyApp Company,C=FR,L=Paris,ST=Ile-de-France",
+        subject_alternative_name="myapp.fr",
         app_id="4141a3e6-1f2b-4ccf-8610-aa0891a1a210",
         expiration_date=1714639412,
         app_dir="/home/cosmian/workspace/sgx_operator/",
@@ -115,8 +123,10 @@ def test_ports():
     """Test `ports` function."""
     ref_conf = SgxDockerConfig(
         size=4096,
-        host="myapp.fr",
+        host="127.0.0.1",
         port=7788,
+        subject="CN=myapp.fr,O=MyApp Company,C=FR,L=Paris,ST=Ile-de-France",
+        subject_alternative_name="myapp.fr",
         app_id="4141a3e6-1f2b-4ccf-8610-aa0891a1a210",
         expiration_date=1714639412,
         app_dir="/home/cosmian/workspace/sgx_operator/code.tar",
@@ -132,8 +142,10 @@ def test_volumes():
     """Test `volumes` function."""
     ref_conf = SgxDockerConfig(
         size=4096,
-        host="myapp.fr",
+        host="127.0.0.1",
         port=7788,
+        subject="CN=myapp.fr,O=MyApp Company,C=FR,L=Paris,ST=Ile-de-France",
+        subject_alternative_name="myapp.fr",
         app_id="4141a3e6-1f2b-4ccf-8610-aa0891a1a210",
         expiration_date=1714639412,
         app_dir="/home/cosmian/workspace/sgx_operator/",
@@ -162,8 +174,10 @@ def test_cmd():
     """Test `cmd` function."""
     ref_conf = SgxDockerConfig(
         size=4096,
-        host="myapp.fr",
+        host="127.0.0.1",
         port=7788,
+        subject="CN=myapp.fr,O=MyApp Company,C=FR,L=Paris,ST=Ile-de-France",
+        subject_alternative_name="myapp.fr",
         app_id="4141a3e6-1f2b-4ccf-8610-aa0891a1a210",
         expiration_date=1714639412,
         app_dir="/home/cosmian/workspace/sgx_operator/",
@@ -175,6 +189,8 @@ def test_cmd():
     assert ref_conf.cmd() == [
         "--size",
         "4096M",
+        "--subject",
+        "CN=myapp.fr,O=MyApp Company,C=FR,L=Paris,ST=Ile-de-France",
         "--san",
         "myapp.fr",
         "--id",

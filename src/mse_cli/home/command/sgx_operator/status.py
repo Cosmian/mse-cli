@@ -38,12 +38,12 @@ def run(args) -> None:
 
     LOG.info("    App name = %s", args.name)
     LOG.info("Enclave size = %dM", docker.size)
-    LOG.info(" Common name = %s", docker.host)
+    LOG.info(" Common name = %s", docker.subject_alternative_name)
     LOG.info("        Port = %d", docker.port)
     LOG.info(" Healthcheck = %s", docker.healthcheck)
     LOG.info(
         "      Status = %s",
-        app_state(docker.port, docker.healthcheck)
+        app_state(docker.host, docker.port, docker.healthcheck)
         if is_running(container)
         else container.status,
     )
@@ -58,14 +58,14 @@ def run(args) -> None:
     )
 
 
-def app_state(port: int, healthcheck_endpoint: str) -> str:
+def app_state(host: str, port: int, healthcheck_endpoint: str) -> str:
     """Determine the application state by querying it."""
     try:
         # Note: the configuration server allows any path
         # So: `healthcheck_endpoint`` does not exist but it's process as /
         # We can there do one query for the application and the configuration server
         response = requests.get(
-            f"https://localhost:{port}{healthcheck_endpoint}",
+            f"https://{host}:{port}{healthcheck_endpoint}",
             verify=False,
             timeout=60,
         )

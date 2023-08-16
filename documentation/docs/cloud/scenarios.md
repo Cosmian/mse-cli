@@ -67,14 +67,14 @@ An MSE node is built on top of an Intel SGX enclave.
 SGX enables running an app in a fully isolated environment, where the filesystem and the memory are fully encrypted, using a hidden secret engraved in the CPU.
 MSE implements the following additional security features:
 
-|                        Feature                        | Zero trust CCC | Fully encrypted SaaS | `--untrusted-ssl` mode |
-| :---------------------------------------------------: | :------------: | :------------------: | :--------------------: |
-|    Code encryption when deploying to the MSE node     |       ✔️        |          ✔️           |           ✔️            |
-| Code & Data encrypted while running (on disk/on ram)  |       ✔️        |          ✔️           |           ✔️            |
-| App owner can verify the MSE instance when deploying  |       ✔️        |          ✔️           |           ✔️            |
-| User can verify the MSE instance before using the app |       ✔️        |          ✖️           |           ✖️            |
-|        Full protection of User queries & data         |       ✔️        |  ✔️ (but App Owner)   |    ✔️ (but Operator)    |
-|      App is directly callable from a web browser      |       ✖️        |          ✔️           |           ✔️            |
+|                        Feature                        |       Zero trust CCC       | Fully encrypted SaaS | `--untrusted-ssl` mode |
+| :---------------------------------------------------: | :------------------------: | :------------------: | :--------------------: |
+|    Code encryption when deploying to the MSE node     |             ✔️              |          ✔️           |           ✔️            |
+| Code & Data encrypted while running (on disk/on ram)  |             ✔️              |          ✔️           |           ✔️            |
+| App owner can verify the MSE instance when deploying  |             ✔️              |          ✔️           |           ✔️            |
+| User can verify the MSE instance before using the app |             ✔️              |          ✖️           |           ✖️            |
+|        Full protection of User queries & data         |             ✔️              |  ✔️ (but App Owner)   |    ✔️ (but Operator)    |
+|      App is directly callable from a web browser      | ✖️ (manual action requires) |          ✔️           |           ✔️            |
 
 Verification of the MSE instance mainly consists in:
 

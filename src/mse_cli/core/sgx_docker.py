@@ -14,6 +14,8 @@ class SgxDockerConfig(BaseModel):
     host: str
     port: int
     app_id: UUID
+    subject: str
+    subject_alternative_name: str
     expiration_date: int
     app_dir: Path
     application: str
@@ -30,8 +32,10 @@ class SgxDockerConfig(BaseModel):
         return [
             "--size",
             f"{self.size}M",
+            "--subject",
+            self.subject,
             "--san",
-            str(self.host),
+            self.subject_alternative_name,
             "--id",
             str(self.app_id),
             "--application",
@@ -42,7 +46,7 @@ class SgxDockerConfig(BaseModel):
 
     def ports(self) -> Dict[str, Tuple[str, str]]:
         """Define the docker ports."""
-        return {"443/tcp": ("127.0.0.1", str(self.port))}
+        return {"443/tcp": (self.host, str(self.port))}
 
     def labels(self) -> Dict[str, str]:
         """Define the docker labels."""
@@ -78,7 +82,7 @@ class SgxDockerConfig(BaseModel):
     @staticmethod
     def load(docker_attrs: Dict[str, Any], docker_labels: Any):
         """Load the docker configuration from the container."""
-        dataMap: Dict[str, Any] = {}
+        data_map: Dict[str, Any] = {}
 
         cmd = docker_attrs["Config"]["Cmd"]
         port = docker_attrs["HostConfig"]["PortBindings"]
@@ -100,25 +104,27 @@ class SgxDockerConfig(BaseModel):
         while i < len(cmd):
             key = cmd[i][2:]
             if i + 1 == len(cmd):
-                dataMap[key] = True
+                data_map[key] = True
                 i += 1
                 break
 
             if cmd[i + 1].startswith("--"):
-                dataMap[key] = True
+                data_map[key] = True
                 i += 1
                 continue
 
-            dataMap[key] = cmd[i + 1]
+            data_map[key] = cmd[i + 1]
             i += 2
 
         return SgxDockerConfig(
-            size=int(dataMap["size"][:-1]),
-            host=dataMap["san"],
-            app_id=UUID(dataMap["id"]),
-            expiration_date=int(dataMap["expiration"]),
+            size=int(data_map["size"][:-1]),
+            host=port["443/tcp"][0]["HostIp"],
+            subject=data_map["subject"],
+            subject_alternative_name=data_map["san"],
+            app_id=UUID(data_map["id"]),
+            expiration_date=int(data_map["expiration"]),
             app_dir=Path(app["Source"]),
-            application=dataMap["application"],
+            application=data_map["application"],
             port=int(port["443/tcp"][0]["HostPort"]),
             healthcheck=docker_labels["healthcheck_endpoint"],
             signer_key=Path(signer_key["Source"]),
