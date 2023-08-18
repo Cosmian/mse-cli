@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## \[1.3\] - 2023-08-16
+
+### Added
+
+* [MSE Home] Commands encrypt and unseal
+
+### Updated
+
+* [MSE Home] Homogenization of commands encrypt/decrypt and seal/unseal
+
 ## \[1.2\] - 2023-08-10
 
 ### Updated

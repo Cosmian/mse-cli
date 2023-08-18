@@ -1,38 +1,38 @@
-"""mse_cli.home.command.code_provider.decrypt module."""
+"""mse_cli.home.command.code_provider.unseal module."""
 
 import sys
 from pathlib import Path
 
-from cryptography.fernet import Fernet
+from mse_lib_crypto.seal_box import unseal
 
 from mse_cli.log import LOGGER as LOG
 
 
 def add_subparser(subparsers):
     """Define the subcommand."""
-    parser = subparsers.add_parser(
-        "decrypt", help="decrypt a file using Fernet symmetric encryption"
-    )
+    parser = subparsers.add_parser("unseal", help="unseal file using NaCl's Seal Box")
 
     parser.add_argument(
         "--input",
         type=Path,
+        metavar="FILE",
         required=True,
-        help="path to the file to decrypt",
+        help="path to the file to unseal",
     )
 
     parser.add_argument(
-        "--key",
+        "--private-key",
         type=Path,
+        metavar="FILE",
         required=True,
-        help="path to the file within a 32 bytes key URL Safe Base64 encoded",
+        help="path to raw X25519 private key",
     )
 
     parser.add_argument(
         "--output",
         type=Path,
         metavar="FILE",
-        help="path to write decrypted file",
+        help="path to write the file unsealed",
     )
 
     parser.set_defaults(func=run)
@@ -40,19 +40,19 @@ def add_subparser(subparsers):
 
 def run(args) -> None:
     """Run the subcommand."""
-    LOG.info("Decrypting %s...", args.input)
+    LOG.info("Unsealing %s...", args.input)
 
-    key: bytes = args.key.read_bytes()
+    private_key: bytes = args.private_key.read_bytes()
     encrypted_data: bytes = args.input.read_bytes()
 
-    data: bytes = Fernet(key).decrypt(encrypted_data)
+    data: bytes = unseal(encrypted_data, private_key)
 
     if args.output:
         args.output.write_bytes(data)
-        LOG.info("File sucessfully decrypted to %s", args.output)
+        LOG.info("File successfully unsealed to %s", args.output)
     else:
-        LOG.info("Data sucessfully decrypted!")
+        LOG.info("Data sucessfully unsealed!")
         LOG.info(
             "----------------------------------------------------------------------"
         )
-        sys.stdout.buffer.write(encrypted_data)
+        sys.stdout.buffer.write(data)
