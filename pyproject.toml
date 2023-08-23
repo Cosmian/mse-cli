@@ -33,7 +33,7 @@ dependencies = [
 dynamic = ["version"]
 
 [project.urls]
-homepage = "htts://cosmian.com"
+homepage = "https://cosmian.com"
 documentation = "https://docs.cosmian.com"
 repository = "https://github.com/Cosmian/mse-cli"
 
