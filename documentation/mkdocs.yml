@@ -1,4 +1,4 @@
-site_name: Microservice Encryption
+site_name: Cosmian Enclave
 site_url: https://docs.cosmian.com/
 copyright: © Copyright 2018-2023 Cosmian. All rights reserved
 dev_addr: "127.0.0.1:8003"
@@ -9,7 +9,7 @@ theme:
     text: Open Sans
   favicon: "favicon.png"
   logo: "https://raw.githubusercontent.com/Cosmian/Files/main/products/cosmian-logo-docs.png"
-  custom_dir: overrides
+  custom_dir: theme_overrides
   features:
     - content.tabs.link
 markdown_extensions:
@@ -40,15 +40,20 @@ plugins:
   - search
   - kroki
   - meta-descriptions
-extra_css:
-  - css/extra.css
-extra_javascript:
-  - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML
-  - https://unpkg.com/mermaid@8.7.0/dist/mermaid.min.js
-  - javascripts/extra.js
 nav:
-  - Overview: overview.md
-  - Cloud:
+#  - Overview: overview.md
+  - Own infrastructure:
+      - Getting started: home/getting_started.md
+      - Develop: home/develop.md
+      - Flow: home/flow.md
+      - Command Line:
+          - Evidence: home/subcommand/evidence.md
+          - List: home/subcommand/list.md
+          - Logs: home/subcommand/logs.md
+          - Restart: home/subcommand/restart.md
+          - Status: home/subcommand/status.md
+          - Stop: home/subcommand/stop.md
+  - Cosmian SaaS:
       - Getting started: cloud/getting_started.md
       - App Configuration: cloud/configuration.md
       - Command Line:
@@ -69,14 +74,4 @@ nav:
       - Security Model: cloud/security.md
       - App Deployment Flow: cloud/how_it_works_deploy.md
       - App Usage Flow: cloud/how_it_works_use.md
-  - Home:
-      - Getting started: home/getting_started.md
-      - Develop: home/develop.md
-      - Flow: home/flow.md
-      - Command Line:
-          - Evidence: home/subcommand/evidence.md
-          - List: home/subcommand/list.md
-          - Logs: home/subcommand/logs.md
-          - Restart: home/subcommand/restart.md
-          - Status: home/subcommand/status.md
-          - Stop: home/subcommand/stop.md
+
