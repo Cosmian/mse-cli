@@ -553,8 +553,12 @@ body.dark-mode .highlight .cpf,
 body.dark-mode .highlight .l,
 body.dark-mode .highlight .sb,
 body.dark-mode .highlight .sc,
+body.dark-mode .highlight .sd,
 body.dark-mode .highlight .si,
-body.dark-mode .highlight .ss {
+body.dark-mode .highlight .ss,
+body.dark-mode .highlight .go,
+body.dark-mode .highlight .gp
+{
     color: var(--md-default-fg-color--light-dark-mode);
 }
 body.dark-mode .highlight .c,
@@ -575,8 +579,8 @@ body.dark-mode .highlight .nt {
 body.dark-mode .highlight .na,
 body.dark-mode .highlight .m {
     color: indianred;
-}
 
+}
 body.dark-mode .md-typeset {
     color: var(--text-dark-mode);
 }

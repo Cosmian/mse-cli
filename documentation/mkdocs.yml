@@ -1,4 +1,4 @@
-site_name: Cosmian Enclave
+site_name: Cosmian Enclave CLI user manual
 site_url: https://docs.cosmian.com/
 copyright: © Copyright 2018-2023 Cosmian. All rights reserved
 dev_addr: "127.0.0.1:8003"
@@ -42,8 +42,8 @@ plugins:
   - meta-descriptions
 nav:
 #  - Overview: overview.md
-  - Own infrastructure:
-      - Getting started: home/getting_started.md
+  - Bare Metal:
+      - Bare Metal - Getting Started: home/getting_started.md
       - Develop: home/develop.md
       - Flow: home/flow.md
       - Command Line:
@@ -54,7 +54,7 @@ nav:
           - Status: home/subcommand/status.md
           - Stop: home/subcommand/stop.md
   - Cosmian SaaS:
-      - Getting started: cloud/getting_started.md
+      - SaaS - Getting Started: cloud/getting_started.md
       - App Configuration: cloud/configuration.md
       - Command Line:
           - Context: cloud/subcommand/context.md
