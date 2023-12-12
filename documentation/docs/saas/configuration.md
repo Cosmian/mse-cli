@@ -1,4 +1,4 @@
-The configuration of an MSE application is written in a TOML file.
+The configuration of a Cosmian Enclave application is written in a TOML file.
 The `mse.toml` file located in the current directory is used with `mse cloud deploy` subcommand, you can specify another TOML file with argument `--path` if needed.
 
 ```toml
@@ -70,9 +70,9 @@ In case the SSL certificate is provided by the application owner, the expiration
 If no `expiration_date` is specified in the configuration file, the expiration date of the application is the expiration date of the certificate.
 Otherwise, the expiration date is set to 1 year (except for `4g-eu-001` hardware).
 
-### MSE docker
+### Cosmian Enclave docker
 
-The `docker` parameter defines which Docker image will run in the MSE node. *Cosmian* offers several Docker images (use the tag with the most recent date):
+The `docker` parameter defines which Docker image will run in the Cosmian Enclave SaaS node. *Cosmian* offers several Docker images (use the tag with the most recent date):
 
 - [mse-flask](https://github.com/Cosmian/mse-app-examples/pkgs/container/mse-flask): containing flask dependencies.
 - [mse-pytorch](https://github.com/Cosmian/mse-app-examples/pkgs/container/mse-pytorch): containing flask and machine learning dependencies using pytorch.
@@ -84,7 +84,7 @@ The `docker` parameter defines which Docker image will run in the MSE node. *Cos
 You can test your code properly runs inside this Docker using [`mse cloud test`](subcommand/test.md).
 
 If you need to install other dependencies, you can create a new Docker by forking [mse-docker-flask](https://github.com/Cosmian/mse-docker-flask).
-This Docker will be allowed to be started in an MSE architecture after a review by a *Cosmian* member. To do so, please contact tech@cosmian.com and provide your `Dockerfile` and the link to your docker image.
+This Docker will be allowed to be started in an Cosmian Enclave architecture after a review by a *Cosmian* member. To do so, please contact tech@cosmian.com and provide your `Dockerfile` and the link to your docker image.
 
 Note that, the `requirements.txt` from your source code directory will still be read when the docker will run. We strongly recommend to put all your requirements into the docker and remove the `requirements.txt` from your source code.
 
@@ -153,4 +153,4 @@ These files will be updated when the certificate renews.
 ```
 
 3. A DNS `TXT` record should be registered under a given name in your DNS provider interface. After doing that, the certificate will be generated. Delete this record at the end of the process.
-4. Read the two PEM files and create your own `ssl` section in the MSE configuration file. You are now ready to deploy your app using: `mse cloud deploy`.
+4. Read the two PEM files and create your own `ssl` section in the Cosmian Enclave configuration file. You are now ready to deploy your app using: `mse cloud deploy`.

@@ -6,6 +6,6 @@ Stopping and destroying the app...
 ✅ App gracefully stopped
 ```
 
-Be aware that stopping an MSE app means that you can't resume it afterwards. All the resources are released and deallocated.
+Be aware that stopping a Cosmian Enclave app means that you can't resume it afterwards. All the resources are released and deallocated.
 
 The context directory will be removed locally as well.

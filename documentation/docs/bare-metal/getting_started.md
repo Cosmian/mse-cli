@@ -4,9 +4,9 @@
     This is the bare metal tutorial: you will need to configure an SGX machine either on premise or at your cloud 
     provider first.
 
-!!! important "Cosmian Enclave Bare Metal use to be called MSE Home"
+!!! important "Cosmian Enclave Bare Metal used to be called MSE Home"
 
-    There are quite a few locations where the old name is still in use.
+    There are quite a few locations where the old MSE name is still in use.
 
 Cosmian Enclave Bare Metal is designed to start an application on your own SGX hardware or that of your cloud provider.
 It does not require the use of the Cosmian Enclave SaaS Infrastructure.
@@ -49,19 +49,19 @@ operations:
                         and the enclave
     scaffold            create a new boilerplate application
     list                list the running applications
-    localtest           test locally a MSE app in a development context
-    logs                print the MSE docker logs
+    localtest           test locally a Cosmian Enclave app in a development context
+    logs                print the Cosmian Enclave docker logs
     package             generate a package containing the Docker image and the code to
-                        run on MSE
-    restart             restart an stopped MSE docker
+                        run on Cosmian Enclave
+    restart             restart an stopped Cosmian Enclave docker
     run                 finalise the configuration of the application docker and run the
                         application code
-    status              print the MSE docker status
-    seal                seal the secrets to be share with an MSE app
-    spawn               spawn a MSE docker
-    stop                stop and optionally remove a running MSE docker
-    test                test a deployed MSE app
-    verify              verify the trustworthiness of a running MSE web application and
+    status              print the Cosmian Enclave docker status
+    seal                seal the secrets to be share with an Cosmian Enclave app
+    spawn               spawn a Cosmian Enclave docker
+    stop                stop and optionally remove a running Cosmian Enclave docker
+    test                test a deployed Cosmian Enclave app
+    verify              verify the trustworthiness of a running Cosmian Enclave web application and
                         get the RA-TLS certificate
 ```
 
@@ -146,7 +146,7 @@ enabling the SGX operator to test the deployed application.
 
 !!! warning "Compatibility with WSGI/ASGI"
 
-    To be compliant with MSE your Python application must be an [ASGI](https://asgi.readthedocs.io) or [WSGI](https://wsgi.readthedocs.io) application. It is not possible to deploy a standalone Python program. 
+    To be compliant with Cosmian Enclave your Python application must be an [ASGI](https://asgi.readthedocs.io) or [WSGI](https://wsgi.readthedocs.io) application. It is not possible to deploy a standalone Python program. 
     In the next example, this documentation will describe how to deploy Flask applications. You can also use other ASGI applications, for instance: FastAPI.
 
 !!! Examples "Examples"

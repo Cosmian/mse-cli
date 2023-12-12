@@ -1,6 +1,13 @@
-!!! info "Welcome to Microservice Encryption Cloud deployment tutorial"
+!!! info "Welcome to Microservice Encryption SaaS deployment tutorial"
 
-    To launch your first confidential microservice, follow this tutorial in your favorite terminal.
+    To launch your first confidential application, follow this tutorial in your favorite terminal.
+    Your application will run on the [Cosmian Enclave Saas platform](https://console.cosmian.com/)
+
+
+!!! important "Cosmian Enclave SaaS used to be called MSE Cloud"
+
+    There are quite a few locations where the old MSE name is still in use.
+
 
 ## Install
 
@@ -20,17 +27,17 @@ options:
 operations:
   {context,deploy,init,list,login,logout,logs,scaffold,status,stop,test,verify}
     context             manage context of your deployed applications
-    deploy              deploy an ASGI web application to MSE
+    deploy              deploy an ASGI web application to Cosmian Enclave
     init                create a new configuration file in the current directory
-    list                list deployed MSE web application from a project
+    list                list deployed Cosmian Enclave web application from a project
     login               sign up or login to console.cosmian.com
     logout              log out the current user
-    logs                logs (last 64kB) of a specific MSE web application
-    scaffold            create a new boilerplate MSE web application
-    status              status of a specific MSE web application
-    stop                stop a specific MSE web application
-    test                test locally the application in the MSE docker
-    verify              verify the trustworthiness of a running MSE web application (no
+    logs                logs (last 64kB) of a specific Cosmian Enclave web application
+    scaffold            create a new boilerplate Cosmian Enclave web application
+    status              status of a specific Cosmian Enclave web application
+    stop                stop a specific Cosmian Enclave web application
+    test                test locally the application in the Cosmian Enclave docker
+    verify              verify the trustworthiness of a running Cosmian Enclave web application (no
                         sign-in required)
 ```
 
@@ -42,7 +49,7 @@ $ mse cloud login
 
 It will open your browser to sign up and/or log in on [console.cosmian.com](https://console.cosmian.com).
 
-If it's the first time you are using Microservice Encryption (MSE), you need to use the sign-up tab.
+If it's the first time you are using Cosmian Enclave SaaS, you need to use the sign-up tab.
 Don't forget to confirm your email and complete the information of your account.
 You can skip the payment information by selecting a free plan.
 
@@ -55,7 +62,7 @@ Let's start with a simple Flask Hello World application:
 ```{.console}
 $ mse cloud scaffold helloworld
 An example app has been generated in the current directory
-You can configure your MSE application in: helloworld/mse.toml
+You can configure your Cosmian Enclave application in: helloworld/mse.toml
 You can now test it locally from 'helloworld/' directory using: `mse cloud localtest`
 Or deploy it from 'helloworld/' directory using: `mse cloud deploy`
 Refer to the 'helloworld/README.md' for more details.
@@ -75,7 +82,7 @@ helloworld/
 
 The `mse_src` is your application directory designed to be dispatched by `mse-cli` to the Microservice Encryption infrastructure. The other files or directories will stay on your own host. 
 
-The file `app.py` is a basic Flask application with no extra code. Adapting your own application to MSE does not require any modification to your Python code:
+The file `app.py` is a basic Flask application with no extra code. Adapting your own application to Cosmian Enclave does not require any modification to your Python code:
 
 ```python
 from http import HTTPStatus
@@ -118,7 +125,7 @@ project = "default"
 hardware = "4g-eu-001"
 ```
 
-This project also contains a test directory enabling you to test this project locally without any MSE consideration.
+This project also contains a test directory enabling you to test this project locally without any Cosmian Enclave consideration.
 Please ensure `flask` is installed locally, before running the following tests:
 
 ```{.console}
@@ -170,16 +177,16 @@ $ export APP_DOMAIN_NAME="..." # your DN here
 $ curl "https://$APP_DOMAIN_NAME" 
 ```
 
-At this point, you can write your [own Flask application](#going-further) and deploy it into MSE.
+At this point, you can write your [own Flask application](#going-further) and deploy it into Cosmian Enclave SaaS.
 
 !!! warning "Compatibility with WSGI/ASGI"
 
-    To be compliant with MSE your Python application must be an [ASGI](https://asgi.readthedocs.io) or [WSGI](https://wsgi.readthedocs.io) application. It is not possible to deploy a standalone Python program. 
+    To be compliant with Cosmian Enclave your Python application must be an [ASGI](https://asgi.readthedocs.io) or [WSGI](https://wsgi.readthedocs.io) application. It is not possible to deploy a standalone Python program. 
     In the next example, this documentation will describe how to deploy Flask applications. You also can use other ASGI applications, for instance: FastAPI.
 
 !!! Examples "Examples"
 
-    Visit [mse-app-examples](https://github.com/Cosmian/mse-app-examples) to find MSE application examples.
+    Visit [Cosmian Enclave Examples](https://github.com/Cosmian/mse-app-examples) to find application examples.
 
 
 ## Verify the trustworthiness of your app (remove `--no-verify`)

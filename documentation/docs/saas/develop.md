@@ -1,11 +1,11 @@
-One of the advantages of using MSE to protect your application and your data in the cloud, is that your original Python application does not need to be modified.
+One of the advantages of using Cosmian Enclave to protect your application and your data in the cloud, is that your original Python application does not need to be modified.
 You simply need to pick your original code, design a standard Flask application without any specific intruction, write a configuration TOML file and run the `deploy` subcommand.
 
-In this section are shared good practices and some considerations you need to know before developing or deploying your application inside an MSE node.
+In this section are shared good practices and some considerations you need to know before developing or deploying your application inside an Cosmian Enclave SaaS node.
 
 !!! info "Requirements"
 
-    The MSE node environment is running on `Ubuntu 20.04` with `python 3.8`.
+    The Cosmian Enclave node environment is running on `Ubuntu 20.04` with `python 3.8`.
 
 
 
@@ -14,10 +14,10 @@ In this section are shared good practices and some considerations you need to kn
 This method is well-suited to test the remote environment when deploying your app.
 
 We recall that your application is deployed into a constraint environment under a specific architecture.
-This method emulates as close as possible the MSE node environment in production.
+This method emulates as close as possible the Cosmian Enclave SaaS node environment in production.
 
-Before any deployment, it's strongly recommended to test your application locally against the MSE Docker image specified into your `mse.toml`.
-It enables you to verify that your application is compatible with the MSE environment and all required dependencies are installed.
+Before any deployment, it's strongly recommended to test your application locally against the Cosmian Enclave Docker image specified into your `mse.toml`.
+It enables you to verify that your application is compatible with the Cosmian Enclave environment and all required dependencies are installed.
 
 Since you have installed `docker` in the previous step on your own machine, you can run:
 
@@ -32,9 +32,9 @@ $ mse cloud localtest
 When you scaffold a new project, the configuration file contains a default Docker including minimal Flask packages.
 For many reasons, this Docker could be not enough to run your own application.
 
-Let's remind that any files written in `mse_src` directory will be sent remotely to the MSE node.
+Please remember that any file written in `mse_src` directory will be sent remotely to the Cosmian Enclave SaaS node.
 If your `mse_src` directory contains a `requirements.txt`, these packages will be installed when running the Docker.
-It enables you to quickly setup and test your application in an MSE environment without generating a new Docker.
+It enables you to quickly setup and test your application in a Cosmian Enclave environment without generating a new Docker.
 
 However:
 
@@ -194,10 +194,10 @@ When running the Docker container locally, you can use the option `--memory` to 
 
 !!! info "Requirements"
 
-    The MSE environment is running on `Ubuntu 22.04` with `python 3.10`.
+    The Cosmian Enclave environment is running on `Ubuntu 22.04` with `python 3.10`.
 
 
-Please find below limitations that you need to consider to be able to run your application in MSE:
+Please find below limitations that you need to consider to be able to run your application in Cosmian Enclave:
 
 - Do not fork processes
 - Do not run subprocess (command execution)

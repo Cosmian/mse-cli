@@ -43,35 +43,35 @@ plugins:
 nav:
 #  - Overview: overview.md
   - Bare Metal:
-      - Bare Metal - Getting Started: home/getting_started.md
-      - Develop: home/develop.md
-      - Flow: home/flow.md
+      - Bare Metal - Getting Started: bare-metal/getting_started.md
+      - Develop: bare-metal/develop.md
+      - Flow: bare-metal/flow.md
       - Command Line:
-          - Evidence: home/subcommand/evidence.md
-          - List: home/subcommand/list.md
-          - Logs: home/subcommand/logs.md
-          - Restart: home/subcommand/restart.md
-          - Status: home/subcommand/status.md
-          - Stop: home/subcommand/stop.md
-  - Cosmian SaaS:
-      - SaaS - Getting Started: cloud/getting_started.md
-      - App Configuration: cloud/configuration.md
+          - Evidence: bare-metal/subcommand/evidence.md
+          - List: bare-metal/subcommand/list.md
+          - Logs: bare-metal/subcommand/logs.md
+          - Restart: bare-metal/subcommand/restart.md
+          - Status: bare-metal/subcommand/status.md
+          - Stop: bare-metal/subcommand/stop.md
+  - SaaS:
+      - SaaS - Getting Started: saas/getting_started.md
+      - App Configuration: saas/configuration.md
       - Command Line:
-          - Context: cloud/subcommand/context.md
-          - Init: cloud/subcommand/init.md
-          - Deploy: cloud/subcommand/deploy.md
-          - List: cloud/subcommand/list.md
-          - Localtest: cloud/subcommand/localtest.md
-          - Login: cloud/subcommand/login.md
-          - Logout: cloud/subcommand/logout.md
-          - Logs: cloud/subcommand/logs.md
-          - Status: cloud/subcommand/status.md
-          - Stop: cloud/subcommand/stop.md
-          - Test: cloud/subcommand/test.md
-          - Verify: cloud/subcommand/verify.md
-      - Develop your app: cloud/develop.md
-      - Usage Scenarios: cloud/scenarios.md
-      - Security Model: cloud/security.md
-      - App Deployment Flow: cloud/how_it_works_deploy.md
-      - App Usage Flow: cloud/how_it_works_use.md
+          - Context: saas/subcommand/context.md
+          - Init: saas/subcommand/init.md
+          - Deploy: saas/subcommand/deploy.md
+          - List: saas/subcommand/list.md
+          - Localtest: saas/subcommand/localtest.md
+          - Login: saas/subcommand/login.md
+          - Logout: saas/subcommand/logout.md
+          - Logs: saas/subcommand/logs.md
+          - Status: saas/subcommand/status.md
+          - Stop: saas/subcommand/stop.md
+          - Test: saas/subcommand/test.md
+          - Verify: saas/subcommand/verify.md
+      - Develop your app: saas/develop.md
+      - Usage Scenarios: saas/scenarios.md
+      - Security Model: saas/security.md
+      - App Deployment Flow: saas/how_it_works_deploy.md
+      - App Usage Flow: saas/how_it_works_use.md
 
