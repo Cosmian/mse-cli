@@ -66,7 +66,7 @@ The verified certificate has been saved at: ./cert.pem
 
 ## Working with the web browser
 
-As an Cosmian Enclave app security is based on a new SSL standard called RATLS, your browser will pop up a security warning when accessing your micro service for the first time.
+As a Cosmian Enclave app security is based on a new SSL standard called RATLS, your browser will pop up a security warning when accessing your micro-service for the first time.
 
 After downloading and verifying your webservice RATLS certificate as shown previously, you can add it to your web browser certificates store. For *Chrome* for example, run:
 
@@ -77,7 +77,7 @@ $ # Read: https://wiki.archlinux.org/title/Network_Security_Services for more de
 $ # Or: https://wiki.archlinux.org/title/User:Grawity/Adding_a_trusted_CA_certificate
 ```
 
-Then, you can access your microservice through your web browser. If the warning message occurs again: it means that the microservice has been updated and then you should download the new certificat, verify it again and then add it you your SSL store. 
+Then, you can access your microservice through your web browser. If the warning message occurs again: it means that the microservice has been updated, and then you should download the new certificat, verify it again and then add it you your SSL store. 
 
 When accessing to your microservice, you can verify than the connection is managed by RATLS by checking the certificate on the left of the url field.
 

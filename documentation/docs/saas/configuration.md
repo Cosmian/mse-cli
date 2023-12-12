@@ -40,15 +40,15 @@ secrets = "secrets.json"
 expiration_date = "2023-06-29 00:00:00+00:00"
 ```
 
-|      Keys       | Required |          Types           |                                                                                Description                                                                                 |
-| :-------------: | :------: | :----------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-|      code       |    ✔️     |          string          |                                                                Relative path to the application code folder                                                                |
-|      tests      |    ✔️     |          string          |                                                               Relative path to the application tests folder                                                                |
-|     docker      |    ✔️     |          string          | URL to the mse docker to run. It could be a local docker to run local test but it must be a remote url when deploying. See [ below section](./configuration.md#mse-docker) |
-|     project     |    ✔️     |          string          |                                                              Project name to regroup applications for payment                                                              |
-|    hardware     |    ✔️     |          string          |                                                           Name of the hardware booked to spawn your application                                                            |
-| expiration_date |          | `YY-MM-DDTHH:mm:ss.nnnZ` |                                Expiration date before the application shutdowns ([rfc3339](https://www.rfc-editor.org/rfc/rfc3339) format)                                 |
-|     secrets     |          |          string          |     A file path (absolute or relative to the configuration file) containing secrets needed by your application to run. See [this page](develop.md) for more  details.      |
+|      Keys       | Required |          Types           |                                                                                      Description                                                                                       |
+|:---------------:|:--------:|:------------------------:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+|      code       |    ✔️    |          string          |                                                                      Relative path to the application code folder                                                                      |
+|      tests      |    ✔️    |          string          |                                                                     Relative path to the application tests folder                                                                      |
+|     docker      |    ✔️    |          string          | URL to the mse docker to run. It could be a local docker to run local test but it must be a remote url when deploying. See [ below section](./configuration.md#cosmian-enclave-docker) |
+|     project     |    ✔️    |          string          |                                                                    Project name to regroup applications for payment                                                                    |
+|    hardware     |    ✔️    |          string          |                                                                 Name of the hardware booked to spawn your application                                                                  |
+| expiration_date |          | `YY-MM-DDTHH:mm:ss.nnnZ` |                                      Expiration date before the application shutdowns ([rfc3339](https://www.rfc-editor.org/rfc/rfc3339) format)                                       |
+|     secrets     |          |          string          |           A file path (absolute or relative to the configuration file) containing secrets needed by your application to run. See [this page](develop.md) for more  details.            |
 
 
 Two applications from the same project with the same name cannot be running at the same time.
@@ -102,10 +102,10 @@ Useful if you want to use your own custom domain name.
 For more information, see [scenarii](scenarios.md).
 
 |    Keys     | Mandatory | Types  |                                                               Description                                                               |
-| :---------: | :-------: | :----: | :-------------------------------------------------------------------------------------------------------------------------------------: |
-| domain_name |     ✔️     | string |              Custom domain name of your application. Should also be in CN and Subject Alternative Name of the certificate               |
-| private_key |     ✔️     | string |       A file path (absolute or relative to the configuration file) containing the private key of the SSL connection (PEM format)        |
-| certificate |     ✔️     | string | A file path (absolute or relative to the configuration file) containing the full certification chain of the SSL connection (PEM format) |
+|:-----------:|:---------:|:------:|:---------------------------------------------------------------------------------------------------------------------------------------:|
+| domain_name |    ✔️     | string |              Custom domain name of your application. Should also be in CN and Subject Alternative Name of the certificate               |
+| private_key |    ✔️     | string |       A file path (absolute or relative to the configuration file) containing the private key of the SSL connection (PEM format)        |
+| certificate |    ✔️     | string | A file path (absolute or relative to the configuration file) containing the full certification chain of the SSL connection (PEM format) |
 
 [LetsEncrypt](https://letsencrypt.org/getting-started/) is supported and recommended to get a certificate for your custom domain. 
 Be aware that the expiration date is set to 3 months for all LetsEncrypt certificate: to run a long-life application you should probably use another certificate authority.

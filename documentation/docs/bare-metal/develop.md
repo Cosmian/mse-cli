@@ -134,7 +134,7 @@ All the libraries needed to run your application will be loaded in that memory. 
 available for your application is about: `hardware_memory - libraries_size`.
 
 When running the Docker container locally, you can use the option `--memory` to estimate your effective memory size. See
-our [github](https://github.com/Cosmian/mse-docker-base#determine-the-enclave-memory-size-of-your-image) for more
+our [GitHub](https://github.com/Cosmian/mse-docker-base#determine-the-enclave-memory-size-of-your-image) for more
 details.
 
 ## Limitations

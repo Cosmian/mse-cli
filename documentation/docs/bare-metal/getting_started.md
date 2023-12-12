@@ -8,22 +8,22 @@
 
     There are quite a few locations where the old MSE name is still in use.
 
-Cosmian Enclave Bare Metal is designed to start an application on your own SGX hardware or that of your cloud provider.
-It does not require the use of the Cosmian Enclave SaaS Infrastructure.
+Cosmian Enclave Bare Metal is designed to start an application on SGX hardware either on-premise or at a cloud 
+provider. This solution does not require the use of the [Cosmian Enclave SaaS](../saas/getting_started.md) Infrastructure.
 
-This tutiorial goes into the details of the deployment flow. If you want to quickly deploy an application, you can
+This tutorial goes into the details of the deployment flow. If you want to quickly deploy an application, you can
 chain all the subcommands, as shown later.
 
-The tutorial defines two actors:
+The tutorial defines two roles:
 
-- The code provider (who can also consume the result of the application)
+- The code provider (who may also consume the result of the application)
 - The SGX operator (who also owns the data to run against the application)
 
-Read [the flow page](flow.md) to get more details about the role of each participant and the overall flow.
+Read [the flow page](flow.md) to get more details about each role and the overall flow.
 
 ## Pre-requisites
 
-You have to install and configure an SGX machine either on-premise or at your cloud provider first.
+You have to install and configure an SGX machine either on-premise or at a cloud provider first.
 Cosmian provides hardware and OS requirements, as well as Ansible scripts to facilitate the deployment. 
 
 ## Install the Cosmian Enclave Bare Metal CLI
@@ -126,7 +126,7 @@ def hello():
 # ...
 ```
 
-The [ configuration file](../cloud/configuration.md) is a TOML file used to give information to the SGX operator,
+The [ configuration file](../saas/configuration.md) is a TOML file used to give information to the SGX operator,
 allowing to start correctly the application:
 
 ```{.toml}
@@ -218,7 +218,7 @@ $ mse home spawn --san myapp.fr \
 
 Mandatory arguments are:
 
-- `san`: Subject Alternative Name to use for routing with SSL passthrough (domain name, IP address or localhost)
+- `san`: Subject Alternative Name to use for routing with SSL pass-through (domain name, IP address or localhost)
 - `port`: port used by Docker to bind the application
 - `size`: memory size (in MB) of the enclave to spawn. Must be a power of 2 greater than 1024. This size is bounded by
   the SGX EPC memory.
@@ -284,7 +284,7 @@ code's key to share it with the SGX operator.
 
     This command is designed to be used by the **code provider**
 
-A sealed secrets file is designed to be shared with the application by hidding them from the SGX operator.
+A sealed secrets file is designed to be shared with the application by hiding them from the SGX operator.
 
 ```console
 $ mse home seal --input example/secrets_to_seal.json \
