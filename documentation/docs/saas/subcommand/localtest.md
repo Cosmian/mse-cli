@@ -3,7 +3,7 @@
     Before testing the app, verify that Docker service is up and your current user can use the Docker client without privilege
 
 
-You can run your application inside the same Docker as MSE environment:
+You can run your application inside the same Docker as the Cosmian Enclave environment:
 
 ```{.console}
 $ mse cloud localtest

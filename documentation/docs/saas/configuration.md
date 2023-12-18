@@ -1,4 +1,4 @@
-The configuration of an MSE application is written in a TOML file.
+The configuration of a Cosmian Enclave application is written in a TOML file.
 The `mse.toml` file located in the current directory is used with `mse cloud deploy` subcommand, you can specify another TOML file with argument `--path` if needed.
 
 ```toml
@@ -40,15 +40,15 @@ secrets = "secrets.json"
 expiration_date = "2023-06-29 00:00:00+00:00"
 ```
 
-|      Keys       | Required |          Types           |                                                                                Description                                                                                 |
-| :-------------: | :------: | :----------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-|      code       |    ✔️     |          string          |                                                                Relative path to the application code folder                                                                |
-|      tests      |    ✔️     |          string          |                                                               Relative path to the application tests folder                                                                |
-|     docker      |    ✔️     |          string          | URL to the mse docker to run. It could be a local docker to run local test but it must be a remote url when deploying. See [ below section](./configuration.md#mse-docker) |
-|     project     |    ✔️     |          string          |                                                              Project name to regroup applications for payment                                                              |
-|    hardware     |    ✔️     |          string          |                                                           Name of the hardware booked to spawn your application                                                            |
-| expiration_date |          | `YY-MM-DDTHH:mm:ss.nnnZ` |                                Expiration date before the application shutdowns ([rfc3339](https://www.rfc-editor.org/rfc/rfc3339) format)                                 |
-|     secrets     |          |          string          |     A file path (absolute or relative to the configuration file) containing secrets needed by your application to run. See [this page](develop.md) for more  details.      |
+|      Keys       | Required |          Types           |                                                                                      Description                                                                                       |
+|:---------------:|:--------:|:------------------------:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+|      code       |    ✔️    |          string          |                                                                      Relative path to the application code folder                                                                      |
+|      tests      |    ✔️    |          string          |                                                                     Relative path to the application tests folder                                                                      |
+|     docker      |    ✔️    |          string          | URL to the mse docker to run. It could be a local docker to run local test but it must be a remote url when deploying. See [ below section](./configuration.md#cosmian-enclave-docker) |
+|     project     |    ✔️    |          string          |                                                                    Project name to regroup applications for payment                                                                    |
+|    hardware     |    ✔️    |          string          |                                                                 Name of the hardware booked to spawn your application                                                                  |
+| expiration_date |          | `YY-MM-DDTHH:mm:ss.nnnZ` |                                      Expiration date before the application shutdowns ([rfc3339](https://www.rfc-editor.org/rfc/rfc3339) format)                                       |
+|     secrets     |          |          string          |           A file path (absolute or relative to the configuration file) containing secrets needed by your application to run. See [this page](develop.md) for more  details.            |
 
 
 Two applications from the same project with the same name cannot be running at the same time.
@@ -70,9 +70,9 @@ In case the SSL certificate is provided by the application owner, the expiration
 If no `expiration_date` is specified in the configuration file, the expiration date of the application is the expiration date of the certificate.
 Otherwise, the expiration date is set to 1 year (except for `4g-eu-001` hardware).
 
-### MSE docker
+### Cosmian Enclave docker
 
-The `docker` parameter defines which Docker image will run in the MSE node. *Cosmian* offers several Docker images (use the tag with the most recent date):
+The `docker` parameter defines which Docker image will run in the Cosmian Enclave SaaS node. *Cosmian* offers several Docker images (use the tag with the most recent date):
 
 - [mse-flask](https://github.com/Cosmian/mse-app-examples/pkgs/container/mse-flask): containing flask dependencies.
 - [mse-pytorch](https://github.com/Cosmian/mse-app-examples/pkgs/container/mse-pytorch): containing flask and machine learning dependencies using pytorch.
@@ -84,7 +84,7 @@ The `docker` parameter defines which Docker image will run in the MSE node. *Cos
 You can test your code properly runs inside this Docker using [`mse cloud test`](subcommand/test.md).
 
 If you need to install other dependencies, you can create a new Docker by forking [mse-docker-flask](https://github.com/Cosmian/mse-docker-flask).
-This Docker will be allowed to be started in an MSE architecture after a review by a *Cosmian* member. To do so, please contact tech@cosmian.com and provide your `Dockerfile` and the link to your docker image.
+This Docker will be allowed to be started in an Cosmian Enclave architecture after a review by a *Cosmian* member. To do so, please contact tech@cosmian.com and provide your `Dockerfile` and the link to your docker image.
 
 Note that, the `requirements.txt` from your source code directory will still be read when the docker will run. We strongly recommend to put all your requirements into the docker and remove the `requirements.txt` from your source code.
 
@@ -102,10 +102,10 @@ Useful if you want to use your own custom domain name.
 For more information, see [scenarii](scenarios.md).
 
 |    Keys     | Mandatory | Types  |                                                               Description                                                               |
-| :---------: | :-------: | :----: | :-------------------------------------------------------------------------------------------------------------------------------------: |
-| domain_name |     ✔️     | string |              Custom domain name of your application. Should also be in CN and Subject Alternative Name of the certificate               |
-| private_key |     ✔️     | string |       A file path (absolute or relative to the configuration file) containing the private key of the SSL connection (PEM format)        |
-| certificate |     ✔️     | string | A file path (absolute or relative to the configuration file) containing the full certification chain of the SSL connection (PEM format) |
+|:-----------:|:---------:|:------:|:---------------------------------------------------------------------------------------------------------------------------------------:|
+| domain_name |    ✔️     | string |              Custom domain name of your application. Should also be in CN and Subject Alternative Name of the certificate               |
+| private_key |    ✔️     | string |       A file path (absolute or relative to the configuration file) containing the private key of the SSL connection (PEM format)        |
+| certificate |    ✔️     | string | A file path (absolute or relative to the configuration file) containing the full certification chain of the SSL connection (PEM format) |
 
 [LetsEncrypt](https://letsencrypt.org/getting-started/) is supported and recommended to get a certificate for your custom domain. 
 Be aware that the expiration date is set to 3 months for all LetsEncrypt certificate: to run a long-life application you should probably use another certificate authority.
@@ -153,4 +153,4 @@ These files will be updated when the certificate renews.
 ```
 
 3. A DNS `TXT` record should be registered under a given name in your DNS provider interface. After doing that, the certificate will be generated. Delete this record at the end of the process.
-4. Read the two PEM files and create your own `ssl` section in the MSE configuration file. You are now ready to deploy your app using: `mse cloud deploy`.
+4. Read the two PEM files and create your own `ssl` section in the Cosmian Enclave configuration file. You are now ready to deploy your app using: `mse cloud deploy`.

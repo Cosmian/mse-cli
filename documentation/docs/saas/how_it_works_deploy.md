@@ -1,6 +1,6 @@
 ## Overview
 
-The deployment step consists for the app owner in deploying their application into MSE. Basically:
+The deployment step consists for the app owner in deploying their application into Cosmian Enclave. Basically:
 
 - Send the code and the configuration
 - Allocate the resource and spawn the app
@@ -8,11 +8,11 @@ The deployment step consists for the app owner in deploying their application in
 
 The deployment is breaking down into two stages: 
 
-- The first one consists in interacting with the Cosmian MSE backend by sending the code and the configuration
+- The first one consists in interacting with the Cosmian Enclave SaaS backend by sending the code and the configuration
 
   ![](../images/deploy-stage-1.png)
 
-- The second one consists in interacting right with the spawned MSE node
+- The second one consists in interacting right with the spawned Cosmian Enclave SaaS node
 
   ![](../images/deploy-stage-2.png)
 
@@ -33,9 +33,9 @@ The cryptography specifications are explained [here](security.md).
 
 All the [ scenarios](./scenarios.md) proceed that way. 
 
-### MSE instance verification
+### Cosmian Enclave instance verification
 
-Between stage 1 and stage 2, the app owner should verify the MSE app, that is to say:
+Between stage 1 and stage 2, the app owner should verify the app, that is to say:
 
 - check that the code is **running inside an enclave**
 - check that this **enclave belongs to Cosmian**
@@ -49,13 +49,14 @@ For more details about this step, read [security](security.md).
 
 ### Stage 2: secret data configuration
 
-At this point, the app owner has sent their encrypted code inside the MSE node and trusts it. 
-Before the application being able to start, the MSE node needs several extra secret parameters:
+At this point, the app owner has sent their encrypted code inside the Cosmian Enclave SaaS node and trusts it. 
+Before the application being able to start, the Cosmian Enclave SaaS node needs several extra secret parameters:
 
 - The key to decrypt the code
 - The private key of the SSL certificate if the TLS connection of the app is managed by the app owner ([ scenario #2](./scenarios.md#app-owner-trust-approach-fully-encrypted-saas))
 
-Both these parameters are sent straight to the MSE node using the dedicated TLS connection managed by the enclave. Therefore, only the MSE app can decrypt the app code previously sent.
+Both these parameters are sent straight to the Cosmian Enclave SaaS node using the dedicated TLS connection managed 
+by the enclave. Therefore, only the Cosmian Enclave app can decrypt the app code previously sent.
 
 ## Start the application
 

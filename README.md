@@ -1,12 +1,13 @@
-# Microservice Encryption Cloud Command-Line (MSE)
+# Cosmian Enclave Command-Line Interface
 
 [![PyPI version](https://badge.fury.io/py/mse-cli.svg)](https://badge.fury.io/py/mse-cli)
 
 ## Overview
 
-Python CLI for Microservice Encryption. See [Github repository](https://github.com/Cosmian/mse-cli).
+Python CLI for Cosmian Enclave (formerly Microservice Encryption - MSE).
+See [GitHub repository](https://github.com/Cosmian/mse-cli).
 
-Read the [MSE documentation](https://docs.cosmian.com/microservice_encryption/).
+Read the [Cosmian Enclave documentation](https://docs.staging.cosmian.com/compute/cosmian_enclave/overview/).
 
 ## Install
 
@@ -16,26 +17,32 @@ $ pip install mse-cli
 
 ## Usage
 
-You can run MSE CLI to manage microservice deployed on the Cosmian cloud infrastructure using `mse cloud` or deployed on your own SGX infrastructure using `mse home`.
+You can run the Cosmian Enclave CLI to manage microservice deployed on the Cosmian cloud infrastructure
+using `mse cloud` or deployed on SGX hardware using `mse home`.
 
-MSE Cloud ☁️ is designed to start an MSE application on Cosmian SGX hardware in a fully zero trust environment. 
+Cosmian Enclave SaaS ☁️ is designed to start a Cosmian Enclave application on Cosmian SGX SaaS infrastructure in a 
+fully zero trust environment.
 
-MSE Home 🏕️ is designed to start an MSE application on your own SGX hardware without using all the MSE cloud infrastructure. We explain later how all the subscommands can be chained to deploy your own application. 
+Cosmian Enclave Bare Metal 🏕️ is designed to start a Cosmian Enclave application on SGX hardware or that of
+a cloud provider without using the Cosmian Enclave SaaS infrastructure.
 
-In that latter usage, two actors are required:
-- The code provider (who can also consume the result of the MSE application)
-- The SGX operator (who also owns the data to run against the MSE application)
+In the Cosmian Enclave Bare Metal scenario, two separate roles are defined:
 
-If writing the subcommand part `home` or `cloud` every time upsets you, you can set the `MSE_DEFAULT_ENV` env variable to one of these values and then just omit that word in the future commands. By default, the CLI will target this default environment. For example: `mse cloud test` turns into `mse test`
+- The code provider (who can also consume the result of the Cosmian Enclave application)
+- The SGX operator (who also owns the data to run against the Cosmian Enclave application)
 
+To avoid writing the subcommand part `home` or `cloud` every time, set the `MSE_DEFAULT_ENV` env 
+variable to one of these values and then just omit that word in the future commands. By default, the CLI will target 
+this default environment. For example: `mse cloud test` turns into `mse test`
 
-## Usage - MSE cloud
+## Usage - Cosmian Enclave SaaS
 
 ```console
 $ mse cloud -h
 ```
 
-Note: if you declare the env variable `MSE_BACKTRACE` to the value `full`, a python stacktrace will be printed in case of errors.
+Note: if you declare the env variable `MSE_BACKTRACE` to the value `full`, a python stacktrace will be printed in case
+of errors.
 
 ### Pre-requisites
 
@@ -45,13 +52,14 @@ First of all sign up or sign in using:
 $ mse login
 ```
 
-Download the [mse-app-examples](https://github.com/Cosmian/mse-app-examples) repository. And go to the `helloworld` directory.
+Download the [mse-app-examples](https://github.com/Cosmian/mse-app-examples) repository. And go to the `helloworld`
+directory.
 
 You can find an example of `flask` application and a `mse.toml` configuration file.
 
 ### Deployment
 
-You can deploy this application as follow:
+You can deploy this application as follows:
 
 ```console
 $ cd helloworld
@@ -78,17 +86,15 @@ You can use these following env variables:
 - `MSE_AUTH0_CLIENT_ID` to specify another auth0 tenant client id
 - `MSE_AUTH0_AUDIENCE` to specify another tenant audience
 - `MSE_CONSOLE_URL` to specify another console URL
-- `MSE_PCCS_URL` to specify another PCCS URL 
+- `MSE_PCCS_URL` to specify another PCCS URL
 
-
-## Usage - MSE Home
+## Usage - Cosmian Enclave Bare Metal
 
 ```console
 $ mse home -h
 ```
 
 Note: if you set the env variable `MSE_BACKTRACE=full`, a Python stacktrace will be printed in case of errors.
-
 
 You can find below the use flow step by step.
 
@@ -108,7 +114,7 @@ __User__: the code provider
 $ mse home localtest --project example/
 ```
 
-### Create the MSE package with the code and the docker image
+### Create the Cosmian Enclave package with the code and the docker image
 
 __User__: the code provider
 
@@ -119,7 +125,7 @@ $ mse home package --project example/ \
 
 The generated package can now be sent to the sgx operator.
 
-### Spawn the MSE docker
+### Spawn the Cosmian Enclave docker
 
 __User__: the SGX operator
 
@@ -143,6 +149,7 @@ The file `workspace/sgx_operator/evidence.json` can now be shared with the other
 __User__: the code provider
 
 The trustworthiness is established based on multiple information:
+
 - the full code package (tarball)
 - the arguments used to spawn the microservice
 - evidences captured from the running microservice
@@ -155,7 +162,8 @@ $ mse home verify --package workspace/code_provider/package_mse_src_168327632772
                   --output /tmp
 ```
 
-If the verification succeeds, you get the RA-TLS certificate (written as a file named `ratls.pem`) and you can now seal the code key to share it with the SGX operator.
+If the verification succeeds, you get the RA-TLS certificate (written as a file named `ratls.pem`) and you can now seal
+the code key to share it with the SGX operator.
 
 ### Seal your secrets
 
@@ -190,9 +198,10 @@ $ mse home test --test workspace/sgx_operator/tests/ \
 
 __User__: the code provider
 
-Assume the SGX operator gets a result as follow: `curl https://localhost:7788/result --cacert /tmp/ratls.pem > result.enc`
+Assume the SGX operator gets a result as follows: `curl https://localhost:7788/result --cacert /tmp/ratls.pem > 
+result.enc`
 
-Then, the code provider can decrypt the result as follow:
+Then, the code provider can decrypt the result as follows:
 
 ```console
 $ mse home decrypt --key key.txt \
@@ -201,39 +210,40 @@ $ mse home decrypt --key key.txt \
 $ cat workspace/code_provider/result.plain
 ```
 
-### Manage the MSE docker
+### Manage the Cosmian Enclave docker
 
 __User__: the SGX operator
 
-You can stop and remove the docker as follow:
+You can stop and remove the docker as follows:
 
 ```console
 $ mse home stop [--remove] <app_name>
 ```
 
-You can restart a stopped and not removed docker as follow:
+You can restart a stopped and not removed docker as follows:
 
 ```console
 $ mse home restart <app_name>
 ```
 
-You can get the MSE docker logs as follow:
+You can get the Cosmian Enclave docker logs as follows:
 
 ```console
 $ mse home logs <app_name>
 ```
 
-You can get the MSE docker status as follow:
+You can get the Cosmian Enclave docker status as follows:
 
 ```console
 $ mse home status <app_name>
 ```
 
-You can get the list of running MSE dockers:
+You can get the list of running Cosmian Enclave dockers:
 
 ```console
 $ mse home list
 ```
+
 ## Development & Test
 
 To work with the development/test environment, you shall edit the following variables with their proper values:
@@ -248,7 +258,8 @@ To work with the development/test environment, you shall edit the following vari
 
 Do the same, if you need to use de staging environment.
 
-Then you first need to login in in order to generate a session. Then run the test.
+Then you first need to login in order to generate a session. Then run the test.
+
 ```console
 $ pytest -m 'not home not cloud'
 $ mse login
@@ -282,9 +293,10 @@ $ ./build_pdf.sh
 
 ## Dockerisation
 
-You can work with `mse home` without having internet access even to install the CLI by running the CLI docker. Or you can easily run `mse cloud` by just pulling the CLI docker. 
+You can work with `mse home` without having internet access even to install the CLI by running the CLI docker. Or you
+can easily run `mse cloud` by just pulling the CLI docker.
 
-You can build a docker for `mse` as follow:
+You can build a docker for `mse` as follows:
 
 ```console
 $ docker build -t mse . 
@@ -292,15 +304,20 @@ $ docker build -t mse .
 
 Then run it.
 
-In the following, the current directory inside the docker is `/mnt/workspace`. You can retrieve all generated files in your current host in: `/mnt/workspace`. Make sure to create it before all at the exact location `/mnt/workspace` (it will not work if both locations are not aligned).  
+In the following, the current directory inside the docker is `/mnt/workspace`. You can retrieve all generated files in
+your current host in: `/mnt/workspace`. Make sure to create it before all at the exact location `/mnt/workspace` (it
+will not work if both locations are not aligned).
 
-### MSE Cloud
+### Cosmian Enclave SaaS
 
-You need to login through the web browser, which is not possible through Docker. You should then run the `mse login` inside the docker and copy/paste the displayed URL into the host web browser to be logged in inside the docker. 
+You need to login through the web browser, which is not possible through Docker. You should then run the `mse login`
+inside the docker and copy/paste the displayed URL into the host web browser to be logged in inside the docker.
 
-Make sure to mount `$HOME/.config/mse` into `/root/.config/mse` to be able to reuse the login credentials or recover your previous deployment information when chaining the commands. 
+Make sure to mount `$HOME/.config/mse` into `/root/.config/mse` to be able to reuse the login credentials or recover
+your previous deployment information when chaining the commands.
 
-If you need to target another environment, use the docker parameter `-e` to specify the previous mentionned MSE env variables. 
+If you need to target another environment, use the docker parameter `-e` to specify the previous mentionned Cosmian Enclave env
+variables.
 
 ```console
 $ # You have to create /mnt/workspace
@@ -437,9 +454,13 @@ $ docker run -v /var/run/docker.sock:/var/run/docker.sock \
 
 ## Use case
 
-Let's assume your microservice have to interface with a frontend. The main issue you will face up is that the RA-TLS certificate is not allowed in your web browser, mainly because it's a self signed cert. Also the RA-TLS extension is not checked by your webbrowser, yet any query to the webservice must verify the RA-TLS extension of the certificate: the security is based on this verification. 
+Let's assume your microservice has to interface with a frontend. The main issue you will face up is that the RA-TLS
+certificate is not allowed in your web browser, mainly because it is a self-signed cert. Also, the RA-TLS extension 
+is not checked by your webbrowser, yet any query to the webservice must verify the RA-TLS extension of the 
+certificate: the security is based on this verification.
 
-Therefore, the frontend can't interact straightaway with your webservice through the web browser. You need to develop a intermediate backend acting like a proxy. Or a simpler way could be to use the following nginx configuration:
+Therefore, the frontend can't interact straightaway with your webservice through the web browser. You need to develop an
+intermediate backend acting like a proxy. Or a simpler way could be to use the following nginx configuration:
 
 ```nginx
 server {
