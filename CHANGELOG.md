@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## \[1.3\] - 2024-06-20
+
+### Fixed
+
+* [MSE Home] Bug with scaffold command (https://github.com/Cosmian/mse-cli/commit/32c8ee8fb6b4dd52871da2e2f2a8a860546c6662)
+* [MSE Home] Bug with SAN as host on Azure (https://github.com/Cosmian/mse-cli/commit/80406e49cc2244f97ade957bb154a2fb7a83d7c5)
+* [MSE Home] Bump `intel-sgx-ra` to fix Azure remote attestation (https://github.com/Cosmian/intel-sgx-ra/pull/13)
+* [MSE Home] Bump major version of `docker` python package with bugfixes
+
+### Added
+
+* [MSE Home] Commands encrypt and unseal
+
+### Updated
+
+* [MSE Home] Homogenization of commands encrypt/decrypt and seal/unseal
+* [Documentation] Reflecting the renaming of MSE to Cosmian Enclave
+* [MSE Cloud] Some tests are disabled due to cloud infrastructure shutdown
+
 ## \[1.2\] - 2023-08-10
 
 ### Updated

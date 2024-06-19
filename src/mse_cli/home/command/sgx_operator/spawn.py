@@ -149,7 +149,7 @@ def run(args) -> None:
 
     docker_config = SgxDockerConfig(
         size=args.size,
-        host=args.san,
+        host=args.host,
         port=args.port,
         subject=args.subject,
         subject_alternative_name=args.san,

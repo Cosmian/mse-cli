@@ -10,13 +10,22 @@ from pathlib import Path
 import pytest
 import requests
 from conftest import capture_logs
+from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
+from cryptography.hazmat.primitives.serialization import (
+    Encoding,
+    NoEncryption,
+    PublicFormat,
+    PrivateFormat,
+)
 
+from mse_cli.home.command.code_provider.encrypt import run as do_encrypt
 from mse_cli.home.command.code_provider.decrypt import run as do_decrypt
 from mse_cli.home.command.code_provider.localtest import run as do_test_dev
 from mse_cli.home.command.code_provider.package import run as do_package
 from mse_cli.home.command.code_provider.scaffold import run as do_scaffold
 from mse_cli.home.command.code_provider.seal import run as do_seal
+from mse_cli.home.command.code_provider.unseal import run as do_unseal
 from mse_cli.home.command.code_provider.verify import run as do_verify
 from mse_cli.home.command.sgx_operator.evidence import run as do_evidence
 from mse_cli.home.command.sgx_operator.list_all import run as do_list
@@ -326,28 +335,70 @@ def test_verify(workspace: Path, cmd_log: io.StringIO):
 @pytest.mark.incremental
 def test_seal(workspace: Path, cmd_log: io.StringIO):
     """Test the `seal` subcommand."""
+    input_path = pytest.app_path / "secrets_to_seal.json"
+
     do_seal(
         Namespace(
             **{
-                "secrets": pytest.app_path / "secrets_to_seal.json",
-                "cert": pytest.ratls_cert,
-                "output": workspace,
+                "input": input_path,
+                "receiver_enclave": pytest.ratls_cert,
+                "receiver_public_key": None,
+                "output": workspace / f"{input_path.name}.seal",
             }
         )
     )
 
-    output = capture_logs(cmd_log)
-    try:
-        pytest.sealed_secrets = Path(
-            re.search(
-                "Your sealed secrets has been saved at: ([A-Za-z0-9/._-]+)", output
-            ).group(1)
-        )
-    except AttributeError:
-        print(output)
-        assert False
+    pytest.sealed_secrets = workspace / f"{input_path.name}.seal"
 
     assert pytest.sealed_secrets.exists()
+
+
+@pytest.mark.home
+@pytest.mark.incremental
+def test_unseal(workspace: Path, cmd_log: io.StringIO):
+    """Test the `unseal` subcommand."""
+    input_path = pytest.app_path / "message.bin"
+    input_path.write_bytes(b"Hello World!")
+
+    output_path = workspace / f"{input_path.name}.seal"
+
+    receiver_priv_key = X25519PrivateKey.generate()
+    receiver_sk_path = workspace / "receiver_priv_key.bin"
+    receiver_sk_path.write_bytes(
+        receiver_priv_key.private_bytes(
+            encoding=Encoding.Raw,
+            format=PrivateFormat.Raw,
+            encryption_algorithm=NoEncryption(),
+        )
+    )
+
+    receiver_pub_key = receiver_priv_key.public_key()
+    receiver_pk_path = workspace / "receiver_pub_key.bin"
+    receiver_pk_path.write_bytes(
+        receiver_pub_key.public_bytes(encoding=Encoding.Raw, format=PublicFormat.Raw)
+    )
+
+    do_seal(
+        Namespace(
+            **{
+                "input": input_path,
+                "receiver_enclave": None,
+                "receiver_public_key": receiver_pk_path,
+                "output": output_path,
+            }
+        )
+    )
+    do_unseal(
+        Namespace(
+            **{
+                "input": output_path,
+                "private_key": receiver_sk_path,
+                "output": workspace / input_path.name,
+            }
+        )
+    )
+
+    assert (workspace / input_path.name).exists()
 
 
 @pytest.mark.home
@@ -391,6 +442,44 @@ def test_test(
 
 @pytest.mark.home
 @pytest.mark.incremental
+def test_encrypt(workspace: Path, port: int, host: str):
+    """Test the `encrypt` subcommand."""
+    plain_file_path = workspace / "test"
+    plain_file_path.write_bytes(b"Hello World!")
+
+    enc_file_path = workspace / "test.enc"
+
+    key_path = workspace / "key.bin"
+    key_path.write_bytes(base64.urlsafe_b64encode(os.urandom(32)))
+
+    do_encrypt(
+        Namespace(
+            **{
+                "input": plain_file_path,
+                "key": key_path,
+                "output": enc_file_path,
+            }
+        )
+    )
+
+    expected_plain_file_path = workspace / "test.plain"
+
+    do_decrypt(
+        Namespace(
+            **{
+                "input": enc_file_path,
+                "key": key_path,
+                "output": expected_plain_file_path,
+            }
+        )
+    )
+
+    assert expected_plain_file_path.exists()
+    assert expected_plain_file_path.read_bytes() == plain_file_path.read_bytes()
+
+
+@pytest.mark.home
+@pytest.mark.incremental
 def test_decrypt_secrets_json(workspace: Path, port: int, host: str):
     """Test the `decrypt` subcommand with the secret json file."""
     response = requests.get(
@@ -417,8 +506,8 @@ def test_decrypt_secrets_json(workspace: Path, port: int, host: str):
     do_decrypt(
         Namespace(
             **{
+                "input": enc_file_path,
                 "key": key_path,
-                "file": enc_file_path,
                 "output": output_path,
             }
         )
@@ -451,8 +540,8 @@ def test_decrypt_sealed_secrets_json(workspace: Path, port: int, host: str):
     do_decrypt(
         Namespace(
             **{
+                "input": enc_file_path,
                 "key": key_path,
-                "file": enc_file_path,
                 "output": output_path,
             }
         )
