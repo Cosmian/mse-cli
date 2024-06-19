@@ -1,11 +1,5 @@
 # CHANGELOG
 
-## \[1.3.1\] - 2023-12-12
-
-### Updated
-
-* [Documentation] Reflecting the renaming of MSE to Cosmian ENclave
-
 ## \[1.3\] - 2023-08-16
 
 ### Added
@@ -15,6 +9,7 @@
 ### Updated
 
 * [MSE Home] Homogenization of commands encrypt/decrypt and seal/unseal
+* [Documentation] Reflecting the renaming of MSE to Cosmian Enclave
 
 ## \[1.2\] - 2023-08-10
 
