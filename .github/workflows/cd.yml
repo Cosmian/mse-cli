@@ -6,16 +6,9 @@ on:
     tags:
       - "*"
 
-permissions:
-  contents: read
-  id-token: write
-
 jobs:
   publish:
     runs-on: ubuntu-latest
-    environment:
-      name: release
-      url: https://pypi.org/p/mse-cli
 
     steps:
       - uses: actions/checkout@v3
@@ -44,3 +37,5 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           print_hash: true
+          user: ${{ secrets.PYPI_USERNAME }}
+          password: ${{ secrets.PYPI_PASSWORD }}
