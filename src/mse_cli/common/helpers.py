@@ -224,7 +224,9 @@ def run_tests(
         env["TEST_SEALED_SECRET_JSON"] = str(sealed_secrets.resolve())
 
     try:
-        subprocess.check_call(app_config.tests_cmd, cwd=tests, env=env)
+        subprocess.check_call(
+            [sys.executable, "-m", app_config.tests_cmd], cwd=tests, env=env
+        )
 
         LOG.info("Tests successful")
         return True

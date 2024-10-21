@@ -59,7 +59,7 @@ def run(args) -> None:
 
     try:
         subprocess.check_call(
-            code_config.tests_cmd,
+            [sys.executable, "-m", code_config.tests_cmd],
             cwd=args.test,
             env=dict(
                 os.environ, TEST_REMOTE_URL=f"https://{docker.host}:{docker.port}"
